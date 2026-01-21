@@ -284,3 +284,24 @@
     height: 70px;
   }
 }
+
+/* Welcome back section */
+.welcome-back {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.welcome-message {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1.25rem;
+  color: #495057;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .welcome-message {
+    font-size: 1.5rem;
+  }
+}

@@ -1,6 +1,45 @@
+import { useState } from 'react'
 import './App.css'
+import Onboarding from './components/Onboarding'
+
+type Screen = 'home' | 'onboarding'
+
+interface ChildData {
+  name: string
+  age: number | null
+  sex: string | null
+  avatar: string | null
+}
 
 function App() {
+  const [screen, setScreen] = useState<Screen>('home')
+  const [childData, setChildData] = useState<ChildData | null>(null)
+
+  const handleGetStarted = () => {
+    setScreen('onboarding')
+  }
+
+  const handleOnboardingComplete = (data: ChildData) => {
+    setChildData(data)
+    // TODO: Save to backend and navigate to main app
+    console.log('Onboarding complete:', data)
+    // For now, show a success message (in production, would navigate to lessons)
+    setScreen('home')
+  }
+
+  const handleOnboardingBack = () => {
+    setScreen('home')
+  }
+
+  if (screen === 'onboarding') {
+    return (
+      <Onboarding
+        onComplete={handleOnboardingComplete}
+        onBack={handleOnboardingBack}
+      />
+    )
+  }
+
   return (
     <div className="app homescreen">
       {/* Decorative floating elements */}
@@ -31,9 +70,20 @@ function App() {
 
         <p className="tagline">Learn to Read, Read to Learn!</p>
 
-        <button className="cta-button" type="button">
-          Get Started!
-        </button>
+        {childData ? (
+          <div className="welcome-back">
+            <p className="welcome-message">
+              Welcome back, {childData.name}!
+            </p>
+            <button className="cta-button" type="button" onClick={handleGetStarted}>
+              Continue Learning!
+            </button>
+          </div>
+        ) : (
+          <button className="cta-button" type="button" onClick={handleGetStarted}>
+            Get Started!
+          </button>
+        )}
       </main>
     </div>
   )
