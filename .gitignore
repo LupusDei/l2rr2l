@@ -12,6 +12,9 @@
 test-results/
 playwright-report/
 
+# Database
+data/
+
 # Logs
 logs
 *.log
