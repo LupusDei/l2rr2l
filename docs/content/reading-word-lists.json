@@ -1,0 +1,416 @@
+{
+  "version": "1.0.0",
+  "description": "Graded word lists and sentences for reading level assessment",
+  "instructions": "Use adaptive assessment starting at pre-reader level. Progress through levels based on accuracy thresholds. Stop when ceiling is reached (< 60% accuracy at current level).",
+  "levels": {
+    "pre_reader": {
+      "name": "Pre-Reader",
+      "description": "Letter awareness, print concepts, basic word recognition",
+      "ageRange": "3-4 years",
+      "skills": [
+        "Recognizes own name",
+        "Understands print has meaning",
+        "Can identify some letters",
+        "Matches pictures to words"
+      ]
+    },
+    "emerging": {
+      "name": "Emerging Reader",
+      "description": "Basic decoding, CVC words, high-frequency words",
+      "ageRange": "4-5 years",
+      "skills": [
+        "Decodes simple CVC words",
+        "Recognizes common sight words",
+        "Understands left-to-right reading",
+        "Beginning phonemic awareness"
+      ]
+    },
+    "early": {
+      "name": "Early Reader",
+      "description": "Blends, digraphs, simple sentences",
+      "ageRange": "5-6 years",
+      "skills": [
+        "Reads simple sentences",
+        "Understands basic comprehension",
+        "Recognizes common word patterns",
+        "Beginning fluency"
+      ]
+    },
+    "developing": {
+      "name": "Developing Reader",
+      "description": "Multi-syllable words, paragraphs, comprehension",
+      "ageRange": "6-7 years",
+      "skills": [
+        "Reads short paragraphs",
+        "Understands story elements",
+        "Self-corrects errors",
+        "Reading for meaning"
+      ]
+    }
+  },
+  "cvcWords": {
+    "description": "Consonant-Vowel-Consonant words organized by vowel sound",
+    "shortA": [
+      { "word": "cat", "image": "cat", "sentence": "The cat sat." },
+      { "word": "hat", "image": "hat", "sentence": "A red hat." },
+      { "word": "bat", "image": "bat", "sentence": "A big bat." },
+      { "word": "mat", "image": "mat", "sentence": "On the mat." },
+      { "word": "rat", "image": "rat", "sentence": "A fat rat." },
+      { "word": "sat", "image": "child-sitting", "sentence": "She sat down." },
+      { "word": "can", "image": "can", "sentence": "A tin can." },
+      { "word": "man", "image": "man", "sentence": "A tall man." },
+      { "word": "pan", "image": "pan", "sentence": "A hot pan." },
+      { "word": "van", "image": "van", "sentence": "A blue van." },
+      { "word": "fan", "image": "fan", "sentence": "The fan spins." },
+      { "word": "ran", "image": "child-running", "sentence": "He ran fast." },
+      { "word": "bad", "image": "thumbs-down", "sentence": "Not bad." },
+      { "word": "dad", "image": "dad", "sentence": "My dad." },
+      { "word": "had", "image": "gift", "sentence": "I had it." },
+      { "word": "mad", "image": "angry-face", "sentence": "So mad." },
+      { "word": "sad", "image": "sad-face", "sentence": "Feeling sad." },
+      { "word": "bag", "image": "bag", "sentence": "A big bag." },
+      { "word": "tag", "image": "tag", "sentence": "A name tag." },
+      { "word": "wag", "image": "dog-wagging", "sentence": "Dogs wag." }
+    ],
+    "shortE": [
+      { "word": "bed", "image": "bed", "sentence": "In my bed." },
+      { "word": "red", "image": "red-color", "sentence": "A red ball." },
+      { "word": "fed", "image": "feeding", "sentence": "I fed the cat." },
+      { "word": "led", "image": "leading", "sentence": "She led us." },
+      { "word": "get", "image": "reaching", "sentence": "Get the ball." },
+      { "word": "let", "image": "allowing", "sentence": "Let me try." },
+      { "word": "met", "image": "meeting", "sentence": "We met today." },
+      { "word": "net", "image": "net", "sentence": "A big net." },
+      { "word": "pet", "image": "pet", "sentence": "My pet dog." },
+      { "word": "set", "image": "placing", "sentence": "Set it down." },
+      { "word": "wet", "image": "wet", "sentence": "So wet!" },
+      { "word": "yet", "image": "waiting", "sentence": "Not yet." },
+      { "word": "hen", "image": "hen", "sentence": "A red hen." },
+      { "word": "men", "image": "men", "sentence": "Two men." },
+      { "word": "pen", "image": "pen", "sentence": "A blue pen." },
+      { "word": "ten", "image": "number-10", "sentence": "I am ten." },
+      { "word": "leg", "image": "leg", "sentence": "One leg." },
+      { "word": "beg", "image": "begging", "sentence": "Dogs beg." },
+      { "word": "peg", "image": "peg", "sentence": "A wooden peg." }
+    ],
+    "shortI": [
+      { "word": "big", "image": "big", "sentence": "So big!" },
+      { "word": "dig", "image": "digging", "sentence": "Dig a hole." },
+      { "word": "fig", "image": "fig", "sentence": "A sweet fig." },
+      { "word": "pig", "image": "pig", "sentence": "A pink pig." },
+      { "word": "wig", "image": "wig", "sentence": "A funny wig." },
+      { "word": "bit", "image": "bite", "sentence": "A little bit." },
+      { "word": "fit", "image": "fitting", "sentence": "It will fit." },
+      { "word": "hit", "image": "hitting", "sentence": "Hit the ball." },
+      { "word": "kit", "image": "kit", "sentence": "A craft kit." },
+      { "word": "lit", "image": "lit-candle", "sentence": "A lit candle." },
+      { "word": "pit", "image": "pit", "sentence": "A deep pit." },
+      { "word": "sit", "image": "sitting", "sentence": "Sit down." },
+      { "word": "did", "image": "completed", "sentence": "I did it!" },
+      { "word": "hid", "image": "hiding", "sentence": "He hid it." },
+      { "word": "kid", "image": "kid", "sentence": "A happy kid." },
+      { "word": "lid", "image": "lid", "sentence": "The jar lid." },
+      { "word": "bin", "image": "bin", "sentence": "A toy bin." },
+      { "word": "fin", "image": "fin", "sentence": "A shark fin." },
+      { "word": "pin", "image": "pin", "sentence": "A sharp pin." },
+      { "word": "win", "image": "winning", "sentence": "We win!" }
+    ],
+    "shortO": [
+      { "word": "box", "image": "box", "sentence": "A big box." },
+      { "word": "fox", "image": "fox", "sentence": "A red fox." },
+      { "word": "cot", "image": "cot", "sentence": "A small cot." },
+      { "word": "dot", "image": "dot", "sentence": "A red dot." },
+      { "word": "got", "image": "receiving", "sentence": "I got it!" },
+      { "word": "hot", "image": "hot", "sentence": "Very hot!" },
+      { "word": "lot", "image": "many", "sentence": "A lot of toys." },
+      { "word": "not", "image": "no", "sentence": "Not now." },
+      { "word": "pot", "image": "pot", "sentence": "A big pot." },
+      { "word": "cob", "image": "corn-cob", "sentence": "A corn cob." },
+      { "word": "job", "image": "working", "sentence": "A good job!" },
+      { "word": "mob", "image": "crowd", "sentence": "A big mob." },
+      { "word": "rob", "image": "thief", "sentence": "Don't rob." },
+      { "word": "dog", "image": "dog", "sentence": "My dog." },
+      { "word": "fog", "image": "fog", "sentence": "In the fog." },
+      { "word": "hog", "image": "hog", "sentence": "A big hog." },
+      { "word": "jog", "image": "jogging", "sentence": "Let's jog." },
+      { "word": "log", "image": "log", "sentence": "A wood log." },
+      { "word": "hop", "image": "hopping", "sentence": "Hop, hop!" },
+      { "word": "mop", "image": "mop", "sentence": "A wet mop." },
+      { "word": "pop", "image": "popping", "sentence": "Pop, pop!" },
+      { "word": "top", "image": "top", "sentence": "On top." }
+    ],
+    "shortU": [
+      { "word": "bug", "image": "bug", "sentence": "A small bug." },
+      { "word": "dug", "image": "digging", "sentence": "He dug deep." },
+      { "word": "hug", "image": "hugging", "sentence": "A big hug." },
+      { "word": "jug", "image": "jug", "sentence": "A water jug." },
+      { "word": "mug", "image": "mug", "sentence": "A hot mug." },
+      { "word": "rug", "image": "rug", "sentence": "A soft rug." },
+      { "word": "tug", "image": "tugging", "sentence": "Tug the rope." },
+      { "word": "bud", "image": "flower-bud", "sentence": "A flower bud." },
+      { "word": "mud", "image": "mud", "sentence": "In the mud." },
+      { "word": "bun", "image": "bun", "sentence": "A sweet bun." },
+      { "word": "fun", "image": "fun", "sentence": "So much fun!" },
+      { "word": "gun", "image": "water-gun", "sentence": "A water gun." },
+      { "word": "run", "image": "running", "sentence": "Run fast!" },
+      { "word": "sun", "image": "sun", "sentence": "The hot sun." },
+      { "word": "bus", "image": "bus", "sentence": "A yellow bus." },
+      { "word": "but", "image": "but", "sentence": "But wait..." },
+      { "word": "cut", "image": "cutting", "sentence": "Cut the paper." },
+      { "word": "gut", "image": "belly", "sentence": "My gut says." },
+      { "word": "hut", "image": "hut", "sentence": "A small hut." },
+      { "word": "nut", "image": "nut", "sentence": "A little nut." },
+      { "word": "rut", "image": "rut", "sentence": "In a rut." },
+      { "word": "cup", "image": "cup", "sentence": "A red cup." },
+      { "word": "pup", "image": "puppy", "sentence": "A cute pup." },
+      { "word": "up", "image": "up-arrow", "sentence": "Look up!" }
+    ]
+  },
+  "highFrequencyWords": {
+    "description": "Dolch sight words organized by difficulty level",
+    "preprimer": [
+      "a", "and", "away", "big", "blue", "can", "come", "down",
+      "find", "for", "funny", "go", "help", "here", "I", "in",
+      "is", "it", "jump", "little", "look", "make", "me", "my",
+      "not", "one", "play", "red", "run", "said", "see", "the",
+      "three", "to", "two", "up", "we", "where", "yellow", "you"
+    ],
+    "primer": [
+      "all", "am", "are", "at", "ate", "be", "black", "brown",
+      "but", "came", "did", "do", "eat", "four", "get", "good",
+      "have", "he", "into", "like", "must", "new", "no", "now",
+      "on", "our", "out", "please", "pretty", "ran", "ride", "saw",
+      "say", "she", "so", "soon", "that", "there", "they", "this",
+      "too", "under", "want", "was", "well", "went", "what", "white",
+      "who", "will", "with", "yes"
+    ],
+    "firstGrade": [
+      "after", "again", "an", "any", "as", "ask", "by", "could",
+      "every", "fly", "from", "give", "giving", "had", "has", "her",
+      "him", "his", "how", "just", "know", "let", "live", "may",
+      "of", "old", "once", "open", "over", "put", "round", "some",
+      "stop", "take", "thank", "them", "then", "think", "walk", "were",
+      "when"
+    ],
+    "secondGrade": [
+      "always", "around", "because", "been", "before", "best", "both",
+      "buy", "call", "cold", "does", "don't", "fast", "first", "five",
+      "found", "gave", "goes", "green", "its", "made", "many", "off",
+      "or", "pull", "read", "right", "sing", "sit", "sleep", "tell",
+      "their", "these", "those", "upon", "us", "use", "very", "wash",
+      "which", "why", "wish", "work", "would", "write", "your"
+    ]
+  },
+  "blends": {
+    "description": "Consonant blends for early reader assessment",
+    "initialBlends": {
+      "bl": ["black", "blue", "blow", "block", "blend"],
+      "br": ["brown", "bring", "bread", "brush", "brave"],
+      "cl": ["clap", "clean", "clock", "cloud", "climb"],
+      "cr": ["crab", "cry", "cream", "crown", "crash"],
+      "dr": ["drop", "draw", "drink", "dream", "dress"],
+      "fl": ["flag", "fly", "flat", "flower", "flip"],
+      "fr": ["frog", "from", "friend", "fruit", "free"],
+      "gl": ["glad", "glass", "glow", "glue", "globe"],
+      "gr": ["green", "grow", "grass", "grape", "great"],
+      "pl": ["play", "plan", "plant", "plate", "plus"],
+      "pr": ["pretty", "print", "proud", "prize", "price"],
+      "sk": ["sky", "skip", "skin", "skate", "skill"],
+      "sl": ["sleep", "slow", "slide", "slip", "slime"],
+      "sm": ["small", "smart", "smell", "smile", "smooth"],
+      "sn": ["snow", "snap", "snake", "snack", "sniff"],
+      "sp": ["spot", "spin", "spell", "space", "speak"],
+      "st": ["stop", "star", "step", "stick", "stand"],
+      "sw": ["swim", "swing", "sweet", "switch", "sweep"],
+      "tr": ["tree", "try", "truck", "train", "trip"],
+      "tw": ["two", "twin", "twist", "twelve", "twenty"]
+    },
+    "finalBlends": {
+      "nd": ["and", "hand", "sand", "end", "find"],
+      "nk": ["pink", "think", "drink", "thank", "sink"],
+      "nt": ["ant", "went", "tent", "want", "front"],
+      "mp": ["jump", "lamp", "camp", "bump", "stamp"],
+      "ft": ["left", "soft", "gift", "lift", "craft"],
+      "sk": ["ask", "desk", "mask", "task", "disk"],
+      "st": ["best", "fast", "last", "must", "test"]
+    }
+  },
+  "digraphs": {
+    "description": "Common digraphs for reading assessment",
+    "initial": {
+      "ch": ["chat", "chin", "chop", "check", "child"],
+      "sh": ["ship", "shop", "she", "shut", "shell"],
+      "th": ["the", "this", "that", "them", "think"],
+      "wh": ["what", "when", "where", "which", "white"]
+    },
+    "final": {
+      "ch": ["much", "such", "each", "teach", "reach"],
+      "sh": ["fish", "wash", "wish", "push", "dish"],
+      "th": ["with", "bath", "math", "path", "both"],
+      "ng": ["ring", "sing", "long", "thing", "bring"],
+      "ck": ["back", "pick", "rock", "duck", "kick"]
+    }
+  },
+  "sentences": {
+    "description": "Graded sentences for reading comprehension assessment",
+    "level1_preReader": [
+      {
+        "sentence": "I see a cat.",
+        "question": "What do you see?",
+        "answer": "a cat",
+        "image": "cat"
+      },
+      {
+        "sentence": "The dog is big.",
+        "question": "Is the dog big or small?",
+        "answer": "big",
+        "image": "big-dog"
+      },
+      {
+        "sentence": "I like red.",
+        "question": "What color?",
+        "answer": "red",
+        "image": "red"
+      }
+    ],
+    "level2_emerging": [
+      {
+        "sentence": "The cat sat on the mat.",
+        "question": "Where did the cat sit?",
+        "answer": "on the mat",
+        "image": "cat-on-mat"
+      },
+      {
+        "sentence": "Sam has a red hat.",
+        "question": "What does Sam have?",
+        "answer": "a red hat",
+        "image": "red-hat"
+      },
+      {
+        "sentence": "The dog can run fast.",
+        "question": "What can the dog do?",
+        "answer": "run fast",
+        "image": "dog-running"
+      },
+      {
+        "sentence": "I see a big sun.",
+        "question": "What do you see?",
+        "answer": "a big sun",
+        "image": "sun"
+      },
+      {
+        "sentence": "The cat is in the box.",
+        "question": "Where is the cat?",
+        "answer": "in the box",
+        "image": "cat-in-box"
+      }
+    ],
+    "level3_early": [
+      {
+        "sentence": "The frog jumped into the pond with a big splash.",
+        "question": "Where did the frog jump?",
+        "answer": "into the pond",
+        "image": "frog-pond"
+      },
+      {
+        "sentence": "Mom made a cake for my birthday party.",
+        "question": "What did Mom make?",
+        "answer": "a cake",
+        "image": "birthday-cake"
+      },
+      {
+        "sentence": "The little bird sang a pretty song in the tree.",
+        "question": "What did the bird do?",
+        "answer": "sang a song",
+        "image": "bird-singing"
+      },
+      {
+        "sentence": "We went to the park and played on the swings.",
+        "question": "Where did we play?",
+        "answer": "at the park / on the swings",
+        "image": "park-swings"
+      },
+      {
+        "sentence": "The rabbit hopped across the green grass.",
+        "question": "What did the rabbit do?",
+        "answer": "hopped",
+        "image": "rabbit-hopping"
+      }
+    ],
+    "level4_developing": [
+      {
+        "sentence": "The children were excited because they were going to the zoo to see the elephants and lions.",
+        "question": "Why were the children excited?",
+        "answer": "going to the zoo",
+        "image": "zoo"
+      },
+      {
+        "sentence": "After the storm, a beautiful rainbow appeared in the sky above the mountains.",
+        "question": "What appeared after the storm?",
+        "answer": "a rainbow",
+        "image": "rainbow"
+      },
+      {
+        "sentence": "The puppy found a bone buried under the old oak tree in the backyard.",
+        "question": "Where did the puppy find the bone?",
+        "answer": "under the oak tree",
+        "image": "puppy-bone"
+      }
+    ]
+  },
+  "assessmentItems": {
+    "wordRecognition": {
+      "description": "Show word, child identifies from options or points to correct picture",
+      "instructions": "Display the target word and 3-4 options. Child selects the matching picture or spoken word.",
+      "example": {
+        "targetWord": "cat",
+        "options": ["cat_image", "dog_image", "hat_image", "bat_image"],
+        "correctIndex": 0
+      }
+    },
+    "pictureWordMatch": {
+      "description": "Show picture, child identifies written word",
+      "instructions": "Display a picture and 3-4 written words. Child selects the word that matches the picture.",
+      "example": {
+        "picture": "dog_image",
+        "options": ["cat", "dog", "log", "fog"],
+        "correctIndex": 1
+      }
+    },
+    "missingWord": {
+      "description": "Sentence with blank, child fills in",
+      "instructions": "Read sentence with missing word. Child selects the word that completes it correctly.",
+      "example": {
+        "sentence": "The cat sat on the ___.",
+        "options": ["mat", "blue", "run", "the"],
+        "correctIndex": 0
+      }
+    },
+    "sentenceReading": {
+      "description": "Child reads sentence, answers comprehension question",
+      "instructions": "Child reads or listens to sentence, then answers a simple question about it.",
+      "example": {
+        "sentence": "The big dog ran to the park.",
+        "question": "Where did the dog go?",
+        "options": ["the park", "the house", "the store"],
+        "correctIndex": 0
+      }
+    }
+  },
+  "adaptiveLogic": {
+    "description": "Rules for adaptive assessment progression",
+    "startLevel": "pre_reader",
+    "questionsPerLevel": 10,
+    "advanceThreshold": 0.8,
+    "stayThreshold": 0.6,
+    "ceilingThreshold": 0.5,
+    "rules": [
+      "Start at pre_reader level",
+      "If accuracy >= 80%, advance to next level",
+      "If accuracy 50-79%, continue at current level with more questions",
+      "If accuracy < 50%, ceiling reached - stop assessment",
+      "Maximum 3 levels can be assessed per session",
+      "Always celebrate effort regardless of score"
+    ]
+  }
+}

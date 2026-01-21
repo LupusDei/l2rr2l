@@ -1,0 +1,405 @@
+{
+  "version": "1.0.0",
+  "description": "Visual-Auditory-Kinesthetic (VAK) learning style assessment questions",
+  "instructions": "Present all 15 questions. Each response maps to V, A, or K. Calculate percentages for each modality to determine primary and secondary learning styles.",
+  "framing": {
+    "title": "Superpower Discovery",
+    "intro": "Let's discover {{childName}}'s learning superpowers! There are no wrong answers - we're just learning what works best for them.",
+    "modalities": {
+      "visual": {
+        "icon": "eye",
+        "emoji": "👁️",
+        "superpowerName": "Super Seer",
+        "description": "Learns best by seeing pictures, watching, and reading"
+      },
+      "auditory": {
+        "icon": "ear",
+        "emoji": "👂",
+        "superpowerName": "Super Listener",
+        "description": "Learns best by hearing, talking, and listening"
+      },
+      "kinesthetic": {
+        "icon": "hand",
+        "emoji": "✋",
+        "superpowerName": "Super Mover",
+        "description": "Learns best by doing, touching, and moving"
+      }
+    }
+  },
+  "questions": [
+    {
+      "id": "vak-001",
+      "context": "Remembering a new word",
+      "question": "How does {{childName}} best remember a new word?",
+      "options": [
+        {
+          "id": "vak-001-v",
+          "text": "Seeing it written or in pictures",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-001-a",
+          "text": "Hearing it said out loud",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-001-k",
+          "text": "Acting it out or touching something related",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-002",
+      "context": "Following instructions",
+      "question": "When learning something new, {{childName}} does best with...",
+      "options": [
+        {
+          "id": "vak-002-v",
+          "text": "Pictures, diagrams, or demonstrations",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-002-a",
+          "text": "Spoken explanations and discussions",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-002-k",
+          "text": "Hands-on practice and trying it themselves",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-003",
+      "context": "Story time engagement",
+      "question": "During story time, {{childName}} enjoys most...",
+      "options": [
+        {
+          "id": "vak-003-v",
+          "text": "Looking at the pictures and illustrations",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-003-a",
+          "text": "Listening to the voices, sounds, and words",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-003-k",
+          "text": "Touching the book, turning pages, pointing",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-004",
+      "context": "Expressing ideas",
+      "question": "{{childName}} usually expresses their ideas by...",
+      "options": [
+        {
+          "id": "vak-004-v",
+          "text": "Drawing or showing pictures",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-004-a",
+          "text": "Talking, making sounds, or telling stories",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-004-k",
+          "text": "Acting it out, demonstrating, or building",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-005",
+      "context": "Getting excited",
+      "question": "{{childName}} gets most excited about...",
+      "options": [
+        {
+          "id": "vak-005-v",
+          "text": "Colorful pictures, videos, and visual things",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-005-a",
+          "text": "Songs, rhymes, funny voices, and music",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-005-k",
+          "text": "Building, moving around, and touching things",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-006",
+      "context": "Learning letters",
+      "question": "The best way for {{childName}} to learn a new letter is...",
+      "options": [
+        {
+          "id": "vak-006-v",
+          "text": "Seeing the letter with a picture (A is for Apple)",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-006-a",
+          "text": "Hearing the letter sound and name",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-006-k",
+          "text": "Tracing the letter with their finger",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-007",
+      "context": "Playing games",
+      "question": "{{childName}}'s favorite type of game involves...",
+      "options": [
+        {
+          "id": "vak-007-v",
+          "text": "Matching, puzzles, or finding differences",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-007-a",
+          "text": "Singing, rhyming, or word games",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-007-k",
+          "text": "Running, jumping, or building things",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-008",
+      "context": "Getting distracted",
+      "question": "{{childName}} is most likely to get distracted by...",
+      "options": [
+        {
+          "id": "vak-008-v",
+          "text": "Things they can see (movement, colors, screens)",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-008-a",
+          "text": "Things they can hear (sounds, music, voices)",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-008-k",
+          "text": "The urge to move, fidget, or touch things",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-009",
+      "context": "Describing something",
+      "question": "When describing a favorite thing, {{childName}} focuses on...",
+      "options": [
+        {
+          "id": "vak-009-v",
+          "text": "How it looks (colors, shapes, size)",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-009-a",
+          "text": "How it sounds or what it's called",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-009-k",
+          "text": "How it feels or what you do with it",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-010",
+      "context": "Remembering events",
+      "question": "When remembering a fun day, {{childName}} talks about...",
+      "options": [
+        {
+          "id": "vak-010-v",
+          "text": "What they saw and what things looked like",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-010-a",
+          "text": "What people said and sounds they heard",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-010-k",
+          "text": "What they did and how things felt",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-011",
+      "context": "Calming down",
+      "question": "When upset, {{childName}} calms down best by...",
+      "options": [
+        {
+          "id": "vak-011-v",
+          "text": "Looking at something calming or watching videos",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-011-a",
+          "text": "Listening to music or hearing soothing words",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-011-k",
+          "text": "Being held, deep breaths, or physical comfort",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-012",
+      "context": "Showing they understand",
+      "question": "When {{childName}} understands something, they...",
+      "options": [
+        {
+          "id": "vak-012-v",
+          "text": "Their face lights up and they nod",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-012-a",
+          "text": "Say 'Oh!' or explain it in their own words",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-012-k",
+          "text": "Start doing it or want to try immediately",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-013",
+      "context": "Engaging with screens",
+      "question": "When using a tablet or screen, {{childName}} prefers...",
+      "options": [
+        {
+          "id": "vak-013-v",
+          "text": "Watching videos or looking at pictures",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-013-a",
+          "text": "Apps with music, sounds, or talking",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-013-k",
+          "text": "Interactive games with swiping and tapping",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-014",
+      "context": "Processing information",
+      "question": "When thinking about something, {{childName}} tends to...",
+      "options": [
+        {
+          "id": "vak-014-v",
+          "text": "Look up or around, visualizing in their head",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-014-a",
+          "text": "Talk to themselves or hum",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-014-k",
+          "text": "Move around, fidget, or use their hands",
+          "modality": "kinesthetic"
+        }
+      ]
+    },
+    {
+      "id": "vak-015",
+      "context": "Rewards and recognition",
+      "question": "{{childName}} feels most rewarded by...",
+      "options": [
+        {
+          "id": "vak-015-v",
+          "text": "Seeing a star, sticker, or visual badge",
+          "modality": "visual"
+        },
+        {
+          "id": "vak-015-a",
+          "text": "Hearing praise, cheering, or special words",
+          "modality": "auditory"
+        },
+        {
+          "id": "vak-015-k",
+          "text": "High fives, hugs, or physical celebration",
+          "modality": "kinesthetic"
+        }
+      ]
+    }
+  ],
+  "scoring": {
+    "method": "percentage",
+    "description": "Count responses for each modality, divide by total questions, multiply by 100",
+    "interpretation": {
+      "dominant": "If one modality is >50%, it's the dominant style",
+      "balanced": "If all modalities are between 25-40%, the child is a balanced learner",
+      "dual": "If two modalities are >35% and one is <30%, child is a dual-modality learner"
+    },
+    "profileLabels": {
+      "visual_dominant": "Visual Learner",
+      "auditory_dominant": "Auditory Learner",
+      "kinesthetic_dominant": "Kinesthetic Learner",
+      "visual_auditory": "Visual-Auditory Learner",
+      "visual_kinesthetic": "Visual-Kinesthetic Learner",
+      "auditory_kinesthetic": "Auditory-Kinesthetic Learner",
+      "balanced": "Balanced Multi-Modal Learner"
+    }
+  },
+  "recommendations": {
+    "visual": [
+      "Use picture books and illustrated materials",
+      "Show written words alongside pictures",
+      "Use color coding for different concepts",
+      "Demonstrate visually before asking to try",
+      "Use flashcards with images",
+      "Create visual schedules and charts"
+    ],
+    "auditory": [
+      "Read aloud frequently with expression",
+      "Use songs and rhymes to teach concepts",
+      "Encourage verbal repetition of new words",
+      "Discuss stories before, during, and after reading",
+      "Use audio books and educational songs",
+      "Allow talking through problems out loud"
+    ],
+    "kinesthetic": [
+      "Incorporate movement into learning",
+      "Use tactile materials (sand writing, clay letters)",
+      "Allow standing or moving while learning",
+      "Use manipulatives and hands-on activities",
+      "Take frequent movement breaks",
+      "Act out stories and vocabulary words"
+    ]
+  }
+}

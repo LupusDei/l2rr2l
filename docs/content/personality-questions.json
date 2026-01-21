@@ -1,0 +1,450 @@
+{
+  "version": "1.0.0",
+  "description": "Personality assessment questions for child learning profile",
+  "instructions": "Select 8 questions randomly from this bank for each assessment. Questions assess 5 personality dimensions relevant to learning.",
+  "questions": [
+    {
+      "id": "pers-001",
+      "dimension": "learning_approach",
+      "situation": "When learning something completely new",
+      "situationImage": "child-new-activity",
+      "prompt": "When {{childName}} is learning something completely new, they usually...",
+      "options": [
+        {
+          "id": "pers-001-a",
+          "text": "Watch carefully first, then try",
+          "value": -0.5,
+          "trait": "cautious"
+        },
+        {
+          "id": "pers-001-b",
+          "text": "Jump right in and figure it out",
+          "value": 0.5,
+          "trait": "adventurous"
+        },
+        {
+          "id": "pers-001-c",
+          "text": "Ask lots of questions before starting",
+          "value": -0.25,
+          "trait": "analytical"
+        },
+        {
+          "id": "pers-001-d",
+          "text": "Need encouragement to begin",
+          "value": -0.75,
+          "trait": "hesitant"
+        }
+      ]
+    },
+    {
+      "id": "pers-002",
+      "dimension": "persistence",
+      "situation": "A puzzle piece won't fit",
+      "situationImage": "child-puzzle",
+      "prompt": "When a puzzle piece won't fit, {{childName}} usually...",
+      "options": [
+        {
+          "id": "pers-002-a",
+          "text": "Keeps trying different ways quietly",
+          "value": 0.75,
+          "trait": "highly_persistent"
+        },
+        {
+          "id": "pers-002-b",
+          "text": "Gets frustrated, needs help calming down",
+          "value": -0.5,
+          "trait": "easily_frustrated"
+        },
+        {
+          "id": "pers-002-c",
+          "text": "Asks for hints or help",
+          "value": 0.25,
+          "trait": "collaborative"
+        },
+        {
+          "id": "pers-002-d",
+          "text": "Moves to something else, comes back later",
+          "value": 0,
+          "trait": "flexible"
+        }
+      ]
+    },
+    {
+      "id": "pers-003",
+      "dimension": "social_preference",
+      "situation": "Learning with other children",
+      "situationImage": "children-group",
+      "prompt": "When learning with other kids, {{childName}}...",
+      "options": [
+        {
+          "id": "pers-003-a",
+          "text": "Loves it, learns from watching others",
+          "value": 0.75,
+          "trait": "social_learner"
+        },
+        {
+          "id": "pers-003-b",
+          "text": "Prefers learning alone",
+          "value": -0.75,
+          "trait": "independent"
+        },
+        {
+          "id": "pers-003-c",
+          "text": "Enjoys taking turns with one friend",
+          "value": 0.25,
+          "trait": "selective_social"
+        },
+        {
+          "id": "pers-003-d",
+          "text": "Gets distracted by others",
+          "value": -0.25,
+          "trait": "focus_challenged"
+        }
+      ]
+    },
+    {
+      "id": "pers-004",
+      "dimension": "attention_capacity",
+      "situation": "During a favorite activity",
+      "situationImage": "child-focused",
+      "prompt": "During a favorite activity, {{childName}} can focus for...",
+      "options": [
+        {
+          "id": "pers-004-a",
+          "text": "15 minutes or more",
+          "value": 0.75,
+          "trait": "extended_focus"
+        },
+        {
+          "id": "pers-004-b",
+          "text": "5-10 minutes, then needs a short break",
+          "value": 0.25,
+          "trait": "moderate_focus"
+        },
+        {
+          "id": "pers-004-c",
+          "text": "It varies a lot day to day",
+          "value": 0,
+          "trait": "variable_focus"
+        },
+        {
+          "id": "pers-004-d",
+          "text": "Best with very short activities (under 5 min)",
+          "value": -0.5,
+          "trait": "brief_focus"
+        }
+      ]
+    },
+    {
+      "id": "pers-005",
+      "dimension": "motivation_type",
+      "situation": "What motivates them most",
+      "situationImage": "child-motivated",
+      "prompt": "What motivates {{childName}} the most?",
+      "options": [
+        {
+          "id": "pers-005-a",
+          "text": "Praise and encouragement from adults",
+          "value": -0.5,
+          "trait": "external_praise"
+        },
+        {
+          "id": "pers-005-b",
+          "text": "Seeing their own progress and improvement",
+          "value": 0.5,
+          "trait": "internal_growth"
+        },
+        {
+          "id": "pers-005-c",
+          "text": "Fun games and earning rewards",
+          "value": -0.25,
+          "trait": "external_rewards"
+        },
+        {
+          "id": "pers-005-d",
+          "text": "Helping others or being a good example",
+          "value": 0.75,
+          "trait": "prosocial"
+        }
+      ]
+    },
+    {
+      "id": "pers-006",
+      "dimension": "learning_approach",
+      "situation": "Trying a challenging task",
+      "situationImage": "child-challenge",
+      "prompt": "When {{childName}} faces a challenging task, they...",
+      "options": [
+        {
+          "id": "pers-006-a",
+          "text": "Get excited about the challenge",
+          "value": 0.75,
+          "trait": "challenge_seeker"
+        },
+        {
+          "id": "pers-006-b",
+          "text": "Prefer to start with an easier version first",
+          "value": -0.25,
+          "trait": "scaffolding_needed"
+        },
+        {
+          "id": "pers-006-c",
+          "text": "Want to know they can do it before trying",
+          "value": -0.5,
+          "trait": "assurance_seeker"
+        },
+        {
+          "id": "pers-006-d",
+          "text": "Try it if someone does it with them",
+          "value": 0.25,
+          "trait": "supported_risk"
+        }
+      ]
+    },
+    {
+      "id": "pers-007",
+      "dimension": "persistence",
+      "situation": "Making a mistake",
+      "situationImage": "child-mistake",
+      "prompt": "When {{childName}} makes a mistake, they usually...",
+      "options": [
+        {
+          "id": "pers-007-a",
+          "text": "Laugh it off and try again",
+          "value": 0.75,
+          "trait": "resilient"
+        },
+        {
+          "id": "pers-007-b",
+          "text": "Get upset and want to stop",
+          "value": -0.75,
+          "trait": "mistake_sensitive"
+        },
+        {
+          "id": "pers-007-c",
+          "text": "Need reassurance that it's okay",
+          "value": -0.25,
+          "trait": "reassurance_needed"
+        },
+        {
+          "id": "pers-007-d",
+          "text": "Want to understand what went wrong",
+          "value": 0.25,
+          "trait": "analytical"
+        }
+      ]
+    },
+    {
+      "id": "pers-008",
+      "dimension": "social_preference",
+      "situation": "Sharing accomplishments",
+      "situationImage": "child-proud",
+      "prompt": "When {{childName}} accomplishes something, they...",
+      "options": [
+        {
+          "id": "pers-008-a",
+          "text": "Want to show everyone right away",
+          "value": 0.75,
+          "trait": "externally_validated"
+        },
+        {
+          "id": "pers-008-b",
+          "text": "Feel quietly proud without needing to share",
+          "value": -0.5,
+          "trait": "internally_satisfied"
+        },
+        {
+          "id": "pers-008-c",
+          "text": "Want to show one special person",
+          "value": 0.25,
+          "trait": "selective_sharing"
+        },
+        {
+          "id": "pers-008-d",
+          "text": "Want to help someone else do it too",
+          "value": 0.5,
+          "trait": "teaching_oriented"
+        }
+      ]
+    },
+    {
+      "id": "pers-009",
+      "dimension": "attention_capacity",
+      "situation": "Following multi-step instructions",
+      "situationImage": "child-instructions",
+      "prompt": "When given multi-step instructions, {{childName}}...",
+      "options": [
+        {
+          "id": "pers-009-a",
+          "text": "Remembers and follows them all",
+          "value": 0.75,
+          "trait": "strong_working_memory"
+        },
+        {
+          "id": "pers-009-b",
+          "text": "Does best with one step at a time",
+          "value": -0.5,
+          "trait": "sequential_needed"
+        },
+        {
+          "id": "pers-009-c",
+          "text": "Remembers 2-3 steps well",
+          "value": 0.25,
+          "trait": "moderate_working_memory"
+        },
+        {
+          "id": "pers-009-d",
+          "text": "Likes to have the steps written or shown",
+          "value": 0,
+          "trait": "visual_support_needed"
+        }
+      ]
+    },
+    {
+      "id": "pers-010",
+      "dimension": "motivation_type",
+      "situation": "Choosing activities",
+      "situationImage": "child-choosing",
+      "prompt": "When choosing what to do, {{childName}} usually picks...",
+      "options": [
+        {
+          "id": "pers-010-a",
+          "text": "Something they're already good at",
+          "value": -0.5,
+          "trait": "mastery_focused"
+        },
+        {
+          "id": "pers-010-b",
+          "text": "Something new and different",
+          "value": 0.5,
+          "trait": "novelty_seeking"
+        },
+        {
+          "id": "pers-010-c",
+          "text": "Whatever their friends are doing",
+          "value": 0.25,
+          "trait": "socially_driven"
+        },
+        {
+          "id": "pers-010-d",
+          "text": "Something a trusted adult suggests",
+          "value": -0.25,
+          "trait": "adult_guided"
+        }
+      ]
+    },
+    {
+      "id": "pers-011",
+      "dimension": "learning_approach",
+      "situation": "Learning a new skill",
+      "situationImage": "child-practice",
+      "prompt": "When learning a new skill, {{childName}} prefers to...",
+      "options": [
+        {
+          "id": "pers-011-a",
+          "text": "Practice the same thing until perfect",
+          "value": -0.25,
+          "trait": "depth_focused"
+        },
+        {
+          "id": "pers-011-b",
+          "text": "Try lots of different variations",
+          "value": 0.5,
+          "trait": "exploration_focused"
+        },
+        {
+          "id": "pers-011-c",
+          "text": "Follow a clear step-by-step guide",
+          "value": -0.5,
+          "trait": "structure_needed"
+        },
+        {
+          "id": "pers-011-d",
+          "text": "Make up their own way to learn it",
+          "value": 0.75,
+          "trait": "self_directed"
+        }
+      ]
+    },
+    {
+      "id": "pers-012",
+      "dimension": "persistence",
+      "situation": "Waiting for something",
+      "situationImage": "child-waiting",
+      "prompt": "When {{childName}} has to wait for something they want...",
+      "options": [
+        {
+          "id": "pers-012-a",
+          "text": "Can wait patiently",
+          "value": 0.75,
+          "trait": "patient"
+        },
+        {
+          "id": "pers-012-b",
+          "text": "Finds it very difficult",
+          "value": -0.75,
+          "trait": "impatient"
+        },
+        {
+          "id": "pers-012-c",
+          "text": "Needs distraction or countdown",
+          "value": -0.25,
+          "trait": "needs_support"
+        },
+        {
+          "id": "pers-012-d",
+          "text": "Can wait if they understand why",
+          "value": 0.25,
+          "trait": "reasoning_helps"
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "learning_approach": {
+      "name": "Learning Approach",
+      "description": "How the child approaches new learning situations",
+      "scale": {
+        "low": "Cautious - Prefers structure and support",
+        "mid": "Balanced - Adapts to situation",
+        "high": "Adventurous - Eager to explore and experiment"
+      }
+    },
+    "persistence": {
+      "name": "Persistence",
+      "description": "How the child handles challenges and setbacks",
+      "scale": {
+        "low": "Needs support - Requires encouragement through challenges",
+        "mid": "Developing - Building resilience",
+        "high": "Resilient - Bounces back and persists"
+      }
+    },
+    "social_preference": {
+      "name": "Social Preference",
+      "description": "Learning environment preference",
+      "scale": {
+        "low": "Independent - Prefers solo learning",
+        "mid": "Flexible - Adapts to different settings",
+        "high": "Social - Thrives learning with others"
+      }
+    },
+    "attention_capacity": {
+      "name": "Attention Capacity",
+      "description": "Focus duration and working memory",
+      "scale": {
+        "low": "Brief - Best with short, chunked activities",
+        "mid": "Moderate - Can sustain focus with breaks",
+        "high": "Extended - Can focus for longer periods"
+      }
+    },
+    "motivation_type": {
+      "name": "Motivation Type",
+      "description": "What drives engagement and effort",
+      "scale": {
+        "low": "External - Motivated by praise and rewards",
+        "mid": "Mixed - Responds to both internal and external",
+        "high": "Internal - Driven by curiosity and growth"
+      }
+    }
+  }
+}
