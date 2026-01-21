@@ -35,6 +35,8 @@ export function initializeDb() {
       user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       name TEXT NOT NULL,
       age INTEGER,
+      sex TEXT,
+      avatar TEXT,
       grade_level TEXT,
       learning_style TEXT,
       interests TEXT,

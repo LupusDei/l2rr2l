@@ -10,6 +10,8 @@ interface ChildRow {
   user_id: string
   name: string
   age: number | null
+  sex: string | null
+  avatar: string | null
   grade_level: string | null
   learning_style: string | null
   interests: string | null
@@ -32,7 +34,7 @@ router.get('/', (req: AuthenticatedRequest, res) => {
 })
 
 router.post('/', (req: AuthenticatedRequest, res) => {
-  const { name, age, gradeLevel, learningStyle, interests } = req.body
+  const { name, age, sex, avatar, gradeLevel, learningStyle, interests } = req.body
 
   if (!name) {
     res.status(400).json({ error: 'Name is required' })
@@ -43,9 +45,9 @@ router.post('/', (req: AuthenticatedRequest, res) => {
   const interestsJson = interests ? JSON.stringify(interests) : null
 
   db.prepare(`
-    INSERT INTO children (id, user_id, name, age, grade_level, learning_style, interests)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).run(id, req.user!.userId, name, age || null, gradeLevel || null, learningStyle || null, interestsJson)
+    INSERT INTO children (id, user_id, name, age, sex, avatar, grade_level, learning_style, interests)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(id, req.user!.userId, name, age || null, sex || null, avatar || null, gradeLevel || null, learningStyle || null, interestsJson)
 
   const child = db.prepare('SELECT * FROM children WHERE id = ?').get(id) as ChildRow
 
@@ -75,7 +77,7 @@ router.get('/:id', (req: AuthenticatedRequest, res) => {
 })
 
 router.put('/:id', (req: AuthenticatedRequest, res) => {
-  const { name, age, gradeLevel, learningStyle, interests } = req.body
+  const { name, age, sex, avatar, gradeLevel, learningStyle, interests } = req.body
 
   const existing = db.prepare('SELECT id FROM children WHERE id = ? AND user_id = ?')
     .get(req.params.id, req.user!.userId) as { id: string } | undefined
@@ -95,6 +97,14 @@ router.put('/:id', (req: AuthenticatedRequest, res) => {
   if (age !== undefined) {
     updates.push('age = ?')
     values.push(age)
+  }
+  if (sex !== undefined) {
+    updates.push('sex = ?')
+    values.push(sex)
+  }
+  if (avatar !== undefined) {
+    updates.push('avatar = ?')
+    values.push(avatar)
   }
   if (gradeLevel !== undefined) {
     updates.push('grade_level = ?')
