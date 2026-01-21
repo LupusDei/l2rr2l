@@ -1,6 +1,10 @@
 # Beads
 .beads/
 
+# Playwright
+test-results/
+playwright-report/
+
 # Logs
 logs
 *.log
