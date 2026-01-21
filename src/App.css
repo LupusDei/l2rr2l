@@ -15,26 +15,272 @@
   text-align: center;
 }
 
-.main h1 {
-  font-size: 2rem;
-  margin: 0 0 var(--space-2);
-  color: #4f46e5;
+/* ==========================================================================
+   Homescreen - Playful Kids Theme (Ages 4-6)
+   ========================================================================== */
+
+.homescreen {
+  background: linear-gradient(135deg, #fff9e6 0%, #ffe6f0 50%, #e6f3ff 100%);
+  position: relative;
+  overflow: hidden;
 }
 
-@media (min-width: 640px) {
-  .main h1 {
-    font-size: 2.5rem;
+/* Decorative floating elements */
+.decorations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.decoration {
+  position: absolute;
+  opacity: 0.8;
+  animation: float 6s ease-in-out infinite;
+}
+
+.crayon {
+  font-size: 2rem;
+  transform: rotate(-30deg);
+}
+
+.crayon-red {
+  color: #ff6b6b;
+  top: 10%;
+  left: 5%;
+  animation-delay: 0s;
+}
+
+.crayon-blue {
+  color: #4dabf7;
+  top: 15%;
+  right: 8%;
+  animation-delay: 1s;
+  transform: rotate(25deg);
+}
+
+.crayon-yellow {
+  color: #ffd43b;
+  bottom: 20%;
+  left: 8%;
+  animation-delay: 2s;
+  transform: rotate(-15deg);
+}
+
+.letter {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-weight: bold;
+  font-size: 2.5rem;
+}
+
+.letter-a {
+  color: #ff922b;
+  top: 25%;
+  right: 12%;
+  animation-delay: 0.5s;
+}
+
+.letter-b {
+  color: #51cf66;
+  bottom: 25%;
+  right: 10%;
+  animation-delay: 1.5s;
+}
+
+.letter-c {
+  color: #cc5de8;
+  bottom: 15%;
+  left: 15%;
+  animation-delay: 2.5s;
+}
+
+.paint {
+  border-radius: 50%;
+}
+
+.paint-splash-1 {
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, #ff6b6b 0%, transparent 70%);
+  top: 8%;
+  left: 25%;
+  animation-delay: 0.8s;
+}
+
+.paint-splash-2 {
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, #4dabf7 0%, transparent 70%);
+  bottom: 12%;
+  right: 20%;
+  animation-delay: 1.8s;
+}
+
+.star {
+  color: #ffd43b;
+  font-size: 1.5rem;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+.star-1 {
+  top: 5%;
+  left: 50%;
+  animation-delay: 0s;
+}
+
+.star-2 {
+  bottom: 8%;
+  left: 30%;
+  animation-delay: 1s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(var(--rotation, -30deg));
+  }
+  50% {
+    transform: translateY(-15px) rotate(var(--rotation, -30deg));
   }
 }
 
-.main p {
-  font-size: 1rem;
-  color: #666;
-  margin: 0;
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
+/* Main content area */
+.homescreen-content {
+  position: relative;
+  z-index: 1;
+  gap: var(--space-8);
+}
+
+/* Logo styling - colorful letters */
+.logo-container {
+  margin-bottom: var(--space-4);
+}
+
+.logo {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 3.5rem;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  display: flex;
+  justify-content: center;
+  gap: 0.05em;
+}
+
+.logo-letter {
+  display: inline-block;
+  animation: bounce 2s ease-in-out infinite;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.logo-l1 { color: #ff6b6b; animation-delay: 0s; }
+.logo-2 { color: #ffd43b; animation-delay: 0.1s; }
+.logo-r1 { color: #51cf66; animation-delay: 0.2s; }
+.logo-r2 { color: #4dabf7; animation-delay: 0.3s; }
+.logo-2b { color: #cc5de8; animation-delay: 0.4s; }
+.logo-l2 { color: #ff922b; animation-delay: 0.5s; }
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Tagline */
+.tagline {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1.25rem;
+  color: #495057;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* CTA Button - Big, colorful, attention-grabbing */
+.cta-button {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff922b 100%);
+  color: white;
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: var(--space-5) var(--space-10);
+  border-radius: 50px;
+  border: 4px solid white;
+  box-shadow:
+    0 6px 0 #e55039,
+    0 8px 20px rgba(255, 107, 107, 0.4);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 60px;
+  min-width: 200px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 0 #e55039,
+    0 12px 25px rgba(255, 107, 107, 0.5);
+}
+
+.cta-button:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #e55039,
+    0 4px 10px rgba(255, 107, 107, 0.4);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* Responsive adjustments */
 @media (min-width: 640px) {
-  .main p {
-    font-size: 1.125rem;
+  .logo {
+    font-size: 5rem;
+  }
+
+  .tagline {
+    font-size: 1.5rem;
+  }
+
+  .cta-button {
+    font-size: 1.75rem;
+    padding: var(--space-6) var(--space-12);
+    min-width: 250px;
+  }
+
+  .decoration.crayon {
+    font-size: 3rem;
+  }
+
+  .decoration.letter {
+    font-size: 3.5rem;
+  }
+
+  .paint-splash-1 {
+    width: 80px;
+    height: 80px;
+  }
+
+  .paint-splash-2 {
+    width: 70px;
+    height: 70px;
   }
 }

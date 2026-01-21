@@ -9,6 +9,11 @@ describe('App', () => {
 
   it('renders the tagline', () => {
     render(<App />)
-    expect(screen.getByText('Learn to Read, Read to Learn')).toBeInTheDocument()
+    expect(screen.getByText('Learn to Read, Read to Learn!')).toBeInTheDocument()
+  })
+
+  it('renders the Get Started button', () => {
+    render(<App />)
+    expect(screen.getByRole('button', { name: 'Get Started!' })).toBeInTheDocument()
   })
 })
