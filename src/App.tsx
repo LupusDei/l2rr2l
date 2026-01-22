@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import './App.css'
 import Onboarding from './components/Onboarding'
+import LessonSelection from './components/LessonSelection'
+import type { Lesson } from './components/LessonCard'
 
-type Screen = 'home' | 'onboarding'
+type Screen = 'home' | 'onboarding' | 'lessons'
 
 interface ChildData {
   name: string
@@ -21,13 +23,21 @@ function App() {
 
   const handleOnboardingComplete = (data: ChildData) => {
     setChildData(data)
-    // TODO: Save to backend and navigate to main app
+    // TODO: Save to backend
     console.log('Onboarding complete:', data)
-    // For now, show a success message (in production, would navigate to lessons)
-    setScreen('home')
+    setScreen('lessons')
   }
 
   const handleOnboardingBack = () => {
+    setScreen('home')
+  }
+
+  const handleSelectLesson = (lesson: Lesson) => {
+    // TODO: Navigate to lesson player
+    console.log('Selected lesson:', lesson)
+  }
+
+  const handleLessonsBack = () => {
     setScreen('home')
   }
 
@@ -36,6 +46,16 @@ function App() {
       <Onboarding
         onComplete={handleOnboardingComplete}
         onBack={handleOnboardingBack}
+      />
+    )
+  }
+
+  if (screen === 'lessons' && childData) {
+    return (
+      <LessonSelection
+        childData={childData}
+        onSelectLesson={handleSelectLesson}
+        onBack={handleLessonsBack}
       />
     )
   }
