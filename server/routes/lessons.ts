@@ -1,7 +1,8 @@
 import { Router, Request, Response } from 'express'
 import { randomUUID } from 'crypto'
 import { db } from '../db/index.js'
-import { optionalAuthMiddleware, AuthenticatedRequest } from '../middleware/auth.js'
+import { optionalAuthMiddleware, authMiddleware, AuthenticatedRequest } from '../middleware/auth.js'
+import { generateLesson, getSupportedSubjects, AIProvider, ChildProfile } from '../services/ai.js'
 
 const router = Router()
 
@@ -64,6 +65,79 @@ router.get('/subjects', (_req: Request, res: Response) => {
     .all() as { subject: string }[]
 
   res.json({ subjects: subjects.map(s => s.subject) })
+})
+
+router.get('/supported-subjects', (_req: Request, res: Response) => {
+  res.json({ subjects: getSupportedSubjects() })
+})
+
+interface ChildRow {
+  id: string
+  name: string
+  age: number | null
+  grade_level: string | null
+  learning_style: string | null
+  interests: string | null
+}
+
+router.post('/generate', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+  const { childId, subject, topic, preferredDuration, provider = 'grok', saveToLibrary = false } = req.body
+
+  if (!childId || !subject) {
+    res.status(400).json({ error: 'childId and subject are required' })
+    return
+  }
+
+  // Verify child belongs to user
+  const child = db.prepare('SELECT * FROM children WHERE id = ? AND user_id = ?')
+    .get(childId, req.user!.userId) as ChildRow | undefined
+
+  if (!child) {
+    res.status(404).json({ error: 'Child not found' })
+    return
+  }
+
+  const childProfile: ChildProfile = {
+    name: child.name,
+    age: child.age,
+    gradeLevel: child.grade_level,
+    learningStyle: child.learning_style,
+    interests: child.interests ? JSON.parse(child.interests) : null
+  }
+
+  try {
+    const lesson = await generateLesson(
+      { childProfile, subject, topic, preferredDuration },
+      provider as AIProvider
+    )
+
+    // Optionally save to database
+    if (saveToLibrary) {
+      db.prepare(`
+        INSERT INTO lessons (id, title, subject, grade_level, difficulty, duration_minutes, content, objectives)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        lesson.id,
+        lesson.title,
+        lesson.subject,
+        lesson.gradeLevel,
+        lesson.difficulty,
+        lesson.durationMinutes,
+        JSON.stringify({
+          activities: lesson.activities,
+          materials: lesson.materials,
+          assessmentCriteria: lesson.assessmentCriteria,
+          source: lesson.source
+        }),
+        JSON.stringify(lesson.objectives)
+      )
+    }
+
+    res.status(201).json({ lesson })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to generate lesson'
+    res.status(500).json({ error: message })
+  }
 })
 
 router.get('/:id', (req: Request, res: Response) => {
