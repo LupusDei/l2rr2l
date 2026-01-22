@@ -16,27 +16,63 @@ describe('Lessons Routes', () => {
   })
 
   afterEach(() => {
+    db.exec('DELETE FROM lesson_engagement')
+    db.exec('DELETE FROM lesson_ratings')
     db.exec('DELETE FROM lessons')
   })
 
   describe('POST /lessons', () => {
-    it('should create a lesson', async () => {
+    it('should create a lesson with all fields', async () => {
       const res = await request(app)
         .post('/lessons')
         .send({
           title: 'Introduction to Addition',
           subject: 'Math',
+          description: 'Learn the basics of adding numbers',
           gradeLevel: '1st',
           difficulty: 'beginner',
           durationMinutes: 30,
-          content: { sections: ['intro', 'practice', 'review'] },
-          objectives: ['Understand addition', 'Add single digits']
+          ageMin: 5,
+          ageMax: 7,
+          learningStyles: ['visual', 'kinesthetic'],
+          interests: ['numbers', 'puzzles'],
+          objectives: [{ description: 'Understand addition', measurable: true }],
+          activities: [
+            { order: 1, title: 'Counting blocks', instructions: 'Use blocks to count', duration_minutes: 10 }
+          ],
+          materials: ['blocks', 'worksheet'],
+          assessmentCriteria: [
+            { type: 'observation', description: 'Can add single digits', success_indicators: ['accurate', 'confident'] }
+          ],
+          source: 'curated',
+          tags: ['math', 'addition', 'beginner']
         })
 
       expect(res.status).toBe(201)
       expect(res.body.lesson.title).toBe('Introduction to Addition')
       expect(res.body.lesson.subject).toBe('Math')
-      expect(res.body.lesson.objectives).toEqual(['Understand addition', 'Add single digits'])
+      expect(res.body.lesson.description).toBe('Learn the basics of adding numbers')
+      expect(res.body.lesson.age_min).toBe(5)
+      expect(res.body.lesson.age_max).toBe(7)
+      expect(res.body.lesson.learning_styles).toEqual(['visual', 'kinesthetic'])
+      expect(res.body.lesson.interests).toEqual(['numbers', 'puzzles'])
+      expect(res.body.lesson.materials).toEqual(['blocks', 'worksheet'])
+      expect(res.body.lesson.source).toBe('curated')
+      expect(res.body.lesson.tags).toEqual(['math', 'addition', 'beginner'])
+    })
+
+    it('should create a lesson with minimal fields', async () => {
+      const res = await request(app)
+        .post('/lessons')
+        .send({
+          title: 'Simple Lesson',
+          subject: 'Math'
+        })
+
+      expect(res.status).toBe(201)
+      expect(res.body.lesson.title).toBe('Simple Lesson')
+      expect(res.body.lesson.source).toBe('curated')
+      expect(res.body.lesson.is_published).toBe(true)
     })
 
     it('should reject missing required fields', async () => {
@@ -50,9 +86,33 @@ describe('Lessons Routes', () => {
 
   describe('GET /lessons', () => {
     beforeEach(async () => {
-      await request(app).post('/lessons').send({ title: 'Math 1', subject: 'Math', gradeLevel: '1st' })
-      await request(app).post('/lessons').send({ title: 'Math 2', subject: 'Math', gradeLevel: '2nd' })
-      await request(app).post('/lessons').send({ title: 'Science 1', subject: 'Science', gradeLevel: '1st' })
+      await request(app).post('/lessons').send({
+        title: 'Math 1',
+        subject: 'Math',
+        gradeLevel: '1st',
+        ageMin: 5,
+        ageMax: 7,
+        learningStyles: ['visual'],
+        interests: ['numbers']
+      })
+      await request(app).post('/lessons').send({
+        title: 'Math 2',
+        subject: 'Math',
+        gradeLevel: '2nd',
+        ageMin: 6,
+        ageMax: 8,
+        learningStyles: ['auditory'],
+        interests: ['puzzles']
+      })
+      await request(app).post('/lessons').send({
+        title: 'Science 1',
+        subject: 'Science',
+        gradeLevel: '1st',
+        ageMin: 5,
+        ageMax: 7,
+        learningStyles: ['kinesthetic'],
+        interests: ['animals']
+      })
     })
 
     it('should list all lessons', async () => {
@@ -77,6 +137,70 @@ describe('Lessons Routes', () => {
       expect(res.status).toBe(200)
       expect(res.body.lessons).toHaveLength(2)
     })
+
+    it('should filter by age range', async () => {
+      const res = await request(app).get('/lessons?ageMin=6&ageMax=6')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(3)
+    })
+
+    it('should filter by learning style', async () => {
+      const res = await request(app).get('/lessons?learningStyles=visual')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(1)
+      expect(res.body.lessons[0].title).toBe('Math 1')
+    })
+
+    it('should filter by interests', async () => {
+      const res = await request(app).get('/lessons?interests=animals')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(1)
+      expect(res.body.lessons[0].title).toBe('Science 1')
+    })
+
+    it('should search by query', async () => {
+      const res = await request(app).get('/lessons?query=Science')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(1)
+      expect(res.body.lessons[0].subject).toBe('Science')
+    })
+  })
+
+  describe('GET /lessons/filters', () => {
+    beforeEach(async () => {
+      await request(app).post('/lessons').send({
+        title: 'Math 1',
+        subject: 'Math',
+        gradeLevel: '1st',
+        ageMin: 5,
+        ageMax: 7
+      })
+      await request(app).post('/lessons').send({
+        title: 'Science 1',
+        subject: 'Science',
+        gradeLevel: '2nd',
+        ageMin: 6,
+        ageMax: 10
+      })
+    })
+
+    it('should return available filter options', async () => {
+      const res = await request(app).get('/lessons/filters')
+
+      expect(res.status).toBe(200)
+      expect(res.body.subjects).toContain('Math')
+      expect(res.body.subjects).toContain('Science')
+      expect(res.body.gradeLevels).toContain('1st')
+      expect(res.body.gradeLevels).toContain('2nd')
+      expect(res.body.difficulties).toContain('beginner')
+      expect(res.body.learningStyles).toContain('visual')
+      expect(res.body.ageRange.min).toBe(5)
+      expect(res.body.ageRange.max).toBe(10)
+    })
   })
 
   describe('GET /lessons/:id', () => {
@@ -85,7 +209,12 @@ describe('Lessons Routes', () => {
     beforeEach(async () => {
       const res = await request(app)
         .post('/lessons')
-        .send({ title: 'Test Lesson', subject: 'Math' })
+        .send({
+          title: 'Test Lesson',
+          subject: 'Math',
+          learningStyles: ['visual'],
+          activities: [{ order: 1, title: 'Activity 1', instructions: 'Do something' }]
+        })
       lessonId = res.body.lesson.id
     })
 
@@ -94,6 +223,8 @@ describe('Lessons Routes', () => {
 
       expect(res.status).toBe(200)
       expect(res.body.lesson.title).toBe('Test Lesson')
+      expect(res.body.lesson.learning_styles).toEqual(['visual'])
+      expect(res.body.lesson.activities).toHaveLength(1)
     })
 
     it('should return 404 for non-existent lesson', async () => {
@@ -159,7 +290,6 @@ describe('Lessons Routes', () => {
       process.env = { ...originalEnv }
       process.env.XAI_API_KEY = 'test-key'
 
-      // Mock fetch for AI API
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: async () => ({
@@ -171,14 +301,12 @@ describe('Lessons Routes', () => {
         })
       })
 
-      // Register user and get token
       const authRes = await request(app)
         .post('/auth/register')
         .send({ email: 'parent@example.com', password: 'password123', name: 'Parent User' })
       token = authRes.body.token
       const userId = authRes.body.user.id
 
-      // Create a child
       const childResult = db.prepare(`
         INSERT INTO children (id, user_id, name, age, grade_level, learning_style, interests)
         VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -243,7 +371,6 @@ describe('Lessons Routes', () => {
 
       expect(res.status).toBe(201)
 
-      // Verify it was saved
       const savedLesson = db.prepare('SELECT * FROM lessons WHERE id = ?')
         .get(res.body.lesson.id) as { title: string } | undefined
 
@@ -275,6 +402,54 @@ describe('Lessons Routes', () => {
       const body = JSON.parse(fetchCall[1].body)
       expect(body.messages[1].content).toContain('multiplication')
       expect(body.messages[1].content).toContain('45 minutes')
+    })
+  })
+
+  describe('PUT /lessons/:id', () => {
+    let lessonId: string
+
+    beforeEach(async () => {
+      const res = await request(app)
+        .post('/lessons')
+        .send({ title: 'Original', subject: 'Math' })
+      lessonId = res.body.lesson.id
+    })
+
+    it('should update lesson fields', async () => {
+      const res = await request(app)
+        .put(`/lessons/${lessonId}`)
+        .send({
+          title: 'Updated',
+          learningStyles: ['auditory', 'kinesthetic'],
+          ageMin: 6,
+          ageMax: 9
+        })
+
+      expect(res.status).toBe(200)
+      expect(res.body.lesson.title).toBe('Updated')
+      expect(res.body.lesson.learning_styles).toEqual(['auditory', 'kinesthetic'])
+      expect(res.body.lesson.age_min).toBe(6)
+      expect(res.body.lesson.age_max).toBe(9)
+    })
+  })
+
+  describe('DELETE /lessons/:id', () => {
+    let lessonId: string
+
+    beforeEach(async () => {
+      const res = await request(app)
+        .post('/lessons')
+        .send({ title: 'To Delete', subject: 'Math' })
+      lessonId = res.body.lesson.id
+    })
+
+    it('should delete a lesson', async () => {
+      const res = await request(app).delete(`/lessons/${lessonId}`)
+
+      expect(res.status).toBe(204)
+
+      const getRes = await request(app).get(`/lessons/${lessonId}`)
+      expect(getRes.status).toBe(404)
     })
   })
 })
