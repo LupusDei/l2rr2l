@@ -1,0 +1,19 @@
+# Cloudflare Pages configuration for l2rr2l
+# Project URL: https://l2rr2l.pages.dev/
+# See: https://developers.cloudflare.com/pages/functions/wrangler-configuration/
+
+name = "l2rr2l"
+compatibility_date = "2026-01-23"
+pages_build_output_dir = "dist"
+
+# Build configuration
+# Build command: npm run build
+# Build output directory: dist
+# Production branch: main
+
+# Manual deployment: npx wrangler pages deploy dist --project-name l2rr2l
+
+# GitHub Actions auto-deploy (see .github/workflows/deploy.yml)
+# Required GitHub secrets:
+#   CLOUDFLARE_API_TOKEN - Create at https://dash.cloudflare.com/profile/api-tokens
+#   CLOUDFLARE_ACCOUNT_ID - 06785f44e597a688eb45a6e3b5477c9a
