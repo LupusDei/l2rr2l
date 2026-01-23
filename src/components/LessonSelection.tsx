@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import LessonCard from './LessonCard'
 import type { Lesson } from './LessonCard'
 import LessonFilters from './LessonFilters'
@@ -16,6 +16,38 @@ interface LessonSelectionProps {
   childData: ChildData
   onSelectLesson: (lesson: Lesson) => void
   onBack: () => void
+}
+
+// Simple cache for API results
+interface CacheEntry<T> {
+  data: T
+  timestamp: number
+}
+
+const cache = new Map<string, CacheEntry<unknown>>()
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+
+function getCached<T>(key: string): T | null {
+  const entry = cache.get(key)
+  if (!entry) return null
+  if (Date.now() - entry.timestamp > CACHE_TTL) {
+    cache.delete(key)
+    return null
+  }
+  return entry.data as T
+}
+
+function setCache<T>(key: string, data: T): void {
+  cache.set(key, { data, timestamp: Date.now() })
+}
+
+// Build query string from filters
+function buildQueryParams(filters: FilterState): string {
+  const params = new URLSearchParams()
+  if (filters.search) params.set('query', filters.search)
+  if (filters.subject) params.set('subject', filters.subject)
+  if (filters.difficulty) params.set('difficulty', filters.difficulty)
+  return params.toString()
 }
 
 const AVATAR_EMOJIS: Record<string, string> = {
@@ -42,8 +74,10 @@ function getRandomGreeting(): string {
 
 export default function LessonSelection({ childData, onSelectLesson, onBack }: LessonSelectionProps) {
   const [lessons, setLessons] = useState<Lesson[]>([])
+  const [recommendedLessons, setRecommendedLessons] = useState<Lesson[]>([])
   const [subjects, setSubjects] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
+  const [filterLoading, setFilterLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [greeting] = useState(getRandomGreeting)
   const [filters, setFilters] = useState<FilterState>({
@@ -53,75 +87,159 @@ export default function LessonSelection({ childData, onSelectLesson, onBack }: L
     difficulty: null,
   })
 
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
+
   const avatarEmoji = childData.avatar ? AVATAR_EMOJIS[childData.avatar] || '⭐' : '⭐'
 
-  useEffect(() => {
-    fetchLessons()
-    fetchSubjects()
-  }, [])
+  // Fetch lessons with optional filters and caching
+  const fetchLessons = useCallback(async (filterParams?: FilterState, isFilterChange = false) => {
+    // Cancel any pending request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+    abortControllerRef.current = new AbortController()
 
-  const fetchLessons = async () => {
+    const queryString = filterParams ? buildQueryParams(filterParams) : ''
+    const url = queryString ? `/api/lessons?${queryString}` : '/api/lessons'
+    const cacheKey = `lessons:${url}`
+
+    // Check cache first
+    const cached = getCached<{ lessons: Lesson[] }>(cacheKey)
+    if (cached) {
+      setLessons(cached.lessons)
+      if (!isFilterChange) setLoading(false)
+      setFilterLoading(false)
+      return
+    }
+
     try {
-      setLoading(true)
+      if (isFilterChange) {
+        setFilterLoading(true)
+      } else {
+        setLoading(true)
+      }
       setError(null)
-      const response = await fetch('/api/lessons')
+
+      const response = await fetch(url, { signal: abortControllerRef.current.signal })
       if (!response.ok) {
         throw new Error('Failed to load lessons')
       }
       const data = await response.json()
-      setLessons(data.lessons || [])
+      const lessonsData = data.lessons || []
+
+      setLessons(lessonsData)
+      setCache(cacheKey, { lessons: lessonsData })
     } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') {
+        return // Ignore aborted requests
+      }
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
       setLoading(false)
+      setFilterLoading(false)
     }
-  }
+  }, [])
 
-  const fetchSubjects = async () => {
+  // Fetch recommended lessons based on child's age
+  const fetchRecommendedLessons = useCallback(async () => {
+    const params = new URLSearchParams()
+    if (childData.age) {
+      params.set('ageMin', String(childData.age))
+      params.set('ageMax', String(childData.age))
+    }
+    params.set('limit', '3')
+
+    const url = `/api/lessons?${params.toString()}`
+    const cacheKey = `recommended:${url}`
+
+    // Check cache first
+    const cached = getCached<{ lessons: Lesson[] }>(cacheKey)
+    if (cached) {
+      setRecommendedLessons(cached.lessons)
+      return
+    }
+
+    try {
+      const response = await fetch(url)
+      if (response.ok) {
+        const data = await response.json()
+        const lessonsData = data.lessons || []
+        setRecommendedLessons(lessonsData)
+        setCache(cacheKey, { lessons: lessonsData })
+      }
+    } catch {
+      // Fall back to first 3 lessons if recommendations fail
+    }
+  }, [childData.age])
+
+  // Fetch subjects with caching
+  const fetchSubjects = useCallback(async () => {
+    const cacheKey = 'subjects'
+    const cached = getCached<string[]>(cacheKey)
+    if (cached) {
+      setSubjects(cached)
+      return
+    }
+
     try {
       const response = await fetch('/api/lessons/subjects')
       if (response.ok) {
         const data = await response.json()
-        setSubjects(data.subjects || [])
+        const subjectsData = data.subjects || []
+        setSubjects(subjectsData)
+        setCache(cacheKey, subjectsData)
       }
     } catch {
       // Silently fail - subjects are optional
     }
-  }
+  }, [])
 
-  const filteredLessons = useMemo(() => {
-    return lessons.filter(lesson => {
-      // Search filter
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase()
-        const titleMatch = lesson.title.toLowerCase().includes(searchLower)
-        const subjectMatch = lesson.subject.toLowerCase().includes(searchLower)
-        if (!titleMatch && !subjectMatch) return false
+  // Initial data fetch
+  useEffect(() => {
+    fetchLessons()
+    fetchRecommendedLessons()
+    fetchSubjects()
+  }, [fetchLessons, fetchRecommendedLessons, fetchSubjects])
+
+  // Handle filter changes with debounce for search
+  useEffect(() => {
+    const hasActiveFilters = filters.search || filters.subject || filters.difficulty
+
+    if (!hasActiveFilters) {
+      // No filters - fetch all lessons
+      fetchLessons()
+      return
+    }
+
+    // Debounce search input
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      fetchLessons(filters, true)
+    }, filters.search ? 300 : 0) // Only debounce search, not other filters
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
       }
+    }
+  }, [filters, fetchLessons])
 
-      // Subject filter
-      if (filters.subject && lesson.subject.toLowerCase() !== filters.subject.toLowerCase()) {
-        return false
-      }
+  // Client-side duration filter (not supported by API)
+  const filteredLessons = lessons.filter(lesson => {
+    if (!filters.duration) return true
+    const duration = lesson.duration_minutes || 5
+    if (filters.duration === '5' && duration > 10) return false
+    if (filters.duration === '15' && (duration < 10 || duration > 20)) return false
+    if (filters.duration === '30' && duration < 25) return false
+    return true
+  })
 
-      // Duration filter
-      if (filters.duration) {
-        const duration = lesson.duration_minutes || 5
-        if (filters.duration === '5' && duration > 10) return false
-        if (filters.duration === '15' && (duration < 10 || duration > 20)) return false
-        if (filters.duration === '30' && duration < 25) return false
-      }
-
-      // Difficulty filter
-      if (filters.difficulty && lesson.difficulty?.toLowerCase() !== filters.difficulty) {
-        return false
-      }
-
-      return true
-    })
-  }, [lessons, filters])
-
-  const recommendedLessons = lessons.slice(0, 3)
+  // Use recommended lessons, falling back to first 3 of all lessons
+  const displayRecommendedLessons = recommendedLessons.length > 0 ? recommendedLessons : lessons.slice(0, 3)
   const allLessons = filteredLessons
   const hasActiveFilters = filters.search || filters.subject || filters.duration || filters.difficulty
 
@@ -160,7 +278,7 @@ export default function LessonSelection({ childData, onSelectLesson, onBack }: L
           <div className="error-state">
             <span className="error-icon">😢</span>
             <p>{error}</p>
-            <button type="button" className="retry-button" onClick={fetchLessons}>
+            <button type="button" className="retry-button" onClick={() => fetchLessons()}>
               Try Again
             </button>
           </div>
@@ -176,14 +294,14 @@ export default function LessonSelection({ childData, onSelectLesson, onBack }: L
         {!loading && !error && lessons.length > 0 && (
           <>
             {/* Recommended section */}
-            {recommendedLessons.length > 0 && (
+            {displayRecommendedLessons.length > 0 && !hasActiveFilters && (
               <section className="lesson-section">
                 <h2 className="section-title">
                   <span className="section-icon">⭐</span>
                   Recommended for you
                 </h2>
                 <div className="lesson-grid recommended-grid">
-                  {recommendedLessons.map(lesson => (
+                  {displayRecommendedLessons.map(lesson => (
                     <LessonCard
                       key={lesson.id}
                       lesson={lesson}
@@ -207,12 +325,19 @@ export default function LessonSelection({ childData, onSelectLesson, onBack }: L
                 subjects={subjects}
               />
 
-              {allLessons.length === 0 && hasActiveFilters ? (
+              {filterLoading && (
+                <div className="filter-loading">
+                  <span className="filter-loading-spinner">🔄</span>
+                  <span>Updating results...</span>
+                </div>
+              )}
+
+              {!filterLoading && allLessons.length === 0 && hasActiveFilters ? (
                 <div className="no-results">
                   <span className="no-results-icon">🔍</span>
                   <p>No lessons match your filters. Try changing them!</p>
                 </div>
-              ) : (
+              ) : !filterLoading && (
                 <div className="lesson-grid all-lessons-grid">
                   {allLessons.map(lesson => (
                     <LessonCard
