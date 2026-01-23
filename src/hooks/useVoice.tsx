@@ -6,6 +6,7 @@ export interface VoiceSettings {
   stability: number
   similarityBoost: number
   enabled: boolean
+  encouragementEnabled: boolean
 }
 
 export interface PronunciationResult {
@@ -34,6 +35,7 @@ const DEFAULT_SETTINGS: VoiceSettings = {
   stability: 0.5,
   similarityBoost: 0.75,
   enabled: true,
+  encouragementEnabled: true,
 }
 
 const VoiceContext = createContext<VoiceContextValue | null>(null)

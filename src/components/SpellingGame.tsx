@@ -53,6 +53,28 @@ function getVoiceCelebration(word: string): string {
 // Dancing characters for celebration
 const dancingCharacters = ['🎈', '⭐', '🌈', '🎀', '🦋', '🌸']
 
+// Encouragement phrases for correct letter placement
+const letterEncouragementPhrases = [
+  "Great job!",
+  "That's right!",
+  "You got it!",
+  "Nice!",
+  "Perfect!",
+  "Yes!",
+  "Good!",
+]
+
+// Progress phrases (used when 2+ letters placed, not yet complete)
+const progressPhrases = [
+  "Keep going!",
+  "Almost there!",
+  "You're doing great!",
+  "So close!",
+]
+
+// Minimum time between encouragements (ms) to avoid being annoying
+const ENCOURAGEMENT_THROTTLE_MS = 4000
+
 // Generate confetti positions once, outside component
 function generateConfettiPositions(count: number = 40) {
   const shapes = ['square', 'circle', 'rectangle'] as const
@@ -82,7 +104,7 @@ function getShuffledLetters(wordIndex: number): string[] {
 
 export default function SpellingGame({ onBack }: SpellingGameProps) {
   // Voice synthesis and recording
-  const { speak, isSpeaking, isRecording, startRecording, checkPronunciation } = useVoice()
+  const { speak, isSpeaking, isRecording, startRecording, checkPronunciation, settings } = useVoice()
 
   // Use lazy initialization to avoid setState in effect
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
@@ -102,6 +124,7 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
   const [showPronunciationFeedback, setShowPronunciationFeedback] = useState(false)
   const zoneBoundsRef = useRef<Map<number, DOMRect>>(new Map())
   const hasAnnouncedRef = useRef(false)
+  const lastEncouragementRef = useRef<number>(0)
 
   const currentWord = words[currentWordIndex]
 
@@ -292,6 +315,20 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
               speak(`Spell: ${words[nextIndex].word}`)
             }, 300)
           }, celebrationDuration)
+        } else {
+          // Word not complete yet - maybe speak encouragement (throttled)
+          const now = Date.now()
+          const timeSinceLastEncouragement = now - lastEncouragementRef.current
+          const placedCount = newPlaced.filter(p => p !== null).length
+
+          if (settings.encouragementEnabled && timeSinceLastEncouragement >= ENCOURAGEMENT_THROTTLE_MS) {
+            lastEncouragementRef.current = now
+            // Use progress phrases if 2+ letters placed, otherwise regular encouragement
+            const phrases = placedCount >= 2 ? progressPhrases : letterEncouragementPhrases
+            const phrase = phrases[Math.floor(Math.random() * phrases.length)]
+            // Small delay so it doesn't overlap with the sound effect
+            setTimeout(() => speak(phrase), 200)
+          }
         }
       } else {
         // Wrong position - trigger shake animation
@@ -302,7 +339,7 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
 
     setDraggedTile(null)
     setActiveZoneIndex(null)
-  }, [draggedTile, placedLetters, currentWord.word, currentWordIndex, speak, streak])
+  }, [draggedTile, placedLetters, currentWord.word, currentWordIndex, speak, streak, settings.encouragementEnabled])
 
   const handleZoneBounds = useCallback((index: number, bounds: DOMRect) => {
     zoneBoundsRef.current.set(index, bounds)
