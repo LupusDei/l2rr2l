@@ -3,6 +3,7 @@ import './SpellingGame.css'
 import LetterTile from './LetterTile'
 import DropZone from './DropZone'
 import { words, shuffleLetters } from '../game/words'
+import { playCorrectSound, playWordCompleteSound } from '../game/sounds'
 
 interface SpellingGameProps {
   onBack: () => void
@@ -45,6 +46,7 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
   const [draggedTile, setDraggedTile] = useState<{ id: string; letter: string } | null>(null)
   const [activeZoneIndex, setActiveZoneIndex] = useState<number | null>(null)
   const [wrongZoneIndex, setWrongZoneIndex] = useState<number | null>(null)
+  const [correctZoneIndex, setCorrectZoneIndex] = useState<number | null>(null)
   const [showCelebration, setShowCelebration] = useState(false)
   const [wordsCompleted, setWordsCompleted] = useState(0)
   const zoneBoundsRef = useRef<Map<number, DOMRect>>(new Map())
@@ -60,6 +62,7 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
     setUsedTileIds(new Set())
     setShowCelebration(false)
     setWrongZoneIndex(null)
+    setCorrectZoneIndex(null)
   }, [currentWordIndex])
 
   const handleDragStart = (id: string, letter: string) => {
@@ -104,9 +107,16 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
         setPlacedLetters(newPlaced)
         setUsedTileIds(prev => new Set([...prev, draggedTile.id]))
 
+        // Trigger correct animation and sound
+        setCorrectZoneIndex(targetZoneIndex)
+        playCorrectSound()
+        setTimeout(() => setCorrectZoneIndex(null), 800)
+
         // Check if word is complete
         const allPlaced = newPlaced.every(p => p !== null)
         if (allPlaced) {
+          // Play word complete sound after a short delay
+          setTimeout(() => playWordCompleteSound(), 300)
           setShowCelebration(true)
           setWordsCompleted(prev => prev + 1)
 
@@ -119,6 +129,7 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
             setUsedTileIds(new Set())
             setShowCelebration(false)
             setWrongZoneIndex(null)
+            setCorrectZoneIndex(null)
           }, 2000)
         }
       } else {
@@ -193,6 +204,7 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
             isActive={activeZoneIndex === index}
             onGetBounds={handleZoneBounds}
             showWrongAnimation={wrongZoneIndex === index}
+            showCorrectAnimation={correctZoneIndex === index}
           />
         ))}
       </div>
