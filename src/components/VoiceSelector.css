@@ -1,0 +1,339 @@
+/* ==========================================================================
+   Voice Selector Component
+   A playful dropdown for voice selection with audio preview
+   ========================================================================== */
+
+.voice-selector {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Label */
+.voice-selector-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: var(--space-2);
+}
+
+.voice-selector-label-icon {
+  font-size: 1.25rem;
+}
+
+/* Trigger button */
+.voice-selector-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: white;
+  border: 3px solid #dee2e6;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1rem;
+  text-align: left;
+}
+
+.voice-selector-trigger:hover {
+  border-color: #4dabf7;
+}
+
+.voice-selector-trigger:focus {
+  outline: none;
+  border-color: #4dabf7;
+  box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.2);
+}
+
+.voice-selector-trigger-open {
+  border-color: #4dabf7;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.voice-selector-selected {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.voice-selector-selected-name {
+  font-weight: 600;
+  color: #212529;
+}
+
+.voice-selector-selected-category {
+  font-size: 0.75rem;
+  color: #868e96;
+}
+
+.voice-selector-placeholder {
+  color: #adb5bd;
+}
+
+.voice-selector-arrow {
+  font-size: 0.75rem;
+  color: #868e96;
+  transition: transform 0.2s ease;
+}
+
+/* Dropdown */
+.voice-selector-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 3px solid #4dabf7;
+  border-top: none;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  max-height: 320px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Filter checkbox */
+.voice-selector-filter {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 2px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.voice-selector-filter-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 0.875rem;
+  color: #495057;
+  cursor: pointer;
+}
+
+.voice-selector-filter-label input {
+  width: 18px;
+  height: 18px;
+  accent-color: #51cf66;
+  cursor: pointer;
+}
+
+/* Voice list */
+.voice-selector-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.voice-selector-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.voice-selector-option:last-child {
+  border-bottom: none;
+}
+
+.voice-selector-option:hover {
+  background-color: #e7f5ff;
+}
+
+.voice-selector-option-selected {
+  background-color: #d0ebff;
+}
+
+.voice-selector-option-selected:hover {
+  background-color: #a5d8ff;
+}
+
+.voice-selector-option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.voice-selector-option-name {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-weight: 600;
+  color: #212529;
+  font-size: 0.95rem;
+}
+
+.voice-selector-option-category {
+  font-size: 0.7rem;
+  color: #868e96;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.voice-selector-option-description {
+  font-size: 0.8rem;
+  color: #6c757d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Preview button */
+.voice-selector-preview-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #51cf66;
+  background: white;
+  color: #51cf66;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: var(--space-3);
+}
+
+.voice-selector-preview-btn:hover {
+  background: #51cf66;
+  color: white;
+  transform: scale(1.1);
+}
+
+.voice-selector-preview-btn:active {
+  transform: scale(0.95);
+}
+
+.voice-selector-preview-playing {
+  background: #ff6b6b;
+  border-color: #ff6b6b;
+  color: white;
+  animation: pulse-preview 1s ease-in-out infinite;
+}
+
+.voice-selector-preview-playing:hover {
+  background: #e55039;
+  border-color: #e55039;
+}
+
+@keyframes pulse-preview {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Empty state */
+.voice-selector-empty {
+  padding: var(--space-6);
+  text-align: center;
+  color: #868e96;
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+}
+
+/* Loading state */
+.voice-selector-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: white;
+  border: 3px solid #dee2e6;
+  border-radius: 16px;
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  color: #868e96;
+}
+
+.voice-selector-spinner {
+  font-size: 1.5rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error state */
+.voice-selector-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: #fff5f5;
+  border: 3px solid #ffc9c9;
+  border-radius: 16px;
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  color: #c92a2a;
+}
+
+.voice-selector-error-icon {
+  font-size: 1.5rem;
+}
+
+.voice-selector-retry {
+  padding: var(--space-2) var(--space-4);
+  background: white;
+  border: 2px solid #c92a2a;
+  border-radius: 8px;
+  color: #c92a2a;
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.voice-selector-retry:hover {
+  background: #c92a2a;
+  color: white;
+}
+
+/* Responsive adjustments */
+@media (min-width: 640px) {
+  .voice-selector {
+    max-width: 450px;
+  }
+
+  .voice-selector-trigger {
+    padding: var(--space-4) var(--space-5);
+    font-size: 1.1rem;
+  }
+
+  .voice-selector-dropdown {
+    max-height: 400px;
+  }
+
+  .voice-selector-option {
+    padding: var(--space-4);
+  }
+
+  .voice-selector-preview-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+}
