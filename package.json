@@ -16,11 +16,13 @@
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.32.0",
+    "@types/multer": "^2.0.0",
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^12.6.2",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

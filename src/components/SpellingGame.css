@@ -454,3 +454,164 @@
     font-size: 2.5rem;
   }
 }
+
+/* ==========================================================================
+   Pronunciation Button and Feedback
+   ========================================================================== */
+
+.pronunciation-button {
+  font-size: 1.5rem;
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pronunciation-button:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #ff6b6b;
+  transform: scale(1.05);
+}
+
+.pronunciation-button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.pronunciation-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pronunciation-button.recording {
+  background: #ff6b6b;
+  border-color: #ff6b6b;
+  animation: recording-pulse 1s ease-in-out infinite;
+}
+
+@keyframes recording-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 15px rgba(255, 107, 107, 0);
+  }
+}
+
+/* Recording indicator */
+.recording-indicator {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 107, 107, 0.95);
+  color: white;
+  padding: var(--space-3) var(--space-6);
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  z-index: 100;
+  animation: slide-down 0.3s ease;
+  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.recording-pulse {
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  animation: pulse-recording 1s ease-in-out infinite;
+}
+
+@keyframes pulse-recording {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
+.recording-text {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* Pronunciation feedback overlay */
+.pronunciation-feedback-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fade-in 0.3s ease;
+}
+
+.pronunciation-feedback-overlay.correct {
+  background: rgba(81, 207, 102, 0.3);
+}
+
+.pronunciation-feedback-overlay.incorrect {
+  background: rgba(255, 193, 7, 0.3);
+}
+
+.pronunciation-feedback-content {
+  background: white;
+  border-radius: 30px;
+  padding: var(--space-8) var(--space-12);
+  text-align: center;
+  animation: pop-in 0.4s ease;
+  max-width: 90%;
+}
+
+.pronunciation-emoji {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: var(--space-4);
+  animation: celebration-bounce 0.5s ease infinite;
+}
+
+.pronunciation-feedback-text {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1.75rem;
+  color: #495057;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.pronunciation-feedback-overlay.correct .pronunciation-feedback-text {
+  color: #51cf66;
+}
+
+.pronunciation-feedback-overlay.incorrect .pronunciation-feedback-text {
+  color: #ffc107;
+}
+
+.pronunciation-transcribed {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1rem;
+  color: #868e96;
+  margin: 0;
+}

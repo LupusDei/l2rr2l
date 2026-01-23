@@ -4,7 +4,7 @@ import LetterTile from './LetterTile'
 import DropZone from './DropZone'
 import { words, shuffleLetters } from '../game/words'
 import { playCorrectSound, playWordCompleteSound } from '../game/sounds'
-import { useVoice } from '../hooks/useVoice'
+import { useVoice, type PronunciationResult } from '../hooks/useVoice'
 
 interface SpellingGameProps {
   onBack: () => void
@@ -81,8 +81,8 @@ function getShuffledLetters(wordIndex: number): string[] {
 }
 
 export default function SpellingGame({ onBack }: SpellingGameProps) {
-  // Voice synthesis
-  const { speak, isSpeaking } = useVoice()
+  // Voice synthesis and recording
+  const { speak, isSpeaking, isRecording, startRecording, checkPronunciation } = useVoice()
 
   // Use lazy initialization to avoid setState in effect
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
@@ -98,6 +98,8 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
   const [streak, setStreak] = useState(0)
   const [celebrationMessage, setCelebrationMessage] = useState(celebrationMessages[0])
   const [isStreakCelebration, setIsStreakCelebration] = useState(false)
+  const [pronunciationResult, setPronunciationResult] = useState<PronunciationResult | null>(null)
+  const [showPronunciationFeedback, setShowPronunciationFeedback] = useState(false)
   const zoneBoundsRef = useRef<Map<number, DOMRect>>(new Map())
   const hasAnnouncedRef = useRef(false)
 
@@ -125,6 +127,40 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
   const handleRepeat = useCallback(() => {
     announceCurrentWord()
   }, [announceCurrentWord])
+
+  // Pronunciation button handler - toggle recording
+  const handlePronunciationToggle = useCallback(async () => {
+    if (isRecording) {
+      // Stop recording and check pronunciation
+      const result = await checkPronunciation(currentWord.word)
+      if (result) {
+        setPronunciationResult(result)
+        setShowPronunciationFeedback(true)
+
+        // Speak the feedback
+        speak(result.feedback)
+
+        // If correct, play celebration sound
+        if (result.isCorrect) {
+          playCorrectSound()
+        }
+
+        // Hide feedback after delay
+        setTimeout(() => {
+          setShowPronunciationFeedback(false)
+          setPronunciationResult(null)
+        }, 3000)
+      }
+    } else {
+      // Start recording
+      try {
+        await startRecording()
+      } catch {
+        // Microphone access denied or not available
+        speak("Please allow microphone access to practice pronunciation")
+      }
+    }
+  }, [isRecording, checkPronunciation, currentWord.word, speak, startRecording])
 
   // Start a new word by advancing to next index
   const goToNextWord = useCallback((resetStreak: boolean = false) => {
@@ -292,6 +328,15 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
         >
           🔊
         </button>
+        <button
+          className={`pronunciation-button ${isRecording ? 'recording' : ''}`}
+          onClick={handlePronunciationToggle}
+          disabled={isSpeaking || showPronunciationFeedback}
+          type="button"
+          aria-label={isRecording ? 'Stop recording' : 'Say the word'}
+        >
+          {isRecording ? '⏹️' : '🎤'}
+        </button>
         <div className="progress-indicator">
           ⭐ {wordsCompleted}
         </div>
@@ -372,6 +417,33 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Pronunciation feedback overlay */}
+      {showPronunciationFeedback && pronunciationResult && (
+        <div className={`pronunciation-feedback-overlay ${pronunciationResult.isCorrect ? 'correct' : 'incorrect'}`}>
+          <div className="pronunciation-feedback-content">
+            <span className="pronunciation-emoji">
+              {pronunciationResult.isCorrect ? '🎉' : '💪'}
+            </span>
+            <h2 className="pronunciation-feedback-text">
+              {pronunciationResult.feedback}
+            </h2>
+            {pronunciationResult.transcribed && (
+              <p className="pronunciation-transcribed">
+                You said: "{pronunciationResult.transcribed}"
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Recording indicator */}
+      {isRecording && (
+        <div className="recording-indicator">
+          <span className="recording-pulse"></span>
+          <span className="recording-text">Say "{currentWord.word}"...</span>
         </div>
       )}
 

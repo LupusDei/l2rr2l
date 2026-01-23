@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { randomUUID } from 'crypto'
+import multer from 'multer'
 import {
   getVoiceService,
   VoiceServiceUnavailableError,
@@ -8,6 +9,14 @@ import {
 import { db } from '../db/index.js'
 
 const router = Router()
+
+// Configure multer for audio file uploads (in-memory storage)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+})
 
 interface VoiceSettingsRow {
   id: string
@@ -298,5 +307,112 @@ router.put('/settings/:childId', (req, res) => {
     res.status(500).json({ error: 'Failed to save voice settings' })
   }
 })
+
+/**
+ * POST /api/voice/stt
+ * Convert speech to text
+ */
+router.post('/stt', upload.single('audio'), async (req, res) => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ error: 'audio file is required' })
+      return
+    }
+
+    const voiceService = getVoiceService()
+    const result = await voiceService.speechToText({
+      file: req.file.buffer as unknown as File,
+      timestampsGranularity: 'word',
+    })
+
+    res.json({
+      text: result.text,
+      words: result.words,
+      languageCode: result.languageCode,
+      languageConfidence: result.languageConfidence,
+    })
+  } catch (error) {
+    handleVoiceError(error, res, 'transcribe speech')
+  }
+})
+
+/**
+ * POST /api/voice/pronunciation-check
+ * Check pronunciation against expected word
+ */
+router.post('/pronunciation-check', upload.single('audio'), async (req, res) => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ error: 'audio file is required' })
+      return
+    }
+
+    const { expectedWord } = req.body
+    if (!expectedWord) {
+      res.status(400).json({ error: 'expectedWord is required' })
+      return
+    }
+
+    const voiceService = getVoiceService()
+    const result = await voiceService.speechToText({
+      file: req.file.buffer as unknown as File,
+      timestampsGranularity: 'word',
+    })
+
+    // Normalize both for comparison (lowercase, trim whitespace)
+    const transcribedNormalized = result.text.toLowerCase().trim()
+    const expectedNormalized = expectedWord.toLowerCase().trim()
+
+    // Check for exact match or if transcription contains the expected word
+    const isCorrect =
+      transcribedNormalized === expectedNormalized ||
+      transcribedNormalized.includes(expectedNormalized)
+
+    // Calculate confidence based on word-level confidences
+    const wordConfidences = result.words
+      .filter((w) => w.type === 'word')
+      .map((w) => w.confidence)
+    const avgConfidence =
+      wordConfidences.length > 0
+        ? wordConfidences.reduce((a, b) => a + b, 0) / wordConfidences.length
+        : 0
+
+    res.json({
+      isCorrect,
+      transcribed: result.text,
+      expected: expectedWord,
+      confidence: avgConfidence,
+      feedback: isCorrect
+        ? getPositiveFeedback()
+        : getEncouragingFeedback(expectedWord),
+    })
+  } catch (error) {
+    handleVoiceError(error, res, 'check pronunciation')
+  }
+})
+
+// Positive feedback messages for correct pronunciation
+function getPositiveFeedback(): string {
+  const messages = [
+    'Great job!',
+    'Perfect!',
+    'You said it!',
+    'Excellent!',
+    'Wonderful!',
+    'Amazing!',
+  ]
+  return messages[Math.floor(Math.random() * messages.length)]
+}
+
+// Encouraging feedback for incorrect pronunciation
+function getEncouragingFeedback(word: string): string {
+  const messages = [
+    `Try again! Say "${word}"`,
+    `Almost! Try saying "${word}" again`,
+    `Good try! Can you say "${word}"?`,
+    `Let's try "${word}" one more time!`,
+  ]
+  return messages[Math.floor(Math.random() * messages.length)]
+}
 
 export default router

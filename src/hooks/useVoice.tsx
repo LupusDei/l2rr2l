@@ -8,12 +8,24 @@ export interface VoiceSettings {
   enabled: boolean
 }
 
+export interface PronunciationResult {
+  isCorrect: boolean
+  transcribed: string
+  expected: string
+  confidence: number
+  feedback: string
+}
+
 interface VoiceContextValue {
   settings: VoiceSettings
   isLoading: boolean
   isSpeaking: boolean
+  isRecording: boolean
   speak: (text: string) => Promise<void>
   updateSettings: (settings: Partial<VoiceSettings>) => void
+  startRecording: () => Promise<void>
+  stopRecording: () => Promise<Blob | null>
+  checkPronunciation: (expectedWord: string) => Promise<PronunciationResult | null>
 }
 
 const DEFAULT_SETTINGS: VoiceSettings = {
@@ -34,9 +46,12 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
   const [settings, setSettings] = useState<VoiceSettings>(DEFAULT_SETTINGS)
   const [isLoading] = useState(false)
   const [isSpeaking, setIsSpeaking] = useState(false)
+  const [isRecording, setIsRecording] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const queueRef = useRef<string[]>([])
   const isProcessingRef = useRef(false)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const audioChunksRef = useRef<Blob[]>([])
 
   // Clean up audio element on unmount
   useEffect(() => {
@@ -44,6 +59,9 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
       if (audioRef.current) {
         audioRef.current.pause()
         audioRef.current = null
+      }
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop()
       }
     }
   }, [])
@@ -129,12 +147,92 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
     setSettings(prev => ({ ...prev, ...newSettings }))
   }, [])
 
+  const startRecording = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      audioChunksRef.current = []
+
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      })
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data)
+        }
+      }
+
+      mediaRecorderRef.current = mediaRecorder
+      mediaRecorder.start()
+      setIsRecording(true)
+    } catch (error) {
+      console.error('Failed to start recording:', error)
+      throw error
+    }
+  }, [])
+
+  const stopRecording = useCallback(async (): Promise<Blob | null> => {
+    return new Promise((resolve) => {
+      const mediaRecorder = mediaRecorderRef.current
+      if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+        setIsRecording(false)
+        resolve(null)
+        return
+      }
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+
+        // Stop all tracks to release the microphone
+        mediaRecorder.stream.getTracks().forEach(track => track.stop())
+
+        setIsRecording(false)
+        mediaRecorderRef.current = null
+        resolve(audioBlob)
+      }
+
+      mediaRecorder.stop()
+    })
+  }, [])
+
+  const checkPronunciation = useCallback(async (expectedWord: string): Promise<PronunciationResult | null> => {
+    const audioBlob = await stopRecording()
+    if (!audioBlob) {
+      return null
+    }
+
+    try {
+      const formData = new FormData()
+      formData.append('audio', audioBlob, 'recording.webm')
+      formData.append('expectedWord', expectedWord)
+
+      const response = await fetch('/api/voice/pronunciation-check', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        console.warn('Pronunciation check failed')
+        return null
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Pronunciation check error:', error)
+      return null
+    }
+  }, [stopRecording])
+
   const value: VoiceContextValue = {
     settings,
     isLoading,
     isSpeaking,
+    isRecording,
     speak,
     updateSettings,
+    startRecording,
+    stopRecording,
+    checkPronunciation,
   }
 
   return (
