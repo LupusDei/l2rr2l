@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto'
 import { db } from '../db/index.js'
 import { optionalAuthMiddleware, AuthenticatedRequest, authMiddleware } from '../middleware/auth.js'
 import { generateLesson, getSupportedSubjects, AIProvider, ChildProfile } from '../services/ai.js'
+import { matchLessonsForChild, getQuickRecommendations } from '../services/lessonMatcher.js'
 import {
   LessonRow,
   CreateLessonInput,
@@ -236,6 +237,39 @@ router.post('/generate', authMiddleware, async (req: AuthenticatedRequest, res: 
   }
 })
 
+// Personalized lesson matching for a child
+router.get('/match/:childId', authMiddleware, (req: AuthenticatedRequest, res: Response) => {
+  const { childId } = req.params
+  const { limit, excludeCompleted, subject, minScore } = req.query
+
+  // Verify child belongs to user
+  const child = db.prepare('SELECT id FROM children WHERE id = ? AND user_id = ?')
+    .get(childId, req.user!.userId) as { id: string } | undefined
+
+  if (!child) {
+    res.status(404).json({ error: 'Child not found' })
+    return
+  }
+
+  try {
+    const matches = matchLessonsForChild(childId, {
+      limit: limit ? parseInt(limit as string, 10) : 20,
+      excludeCompleted: excludeCompleted !== 'false',
+      subjectFilter: subject as string | undefined,
+      minScore: minScore ? parseInt(minScore as string, 10) : 0
+    })
+
+    res.json({
+      matches,
+      total: matches.length,
+      childId
+    })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to match lessons'
+    res.status(500).json({ error: message })
+  }
+})
+
 router.get('/:id', (req: Request, res: Response) => {
   const lesson = db.prepare(`
     SELECT l.*,
@@ -270,54 +304,30 @@ router.get('/:id', (req: Request, res: Response) => {
 
 router.get('/:id/recommendations', (req: AuthenticatedRequest, res: Response) => {
   const { childId } = req.query
+  const lessonId = req.params.id
+
   const lesson = db.prepare('SELECT * FROM lessons WHERE id = ?')
-    .get(req.params.id) as LessonRow | undefined
+    .get(lessonId) as LessonRow | undefined
 
   if (!lesson) {
     res.status(404).json({ error: 'Lesson not found' })
     return
   }
 
-  let recommendations: LessonRow[]
-
+  // Use smart matching when childId is provided
   if (childId) {
-    const child = db.prepare('SELECT * FROM children WHERE id = ?').get(childId) as {
-      age: number | null
-      learning_style: string | null
-      interests: string | null
-    } | undefined
-
-    if (child) {
-      let sql = `
-        SELECT * FROM lessons
-        WHERE id != ? AND is_published = 1
-        AND (subject = ? OR grade_level = ?)
-      `
-      const params: (string | number)[] = [req.params.id, lesson.subject, lesson.grade_level || '']
-
-      if (child.age) {
-        sql += ' AND (age_min IS NULL OR age_min <= ?) AND (age_max IS NULL OR age_max >= ?)'
-        params.push(child.age, child.age)
-      }
-
-      sql += ' ORDER BY RANDOM() LIMIT 5'
-      recommendations = db.prepare(sql).all(...params) as LessonRow[]
-    } else {
-      recommendations = db.prepare(`
-        SELECT * FROM lessons
-        WHERE id != ? AND is_published = 1 AND (subject = ? OR grade_level = ?)
-        ORDER BY RANDOM()
-        LIMIT 5
-      `).all(req.params.id, lesson.subject, lesson.grade_level) as LessonRow[]
-    }
-  } else {
-    recommendations = db.prepare(`
-      SELECT * FROM lessons
-      WHERE id != ? AND is_published = 1 AND (subject = ? OR grade_level = ?)
-      ORDER BY RANDOM()
-      LIMIT 5
-    `).all(req.params.id, lesson.subject, lesson.grade_level) as LessonRow[]
+    const recommendations = getQuickRecommendations(childId as string, lessonId, 5)
+    res.json({ recommendations })
+    return
   }
+
+  // Fallback to basic matching without child context
+  const recommendations = db.prepare(`
+    SELECT * FROM lessons
+    WHERE id != ? AND is_published = 1 AND (subject = ? OR grade_level = ?)
+    ORDER BY RANDOM()
+    LIMIT 5
+  `).all(lessonId, lesson.subject, lesson.grade_level) as LessonRow[]
 
   res.json({
     recommendations: recommendations.map(parseLesson)
