@@ -1,9 +1,10 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import './SpellingGame.css'
 import LetterTile from './LetterTile'
 import DropZone from './DropZone'
 import { words, shuffleLetters } from '../game/words'
 import { playCorrectSound, playWordCompleteSound } from '../game/sounds'
+import { useVoice } from '../hooks/useVoice'
 
 interface SpellingGameProps {
   onBack: () => void
@@ -63,6 +64,9 @@ function getShuffledLetters(wordIndex: number): string[] {
 }
 
 export default function SpellingGame({ onBack }: SpellingGameProps) {
+  // Voice synthesis
+  const { speak, isSpeaking } = useVoice()
+
   // Use lazy initialization to avoid setState in effect
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [shuffledLetters, setShuffledLetters] = useState(() => getShuffledLetters(0))
@@ -78,8 +82,32 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
   const [celebrationMessage, setCelebrationMessage] = useState(celebrationMessages[0])
   const [isStreakCelebration, setIsStreakCelebration] = useState(false)
   const zoneBoundsRef = useRef<Map<number, DOMRect>>(new Map())
+  const hasAnnouncedRef = useRef(false)
 
   const currentWord = words[currentWordIndex]
+
+  // Announce word on game start with slight delay
+  useEffect(() => {
+    if (!hasAnnouncedRef.current) {
+      hasAnnouncedRef.current = true
+      // Slight delay before announcing to build anticipation
+      const timer = setTimeout(() => {
+        speak(`Spell: ${currentWord.word}`)
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Only run once on mount
+
+  // Announce word when moving to a new word
+  const announceCurrentWord = useCallback(() => {
+    speak(`Spell: ${currentWord.word}`)
+  }, [speak, currentWord.word])
+
+  // Repeat button handler
+  const handleRepeat = useCallback(() => {
+    announceCurrentWord()
+  }, [announceCurrentWord])
 
   // Start a new word by advancing to next index
   const goToNextWord = useCallback((resetStreak: boolean = false) => {
@@ -95,7 +123,11 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
     if (resetStreak) {
       setStreak(0)
     }
-  }, [currentWordIndex])
+    // Announce the new word after a brief delay
+    setTimeout(() => {
+      speak(`Spell: ${words[nextIndex].word}`)
+    }, 300)
+  }, [currentWordIndex, speak])
 
   const handleDragStart = (id: string, letter: string) => {
     setDraggedTile({ id, letter })
@@ -179,6 +211,10 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
             setWrongZoneIndex(null)
             setCorrectZoneIndex(null)
             setIsStreakCelebration(false)
+            // Announce the new word after a brief delay
+            setTimeout(() => {
+              speak(`Spell: ${words[nextIndex].word}`)
+            }, 300)
           }, celebrationDuration)
         }
       } else {
@@ -190,7 +226,7 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
 
     setDraggedTile(null)
     setActiveZoneIndex(null)
-  }, [draggedTile, placedLetters, currentWord.word, currentWordIndex])
+  }, [draggedTile, placedLetters, currentWord.word, currentWordIndex, speak, streak])
 
   const handleZoneBounds = useCallback((index: number, bounds: DOMRect) => {
     zoneBoundsRef.current.set(index, bounds)
@@ -206,6 +242,15 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
       <header className="spelling-header">
         <button className="back-button" onClick={onBack} type="button">
           ← Back
+        </button>
+        <button
+          className="repeat-button"
+          onClick={handleRepeat}
+          disabled={isSpeaking}
+          type="button"
+          aria-label="Repeat word"
+        >
+          🔊
         </button>
         <div className="progress-indicator">
           ⭐ {wordsCompleted}
