@@ -1,5 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { VoiceService } from './voice.js'
+import {
+  VoiceService,
+  VoiceServiceUnavailableError,
+  VoiceSettingsValidationFailedError,
+  validateVoiceSettings,
+  applyVoiceSettingsDefaults,
+  VOICE_SETTINGS_DEFAULTS,
+  VOICE_SETTINGS_RANGES,
+  DEFAULT_VOICE_ID,
+} from './voice.js'
 
 // Mock the ElevenLabs client
 vi.mock('@elevenlabs/elevenlabs-js', () => {
@@ -122,5 +131,165 @@ describe('VoiceService', () => {
 
       expect(result).toBe(true)
     })
+  })
+
+  describe('isAvailable', () => {
+    it('returns true when API key is provided', () => {
+      expect(voiceService.isAvailable()).toBe(true)
+    })
+
+    it('returns false when no API key is provided', () => {
+      const originalEnv = process.env.ELEVENLABS_API_KEY
+      delete process.env.ELEVENLABS_API_KEY
+      const service = new VoiceService()
+      expect(service.isAvailable()).toBe(false)
+      process.env.ELEVENLABS_API_KEY = originalEnv
+    })
+  })
+
+  describe('service unavailability', () => {
+    it('throws VoiceServiceUnavailableError when API key is missing', async () => {
+      const originalEnv = process.env.ELEVENLABS_API_KEY
+      delete process.env.ELEVENLABS_API_KEY
+      const service = new VoiceService()
+
+      await expect(
+        service.textToSpeech({ voiceId: 'test', text: 'hello' })
+      ).rejects.toThrow(VoiceServiceUnavailableError)
+
+      process.env.ELEVENLABS_API_KEY = originalEnv
+    })
+  })
+
+  describe('voice settings validation', () => {
+    it('throws VoiceSettingsValidationFailedError for invalid settings', async () => {
+      await expect(
+        voiceService.textToSpeech({
+          voiceId: 'test',
+          text: 'hello',
+          voiceSettings: { stability: 2 }, // Invalid: > 1
+        })
+      ).rejects.toThrow(VoiceSettingsValidationFailedError)
+    })
+  })
+})
+
+describe('validateVoiceSettings', () => {
+  it('returns empty array for valid settings', () => {
+    const errors = validateVoiceSettings({
+      stability: 0.5,
+      similarityBoost: 0.75,
+      style: 0.3,
+      speed: 1.0,
+    })
+    expect(errors).toEqual([])
+  })
+
+  it('returns empty array for undefined values', () => {
+    const errors = validateVoiceSettings({})
+    expect(errors).toEqual([])
+  })
+
+  it('returns errors for out-of-range stability', () => {
+    const errors = validateVoiceSettings({ stability: 1.5 })
+    expect(errors).toHaveLength(1)
+    expect(errors[0].field).toBe('stability')
+    expect(errors[0].value).toBe(1.5)
+    expect(errors[0].min).toBe(0)
+    expect(errors[0].max).toBe(1)
+  })
+
+  it('returns errors for negative values', () => {
+    const errors = validateVoiceSettings({ style: -0.5 })
+    expect(errors).toHaveLength(1)
+    expect(errors[0].field).toBe('style')
+  })
+
+  it('returns errors for out-of-range speed', () => {
+    const errors = validateVoiceSettings({ speed: 3.0 })
+    expect(errors).toHaveLength(1)
+    expect(errors[0].field).toBe('speed')
+    expect(errors[0].min).toBe(0.5)
+    expect(errors[0].max).toBe(2.0)
+  })
+
+  it('returns errors for speed below minimum', () => {
+    const errors = validateVoiceSettings({ speed: 0.2 })
+    expect(errors).toHaveLength(1)
+    expect(errors[0].field).toBe('speed')
+  })
+
+  it('returns multiple errors for multiple invalid fields', () => {
+    const errors = validateVoiceSettings({
+      stability: -1,
+      similarityBoost: 2,
+      speed: 5,
+    })
+    expect(errors).toHaveLength(3)
+  })
+
+  it('accepts boundary values', () => {
+    expect(validateVoiceSettings({ stability: 0 })).toEqual([])
+    expect(validateVoiceSettings({ stability: 1 })).toEqual([])
+    expect(validateVoiceSettings({ speed: 0.5 })).toEqual([])
+    expect(validateVoiceSettings({ speed: 2.0 })).toEqual([])
+  })
+})
+
+describe('applyVoiceSettingsDefaults', () => {
+  it('returns all defaults when no settings provided', () => {
+    const result = applyVoiceSettingsDefaults()
+    expect(result).toEqual({
+      stability: VOICE_SETTINGS_DEFAULTS.stability,
+      similarityBoost: VOICE_SETTINGS_DEFAULTS.similarityBoost,
+      style: VOICE_SETTINGS_DEFAULTS.style,
+      speed: VOICE_SETTINGS_DEFAULTS.speed,
+      useSpeakerBoost: VOICE_SETTINGS_DEFAULTS.useSpeakerBoost,
+    })
+  })
+
+  it('returns all defaults when empty object provided', () => {
+    const result = applyVoiceSettingsDefaults({})
+    expect(result).toEqual({
+      stability: 0.5,
+      similarityBoost: 0.75,
+      style: 0,
+      speed: 1.0,
+      useSpeakerBoost: true,
+    })
+  })
+
+  it('preserves provided values and fills in defaults', () => {
+    const result = applyVoiceSettingsDefaults({
+      stability: 0.8,
+      useSpeakerBoost: false,
+    })
+    expect(result).toEqual({
+      stability: 0.8,
+      similarityBoost: 0.75,
+      style: 0,
+      speed: 1.0,
+      useSpeakerBoost: false,
+    })
+  })
+
+  it('preserves zero values', () => {
+    const result = applyVoiceSettingsDefaults({ style: 0, stability: 0 })
+    expect(result.style).toBe(0)
+    expect(result.stability).toBe(0)
+  })
+})
+
+describe('constants', () => {
+  it('exports DEFAULT_VOICE_ID', () => {
+    expect(DEFAULT_VOICE_ID).toBeDefined()
+    expect(typeof DEFAULT_VOICE_ID).toBe('string')
+  })
+
+  it('exports correct VOICE_SETTINGS_RANGES', () => {
+    expect(VOICE_SETTINGS_RANGES.stability).toEqual({ min: 0, max: 1 })
+    expect(VOICE_SETTINGS_RANGES.similarityBoost).toEqual({ min: 0, max: 1 })
+    expect(VOICE_SETTINGS_RANGES.style).toEqual({ min: 0, max: 1 })
+    expect(VOICE_SETTINGS_RANGES.speed).toEqual({ min: 0.5, max: 2.0 })
   })
 })

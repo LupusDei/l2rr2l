@@ -1,7 +1,33 @@
 import { Router } from 'express'
-import { getVoiceService } from '../services/voice.js'
+import {
+  getVoiceService,
+  VoiceServiceUnavailableError,
+  VoiceSettingsValidationFailedError,
+} from '../services/voice.js'
 
 const router = Router()
+
+/**
+ * Handle voice service errors and send appropriate responses
+ */
+function handleVoiceError(error: unknown, res: import('express').Response, action: string) {
+  if (error instanceof VoiceServiceUnavailableError) {
+    res.status(503).json({
+      error: 'Voice service unavailable',
+      message: 'Voice features are not configured. Please set ELEVENLABS_API_KEY.',
+    })
+    return
+  }
+  if (error instanceof VoiceSettingsValidationFailedError) {
+    res.status(400).json({
+      error: 'Invalid voice settings',
+      validationErrors: error.errors,
+    })
+    return
+  }
+  console.error(`Failed to ${action}:`, error)
+  res.status(500).json({ error: `Failed to ${action}` })
+}
 
 /**
  * GET /api/voice/voices
@@ -13,8 +39,7 @@ router.get('/voices', async (_req, res) => {
     const voices = await voiceService.listVoices()
     res.json({ voices })
   } catch (error) {
-    console.error('Failed to list voices:', error)
-    res.status(500).json({ error: 'Failed to list voices' })
+    handleVoiceError(error, res, 'list voices')
   }
 })
 
@@ -32,8 +57,7 @@ router.get('/voices/:voiceId', async (req, res) => {
     }
     res.json(voice)
   } catch (error) {
-    console.error('Failed to get voice:', error)
-    res.status(500).json({ error: 'Failed to get voice' })
+    handleVoiceError(error, res, 'get voice')
   }
 })
 
@@ -45,8 +69,8 @@ router.post('/tts', async (req, res) => {
   try {
     const { voiceId, text, modelId, voiceSettings, outputFormat } = req.body
 
-    if (!voiceId || !text) {
-      res.status(400).json({ error: 'voiceId and text are required' })
+    if (!text) {
+      res.status(400).json({ error: 'text is required' })
       return
     }
 
@@ -65,8 +89,7 @@ router.post('/tts', async (req, res) => {
     })
     res.send(audioBuffer)
   } catch (error) {
-    console.error('Failed to convert text to speech:', error)
-    res.status(500).json({ error: 'Failed to convert text to speech' })
+    handleVoiceError(error, res, 'convert text to speech')
   }
 })
 
@@ -78,8 +101,8 @@ router.post('/tts/stream', async (req, res) => {
   try {
     const { voiceId, text, modelId, voiceSettings, outputFormat } = req.body
 
-    if (!voiceId || !text) {
-      res.status(400).json({ error: 'voiceId and text are required' })
+    if (!text) {
+      res.status(400).json({ error: 'text is required' })
       return
     }
 
@@ -109,8 +132,7 @@ router.post('/tts/stream', async (req, res) => {
     }
     await pump()
   } catch (error) {
-    console.error('Failed to stream text to speech:', error)
-    res.status(500).json({ error: 'Failed to stream text to speech' })
+    handleVoiceError(error, res, 'stream text to speech')
   }
 })
 
@@ -128,8 +150,7 @@ router.delete('/voices/:voiceId', async (req, res) => {
     }
     res.json({ success: true })
   } catch (error) {
-    console.error('Failed to delete voice:', error)
-    res.status(500).json({ error: 'Failed to delete voice' })
+    handleVoiceError(error, res, 'delete voice')
   }
 })
 
