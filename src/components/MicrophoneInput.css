@@ -1,0 +1,277 @@
+/* ==========================================================================
+   Microphone Input Component
+   A playful, child-friendly microphone button with audio visualization
+   ========================================================================== */
+
+.mic-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.mic-input-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Error message */
+.mic-input-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: #fff5f5;
+  border: 3px solid #ffc9c9;
+  border-radius: 16px;
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 0.9rem;
+  color: #c92a2a;
+  max-width: 300px;
+  text-align: left;
+}
+
+.mic-input-error-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.mic-input-error-dismiss {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: #ffc9c9;
+  border-radius: 50%;
+  color: #c92a2a;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.mic-input-error-dismiss:hover {
+  background: #c92a2a;
+  color: white;
+}
+
+/* Main record button */
+.mic-input-button {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 5px solid white;
+  background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+  box-shadow:
+    0 6px 0 #1c7ed6,
+    0 8px 20px rgba(77, 171, 247, 0.4);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.mic-input-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 0 #1c7ed6,
+    0 12px 25px rgba(77, 171, 247, 0.5);
+}
+
+.mic-input-button:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #1c7ed6,
+    0 4px 10px rgba(77, 171, 247, 0.4);
+}
+
+.mic-input-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Recording state - red pulsing button */
+.mic-input-button-recording {
+  background: linear-gradient(135deg, #ff6b6b 0%, #f03e3e 100%);
+  box-shadow:
+    0 6px 0 #c92a2a,
+    0 8px 20px rgba(255, 107, 107, 0.4);
+  animation: pulse-record 1s ease-in-out infinite;
+}
+
+.mic-input-button-recording:hover:not(:disabled) {
+  box-shadow:
+    0 8px 0 #c92a2a,
+    0 12px 25px rgba(255, 107, 107, 0.5);
+}
+
+.mic-input-button-recording:active:not(:disabled) {
+  box-shadow:
+    0 2px 0 #c92a2a,
+    0 4px 10px rgba(255, 107, 107, 0.4);
+}
+
+@keyframes pulse-record {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 6px 0 #c92a2a,
+      0 8px 20px rgba(255, 107, 107, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow:
+      0 6px 0 #c92a2a,
+      0 8px 30px rgba(255, 107, 107, 0.6);
+  }
+}
+
+/* Requesting state - spinner animation */
+.mic-input-button-requesting {
+  background: linear-gradient(135deg, #ffd43b 0%, #fab005 100%);
+  box-shadow:
+    0 6px 0 #f59f00,
+    0 8px 20px rgba(255, 212, 59, 0.4);
+}
+
+/* Icons */
+.mic-input-mic {
+  animation: mic-bounce 2s ease-in-out infinite;
+}
+
+@keyframes mic-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.mic-input-stop {
+  font-size: 1.5rem;
+}
+
+.mic-input-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Audio level visualizer */
+.mic-input-visualizer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 6px;
+  height: 50px;
+  padding: var(--space-2);
+}
+
+.mic-input-bar {
+  width: 8px;
+  background: linear-gradient(to top, #dee2e6, #adb5bd);
+  border-radius: 4px;
+  transition: all 0.1s ease;
+}
+
+.mic-input-bar-active {
+  background: linear-gradient(to top, #51cf66, #37b24d);
+  animation: bar-pulse 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes bar-pulse {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(1.1);
+  }
+}
+
+/* Status text */
+.mic-input-status {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1rem;
+  color: #495057;
+  min-height: 1.5em;
+}
+
+.mic-input-hint {
+  color: #868e96;
+}
+
+.mic-input-time {
+  font-weight: 600;
+  color: #ff6b6b;
+  font-size: 1.25rem;
+}
+
+/* Responsive - larger on tablets/desktop */
+@media (min-width: 640px) {
+  .mic-input-button {
+    width: 120px;
+    height: 120px;
+    font-size: 3rem;
+  }
+
+  .mic-input-stop {
+    font-size: 2rem;
+  }
+
+  .mic-input-visualizer {
+    height: 60px;
+    gap: 8px;
+  }
+
+  .mic-input-bar {
+    width: 10px;
+  }
+
+  .mic-input-status {
+    font-size: 1.1rem;
+  }
+
+  .mic-input-time {
+    font-size: 1.5rem;
+  }
+}
+
+/* Touch-friendly adjustments for mobile */
+@media (hover: none) {
+  .mic-input-button {
+    /* Ensure good touch target size */
+    min-width: 88px;
+    min-height: 88px;
+  }
+
+  /* Remove hover effects that can stick on mobile */
+  .mic-input-button:hover:not(:disabled) {
+    transform: none;
+    box-shadow:
+      0 6px 0 #1c7ed6,
+      0 8px 20px rgba(77, 171, 247, 0.4);
+  }
+
+  .mic-input-button-recording:hover:not(:disabled) {
+    box-shadow:
+      0 6px 0 #c92a2a,
+      0 8px 20px rgba(255, 107, 107, 0.4);
+  }
+}
