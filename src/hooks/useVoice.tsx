@@ -1,5 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from 'react'
+import {
+  getCachedAudio,
+  setCachedAudio,
+  clearAllCache,
+  preCacheCommonPhrases,
+} from '../services/audioCache'
 
 export interface VoiceSettings {
   voiceId: string
@@ -12,6 +18,7 @@ interface VoiceContextValue {
   settings: VoiceSettings
   isLoading: boolean
   isSpeaking: boolean
+  isCaching: boolean
   speak: (text: string) => Promise<void>
   updateSettings: (settings: Partial<VoiceSettings>) => void
 }
@@ -34,9 +41,62 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
   const [settings, setSettings] = useState<VoiceSettings>(DEFAULT_SETTINGS)
   const [isLoading] = useState(false)
   const [isSpeaking, setIsSpeaking] = useState(false)
+  const [isCaching, setIsCaching] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const queueRef = useRef<string[]>([])
   const isProcessingRef = useRef(false)
+  const prevSettingsRef = useRef<VoiceSettings>(DEFAULT_SETTINGS)
+
+  // Pre-cache common phrases on mount
+  useEffect(() => {
+    const doPreCache = async () => {
+      setIsCaching(true)
+      try {
+        await preCacheCommonPhrases({
+          voiceId: settings.voiceId,
+          stability: settings.stability,
+          similarityBoost: settings.similarityBoost,
+        })
+      } catch {
+        // Pre-caching is optional, continue without it
+      } finally {
+        setIsCaching(false)
+      }
+    }
+    doPreCache()
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Invalidate cache when voice settings change
+  useEffect(() => {
+    const prev = prevSettingsRef.current
+    const settingsChanged =
+      prev.voiceId !== settings.voiceId ||
+      prev.stability !== settings.stability ||
+      prev.similarityBoost !== settings.similarityBoost
+
+    if (settingsChanged) {
+      // Clear cache and re-cache for new settings
+      const doInvalidateAndReCache = async () => {
+        setIsCaching(true)
+        try {
+          await clearAllCache()
+          await preCacheCommonPhrases({
+            voiceId: settings.voiceId,
+            stability: settings.stability,
+            similarityBoost: settings.similarityBoost,
+          })
+        } catch {
+          // Continue without caching
+        } finally {
+          setIsCaching(false)
+        }
+      }
+      doInvalidateAndReCache()
+    }
+    prevSettingsRef.current = settings
+  }, [settings])
 
   // Clean up audio element on unmount
   useEffect(() => {
@@ -64,27 +124,48 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
       }
 
       try {
-        const response = await fetch('/api/voice/tts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            voiceId: settings.voiceId,
-            text,
-            voiceSettings: {
-              stability: settings.stability,
-              similarityBoost: settings.similarityBoost,
-            },
-          }),
-        })
+        // Check cache first
+        let audioBlob = await getCachedAudio(
+          settings.voiceId,
+          settings.stability,
+          settings.similarityBoost,
+          text
+        )
 
-        if (!response.ok) {
-          console.warn('Voice API failed, continuing silently')
-          continue
+        // Fetch from API if not cached
+        if (!audioBlob) {
+          const response = await fetch('/api/voice/tts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              voiceId: settings.voiceId,
+              text,
+              voiceSettings: {
+                stability: settings.stability,
+                similarityBoost: settings.similarityBoost,
+              },
+            }),
+          })
+
+          if (!response.ok) {
+            console.warn('Voice API failed, continuing silently')
+            continue
+          }
+
+          audioBlob = await response.blob()
+
+          // Cache for future use
+          await setCachedAudio(
+            settings.voiceId,
+            settings.stability,
+            settings.similarityBoost,
+            text,
+            audioBlob
+          )
         }
 
-        const audioBlob = await response.blob()
         const audioUrl = URL.createObjectURL(audioBlob)
 
         await new Promise<void>((resolve) => {
@@ -133,6 +214,7 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
     settings,
     isLoading,
     isSpeaking,
+    isCaching,
     speak,
     updateSettings,
   }
