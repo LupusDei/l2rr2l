@@ -44,3 +44,7 @@ coverage
 # Gas Town (added by gt)
 .claude/
 .logs/
+
+# Cloudflare
+.dev.vars
+.wrangler/

@@ -7,17 +7,25 @@
     "dev": "vite",
     "dev:server": "tsx watch server/index.ts",
     "dev:all": "npm run dev:server & npm run dev",
+    "dev:cf": "wrangler pages dev --compatibility-date=2024-01-01 --compatibility-flags=nodejs_compat -- vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "preview:cf": "wrangler pages dev dist",
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "db:create": "wrangler d1 create l2rr2l",
+    "db:migrate": "wrangler d1 migrations apply l2rr2l",
+    "db:migrate:local": "wrangler d1 migrations apply l2rr2l --local",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.32.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/multer": "^2.0.0",
     "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.6.2",
     "cors": "^2.8.5",
     "express": "^5.2.1",
@@ -27,6 +35,7 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260123.0",
     "@eslint/js": "^9.39.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -52,6 +61,7 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
-    "vitest": "^4.0.17"
+    "vitest": "^4.0.17",
+    "wrangler": "^4.60.0"
   }
 }

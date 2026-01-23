@@ -1,0 +1,17 @@
+# Cloudflare Pages Functions configuration
+name = "l2rr2l"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "l2rr2l"
+database_id = "" # Set after creating DB with: wrangler d1 create l2rr2l
+
+# Environment variables (set in Cloudflare dashboard or .dev.vars)
+# ELEVENLABS_API_KEY
+# JWT_SECRET
+
+[vars]
+ENVIRONMENT = "production"
