@@ -116,6 +116,19 @@ export function initializeDb() {
       UNIQUE(lesson_id, child_id)
     );
 
+    CREATE TABLE IF NOT EXISTS voice_settings (
+      id TEXT PRIMARY KEY,
+      child_id TEXT UNIQUE NOT NULL REFERENCES children(id) ON DELETE CASCADE,
+      voice_id TEXT DEFAULT 'pMsXgVXv3BLzUgSXRplE',
+      stability REAL DEFAULT 0.5,
+      similarity_boost REAL DEFAULT 0.75,
+      style REAL DEFAULT 0.0,
+      speed REAL DEFAULT 1.0,
+      use_speaker_boost INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE INDEX IF NOT EXISTS idx_children_user ON children(user_id);
     CREATE INDEX IF NOT EXISTS idx_progress_child ON progress(child_id);
     CREATE INDEX IF NOT EXISTS idx_progress_lesson ON progress(lesson_id);
@@ -126,6 +139,7 @@ export function initializeDb() {
     CREATE INDEX IF NOT EXISTS idx_lesson_ratings_lesson ON lesson_ratings(lesson_id);
     CREATE INDEX IF NOT EXISTS idx_lesson_engagement_lesson ON lesson_engagement(lesson_id);
     CREATE INDEX IF NOT EXISTS idx_lesson_engagement_child ON lesson_engagement(child_id);
+    CREATE INDEX IF NOT EXISTS idx_voice_settings_child ON voice_settings(child_id);
 
     -- Full-text search virtual table for lessons
     CREATE VIRTUAL TABLE IF NOT EXISTS lessons_fts USING fts5(

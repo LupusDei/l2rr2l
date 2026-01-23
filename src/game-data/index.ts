@@ -1,5 +1,5 @@
 import gameWordsData from '../../docs/content/game-words.json'
-import type { GameWord, GameWordsData, WordCategory } from './types'
+import type { GameWord, GameWordsData } from './types'
 
 export type { GameWord, GameWordsData, WordCategory, DifficultyLevel } from './types'
 export { getWordsByDifficulty, getWordsByCategory, getWordsByVowelSound } from './types'
