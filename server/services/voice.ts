@@ -96,6 +96,33 @@ export interface VoiceCloneOptions {
   labels?: Record<string, string>
 }
 
+export interface SpeechToTextOptions {
+  file: File | Buffer
+  modelId?: 'scribe_v1' | 'scribe_v2'
+  languageCode?: string
+  diarize?: boolean
+  numSpeakers?: number
+  timestampsGranularity?: 'none' | 'word' | 'character'
+  tagAudioEvents?: boolean
+}
+
+export interface TranscriptionWord {
+  text: string
+  start?: number
+  end?: number
+  type: 'word' | 'spacing' | 'audio_event'
+  speakerId?: string
+  confidence: number
+}
+
+export interface TranscriptionResult {
+  text: string
+  languageCode: string
+  languageConfidence: number
+  words: TranscriptionWord[]
+  transcriptionId?: string
+}
+
 export interface Voice {
   voiceId: string
   name: string
@@ -274,6 +301,68 @@ export class VoiceService {
       return true
     } catch {
       return false
+    }
+  }
+
+  /**
+   * Convert speech to text
+   */
+  async speechToText(options: SpeechToTextOptions): Promise<TranscriptionResult> {
+    this.ensureAvailable()
+    const {
+      file,
+      modelId = 'scribe_v2',
+      languageCode,
+      diarize,
+      numSpeakers,
+      timestampsGranularity = 'word',
+      tagAudioEvents = true,
+    } = options
+
+    const response = await this.client.speechToText.convert({
+      file: file as File,
+      modelId,
+      languageCode,
+      diarize,
+      numSpeakers,
+      timestampsGranularity,
+      tagAudioEvents,
+    })
+
+    // Handle the response - the API returns a union type, extract the single-channel result
+    if ('transcripts' in response) {
+      // Multi-channel response - take the first transcript
+      const firstTranscript = response.transcripts[0]
+      return {
+        text: firstTranscript.text,
+        languageCode: firstTranscript.languageCode,
+        languageConfidence: firstTranscript.languageProbability,
+        words: firstTranscript.words.map((word) => ({
+          text: word.text,
+          start: word.start,
+          end: word.end,
+          type: word.type as 'word' | 'spacing' | 'audio_event',
+          speakerId: word.speakerId,
+          confidence: Math.exp(word.logprob), // Convert log probability to probability
+        })),
+        transcriptionId: firstTranscript.transcriptionId,
+      }
+    }
+
+    // Single-channel response
+    return {
+      text: response.text,
+      languageCode: response.languageCode,
+      languageConfidence: response.languageProbability,
+      words: response.words.map((word) => ({
+        text: word.text,
+        start: word.start,
+        end: word.end,
+        type: word.type as 'word' | 'spacing' | 'audio_event',
+        speakerId: word.speakerId,
+        confidence: Math.exp(word.logprob), // Convert log probability to probability
+      })),
+      transcriptionId: response.transcriptionId,
     }
   }
 }

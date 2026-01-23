@@ -57,6 +57,37 @@ vi.mock('@elevenlabs/elevenlabs-js', () => {
         create: vi.fn().mockResolvedValue({ voiceId: 'new-voice-id' }),
       },
     }
+    speechToText = {
+      convert: vi.fn().mockResolvedValue({
+        languageCode: 'eng',
+        languageProbability: 0.98,
+        text: 'Hello world',
+        words: [
+          {
+            text: 'Hello',
+            start: 0.0,
+            end: 0.5,
+            type: 'word',
+            logprob: -0.1,
+          },
+          {
+            text: ' ',
+            start: 0.5,
+            end: 0.5,
+            type: 'spacing',
+            logprob: 0,
+          },
+          {
+            text: 'world',
+            start: 0.5,
+            end: 1.0,
+            type: 'word',
+            logprob: -0.05,
+          },
+        ],
+        transcriptionId: 'txn-123',
+      }),
+    }
   }
 
   return {
@@ -133,6 +164,51 @@ describe('VoiceService', () => {
     })
   })
 
+  describe('speechToText', () => {
+    it('transcribes audio to text', async () => {
+      const audioBuffer = Buffer.from([1, 2, 3])
+      const result = await voiceService.speechToText({
+        file: audioBuffer as unknown as File,
+      })
+
+      expect(result.text).toBe('Hello world')
+      expect(result.languageCode).toBe('eng')
+      expect(result.languageConfidence).toBe(0.98)
+      expect(result.transcriptionId).toBe('txn-123')
+    })
+
+    it('returns word-level timing information', async () => {
+      const audioBuffer = Buffer.from([1, 2, 3])
+      const result = await voiceService.speechToText({
+        file: audioBuffer as unknown as File,
+      })
+
+      expect(result.words).toHaveLength(3)
+      expect(result.words[0]).toMatchObject({
+        text: 'Hello',
+        start: 0.0,
+        end: 0.5,
+        type: 'word',
+      })
+      expect(result.words[0].confidence).toBeCloseTo(0.905, 2) // e^(-0.1)
+    })
+
+    it('accepts optional parameters', async () => {
+      const audioBuffer = Buffer.from([1, 2, 3])
+      const result = await voiceService.speechToText({
+        file: audioBuffer as unknown as File,
+        modelId: 'scribe_v1',
+        languageCode: 'en',
+        diarize: true,
+        numSpeakers: 2,
+        timestampsGranularity: 'character',
+        tagAudioEvents: false,
+      })
+
+      expect(result.text).toBe('Hello world')
+    })
+  })
+
   describe('isAvailable', () => {
     it('returns true when API key is provided', () => {
       expect(voiceService.isAvailable()).toBe(true)
@@ -155,6 +231,18 @@ describe('VoiceService', () => {
 
       await expect(
         service.textToSpeech({ voiceId: 'test', text: 'hello' })
+      ).rejects.toThrow(VoiceServiceUnavailableError)
+
+      process.env.ELEVENLABS_API_KEY = originalEnv
+    })
+
+    it('throws VoiceServiceUnavailableError for speechToText when API key is missing', async () => {
+      const originalEnv = process.env.ELEVENLABS_API_KEY
+      delete process.env.ELEVENLABS_API_KEY
+      const service = new VoiceService()
+
+      await expect(
+        service.speechToText({ file: Buffer.from([1, 2, 3]) as unknown as File })
       ).rejects.toThrow(VoiceServiceUnavailableError)
 
       process.env.ELEVENLABS_API_KEY = originalEnv
