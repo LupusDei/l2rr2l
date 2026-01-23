@@ -1,11 +1,26 @@
 import { Router } from 'express'
+import { randomUUID } from 'crypto'
 import {
   getVoiceService,
   VoiceServiceUnavailableError,
   VoiceSettingsValidationFailedError,
 } from '../services/voice.js'
+import { db } from '../db/index.js'
 
 const router = Router()
+
+interface VoiceSettingsRow {
+  id: string
+  child_id: string
+  voice_id: string
+  stability: number
+  similarity_boost: number
+  style: number
+  speed: number
+  use_speaker_boost: number
+  created_at: string
+  updated_at: string
+}
 
 /**
  * Handle voice service errors and send appropriate responses
@@ -151,6 +166,136 @@ router.delete('/voices/:voiceId', async (req, res) => {
     res.json({ success: true })
   } catch (error) {
     handleVoiceError(error, res, 'delete voice')
+  }
+})
+
+/**
+ * GET /api/voice/settings/:childId
+ * Get voice settings for a child (or defaults if not set)
+ */
+router.get('/settings/:childId', (req, res) => {
+  try {
+    const { childId } = req.params
+
+    const row = db
+      .prepare('SELECT * FROM voice_settings WHERE child_id = ?')
+      .get(childId) as VoiceSettingsRow | undefined
+
+    if (row) {
+      res.json({
+        voiceId: row.voice_id,
+        stability: row.stability,
+        similarityBoost: row.similarity_boost,
+        style: row.style,
+        speed: row.speed,
+        useSpeakerBoost: row.use_speaker_boost === 1,
+      })
+    } else {
+      // Return default settings
+      res.json({
+        voiceId: 'pMsXgVXv3BLzUgSXRplE',
+        stability: 0.5,
+        similarityBoost: 0.75,
+        style: 0,
+        speed: 1.0,
+        useSpeakerBoost: true,
+      })
+    }
+  } catch (error) {
+    console.error('Failed to get voice settings:', error)
+    res.status(500).json({ error: 'Failed to get voice settings' })
+  }
+})
+
+/**
+ * PUT /api/voice/settings/:childId
+ * Save voice settings for a child
+ */
+router.put('/settings/:childId', (req, res) => {
+  try {
+    const { childId } = req.params
+    const { voiceId, stability, similarityBoost, style, speed, useSpeakerBoost } = req.body
+
+    // Validate settings
+    const errors: Array<{ field: string; message: string }> = []
+
+    if (stability !== undefined && (stability < 0 || stability > 1)) {
+      errors.push({ field: 'stability', message: 'stability must be between 0 and 1' })
+    }
+    if (similarityBoost !== undefined && (similarityBoost < 0 || similarityBoost > 1)) {
+      errors.push({ field: 'similarityBoost', message: 'similarityBoost must be between 0 and 1' })
+    }
+    if (style !== undefined && (style < 0 || style > 1)) {
+      errors.push({ field: 'style', message: 'style must be between 0 and 1' })
+    }
+    if (speed !== undefined && (speed < 0.5 || speed > 2.0)) {
+      errors.push({ field: 'speed', message: 'speed must be between 0.5 and 2.0' })
+    }
+
+    if (errors.length > 0) {
+      res.status(400).json({ error: 'Invalid voice settings', validationErrors: errors })
+      return
+    }
+
+    // Check if settings exist for this child
+    const existing = db
+      .prepare('SELECT id FROM voice_settings WHERE child_id = ?')
+      .get(childId) as { id: string } | undefined
+
+    if (existing) {
+      // Update existing settings
+      db.prepare(`
+        UPDATE voice_settings SET
+          voice_id = COALESCE(?, voice_id),
+          stability = COALESCE(?, stability),
+          similarity_boost = COALESCE(?, similarity_boost),
+          style = COALESCE(?, style),
+          speed = COALESCE(?, speed),
+          use_speaker_boost = COALESCE(?, use_speaker_boost),
+          updated_at = datetime('now')
+        WHERE child_id = ?
+      `).run(
+        voiceId ?? null,
+        stability ?? null,
+        similarityBoost ?? null,
+        style ?? null,
+        speed ?? null,
+        useSpeakerBoost !== undefined ? (useSpeakerBoost ? 1 : 0) : null,
+        childId
+      )
+    } else {
+      // Insert new settings
+      db.prepare(`
+        INSERT INTO voice_settings (id, child_id, voice_id, stability, similarity_boost, style, speed, use_speaker_boost)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        randomUUID(),
+        childId,
+        voiceId ?? 'pMsXgVXv3BLzUgSXRplE',
+        stability ?? 0.5,
+        similarityBoost ?? 0.75,
+        style ?? 0,
+        speed ?? 1.0,
+        useSpeakerBoost !== undefined ? (useSpeakerBoost ? 1 : 0) : 1
+      )
+    }
+
+    // Return the updated settings
+    const row = db
+      .prepare('SELECT * FROM voice_settings WHERE child_id = ?')
+      .get(childId) as VoiceSettingsRow
+
+    res.json({
+      voiceId: row.voice_id,
+      stability: row.stability,
+      similarityBoost: row.similarity_boost,
+      style: row.style,
+      speed: row.speed,
+      useSpeakerBoost: row.use_speaker_boost === 1,
+    })
+  } catch (error) {
+    console.error('Failed to save voice settings:', error)
+    res.status(500).json({ error: 'Failed to save voice settings' })
   }
 })
 

@@ -3,10 +3,14 @@ import './App.css'
 import Onboarding from './components/Onboarding'
 import LessonSelection from './components/LessonSelection'
 import SpellingGame from './components/SpellingGame'
+import Settings from './components/Settings'
 import { VoiceProvider } from './hooks/useVoice'
 import type { Lesson } from './components/LessonCard'
 
-type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling'
+type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling' | 'settings'
+
+// Temporary child ID for development (would come from auth in production)
+const DEV_CHILD_ID = 'dev-child-1'
 
 interface ChildData {
   name: string
@@ -51,6 +55,23 @@ function App() {
     setScreen('home')
   }
 
+  const handleSettings = () => {
+    setScreen('settings')
+  }
+
+  const handleSettingsBack = () => {
+    setScreen('home')
+  }
+
+  if (screen === 'settings') {
+    return (
+      <Settings
+        childId={DEV_CHILD_ID}
+        onBack={handleSettingsBack}
+      />
+    )
+  }
+
   if (screen === 'spelling') {
     return (
       <VoiceProvider>
@@ -80,6 +101,16 @@ function App() {
 
   return (
     <div className="app homescreen">
+      {/* Settings button */}
+      <button
+        className="home-settings-btn"
+        type="button"
+        onClick={handleSettings}
+        aria-label="Settings"
+      >
+        <span aria-hidden="true">&#9881;</span>
+      </button>
+
       {/* Decorative floating elements */}
       <div className="decorations" aria-hidden="true">
         <span className="decoration crayon crayon-red">&#9998;</span>
