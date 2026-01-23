@@ -10,6 +10,15 @@ describe('Settings', () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
+    // Mock localStorage
+    const localStorageMock = {
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      clear: vi.fn(),
+    }
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+
     // Mock fetch for loading settings
     global.fetch = vi.fn().mockImplementation((url: string) => {
       if (url.includes('/api/voice/settings/')) {
@@ -72,17 +81,18 @@ describe('Settings', () => {
     expect(mockOnBack).toHaveBeenCalledTimes(1)
   })
 
-  it('should render error state when fetch fails', async () => {
+  it('should fall back to default settings when fetch fails', async () => {
     global.fetch = vi.fn().mockRejectedValue(new Error('Network error'))
 
     render(<Settings childId="test-child" onBack={mockOnBack} />)
 
+    // Should render settings with defaults (not error state)
     await waitFor(() => {
-      // The error message comes from the caught exception
-      expect(screen.getByText('Network error')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { level: 1, name: 'Settings' })).toBeInTheDocument()
     })
 
-    expect(screen.getByRole('button', { name: /try again/i })).toBeInTheDocument()
+    // Voice settings section should be rendered
+    expect(screen.getByText(/Choose a voice and adjust/)).toBeInTheDocument()
   })
 
   it('should render voice settings section after loading', async () => {

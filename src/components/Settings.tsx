@@ -7,6 +7,19 @@ export interface FullVoiceSettings extends VoiceSettings {
   voiceId: string
 }
 
+// Default settings matching the backend defaults
+const DEFAULT_VOICE_SETTINGS: FullVoiceSettings = {
+  voiceId: 'pMsXgVXv3BLzUgSXRplE',
+  stability: 0.5,
+  similarityBoost: 0.75,
+  style: 0,
+  speed: 1.0,
+  useSpeakerBoost: true,
+}
+
+// LocalStorage key for caching settings
+const STORAGE_KEY_PREFIX = 'l2rr2l_voice_settings_'
+
 interface SettingsProps {
   childId: string
   onBack: () => void
@@ -18,19 +31,39 @@ type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 export default function Settings({ childId, onBack, onSettingsChange }: SettingsProps) {
   const [settings, setSettings] = useState<FullVoiceSettings | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
   const [saveError, setSaveError] = useState<string | null>(null)
 
   const saveTimeoutRef = useRef<number | null>(null)
   const toastTimeoutRef = useRef<number | null>(null)
 
+  // Helper to get cached settings from localStorage
+  const getCachedSettings = useCallback((): FullVoiceSettings | null => {
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY_PREFIX + childId)
+      if (cached) {
+        return JSON.parse(cached) as FullVoiceSettings
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+    return null
+  }, [childId])
+
+  // Helper to save settings to localStorage
+  const cacheSettings = useCallback((settingsToCache: FullVoiceSettings) => {
+    try {
+      localStorage.setItem(STORAGE_KEY_PREFIX + childId, JSON.stringify(settingsToCache))
+    } catch {
+      // Ignore localStorage errors (e.g., quota exceeded, private browsing)
+    }
+  }, [childId])
+
   // Load settings on mount
   useEffect(() => {
     const loadSettings = async () => {
       try {
         setIsLoading(true)
-        setLoadError(null)
 
         const response = await fetch(`/api/voice/settings/${childId}`)
         if (!response.ok) {
@@ -39,15 +72,23 @@ export default function Settings({ childId, onBack, onSettingsChange }: Settings
 
         const data = await response.json()
         setSettings(data)
-      } catch (err) {
-        setLoadError(err instanceof Error ? err.message : 'Failed to load settings')
+        cacheSettings(data) // Cache successful API response
+      } catch {
+        // API failed - fall back to cached settings or defaults
+        const cached = getCachedSettings()
+        if (cached) {
+          setSettings(cached)
+        } else {
+          setSettings({ ...DEFAULT_VOICE_SETTINGS })
+        }
+        // Don't show error - settings are usable with fallback
       } finally {
         setIsLoading(false)
       }
     }
 
     loadSettings()
-  }, [childId])
+  }, [childId, cacheSettings, getCachedSettings])
 
   // Cleanup timeouts on unmount
   useEffect(() => {
@@ -63,12 +104,15 @@ export default function Settings({ childId, onBack, onSettingsChange }: Settings
 
   // Save settings to API with debounce
   const saveSettings = useCallback(async (newSettings: FullVoiceSettings) => {
+    // Always cache to localStorage immediately (before debounce)
+    cacheSettings(newSettings)
+
     // Clear any pending save
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current)
     }
 
-    // Debounce the save
+    // Debounce the API save
     saveTimeoutRef.current = window.setTimeout(async () => {
       try {
         setSaveStatus('saving')
@@ -94,21 +138,21 @@ export default function Settings({ childId, onBack, onSettingsChange }: Settings
         toastTimeoutRef.current = window.setTimeout(() => {
           setSaveStatus('idle')
         }, 2000)
-      } catch (err) {
-        setSaveStatus('error')
-        setSaveError(err instanceof Error ? err.message : 'Failed to save settings')
+      } catch {
+        // API save failed, but localStorage save succeeded
+        // Show "saved" status since settings are persisted locally
+        setSaveStatus('saved')
 
-        // Clear error after 5 seconds
+        // Clear the "saved" toast after 2 seconds
         if (toastTimeoutRef.current) {
           clearTimeout(toastTimeoutRef.current)
         }
         toastTimeoutRef.current = window.setTimeout(() => {
           setSaveStatus('idle')
-          setSaveError(null)
-        }, 5000)
+        }, 2000)
       }
     }, 500) // 500ms debounce
-  }, [childId])
+  }, [childId, cacheSettings])
 
   const handleVoiceSelect = useCallback((voice: Voice) => {
     if (!settings) return
@@ -140,30 +184,6 @@ export default function Settings({ childId, onBack, onSettingsChange }: Settings
         <div className="settings-loading">
           <span className="settings-spinner" aria-hidden="true">&#9881;</span>
           <span>Loading settings...</span>
-        </div>
-      </div>
-    )
-  }
-
-  if (loadError) {
-    return (
-      <div className="settings">
-        <header className="settings-header">
-          <button className="settings-back-btn" type="button" onClick={onBack}>
-            <span aria-hidden="true">&larr;</span> Back
-          </button>
-          <h1 className="settings-title">Settings</h1>
-        </header>
-        <div className="settings-error">
-          <span className="settings-error-icon" aria-hidden="true">&#9888;</span>
-          <span>{loadError}</span>
-          <button
-            type="button"
-            className="settings-retry-btn"
-            onClick={() => window.location.reload()}
-          >
-            Try Again
-          </button>
         </div>
       </div>
     )
