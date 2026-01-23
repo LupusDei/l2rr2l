@@ -53,7 +53,7 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
 
-  // Clean up audio element on unmount
+  // Clean up audio element and speech synthesis on unmount
   useEffect(() => {
     return () => {
       if (audioRef.current) {
@@ -63,7 +63,35 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
         mediaRecorderRef.current.stop()
       }
+      // Cancel any ongoing browser speech synthesis
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+      }
     }
+  }, [])
+
+  // Fallback to browser's Web Speech API when server API is unavailable
+  const speakWithBrowserFallback = useCallback((text: string): Promise<void> => {
+    return new Promise((resolve) => {
+      if (!('speechSynthesis' in window)) {
+        console.warn('Web Speech API not available')
+        resolve()
+        return
+      }
+
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.rate = 0.9 // Slightly slower for children
+      utterance.pitch = 1.0
+      utterance.volume = 1.0
+
+      utterance.onend = () => resolve()
+      utterance.onerror = () => {
+        console.warn('Browser speech synthesis failed')
+        resolve()
+      }
+
+      window.speechSynthesis.speak(utterance)
+    })
   }, [])
 
   const processQueue = useCallback(async () => {
@@ -98,7 +126,9 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
         })
 
         if (!response.ok) {
-          console.warn('Voice API failed, continuing silently')
+          // Server API unavailable - fall back to browser speech synthesis
+          console.info('Voice API unavailable, using browser speech synthesis')
+          await speakWithBrowserFallback(text)
           continue
         }
 
@@ -130,13 +160,15 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
           })
         })
       } catch (error) {
-        console.warn('Voice synthesis failed, continuing silently:', error)
+        // Network error or other failure - fall back to browser speech synthesis
+        console.info('Voice synthesis error, using browser fallback:', error)
+        await speakWithBrowserFallback(text)
       }
     }
 
     isProcessingRef.current = false
     setIsSpeaking(false)
-  }, [settings])
+  }, [settings, speakWithBrowserFallback])
 
   const speak = useCallback(async (text: string) => {
     queueRef.current.push(text)
