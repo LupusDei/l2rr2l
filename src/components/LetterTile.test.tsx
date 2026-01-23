@@ -117,4 +117,24 @@ describe('LetterTile', () => {
     const tile = screen.getByText('A')
     expect(tile.style.zIndex).toBe('1')
   })
+
+  it('calls onDrag with position during drag', () => {
+    const onDrag = vi.fn()
+    render(<LetterTile {...defaultProps} onDrag={onDrag} />)
+    const tile = screen.getByText('A')
+    fireEvent.mouseDown(tile, { clientX: 100, clientY: 100 })
+    fireEvent.mouseMove(window, { clientX: 150, clientY: 120 })
+    expect(onDrag).toHaveBeenCalledWith(150, 120)
+  })
+
+  it('calls onDrag multiple times during drag movement', () => {
+    const onDrag = vi.fn()
+    render(<LetterTile {...defaultProps} onDrag={onDrag} />)
+    const tile = screen.getByText('A')
+    fireEvent.mouseDown(tile, { clientX: 100, clientY: 100 })
+    fireEvent.mouseMove(window, { clientX: 110, clientY: 110 })
+    fireEvent.mouseMove(window, { clientX: 120, clientY: 120 })
+    fireEvent.mouseMove(window, { clientX: 130, clientY: 130 })
+    expect(onDrag).toHaveBeenCalledTimes(3)
+  })
 })

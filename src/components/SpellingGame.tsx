@@ -133,6 +133,24 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
     setDraggedTile({ id, letter })
   }
 
+  // Handle drag position updates for live hover detection
+  const handleDrag = useCallback((clientX: number, clientY: number) => {
+    // Check which zone the cursor is over
+    let hoverZoneIndex: number | null = null
+    zoneBoundsRef.current.forEach((bounds, index) => {
+      if (
+        clientX >= bounds.left &&
+        clientX <= bounds.right &&
+        clientY >= bounds.top &&
+        clientY <= bounds.bottom &&
+        placedLetters[index] === null // Only highlight empty zones
+      ) {
+        hoverZoneIndex = index
+      }
+    })
+    setActiveZoneIndex(hoverZoneIndex)
+  }, [placedLetters])
+
   const handleDragEnd = useCallback(() => {
     if (!draggedTile) return
 
@@ -369,6 +387,7 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
               letter={letter}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
+              onDrag={handleDrag}
               disabled={isUsed}
               placed={isUsed}
             />

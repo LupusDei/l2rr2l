@@ -6,6 +6,7 @@ export interface LetterTileProps {
   id: string
   onDragStart: (id: string, letter: string) => void
   onDragEnd: () => void
+  onDrag?: (clientX: number, clientY: number) => void
   disabled?: boolean
   placed?: boolean
 }
@@ -15,6 +16,7 @@ export default function LetterTile({
   id,
   onDragStart,
   onDragEnd,
+  onDrag,
   disabled = false,
   placed = false,
 }: LetterTileProps) {
@@ -38,7 +40,8 @@ export default function LetterTile({
       x: clientX - startPosRef.current.x,
       y: clientY - startPosRef.current.y,
     })
-  }, [])
+    onDrag?.(clientX, clientY)
+  }, [onDrag])
 
   // Handle mouse/touch end
   const handleEnd = useCallback(() => {
