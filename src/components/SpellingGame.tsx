@@ -33,6 +33,23 @@ const streakMessages = [
   { streak: 10, text: 'Champion!', emoji: '🏆' },
 ]
 
+// Voice celebration phrases - some include the word, some are general
+const voiceCelebrationPhrases = [
+  (word: string) => `Wonderful! You spelled ${word}!`,
+  (word: string) => `Amazing job! That's ${word}!`,
+  (word: string) => `You did it! ${word}!`,
+  (word: string) => `Great spelling! ${word}!`,
+  () => `You're a spelling star!`,
+  () => `Fantastic work!`,
+  () => `Keep it up!`,
+]
+
+// Get a random celebration phrase
+function getVoiceCelebration(word: string): string {
+  const phrase = voiceCelebrationPhrases[Math.floor(Math.random() * voiceCelebrationPhrases.length)]
+  return phrase(word)
+}
+
 // Dancing characters for celebration
 const dancingCharacters = ['🎈', '⭐', '🌈', '🎀', '🦋', '🌸']
 
@@ -216,6 +233,11 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
           }
 
           setShowCelebration(true)
+
+          // Voice celebration - say the phrase after sound effect
+          setTimeout(() => {
+            speak(getVoiceCelebration(currentWord.word))
+          }, 500)
 
           // Move to next word after celebration (longer for streak celebrations)
           const celebrationDuration = streakMsg ? 2500 : 2000
