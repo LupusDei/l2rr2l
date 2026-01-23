@@ -4,7 +4,7 @@ import Onboarding from './components/Onboarding'
 import LessonSelection from './components/LessonSelection'
 import type { Lesson } from './components/LessonCard'
 
-type Screen = 'home' | 'onboarding' | 'lessons'
+type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling'
 
 interface ChildData {
   name: string
@@ -41,6 +41,14 @@ function App() {
     setScreen('home')
   }
 
+  const handleSpellingGame = () => {
+    setScreen('spelling')
+  }
+
+  const handleSpellingBack = () => {
+    setScreen('home')
+  }
+
   if (screen === 'onboarding') {
     return (
       <Onboarding
@@ -57,6 +65,20 @@ function App() {
         onSelectLesson={handleSelectLesson}
         onBack={handleLessonsBack}
       />
+    )
+  }
+
+  if (screen === 'spelling') {
+    return (
+      <div className="app spelling-game">
+        <main className="main">
+          <h1 className="spelling-title">Spelling Game</h1>
+          <p className="spelling-subtitle">Coming soon!</p>
+          <button className="back-button" type="button" onClick={handleSpellingBack}>
+            Back to Home
+          </button>
+        </main>
+      </div>
     )
   }
 
@@ -104,6 +126,14 @@ function App() {
             Get Started!
           </button>
         )}
+
+        <div className="games-section">
+          <button className="game-card spelling-card" type="button" onClick={handleSpellingGame}>
+            <span className="game-icon" aria-hidden="true">ABC</span>
+            <span className="game-title">Spelling Game</span>
+            <span className="game-description">Practice spelling words!</span>
+          </button>
+        </div>
       </main>
     </div>
   )
