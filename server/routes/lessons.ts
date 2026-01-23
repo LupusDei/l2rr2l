@@ -91,9 +91,18 @@ router.get('/', (req: Request, res: Response) => {
   }
 
   if (query) {
-    sql += ' AND (l.title LIKE ? OR l.description LIKE ? OR l.subject LIKE ?)'
-    const searchTerm = `%${query}%`
-    params.push(searchTerm, searchTerm, searchTerm)
+    const searchQuery = (query as string)
+      .replace(/[^\w\s]/g, ' ')
+      .trim()
+      .split(/\s+/)
+      .filter(term => term.length > 0)
+      .map(term => `${term}*`)
+      .join(' ')
+
+    if (searchQuery) {
+      sql += ' AND l.rowid IN (SELECT rowid FROM lessons_fts WHERE lessons_fts MATCH ?)'
+      params.push(searchQuery)
+    }
   }
 
   sql += ' GROUP BY l.id ORDER BY l.created_at DESC LIMIT ? OFFSET ?'
@@ -132,6 +141,96 @@ router.get('/subjects', (_req: Request, res: Response) => {
 
 router.get('/supported-subjects', (_req: Request, res: Response) => {
   res.json({ subjects: getSupportedSubjects() })
+})
+
+router.get('/search', (req: Request, res: Response) => {
+  const { q, limit = '20', offset = '0' } = req.query
+
+  if (!q || typeof q !== 'string' || q.trim().length === 0) {
+    res.status(400).json({ error: 'Search query is required' })
+    return
+  }
+
+  const searchQuery = q
+    .replace(/[^\w\s]/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(term => term.length > 0)
+    .map(term => `${term}*`)
+    .join(' ')
+
+  if (!searchQuery) {
+    res.json({ lessons: [], total: 0 })
+    return
+  }
+
+  try {
+    // First get matching lesson IDs with relevance ranking
+    const matchingIds = db.prepare(`
+      SELECT rowid, bm25(lessons_fts) as rank
+      FROM lessons_fts
+      WHERE lessons_fts MATCH ?
+      ORDER BY rank
+      LIMIT ? OFFSET ?
+    `).all(searchQuery, parseInt(limit as string, 10), parseInt(offset as string, 10)) as { rowid: number; rank: number }[]
+
+    if (matchingIds.length === 0) {
+      res.json({ lessons: [], total: 0, limit: parseInt(limit as string, 10), offset: parseInt(offset as string, 10) })
+      return
+    }
+
+    const rowids = matchingIds.map(m => m.rowid)
+    const placeholders = rowids.map(() => '?').join(',')
+
+    const lessons = db.prepare(`
+      SELECT l.*,
+        COALESCE(AVG(r.rating), 0) as avg_rating,
+        COUNT(DISTINCT r.id) as rating_count,
+        COALESCE(SUM(e.completion_count), 0) as total_completions
+      FROM lessons l
+      LEFT JOIN lesson_ratings r ON l.id = r.lesson_id
+      LEFT JOIN lesson_engagement e ON l.id = e.lesson_id
+      WHERE l.rowid IN (${placeholders}) AND l.is_published = 1
+      GROUP BY l.id
+    `).all(...rowids) as (LessonRow & {
+      avg_rating: number
+      rating_count: number
+      total_completions: number
+    })[]
+
+    // Sort by the original ranking order
+    const rowIdToRank = new Map(matchingIds.map(m => [m.rowid, m.rank]))
+    const lessonRowidMap = new Map<string, number>()
+    const allLessons = db.prepare(`SELECT id, rowid FROM lessons WHERE rowid IN (${placeholders})`).all(...rowids) as { id: string; rowid: number }[]
+    allLessons.forEach(l => lessonRowidMap.set(l.id, l.rowid))
+    lessons.sort((a, b) => {
+      const rankA = rowIdToRank.get(lessonRowidMap.get(a.id) || 0) || 0
+      const rankB = rowIdToRank.get(lessonRowidMap.get(b.id) || 0) || 0
+      return rankA - rankB
+    })
+
+    const total = (db.prepare(`
+      SELECT COUNT(*) as count
+      FROM lessons_fts
+      INNER JOIN lessons ON lessons.rowid = lessons_fts.rowid
+      WHERE lessons_fts MATCH ? AND lessons.is_published = 1
+    `).get(searchQuery) as { count: number }).count
+
+    res.json({
+      lessons: lessons.map(l => ({
+        ...parseLesson(l),
+        avg_rating: l.avg_rating || null,
+        rating_count: l.rating_count,
+        total_completions: l.total_completions
+      })),
+      total,
+      limit: parseInt(limit as string, 10),
+      offset: parseInt(offset as string, 10)
+    })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Search failed'
+    res.status(500).json({ error: message })
+  }
 })
 
 router.get('/filters', (_req: Request, res: Response) => {

@@ -126,6 +126,42 @@ export function initializeDb() {
     CREATE INDEX IF NOT EXISTS idx_lesson_ratings_lesson ON lesson_ratings(lesson_id);
     CREATE INDEX IF NOT EXISTS idx_lesson_engagement_lesson ON lesson_engagement(lesson_id);
     CREATE INDEX IF NOT EXISTS idx_lesson_engagement_child ON lesson_engagement(child_id);
+
+    -- Full-text search virtual table for lessons
+    CREATE VIRTUAL TABLE IF NOT EXISTS lessons_fts USING fts5(
+      title,
+      subject,
+      description,
+      tags,
+      content='lessons',
+      content_rowid='rowid'
+    );
+
+    -- Triggers to keep FTS table in sync with lessons table
+    CREATE TRIGGER IF NOT EXISTS lessons_fts_insert AFTER INSERT ON lessons BEGIN
+      INSERT INTO lessons_fts(rowid, title, subject, description, tags)
+      VALUES (NEW.rowid, NEW.title, NEW.subject, NEW.description, NEW.tags);
+    END;
+
+    CREATE TRIGGER IF NOT EXISTS lessons_fts_delete AFTER DELETE ON lessons BEGIN
+      INSERT INTO lessons_fts(lessons_fts, rowid, title, subject, description, tags)
+      VALUES ('delete', OLD.rowid, OLD.title, OLD.subject, OLD.description, OLD.tags);
+    END;
+
+    CREATE TRIGGER IF NOT EXISTS lessons_fts_update AFTER UPDATE ON lessons BEGIN
+      INSERT INTO lessons_fts(lessons_fts, rowid, title, subject, description, tags)
+      VALUES ('delete', OLD.rowid, OLD.title, OLD.subject, OLD.description, OLD.tags);
+      INSERT INTO lessons_fts(rowid, title, subject, description, tags)
+      VALUES (NEW.rowid, NEW.title, NEW.subject, NEW.description, NEW.tags);
+    END;
+  `)
+}
+
+export function rebuildLessonsFts() {
+  db.exec(`
+    DELETE FROM lessons_fts;
+    INSERT INTO lessons_fts(rowid, title, subject, description, tags)
+    SELECT rowid, title, subject, description, tags FROM lessons;
   `)
 }
 

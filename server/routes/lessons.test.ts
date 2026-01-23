@@ -168,6 +168,98 @@ describe('Lessons Routes', () => {
       expect(res.body.lessons).toHaveLength(1)
       expect(res.body.lessons[0].subject).toBe('Science')
     })
+
+    it('should search with partial word match', async () => {
+      const res = await request(app).get('/lessons?query=Sci')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(1)
+      expect(res.body.lessons[0].subject).toBe('Science')
+    })
+
+    it('should search case-insensitively', async () => {
+      const res = await request(app).get('/lessons?query=science')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(1)
+    })
+  })
+
+  describe('GET /lessons/search', () => {
+    beforeEach(async () => {
+      await request(app).post('/lessons').send({
+        title: 'Introduction to Fractions',
+        subject: 'Math',
+        description: 'Learn how fractions work with visual examples'
+      })
+      await request(app).post('/lessons').send({
+        title: 'Basic Addition',
+        subject: 'Math',
+        description: 'Adding numbers together'
+      })
+      await request(app).post('/lessons').send({
+        title: 'Dinosaur Facts',
+        subject: 'Science',
+        description: 'Explore the prehistoric world of dinosaurs'
+      })
+    })
+
+    it('should require a search query', async () => {
+      const res = await request(app).get('/lessons/search')
+
+      expect(res.status).toBe(400)
+      expect(res.body.error).toContain('required')
+    })
+
+    it('should return matching lessons ranked by relevance', async () => {
+      const res = await request(app).get('/lessons/search?q=fractions')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(1)
+      expect(res.body.lessons[0].title).toBe('Introduction to Fractions')
+    })
+
+    it('should search across title and description', async () => {
+      const res = await request(app).get('/lessons/search?q=prehistoric')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(1)
+      expect(res.body.lessons[0].title).toBe('Dinosaur Facts')
+    })
+
+    it('should support prefix matching', async () => {
+      const res = await request(app).get('/lessons/search?q=dino')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(1)
+      expect(res.body.lessons[0].title).toBe('Dinosaur Facts')
+    })
+
+    it('should handle multi-word queries', async () => {
+      const res = await request(app).get('/lessons/search?q=visual examples')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(1)
+      expect(res.body.lessons[0].title).toBe('Introduction to Fractions')
+    })
+
+    it('should return empty results for no matches', async () => {
+      const res = await request(app).get('/lessons/search?q=zzzznonexistent')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(0)
+      expect(res.body.total).toBe(0)
+    })
+
+    it('should support pagination', async () => {
+      const res = await request(app).get('/lessons/search?q=math&limit=1&offset=0')
+
+      expect(res.status).toBe(200)
+      expect(res.body.lessons).toHaveLength(1)
+      expect(res.body.total).toBe(2)
+      expect(res.body.limit).toBe(1)
+      expect(res.body.offset).toBe(0)
+    })
   })
 
   describe('GET /lessons/filters', () => {
