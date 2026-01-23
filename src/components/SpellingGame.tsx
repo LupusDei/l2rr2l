@@ -14,17 +14,42 @@ interface PlacedLetter {
   tileId: string
 }
 
+// Celebration messages that rotate
+const celebrationMessages = [
+  { text: 'Great Job!', emoji: '🎉' },
+  { text: 'Amazing!', emoji: '🌟' },
+  { text: 'Awesome!', emoji: '✨' },
+  { text: 'Super!', emoji: '🚀' },
+  { text: 'Fantastic!', emoji: '💫' },
+  { text: 'Wonderful!', emoji: '🎊' },
+]
+
+// Extra special messages for streaks
+const streakMessages = [
+  { streak: 3, text: 'On Fire!', emoji: '🔥' },
+  { streak: 5, text: 'Unstoppable!', emoji: '⚡' },
+  { streak: 7, text: 'Legendary!', emoji: '👑' },
+  { streak: 10, text: 'Champion!', emoji: '🏆' },
+]
+
+// Dancing characters for celebration
+const dancingCharacters = ['🎈', '⭐', '🌈', '🎀', '🦋', '🌸']
+
 // Generate confetti positions once, outside component
-function generateConfettiPositions() {
-  return Array.from({ length: 20 }).map((_, i) => ({
+function generateConfettiPositions(count: number = 40) {
+  const shapes = ['square', 'circle', 'rectangle'] as const
+  return Array.from({ length: count }).map((_, i) => ({
     id: i,
-    left: `${(i * 5) % 100}%`,
-    delay: `${(i * 0.025) % 0.5}s`,
-    color: ['#ff6b6b', '#ffd43b', '#51cf66', '#4dabf7', '#cc5de8'][i % 5]
+    left: `${Math.random() * 100}%`,
+    delay: `${Math.random() * 0.6}s`,
+    color: ['#ff6b6b', '#ffd43b', '#51cf66', '#4dabf7', '#cc5de8', '#ff922b', '#20c997'][i % 7],
+    shape: shapes[i % 3],
+    size: 8 + Math.random() * 8,
+    duration: 1.2 + Math.random() * 0.8
   }))
 }
 
-const confettiPositions = generateConfettiPositions()
+const confettiPositions = generateConfettiPositions(40)
 
 // Helper to get shuffled letters for a word
 function getShuffledLetters(wordIndex: number): string[] {
@@ -49,12 +74,15 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
   const [correctZoneIndex, setCorrectZoneIndex] = useState<number | null>(null)
   const [showCelebration, setShowCelebration] = useState(false)
   const [wordsCompleted, setWordsCompleted] = useState(0)
+  const [streak, setStreak] = useState(0)
+  const [celebrationMessage, setCelebrationMessage] = useState(celebrationMessages[0])
+  const [isStreakCelebration, setIsStreakCelebration] = useState(false)
   const zoneBoundsRef = useRef<Map<number, DOMRect>>(new Map())
 
   const currentWord = words[currentWordIndex]
 
   // Start a new word by advancing to next index
-  const goToNextWord = useCallback(() => {
+  const goToNextWord = useCallback((resetStreak: boolean = false) => {
     const nextIndex = (currentWordIndex + 1) % words.length
     setCurrentWordIndex(nextIndex)
     setShuffledLetters(getShuffledLetters(nextIndex))
@@ -63,6 +91,10 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
     setShowCelebration(false)
     setWrongZoneIndex(null)
     setCorrectZoneIndex(null)
+    setIsStreakCelebration(false)
+    if (resetStreak) {
+      setStreak(0)
+    }
   }, [currentWordIndex])
 
   const handleDragStart = (id: string, letter: string) => {
@@ -117,10 +149,26 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
         if (allPlaced) {
           // Play word complete sound after a short delay
           setTimeout(() => playWordCompleteSound(), 300)
-          setShowCelebration(true)
+          const newStreak = streak + 1
+          setStreak(newStreak)
           setWordsCompleted(prev => prev + 1)
 
-          // Move to next word after celebration
+          // Check for streak celebration
+          const streakMsg = [...streakMessages].reverse().find(s => newStreak >= s.streak)
+          if (streakMsg) {
+            setCelebrationMessage({ text: streakMsg.text, emoji: streakMsg.emoji })
+            setIsStreakCelebration(true)
+          } else {
+            // Random celebration message
+            const randomMsg = celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)]
+            setCelebrationMessage(randomMsg)
+            setIsStreakCelebration(false)
+          }
+
+          setShowCelebration(true)
+
+          // Move to next word after celebration (longer for streak celebrations)
+          const celebrationDuration = streakMsg ? 2500 : 2000
           setTimeout(() => {
             const nextIndex = (currentWordIndex + 1) % words.length
             setCurrentWordIndex(nextIndex)
@@ -130,7 +178,8 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
             setShowCelebration(false)
             setWrongZoneIndex(null)
             setCorrectZoneIndex(null)
-          }, 2000)
+            setIsStreakCelebration(false)
+          }, celebrationDuration)
         }
       } else {
         // Wrong position - trigger shake animation
@@ -148,7 +197,7 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
   }, [])
 
   const handleSkip = () => {
-    goToNextWord()
+    goToNextWord(true) // Reset streak when skipping
   }
 
   return (
@@ -165,24 +214,78 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
 
       {/* Celebration overlay */}
       {showCelebration && (
-        <div className="celebration-overlay">
+        <div className={`celebration-overlay ${isStreakCelebration ? 'streak-celebration' : ''}`}>
           <div className="celebration-content">
-            <span className="celebration-emoji">🎉</span>
-            <h2 className="celebration-text">Great Job!</h2>
+            {/* Dancing characters on sides */}
+            <div className="dancing-characters">
+              {dancingCharacters.slice(0, 3).map((char, i) => (
+                <span key={`left-${i}`} className="dancing-char left" style={{ animationDelay: `${i * 0.15}s` }}>
+                  {char}
+                </span>
+              ))}
+            </div>
+            <div className="dancing-characters right">
+              {dancingCharacters.slice(3).map((char, i) => (
+                <span key={`right-${i}`} className="dancing-char right" style={{ animationDelay: `${i * 0.15}s` }}>
+                  {char}
+                </span>
+              ))}
+            </div>
+
+            {/* Main celebration emoji */}
+            <span className={`celebration-emoji ${isStreakCelebration ? 'streak-emoji' : ''}`}>
+              {celebrationMessage.emoji}
+            </span>
+
+            {/* Celebration text */}
+            <h2 className={`celebration-text ${isStreakCelebration ? 'streak-text' : ''}`}>
+              {celebrationMessage.text}
+            </h2>
+
+            {/* Streak indicator */}
+            {streak > 1 && (
+              <p className="streak-indicator">
+                {streak} in a row! {'🔥'.repeat(Math.min(streak, 5))}
+              </p>
+            )}
+
+            {/* Completed word */}
             <p className="celebration-word">{currentWord.word.toUpperCase()}</p>
+
+            {/* Enhanced confetti */}
             <div className="confetti">
-              {confettiPositions.map(({ id, left, delay, color }) => (
+              {confettiPositions.map(({ id, left, delay, color, shape, size, duration }) => (
                 <span
                   key={id}
-                  className="confetti-piece"
+                  className={`confetti-piece confetti-${shape}`}
                   style={{
                     left,
                     animationDelay: delay,
-                    backgroundColor: color
+                    backgroundColor: color,
+                    width: shape === 'rectangle' ? size * 0.5 : size,
+                    height: shape === 'rectangle' ? size * 1.5 : size,
+                    animationDuration: `${duration}s`
                   }}
                 />
               ))}
             </div>
+
+            {/* Extra fireworks for streaks */}
+            {isStreakCelebration && (
+              <div className="fireworks">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="firework-particle"
+                    style={{
+                      '--angle': `${i * 30}deg`,
+                      '--delay': `${Math.random() * 0.3}s`,
+                      backgroundColor: ['#ff6b6b', '#ffd43b', '#51cf66', '#4dabf7'][i % 4]
+                    } as React.CSSProperties}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
