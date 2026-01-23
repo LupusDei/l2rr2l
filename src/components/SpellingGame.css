@@ -1,0 +1,263 @@
+/* ==========================================================================
+   Spelling Game - Main game screen
+   ========================================================================== */
+
+.spelling-game {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #e6f7ff 0%, #fff0f6 50%, #fff9db 100%);
+  padding: var(--space-4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header */
+.spelling-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.back-button {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #495057;
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 25px;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.progress-indicator {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #495057;
+  background: white;
+  border-radius: 25px;
+  padding: var(--space-2) var(--space-4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Word hint */
+.word-hint {
+  text-align: center;
+  margin: var(--space-6) 0;
+}
+
+.hint-image {
+  font-size: 5rem;
+  margin-bottom: var(--space-2);
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.hint-text {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1.5rem;
+  color: #495057;
+  margin: 0;
+}
+
+/* Drop zones container */
+.drop-zones {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin: var(--space-8) 0;
+}
+
+/* Letter tiles container */
+.letter-tiles {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin: var(--space-6) 0;
+  flex-wrap: wrap;
+}
+
+/* Skip button */
+.skip-button {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1rem;
+  color: #868e96;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-top: auto;
+  padding: var(--space-3);
+  align-self: center;
+  transition: color 0.2s ease;
+}
+
+.skip-button:hover {
+  color: #495057;
+}
+
+/* ==========================================================================
+   Celebration Overlay
+   ========================================================================== */
+
+.celebration-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fade-in 0.3s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.celebration-content {
+  background: white;
+  border-radius: 30px;
+  padding: var(--space-8) var(--space-12);
+  text-align: center;
+  animation: pop-in 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.celebration-emoji {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: var(--space-4);
+  animation: celebration-bounce 0.5s ease infinite;
+}
+
+@keyframes celebration-bounce {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+.celebration-text {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 2rem;
+  color: #51cf66;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.celebration-word {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #495057;
+  margin: 0;
+  letter-spacing: 0.2em;
+}
+
+/* Confetti */
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: -10px;
+  animation: confetti-fall 1.5s ease-out forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(400px) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Responsive */
+@media (min-width: 640px) {
+  .spelling-game {
+    padding: var(--space-6);
+  }
+
+  .hint-image {
+    font-size: 6rem;
+  }
+
+  .hint-text {
+    font-size: 1.75rem;
+  }
+
+  .drop-zones {
+    gap: var(--space-4);
+  }
+
+  .letter-tiles {
+    gap: var(--space-4);
+  }
+
+  .celebration-content {
+    padding: var(--space-10) var(--space-16);
+  }
+
+  .celebration-emoji {
+    font-size: 6rem;
+  }
+
+  .celebration-text {
+    font-size: 2.5rem;
+  }
+
+  .celebration-word {
+    font-size: 3rem;
+  }
+}

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import Onboarding from './components/Onboarding'
 import LessonSelection from './components/LessonSelection'
+import SpellingGame from './components/SpellingGame'
 import type { Lesson } from './components/LessonCard'
 
 type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling'
@@ -49,6 +50,10 @@ function App() {
     setScreen('home')
   }
 
+  if (screen === 'spelling') {
+    return <SpellingGame onBack={handleSpellingBack} />
+  }
+
   if (screen === 'onboarding') {
     return (
       <Onboarding
@@ -65,20 +70,6 @@ function App() {
         onSelectLesson={handleSelectLesson}
         onBack={handleLessonsBack}
       />
-    )
-  }
-
-  if (screen === 'spelling') {
-    return (
-      <div className="app spelling-game">
-        <main className="main">
-          <h1 className="spelling-title">Spelling Game</h1>
-          <p className="spelling-subtitle">Coming soon!</p>
-          <button className="back-button" type="button" onClick={handleSpellingBack}>
-            Back to Home
-          </button>
-        </main>
-      </div>
     )
   }
 

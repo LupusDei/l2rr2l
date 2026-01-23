@@ -1,0 +1,105 @@
+/* ==========================================================================
+   Letter Tile - Draggable letter component
+   ========================================================================== */
+
+.letter-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+  border-radius: 16px;
+  border: 4px solid white;
+  box-shadow:
+    0 4px 0 #1c7ed6,
+    0 6px 15px rgba(77, 171, 247, 0.4);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Different colors for variety */
+.letter-tile:nth-child(3n + 1) {
+  background: linear-gradient(135deg, #ff6b6b 0%, #fa5252 100%);
+  box-shadow:
+    0 4px 0 #e03131,
+    0 6px 15px rgba(255, 107, 107, 0.4);
+}
+
+.letter-tile:nth-child(3n + 2) {
+  background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+  box-shadow:
+    0 4px 0 #2f9e44,
+    0 6px 15px rgba(81, 207, 102, 0.4);
+}
+
+.letter-tile:nth-child(3n + 3) {
+  background: linear-gradient(135deg, #ffd43b 0%, #fab005 100%);
+  color: #495057;
+  box-shadow:
+    0 4px 0 #f59f00,
+    0 6px 15px rgba(255, 212, 59, 0.4);
+}
+
+/* Hover state */
+.letter-tile:hover:not(.disabled):not(.placed) {
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Dragging state */
+.letter-tile.dragging {
+  cursor: grabbing;
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.2),
+    0 12px 25px rgba(0, 0, 0, 0.3);
+  opacity: 0.9;
+}
+
+/* Disabled state (already placed) */
+.letter-tile.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: scale(0.9);
+}
+
+/* Placed state (in drop zone) */
+.letter-tile.placed {
+  cursor: default;
+  animation: placed-bounce 0.3s ease;
+}
+
+@keyframes placed-bounce {
+  0% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive sizing */
+@media (min-width: 640px) {
+  .letter-tile {
+    width: 90px;
+    height: 90px;
+    font-size: 3rem;
+    border-radius: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .letter-tile {
+    width: 100px;
+    height: 100px;
+    font-size: 3.5rem;
+  }
+}
