@@ -24,6 +24,15 @@ const DEFAULT_SETTINGS: VoiceSettings = {
   enabled: true,
 }
 
+interface ApiVoiceSettings {
+  voiceId?: string
+  stability?: number
+  similarityBoost?: number
+  style?: number
+  speed?: number
+  useSpeakerBoost?: boolean
+}
+
 const VoiceContext = createContext<VoiceContextValue | null>(null)
 
 interface VoiceProviderProps {
@@ -32,11 +41,37 @@ interface VoiceProviderProps {
 
 export function VoiceProvider({ children }: VoiceProviderProps) {
   const [settings, setSettings] = useState<VoiceSettings>(DEFAULT_SETTINGS)
-  const [isLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const queueRef = useRef<string[]>([])
   const isProcessingRef = useRef(false)
+
+  // Load voice settings from API on mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await fetch('/api/voice/settings')
+        if (response.ok) {
+          const data: ApiVoiceSettings = await response.json()
+          setSettings(prev => ({
+            ...prev,
+            voiceId: data.voiceId ?? prev.voiceId,
+            stability: data.stability ?? prev.stability,
+            similarityBoost: data.similarityBoost ?? prev.similarityBoost,
+          }))
+        }
+        // If response is not ok (404, 503, etc.), silently use defaults
+      } catch {
+        // Network error or API unavailable - silently use defaults
+        console.debug('Voice settings API unavailable, using defaults')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadSettings()
+  }, [])
 
   // Clean up audio element on unmount
   useEffect(() => {
