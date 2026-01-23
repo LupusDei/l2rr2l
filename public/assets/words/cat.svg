@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Simple cat illustration for reading game -->
+  <rect width="200" height="200" fill="#f5f5f5" rx="20"/>
+
+  <!-- Body -->
+  <ellipse cx="100" cy="130" rx="50" ry="40" fill="#ff9800"/>
+
+  <!-- Head -->
+  <circle cx="100" cy="80" r="40" fill="#ff9800"/>
+
+  <!-- Ears -->
+  <polygon points="70,50 60,20 85,45" fill="#ff9800"/>
+  <polygon points="130,50 140,20 115,45" fill="#ff9800"/>
+  <polygon points="72,48 65,28 82,46" fill="#ffcc80"/>
+  <polygon points="128,48 135,28 118,46" fill="#ffcc80"/>
+
+  <!-- Eyes -->
+  <ellipse cx="85" cy="75" rx="8" ry="10" fill="white"/>
+  <ellipse cx="115" cy="75" rx="8" ry="10" fill="white"/>
+  <circle cx="85" cy="77" r="5" fill="#333"/>
+  <circle cx="115" cy="77" r="5" fill="#333"/>
+  <circle cx="87" cy="75" r="2" fill="white"/>
+  <circle cx="117" cy="75" r="2" fill="white"/>
+
+  <!-- Nose -->
+  <ellipse cx="100" cy="90" rx="6" ry="4" fill="#ff6f61"/>
+
+  <!-- Mouth -->
+  <path d="M 92 96 Q 100 102 108 96" stroke="#333" stroke-width="2" fill="none"/>
+
+  <!-- Whiskers -->
+  <line x1="60" y1="88" x2="78" y2="90" stroke="#333" stroke-width="1.5"/>
+  <line x1="60" y1="95" x2="78" y2="95" stroke="#333" stroke-width="1.5"/>
+  <line x1="122" y1="90" x2="140" y2="88" stroke="#333" stroke-width="1.5"/>
+  <line x1="122" y1="95" x2="140" y2="95" stroke="#333" stroke-width="1.5"/>
+
+  <!-- Tail -->
+  <path d="M 150 130 Q 170 100 160 140 Q 155 160 145 155" stroke="#ff9800" stroke-width="12" fill="none" stroke-linecap="round"/>
+</svg>

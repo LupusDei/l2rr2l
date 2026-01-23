@@ -1,0 +1,226 @@
+{
+  "version": "1.0.0",
+  "description": "Curated 3-letter CVC word list for the reading game with asset references",
+  "words": [
+    {
+      "id": "cat",
+      "word": "cat",
+      "phonemes": ["c", "a", "t"],
+      "vowelSound": "short-a",
+      "difficulty": 1,
+      "image": "/assets/words/cat.svg",
+      "audio": "/assets/audio/cat.mp3",
+      "sentence": "The cat sat.",
+      "category": "animals"
+    },
+    {
+      "id": "dog",
+      "word": "dog",
+      "phonemes": ["d", "o", "g"],
+      "vowelSound": "short-o",
+      "difficulty": 1,
+      "image": "/assets/words/dog.svg",
+      "audio": "/assets/audio/dog.mp3",
+      "sentence": "A big dog.",
+      "category": "animals"
+    },
+    {
+      "id": "sun",
+      "word": "sun",
+      "phonemes": ["s", "u", "n"],
+      "vowelSound": "short-u",
+      "difficulty": 1,
+      "image": "/assets/words/sun.svg",
+      "audio": "/assets/audio/sun.mp3",
+      "sentence": "The hot sun.",
+      "category": "nature"
+    },
+    {
+      "id": "hat",
+      "word": "hat",
+      "phonemes": ["h", "a", "t"],
+      "vowelSound": "short-a",
+      "difficulty": 1,
+      "image": "/assets/words/hat.svg",
+      "audio": "/assets/audio/hat.mp3",
+      "sentence": "A red hat.",
+      "category": "clothing"
+    },
+    {
+      "id": "bed",
+      "word": "bed",
+      "phonemes": ["b", "e", "d"],
+      "vowelSound": "short-e",
+      "difficulty": 1,
+      "image": "/assets/words/bed.svg",
+      "audio": "/assets/audio/bed.mp3",
+      "sentence": "In my bed.",
+      "category": "home"
+    },
+    {
+      "id": "cup",
+      "word": "cup",
+      "phonemes": ["c", "u", "p"],
+      "vowelSound": "short-u",
+      "difficulty": 1,
+      "image": "/assets/words/cup.svg",
+      "audio": "/assets/audio/cup.mp3",
+      "sentence": "A red cup.",
+      "category": "home"
+    },
+    {
+      "id": "pig",
+      "word": "pig",
+      "phonemes": ["p", "i", "g"],
+      "vowelSound": "short-i",
+      "difficulty": 2,
+      "image": "/assets/words/pig.svg",
+      "audio": "/assets/audio/pig.mp3",
+      "sentence": "A pink pig.",
+      "category": "animals"
+    },
+    {
+      "id": "bug",
+      "word": "bug",
+      "phonemes": ["b", "u", "g"],
+      "vowelSound": "short-u",
+      "difficulty": 2,
+      "image": "/assets/words/bug.svg",
+      "audio": "/assets/audio/bug.mp3",
+      "sentence": "A small bug.",
+      "category": "animals"
+    },
+    {
+      "id": "bat",
+      "word": "bat",
+      "phonemes": ["b", "a", "t"],
+      "vowelSound": "short-a",
+      "difficulty": 2,
+      "image": "/assets/words/bat.svg",
+      "audio": "/assets/audio/bat.mp3",
+      "sentence": "A big bat.",
+      "category": "animals"
+    },
+    {
+      "id": "hen",
+      "word": "hen",
+      "phonemes": ["h", "e", "n"],
+      "vowelSound": "short-e",
+      "difficulty": 2,
+      "image": "/assets/words/hen.svg",
+      "audio": "/assets/audio/hen.mp3",
+      "sentence": "A red hen.",
+      "category": "animals"
+    },
+    {
+      "id": "fox",
+      "word": "fox",
+      "phonemes": ["f", "o", "x"],
+      "vowelSound": "short-o",
+      "difficulty": 2,
+      "image": "/assets/words/fox.svg",
+      "audio": "/assets/audio/fox.mp3",
+      "sentence": "A red fox.",
+      "category": "animals"
+    },
+    {
+      "id": "bus",
+      "word": "bus",
+      "phonemes": ["b", "u", "s"],
+      "vowelSound": "short-u",
+      "difficulty": 2,
+      "image": "/assets/words/bus.svg",
+      "audio": "/assets/audio/bus.mp3",
+      "sentence": "A yellow bus.",
+      "category": "vehicles"
+    },
+    {
+      "id": "pot",
+      "word": "pot",
+      "phonemes": ["p", "o", "t"],
+      "vowelSound": "short-o",
+      "difficulty": 2,
+      "image": "/assets/words/pot.svg",
+      "audio": "/assets/audio/pot.mp3",
+      "sentence": "A big pot.",
+      "category": "home"
+    },
+    {
+      "id": "rug",
+      "word": "rug",
+      "phonemes": ["r", "u", "g"],
+      "vowelSound": "short-u",
+      "difficulty": 3,
+      "image": "/assets/words/rug.svg",
+      "audio": "/assets/audio/rug.mp3",
+      "sentence": "A soft rug.",
+      "category": "home"
+    },
+    {
+      "id": "net",
+      "word": "net",
+      "phonemes": ["n", "e", "t"],
+      "vowelSound": "short-e",
+      "difficulty": 3,
+      "image": "/assets/words/net.svg",
+      "audio": "/assets/audio/net.mp3",
+      "sentence": "A big net.",
+      "category": "objects"
+    },
+    {
+      "id": "box",
+      "word": "box",
+      "phonemes": ["b", "o", "x"],
+      "vowelSound": "short-o",
+      "difficulty": 3,
+      "image": "/assets/words/box.svg",
+      "audio": "/assets/audio/box.mp3",
+      "sentence": "A big box.",
+      "category": "objects"
+    },
+    {
+      "id": "mug",
+      "word": "mug",
+      "phonemes": ["m", "u", "g"],
+      "vowelSound": "short-u",
+      "difficulty": 3,
+      "image": "/assets/words/mug.svg",
+      "audio": "/assets/audio/mug.mp3",
+      "sentence": "A hot mug.",
+      "category": "home"
+    },
+    {
+      "id": "fin",
+      "word": "fin",
+      "phonemes": ["f", "i", "n"],
+      "vowelSound": "short-i",
+      "difficulty": 3,
+      "image": "/assets/words/fin.svg",
+      "audio": "/assets/audio/fin.mp3",
+      "sentence": "A shark fin.",
+      "category": "animals"
+    }
+  ],
+  "difficultyLevels": {
+    "1": {
+      "name": "Starter",
+      "description": "Most common CVC words with familiar objects",
+      "targetAge": "3-4 years"
+    },
+    "2": {
+      "name": "Beginner",
+      "description": "Common CVC words with clear phoneme sounds",
+      "targetAge": "4-5 years"
+    },
+    "3": {
+      "name": "Developing",
+      "description": "Less common CVC words requiring stronger phonemic awareness",
+      "targetAge": "5-6 years"
+    }
+  },
+  "categories": ["animals", "home", "nature", "clothing", "vehicles", "objects"],
+  "assetNotes": {
+    "images": "SVG illustrations should be colorful, child-friendly, and clearly depict the word. Recommended size: 200x200px.",
+    "audio": "Clear pronunciation recorded at child-appropriate pace. MP3 format, ~1-2 seconds duration."
+  }
+}

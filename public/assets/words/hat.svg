@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Simple hat illustration for reading game -->
+  <rect width="200" height="200" fill="#f5f5f5" rx="20"/>
+
+  <!-- Hat brim -->
+  <ellipse cx="100" cy="140" rx="80" ry="20" fill="#c62828"/>
+  <ellipse cx="100" cy="138" rx="78" ry="18" fill="#e53935"/>
+
+  <!-- Hat top -->
+  <rect x="45" y="60" width="110" height="80" rx="10" fill="#c62828"/>
+  <rect x="48" y="63" width="104" height="75" rx="8" fill="#e53935"/>
+
+  <!-- Hat band -->
+  <rect x="45" y="115" width="110" height="15" fill="#1565c0"/>
+
+  <!-- Band decoration -->
+  <rect x="85" y="112" width="30" height="21" fill="#0d47a1"/>
+  <rect x="90" y="117" width="20" height="11" fill="#1976d2"/>
+
+  <!-- Highlight -->
+  <ellipse cx="70" cy="85" rx="15" ry="25" fill="white" opacity="0.15"/>
+</svg>
