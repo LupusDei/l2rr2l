@@ -1,0 +1,97 @@
+{
+  "id": "sight-words-level-1",
+  "title": "Sight Words: The Basics",
+  "description": "Learn the 10 most common sight words that appear in almost every book!",
+  "subject": "sight-words",
+  "difficulty": "beginner",
+  "objectives": [
+    "Recognize 10 common sight words instantly",
+    "Read sight words in simple sentences",
+    "Build reading fluency"
+  ],
+  "durationMinutes": 10,
+  "tags": ["sight-words", "high-frequency", "beginner"],
+  "ageRange": { "min": 4, "max": 6 },
+  "activities": [
+    {
+      "id": "sw1-intro",
+      "type": "reading",
+      "instructions": "Sight words are words we see all the time! Let's learn some important ones.",
+      "order": 0,
+      "points": 5,
+      "content": "Sight words are special words.\nWe need to know them by sight!\nLet's learn: the, a, is, it, to",
+      "readAloud": true
+    },
+    {
+      "id": "sw1-the",
+      "type": "sight-words",
+      "instructions": "This is one of the most common words! Say it with me.",
+      "spokenInstructions": "This word is THE. Can you say the?",
+      "order": 1,
+      "points": 10,
+      "words": ["the"],
+      "showInContext": true
+    },
+    {
+      "id": "sw1-group1",
+      "type": "sight-words",
+      "instructions": "Let's practice these sight words!",
+      "spokenInstructions": "Practice these words. The, a, is.",
+      "order": 2,
+      "points": 15,
+      "words": ["the", "a", "is"],
+      "showInContext": true
+    },
+    {
+      "id": "sw1-group2",
+      "type": "sight-words",
+      "instructions": "Great job! Now let's learn more sight words.",
+      "spokenInstructions": "Practice these words. It, to, and.",
+      "order": 3,
+      "points": 15,
+      "words": ["it", "to", "and"],
+      "showInContext": true
+    },
+    {
+      "id": "sw1-group3",
+      "type": "sight-words",
+      "instructions": "You're doing great! Here are more words to know.",
+      "spokenInstructions": "Practice these words. He, she, we.",
+      "order": 4,
+      "points": 15,
+      "words": ["he", "she", "we"],
+      "showInContext": true
+    },
+    {
+      "id": "sw1-fill-1",
+      "type": "fill-in-blank",
+      "instructions": "Fill in the missing word!",
+      "order": 5,
+      "points": 10,
+      "sentence": "I see ___ cat.",
+      "answer": "the",
+      "wordBank": ["the", "a", "is"]
+    },
+    {
+      "id": "sw1-fill-2",
+      "type": "fill-in-blank",
+      "instructions": "Fill in the missing word!",
+      "order": 6,
+      "points": 10,
+      "sentence": "It ___ a dog.",
+      "answer": "is",
+      "wordBank": ["the", "a", "is"]
+    },
+    {
+      "id": "sw1-quiz",
+      "type": "quiz",
+      "instructions": "Which word completes the sentence?",
+      "order": 7,
+      "points": 10,
+      "question": "I want ___ go home.",
+      "options": ["the", "to", "is", "a"],
+      "correctIndex": 1,
+      "explanation": "I want TO go home. 'To' shows where you want to go!"
+    }
+  ]
+}

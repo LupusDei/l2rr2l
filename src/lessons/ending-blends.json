@@ -1,0 +1,101 @@
+{
+  "id": "ending-blends",
+  "title": "Ending Blends: ND, NK, NT",
+  "description": "Learn consonant blends that end words like hand, pink, and tent!",
+  "subject": "phonics",
+  "difficulty": "intermediate",
+  "objectives": [
+    "Recognize ending consonant blends",
+    "Blend two consonants together at word endings",
+    "Read words with -nd, -nk, -nt blends"
+  ],
+  "durationMinutes": 12,
+  "tags": ["blends", "consonant-blends", "phonics", "intermediate"],
+  "ageRange": { "min": 5, "max": 7 },
+  "activities": [
+    {
+      "id": "end-blend-intro",
+      "type": "reading",
+      "instructions": "Some blends come at the END of words! Let's learn some.",
+      "order": 0,
+      "points": 5,
+      "content": "Ending blends are special too!\nTwo letters work together at the end:\nND like in HAND\nNK like in PINK\nNT like in TENT",
+      "readAloud": true
+    },
+    {
+      "id": "end-blend-nd",
+      "type": "phonics",
+      "instructions": "The ND blend sounds like 'nd'. Listen and repeat!",
+      "spokenInstructions": "The N D blend. Hand, sand, band.",
+      "order": 1,
+      "points": 15,
+      "sound": "nd",
+      "exampleWords": ["hand", "sand", "band", "land"],
+      "soundPosition": "ending"
+    },
+    {
+      "id": "end-blend-nk",
+      "type": "phonics",
+      "instructions": "The NK blend sounds like 'nk'. Let's practice!",
+      "spokenInstructions": "The N K blend. Pink, sink, think.",
+      "order": 2,
+      "points": 15,
+      "sound": "nk",
+      "exampleWords": ["pink", "sink", "think", "drink"],
+      "soundPosition": "ending"
+    },
+    {
+      "id": "end-blend-nt",
+      "type": "phonics",
+      "instructions": "The NT blend sounds like 'nt'. Your turn!",
+      "spokenInstructions": "The N T blend. Tent, went, ant.",
+      "order": 3,
+      "points": 15,
+      "sound": "nt",
+      "exampleWords": ["tent", "went", "ant", "plant"],
+      "soundPosition": "ending"
+    },
+    {
+      "id": "end-spell-1",
+      "type": "spelling",
+      "instructions": "Spell this ending blend word!",
+      "spokenInstructions": "Spell the word hand.",
+      "order": 4,
+      "points": 10,
+      "word": "hand",
+      "hint": "You wave with it"
+    },
+    {
+      "id": "end-spell-2",
+      "type": "spelling",
+      "instructions": "Spell this ending blend word!",
+      "spokenInstructions": "Spell the word pink.",
+      "order": 5,
+      "points": 10,
+      "word": "pink",
+      "hint": "A light red color"
+    },
+    {
+      "id": "end-quiz-1",
+      "type": "quiz",
+      "instructions": "Which word ends with the ND blend?",
+      "order": 6,
+      "points": 10,
+      "question": "Which word ends with the ND blend?",
+      "options": ["tent", "pink", "sand", "think"],
+      "correctIndex": 2,
+      "explanation": "SAND ends with the ND blend!"
+    },
+    {
+      "id": "end-quiz-2",
+      "type": "quiz",
+      "instructions": "Which word ends with the NT blend?",
+      "order": 7,
+      "points": 10,
+      "question": "Which word ends with the NT blend?",
+      "options": ["band", "drink", "plant", "sink"],
+      "correctIndex": 2,
+      "explanation": "PLANT ends with the NT blend!"
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "id": "word-family-at",
+  "title": "Word Family: -AT Words",
+  "description": "Build words that end in -AT like cat, bat, hat, and more!",
+  "subject": "word-families",
+  "difficulty": "beginner",
+  "objectives": [
+    "Recognize the -at word family pattern",
+    "Build new words by changing the first letter",
+    "Read -at words fluently"
+  ],
+  "durationMinutes": 10,
+  "tags": ["word-families", "-at", "rhyming", "beginner"],
+  "ageRange": { "min": 4, "max": 7 },
+  "activities": [
+    {
+      "id": "at-intro",
+      "type": "reading",
+      "instructions": "Word families are groups of words that rhyme! Today we'll learn the -AT family.",
+      "order": 0,
+      "points": 5,
+      "content": "The -AT family has lots of words:\nCAT, BAT, HAT, MAT, SAT, RAT\nThey all end with the same sound!",
+      "readAloud": true
+    },
+    {
+      "id": "at-build-cat",
+      "type": "word-building",
+      "instructions": "Let's build -AT words! Add a letter to make a word.",
+      "spokenInstructions": "Add c to at. What word do you get?",
+      "order": 1,
+      "points": 15,
+      "pattern": "at",
+      "onsets": ["c", "b", "h"],
+      "words": ["cat", "bat", "hat"]
+    },
+    {
+      "id": "at-build-more",
+      "type": "word-building",
+      "instructions": "Great! Let's make more -AT words!",
+      "spokenInstructions": "Add these letters to at to make new words.",
+      "order": 2,
+      "points": 15,
+      "pattern": "at",
+      "onsets": ["m", "s", "r"],
+      "words": ["mat", "sat", "rat"]
+    },
+    {
+      "id": "at-spell-cat",
+      "type": "spelling",
+      "instructions": "Spell this -AT word!",
+      "spokenInstructions": "Spell the word cat.",
+      "order": 3,
+      "points": 10,
+      "word": "cat",
+      "hint": "A furry pet"
+    },
+    {
+      "id": "at-spell-hat",
+      "type": "spelling",
+      "instructions": "Spell this -AT word!",
+      "spokenInstructions": "Spell the word hat.",
+      "order": 4,
+      "points": 10,
+      "word": "hat",
+      "hint": "Wear it on your head"
+    },
+    {
+      "id": "at-matching",
+      "type": "matching",
+      "instructions": "Match the -AT words with their meanings!",
+      "order": 5,
+      "points": 20,
+      "pairs": [
+        ["cat", "furry pet"],
+        ["bat", "flies at night"],
+        ["hat", "goes on head"],
+        ["mat", "on the floor"]
+      ],
+      "matchType": "word-definition"
+    },
+    {
+      "id": "at-quiz",
+      "type": "quiz",
+      "instructions": "Which word rhymes with CAT?",
+      "order": 6,
+      "points": 10,
+      "question": "Which word rhymes with CAT?",
+      "options": ["dog", "bat", "cup", "sun"],
+      "correctIndex": 1,
+      "explanation": "BAT rhymes with CAT! They both end in -AT."
+    }
+  ]
+}

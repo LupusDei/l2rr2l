@@ -1,0 +1,88 @@
+{
+  "id": "word-family-an",
+  "title": "Word Family: -AN Words",
+  "description": "Build words that end in -AN like can, fan, man, and more!",
+  "subject": "word-families",
+  "difficulty": "beginner",
+  "objectives": [
+    "Recognize the -an word family pattern",
+    "Build new words by changing the first letter",
+    "Read -an words fluently"
+  ],
+  "durationMinutes": 10,
+  "tags": ["word-families", "-an", "rhyming", "beginner"],
+  "ageRange": { "min": 4, "max": 7 },
+  "activities": [
+    {
+      "id": "an-intro",
+      "type": "reading",
+      "instructions": "Let's learn another word family! The -AN family.",
+      "order": 0,
+      "points": 5,
+      "content": "The -AN family words:\nCAN, FAN, MAN, PAN, RAN, VAN\nThey all rhyme with AN!",
+      "readAloud": true
+    },
+    {
+      "id": "an-build-1",
+      "type": "word-building",
+      "instructions": "Let's build -AN words!",
+      "spokenInstructions": "Add these letters to an to make words.",
+      "order": 1,
+      "points": 15,
+      "pattern": "an",
+      "onsets": ["c", "f", "m"],
+      "words": ["can", "fan", "man"]
+    },
+    {
+      "id": "an-build-2",
+      "type": "word-building",
+      "instructions": "Great! Make more -AN words!",
+      "spokenInstructions": "Add these letters to an to make new words.",
+      "order": 2,
+      "points": 15,
+      "pattern": "an",
+      "onsets": ["p", "r", "v"],
+      "words": ["pan", "ran", "van"]
+    },
+    {
+      "id": "an-spell-can",
+      "type": "spelling",
+      "instructions": "Spell this -AN word!",
+      "spokenInstructions": "Spell the word can.",
+      "order": 3,
+      "points": 10,
+      "word": "can",
+      "hint": "You CAN do it!"
+    },
+    {
+      "id": "an-spell-fan",
+      "type": "spelling",
+      "instructions": "Spell this -AN word!",
+      "spokenInstructions": "Spell the word fan.",
+      "order": 4,
+      "points": 10,
+      "word": "fan",
+      "hint": "Keeps you cool"
+    },
+    {
+      "id": "an-listen",
+      "type": "listen-repeat",
+      "instructions": "Listen and repeat these -AN words!",
+      "order": 5,
+      "points": 10,
+      "phrase": "Can, fan, man, pan, ran, van",
+      "checkPronunciation": false
+    },
+    {
+      "id": "an-quiz",
+      "type": "quiz",
+      "instructions": "Which word rhymes with MAN?",
+      "order": 6,
+      "points": 10,
+      "question": "Which word rhymes with MAN?",
+      "options": ["cat", "pan", "dog", "hat"],
+      "correctIndex": 1,
+      "explanation": "PAN rhymes with MAN! They both end in -AN."
+    }
+  ]
+}

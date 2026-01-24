@@ -1,0 +1,98 @@
+{
+  "id": "sight-words-level-2",
+  "title": "Sight Words: Level 2",
+  "description": "Learn more important sight words to boost your reading!",
+  "subject": "sight-words",
+  "difficulty": "beginner",
+  "objectives": [
+    "Recognize 10 more common sight words",
+    "Use sight words in context",
+    "Read faster with more sight words"
+  ],
+  "durationMinutes": 10,
+  "tags": ["sight-words", "high-frequency", "beginner"],
+  "ageRange": { "min": 4, "max": 7 },
+  "activities": [
+    {
+      "id": "sw2-intro",
+      "type": "reading",
+      "instructions": "Let's learn more sight words! These words are everywhere.",
+      "order": 0,
+      "points": 5,
+      "content": "More sight words to learn:\nYou, me, my, see, look\nThey help us read!",
+      "readAloud": true
+    },
+    {
+      "id": "sw2-group1",
+      "type": "sight-words",
+      "instructions": "Practice these sight words!",
+      "spokenInstructions": "Practice these words. You, me, my.",
+      "order": 1,
+      "points": 15,
+      "words": ["you", "me", "my"],
+      "showInContext": true
+    },
+    {
+      "id": "sw2-group2",
+      "type": "sight-words",
+      "instructions": "Great! Here are more sight words.",
+      "spokenInstructions": "Practice these words. See, look, can.",
+      "order": 2,
+      "points": 15,
+      "words": ["see", "look", "can"],
+      "showInContext": true
+    },
+    {
+      "id": "sw2-group3",
+      "type": "sight-words",
+      "instructions": "You're doing awesome! Learn these too.",
+      "spokenInstructions": "Practice these words. Like, have, are.",
+      "order": 3,
+      "points": 15,
+      "words": ["like", "have", "are"],
+      "showInContext": true
+    },
+    {
+      "id": "sw2-fill-1",
+      "type": "fill-in-blank",
+      "instructions": "Fill in the missing word!",
+      "order": 4,
+      "points": 10,
+      "sentence": "I ___ see the bird.",
+      "answer": "can",
+      "wordBank": ["can", "the", "you"]
+    },
+    {
+      "id": "sw2-fill-2",
+      "type": "fill-in-blank",
+      "instructions": "Fill in the missing word!",
+      "order": 5,
+      "points": 10,
+      "sentence": "___ at the dog!",
+      "answer": "Look",
+      "wordBank": ["Look", "See", "You"]
+    },
+    {
+      "id": "sw2-quiz-1",
+      "type": "quiz",
+      "instructions": "Choose the right word!",
+      "order": 6,
+      "points": 10,
+      "question": "I ___ a cat. (to own/possess)",
+      "options": ["see", "have", "look", "can"],
+      "correctIndex": 1,
+      "explanation": "I HAVE a cat means you own a cat!"
+    },
+    {
+      "id": "sw2-quiz-2",
+      "type": "quiz",
+      "instructions": "Choose the right word!",
+      "order": 7,
+      "points": 10,
+      "question": "I ___ pizza! (to enjoy)",
+      "options": ["have", "see", "like", "are"],
+      "correctIndex": 2,
+      "explanation": "I LIKE pizza means you enjoy eating pizza!"
+    }
+  ]
+}

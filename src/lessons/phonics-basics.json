@@ -1,0 +1,105 @@
+{
+  "id": "phonics-basics-a-to-f",
+  "title": "Letter Sounds A-F",
+  "description": "Learn the sounds of letters A through F with fun examples!",
+  "subject": "phonics",
+  "difficulty": "beginner",
+  "objectives": [
+    "Recognize the sounds of letters A, B, C, D, E, and F",
+    "Connect letter sounds to example words",
+    "Practice saying each sound clearly"
+  ],
+  "durationMinutes": 10,
+  "tags": ["alphabet", "letter-sounds", "beginner"],
+  "ageRange": { "min": 4, "max": 6 },
+  "activities": [
+    {
+      "id": "phonics-a-intro",
+      "type": "phonics",
+      "instructions": "Let's learn the letter A sound! Say 'aaa' like in 'apple'.",
+      "spokenInstructions": "Let's learn the letter A sound! Say ahh like in apple.",
+      "order": 0,
+      "points": 10,
+      "sound": "A",
+      "exampleWords": ["apple", "ant", "alligator"],
+      "soundPosition": "beginning"
+    },
+    {
+      "id": "phonics-b-intro",
+      "type": "phonics",
+      "instructions": "Now let's learn the letter B sound! Say 'buh' like in 'ball'.",
+      "spokenInstructions": "Now let's learn the letter B sound! Say buh like in ball.",
+      "order": 1,
+      "points": 10,
+      "sound": "B",
+      "exampleWords": ["ball", "bear", "banana"],
+      "soundPosition": "beginning"
+    },
+    {
+      "id": "phonics-c-intro",
+      "type": "phonics",
+      "instructions": "Let's learn the letter C sound! Say 'kuh' like in 'cat'.",
+      "spokenInstructions": "Let's learn the letter C sound! Say kuh like in cat.",
+      "order": 2,
+      "points": 10,
+      "sound": "C",
+      "exampleWords": ["cat", "car", "cup"],
+      "soundPosition": "beginning"
+    },
+    {
+      "id": "phonics-d-intro",
+      "type": "phonics",
+      "instructions": "Now let's learn the letter D sound! Say 'duh' like in 'dog'.",
+      "spokenInstructions": "Now let's learn the letter D sound! Say duh like in dog.",
+      "order": 3,
+      "points": 10,
+      "sound": "D",
+      "exampleWords": ["dog", "duck", "door"],
+      "soundPosition": "beginning"
+    },
+    {
+      "id": "phonics-e-intro",
+      "type": "phonics",
+      "instructions": "Let's learn the letter E sound! Say 'eh' like in 'egg'.",
+      "spokenInstructions": "Let's learn the letter E sound! Say eh like in egg.",
+      "order": 4,
+      "points": 10,
+      "sound": "E",
+      "exampleWords": ["egg", "elephant", "elbow"],
+      "soundPosition": "beginning"
+    },
+    {
+      "id": "phonics-f-intro",
+      "type": "phonics",
+      "instructions": "Now let's learn the letter F sound! Say 'fff' like in 'fish'.",
+      "spokenInstructions": "Now let's learn the letter F sound! Say fff like in fish.",
+      "order": 5,
+      "points": 10,
+      "sound": "F",
+      "exampleWords": ["fish", "frog", "flower"],
+      "soundPosition": "beginning"
+    },
+    {
+      "id": "phonics-quiz-1",
+      "type": "quiz",
+      "instructions": "Which word starts with the 'A' sound?",
+      "order": 6,
+      "points": 15,
+      "question": "Which word starts with the 'A' sound?",
+      "options": ["Apple", "Ball", "Cat", "Dog"],
+      "correctIndex": 0,
+      "explanation": "Apple starts with the 'A' sound - aaa-pple!"
+    },
+    {
+      "id": "phonics-quiz-2",
+      "type": "quiz",
+      "instructions": "Which word starts with the 'D' sound?",
+      "order": 7,
+      "points": 15,
+      "question": "Which word starts with the 'D' sound?",
+      "options": ["Cat", "Fish", "Dog", "Egg"],
+      "correctIndex": 2,
+      "explanation": "Dog starts with the 'D' sound - duh-og!"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "id": "beginning-blends",
+  "title": "Beginning Blends: BL, CL, FL",
+  "description": "Learn consonant blends that start words like blue, clap, and flag!",
+  "subject": "phonics",
+  "difficulty": "intermediate",
+  "objectives": [
+    "Recognize beginning consonant blends",
+    "Blend two consonants together smoothly",
+    "Read words with bl-, cl-, fl- blends"
+  ],
+  "durationMinutes": 12,
+  "tags": ["blends", "consonant-blends", "phonics", "intermediate"],
+  "ageRange": { "min": 5, "max": 7 },
+  "activities": [
+    {
+      "id": "blend-intro",
+      "type": "reading",
+      "instructions": "Blends are two letters that make sounds together! Let's learn some.",
+      "order": 0,
+      "points": 5,
+      "content": "Consonant blends are special!\nTwo letters work together:\nBL like in BLUE\nCL like in CLAP\nFL like in FLAG",
+      "readAloud": true
+    },
+    {
+      "id": "blend-bl",
+      "type": "phonics",
+      "instructions": "The BL blend sounds like 'bl'. Say it with me!",
+      "spokenInstructions": "The B L blend. Blue, black, block.",
+      "order": 1,
+      "points": 15,
+      "sound": "bl",
+      "exampleWords": ["blue", "black", "block", "blow"],
+      "soundPosition": "beginning"
+    },
+    {
+      "id": "blend-cl",
+      "type": "phonics",
+      "instructions": "The CL blend sounds like 'cl'. Let's practice!",
+      "spokenInstructions": "The C L blend. Clap, clock, cloud.",
+      "order": 2,
+      "points": 15,
+      "sound": "cl",
+      "exampleWords": ["clap", "clock", "cloud", "clean"],
+      "soundPosition": "beginning"
+    },
+    {
+      "id": "blend-fl",
+      "type": "phonics",
+      "instructions": "The FL blend sounds like 'fl'. Your turn!",
+      "spokenInstructions": "The F L blend. Flag, flat, flower.",
+      "order": 3,
+      "points": 15,
+      "sound": "fl",
+      "exampleWords": ["flag", "flat", "flower", "fly"],
+      "soundPosition": "beginning"
+    },
+    {
+      "id": "blend-spell-1",
+      "type": "spelling",
+      "instructions": "Spell this blend word!",
+      "spokenInstructions": "Spell the word clap.",
+      "order": 4,
+      "points": 10,
+      "word": "clap",
+      "hint": "You do this with your hands"
+    },
+    {
+      "id": "blend-spell-2",
+      "type": "spelling",
+      "instructions": "Spell this blend word!",
+      "spokenInstructions": "Spell the word flag.",
+      "order": 5,
+      "points": 10,
+      "word": "flag",
+      "hint": "It waves in the wind"
+    },
+    {
+      "id": "blend-quiz-1",
+      "type": "quiz",
+      "instructions": "Which word starts with the BL blend?",
+      "order": 6,
+      "points": 10,
+      "question": "Which word starts with the BL blend?",
+      "options": ["flag", "clap", "blue", "play"],
+      "correctIndex": 2,
+      "explanation": "BLUE starts with the BL blend!"
+    },
+    {
+      "id": "blend-quiz-2",
+      "type": "quiz",
+      "instructions": "Which word starts with the FL blend?",
+      "order": 7,
+      "points": 10,
+      "question": "Which word starts with the FL blend?",
+      "options": ["clock", "block", "flower", "class"],
+      "correctIndex": 2,
+      "explanation": "FLOWER starts with the FL blend!"
+    }
+  ]
+}

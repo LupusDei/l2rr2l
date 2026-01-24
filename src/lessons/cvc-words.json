@@ -1,0 +1,98 @@
+{
+  "id": "cvc-words-intro",
+  "title": "CVC Words: Cat, Dog, and More!",
+  "description": "Learn to read simple three-letter words with consonant-vowel-consonant patterns.",
+  "subject": "reading",
+  "difficulty": "beginner",
+  "objectives": [
+    "Blend sounds together to read CVC words",
+    "Recognize common CVC word patterns",
+    "Practice reading simple words"
+  ],
+  "durationMinutes": 12,
+  "tags": ["cvc", "reading", "blending", "beginner"],
+  "ageRange": { "min": 4, "max": 7 },
+  "activities": [
+    {
+      "id": "cvc-intro-reading",
+      "type": "reading",
+      "instructions": "CVC words have 3 letters: a consonant, a vowel, and a consonant. Let's read some!",
+      "order": 0,
+      "points": 5,
+      "content": "C-A-T says CAT!\nD-O-G says DOG!\nH-A-T says HAT!",
+      "readAloud": true
+    },
+    {
+      "id": "cvc-spell-cat",
+      "type": "spelling",
+      "instructions": "Spell the word you hear!",
+      "spokenInstructions": "Listen to the word and spell it. Cat.",
+      "order": 1,
+      "points": 15,
+      "word": "cat",
+      "hint": "A furry pet that says meow"
+    },
+    {
+      "id": "cvc-spell-dog",
+      "type": "spelling",
+      "instructions": "Spell the word you hear!",
+      "spokenInstructions": "Listen to the word and spell it. Dog.",
+      "order": 2,
+      "points": 15,
+      "word": "dog",
+      "hint": "A pet that barks and wags its tail"
+    },
+    {
+      "id": "cvc-spell-hat",
+      "type": "spelling",
+      "instructions": "Spell the word you hear!",
+      "spokenInstructions": "Listen to the word and spell it. Hat.",
+      "order": 3,
+      "points": 15,
+      "word": "hat",
+      "hint": "You wear it on your head"
+    },
+    {
+      "id": "cvc-spell-sun",
+      "type": "spelling",
+      "instructions": "Spell the word you hear!",
+      "spokenInstructions": "Listen to the word and spell it. Sun.",
+      "order": 4,
+      "points": 15,
+      "word": "sun",
+      "hint": "It shines bright in the sky"
+    },
+    {
+      "id": "cvc-spell-cup",
+      "type": "spelling",
+      "instructions": "Spell the word you hear!",
+      "spokenInstructions": "Listen to the word and spell it. Cup.",
+      "order": 5,
+      "points": 15,
+      "word": "cup",
+      "hint": "You drink from it"
+    },
+    {
+      "id": "cvc-quiz-1",
+      "type": "quiz",
+      "instructions": "Look at the picture and choose the right word.",
+      "order": 6,
+      "points": 10,
+      "question": "Which word means a small furry pet that meows?",
+      "options": ["dog", "cat", "hat", "bat"],
+      "correctIndex": 1,
+      "explanation": "A cat is a furry pet that meows! C-A-T spells cat."
+    },
+    {
+      "id": "cvc-quiz-2",
+      "type": "quiz",
+      "instructions": "Choose the right word!",
+      "order": 7,
+      "points": 10,
+      "question": "Which word is something you wear on your head?",
+      "options": ["cat", "sun", "hat", "cup"],
+      "correctIndex": 2,
+      "explanation": "A hat is something you wear on your head! H-A-T spells hat."
+    }
+  ]
+}
