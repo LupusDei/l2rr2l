@@ -454,3 +454,20 @@
     font-size: 1.75rem;
   }
 }
+
+/* ==========================================================================
+   Version Footer
+   ========================================================================== */
+
+.version-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  color: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  z-index: 1;
+}

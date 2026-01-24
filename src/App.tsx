@@ -6,6 +6,7 @@ import SpellingGame from './components/SpellingGame'
 import Settings from './components/Settings'
 import { VoiceProvider } from './hooks/useVoice'
 import type { Lesson } from './components/LessonCard'
+import { version } from '../package.json'
 
 type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling' | 'settings'
 
@@ -63,106 +64,115 @@ function App() {
     setScreen('home')
   }
 
-  if (screen === 'settings') {
-    return (
-      <Settings
-        childId={DEV_CHILD_ID}
-        onBack={handleSettingsBack}
-      />
-    )
-  }
+  const renderContent = () => {
+    if (screen === 'settings') {
+      return (
+        <Settings
+          childId={DEV_CHILD_ID}
+          onBack={handleSettingsBack}
+        />
+      )
+    }
 
-  if (screen === 'spelling') {
-    return (
-      <VoiceProvider>
-        <SpellingGame onBack={handleSpellingBack} />
-      </VoiceProvider>
-    )
-  }
+    if (screen === 'spelling') {
+      return (
+        <VoiceProvider>
+          <SpellingGame onBack={handleSpellingBack} />
+        </VoiceProvider>
+      )
+    }
 
-  if (screen === 'onboarding') {
-    return (
-      <Onboarding
-        onComplete={handleOnboardingComplete}
-        onBack={handleOnboardingBack}
-      />
-    )
-  }
+    if (screen === 'onboarding') {
+      return (
+        <Onboarding
+          onComplete={handleOnboardingComplete}
+          onBack={handleOnboardingBack}
+        />
+      )
+    }
 
-  if (screen === 'lessons' && childData) {
+    if (screen === 'lessons' && childData) {
+      return (
+        <LessonSelection
+          childData={childData}
+          onSelectLesson={handleSelectLesson}
+          onBack={handleLessonsBack}
+        />
+      )
+    }
+
     return (
-      <LessonSelection
-        childData={childData}
-        onSelectLesson={handleSelectLesson}
-        onBack={handleLessonsBack}
-      />
+      <div className="app homescreen">
+        {/* Settings button */}
+        <button
+          className="home-settings-btn"
+          type="button"
+          onClick={handleSettings}
+          aria-label="Settings"
+        >
+          <span aria-hidden="true">&#9881;</span>
+        </button>
+
+        {/* Decorative floating elements */}
+        <div className="decorations" aria-hidden="true">
+          <span className="decoration crayon crayon-red">&#9998;</span>
+          <span className="decoration crayon crayon-blue">&#9998;</span>
+          <span className="decoration crayon crayon-yellow">&#9998;</span>
+          <span className="decoration letter letter-a">A</span>
+          <span className="decoration letter letter-b">B</span>
+          <span className="decoration letter letter-c">C</span>
+          <span className="decoration paint paint-splash-1"></span>
+          <span className="decoration paint paint-splash-2"></span>
+          <span className="decoration star star-1">&#9733;</span>
+          <span className="decoration star star-2">&#9733;</span>
+        </div>
+
+        <main className="main homescreen-content">
+          <div className="logo-container">
+            <h1 className="logo">
+              <span className="logo-letter logo-l1">L</span>
+              <span className="logo-letter logo-2">2</span>
+              <span className="logo-letter logo-r1">R</span>
+              <span className="logo-letter logo-r2">R</span>
+              <span className="logo-letter logo-2b">2</span>
+              <span className="logo-letter logo-l2">L</span>
+            </h1>
+          </div>
+
+          <p className="tagline">Learn to Read, Read to Learn!</p>
+
+          {childData ? (
+            <div className="welcome-back">
+              <p className="welcome-message">
+                Welcome back, {childData.name}!
+              </p>
+              <button className="cta-button" type="button" onClick={handleGetStarted}>
+                Continue Learning!
+              </button>
+            </div>
+          ) : (
+            <button className="cta-button" type="button" onClick={handleGetStarted}>
+              Get Started!
+            </button>
+          )}
+
+          <div className="games-section">
+            <button className="game-card spelling-card" type="button" onClick={handleSpellingGame}>
+              <span className="game-icon" aria-hidden="true">ABC</span>
+              <span className="game-title">Spelling Game</span>
+              <span className="game-description">Practice spelling words!</span>
+            </button>
+          </div>
+        </main>
+      </div>
     )
   }
 
   return (
-    <div className="app homescreen">
-      {/* Settings button */}
-      <button
-        className="home-settings-btn"
-        type="button"
-        onClick={handleSettings}
-        aria-label="Settings"
-      >
-        <span aria-hidden="true">&#9881;</span>
-      </button>
-
-      {/* Decorative floating elements */}
-      <div className="decorations" aria-hidden="true">
-        <span className="decoration crayon crayon-red">&#9998;</span>
-        <span className="decoration crayon crayon-blue">&#9998;</span>
-        <span className="decoration crayon crayon-yellow">&#9998;</span>
-        <span className="decoration letter letter-a">A</span>
-        <span className="decoration letter letter-b">B</span>
-        <span className="decoration letter letter-c">C</span>
-        <span className="decoration paint paint-splash-1"></span>
-        <span className="decoration paint paint-splash-2"></span>
-        <span className="decoration star star-1">&#9733;</span>
-        <span className="decoration star star-2">&#9733;</span>
-      </div>
-
-      <main className="main homescreen-content">
-        <div className="logo-container">
-          <h1 className="logo">
-            <span className="logo-letter logo-l1">L</span>
-            <span className="logo-letter logo-2">2</span>
-            <span className="logo-letter logo-r1">R</span>
-            <span className="logo-letter logo-r2">R</span>
-            <span className="logo-letter logo-2b">2</span>
-            <span className="logo-letter logo-l2">L</span>
-          </h1>
-        </div>
-
-        <p className="tagline">Learn to Read, Read to Learn!</p>
-
-        {childData ? (
-          <div className="welcome-back">
-            <p className="welcome-message">
-              Welcome back, {childData.name}!
-            </p>
-            <button className="cta-button" type="button" onClick={handleGetStarted}>
-              Continue Learning!
-            </button>
-          </div>
-        ) : (
-          <button className="cta-button" type="button" onClick={handleGetStarted}>
-            Get Started!
-          </button>
-        )}
-
-        <div className="games-section">
-          <button className="game-card spelling-card" type="button" onClick={handleSpellingGame}>
-            <span className="game-icon" aria-hidden="true">ABC</span>
-            <span className="game-title">Spelling Game</span>
-            <span className="game-description">Practice spelling words!</span>
-          </button>
-        </div>
-      </main>
-    </div>
+    <>
+      {renderContent()}
+      <footer className="version-footer">v{version}</footer>
+    </>
   )
 }
 
