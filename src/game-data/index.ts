@@ -40,3 +40,6 @@ export function getRandomWords(count: number, difficulty?: 1 | 2 | 3): GameWord[
 
 // Phonics game data exports
 export * from './phonics'
+
+// Word families game data exports
+export * from './word-families'
