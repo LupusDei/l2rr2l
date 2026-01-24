@@ -7,11 +7,11 @@ compatibility_date = "2026-01-23"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "dist"
 
-# D1 Database binding (uncomment after creating DB with: wrangler d1 create l2rr2l)
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "l2rr2l"
-# database_id = "YOUR_DATABASE_ID_HERE"
+# D1 Database binding
+[[d1_databases]]
+binding = "l2rr2l"
+database_name = "l2rr2l"
+database_id = "df44dc20-00df-4d90-a584-e798027b24ae" # Set after creating DB with: wrangler d1 create l2rr2l
 
 # Environment variables (set in Cloudflare dashboard or .dev.vars)
 # ELEVENLABS_API_KEY
