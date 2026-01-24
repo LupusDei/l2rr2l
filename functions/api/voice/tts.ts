@@ -61,10 +61,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         headers: {
           'xi-api-key': apiKey,
           'Content-Type': 'application/json',
+          'Accept': 'audio/mpeg',
+          'User-Agent': 'L2RR2L-Learning-App/1.0',
         },
         body: JSON.stringify({
           text,
-          model_id: 'eleven_multilingual_v2',
+          model_id: 'eleven_flash_v2_5',
           voice_settings: {
             stability,
             similarity_boost: similarityBoost,
