@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import Onboarding from './components/Onboarding'
 import LessonSelection from './components/LessonSelection'
+import LessonPlayer from './components/LessonPlayer'
 import SpellingGame from './components/SpellingGame'
 import MemoryGame from './components/MemoryGame'
 import RhymeGame from './components/RhymeGame'
@@ -9,10 +10,11 @@ import WordBuilder from './components/WordBuilder'
 import PhonicsGame from './components/PhonicsGame'
 import Settings from './components/Settings'
 import { VoiceProvider } from './hooks/useVoice'
-import type { Lesson } from './components/LessonCard'
+import type { Lesson as LegacyLesson } from './components/LessonCard'
+import type { Lesson, ActivityProgress } from './types/lesson'
 import { version } from '../package.json'
 
-type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling' | 'memory' | 'rhyme' | 'builder' | 'phonics' | 'settings'
+type Screen = 'home' | 'onboarding' | 'lessons' | 'lesson-player' | 'spelling' | 'memory' | 'rhyme' | 'builder' | 'phonics' | 'settings'
 
 // Temporary child ID for development (would come from auth in production)
 const DEV_CHILD_ID = 'dev-child-1'
@@ -27,6 +29,7 @@ interface ChildData {
 function App() {
   const [screen, setScreen] = useState<Screen>('home')
   const [childData, setChildData] = useState<ChildData | null>(null)
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null)
 
   const handleGetStarted = () => {
     setScreen('onboarding')
@@ -43,9 +46,47 @@ function App() {
     setScreen('home')
   }
 
-  const handleSelectLesson = (lesson: Lesson) => {
-    // TODO: Navigate to lesson player
-    console.log('Selected lesson:', lesson)
+  const handleSelectLesson = async (legacyLesson: LegacyLesson) => {
+    // Fetch full lesson data from API
+    try {
+      const response = await fetch(`/api/lessons/${legacyLesson.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        if (data.lesson) {
+          setSelectedLesson(data.lesson as Lesson)
+          setScreen('lesson-player')
+          return
+        }
+      }
+    } catch {
+      // Fall back to legacy lesson if API fails
+    }
+    console.log('Failed to load lesson:', legacyLesson)
+  }
+
+  const handleLessonComplete = async (progress: { overallScore: number; activityProgress: ActivityProgress[] }) => {
+    if (selectedLesson) {
+      // Save progress to API
+      try {
+        await fetch(`/api/progress/child/${DEV_CHILD_ID}/lesson/${selectedLesson.id}/complete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            score: progress.overallScore,
+            timeSpent: progress.activityProgress.reduce((t, a) => t + a.timeSpentSeconds, 0),
+          }),
+        })
+      } catch {
+        // Silently fail - progress saving is non-critical
+      }
+    }
+    setSelectedLesson(null)
+    setScreen('lessons')
+  }
+
+  const handleLessonExit = () => {
+    setSelectedLesson(null)
+    setScreen('lessons')
   }
 
   const handleLessonsBack = () => {
@@ -110,6 +151,18 @@ function App() {
       )
     }
 
+    if (screen === 'lesson-player' && selectedLesson) {
+      return (
+        <VoiceProvider>
+          <LessonPlayer
+            lesson={selectedLesson}
+            onComplete={handleLessonComplete}
+            onExit={handleLessonExit}
+          />
+        </VoiceProvider>
+      )
+    }
+
     if (screen === 'spelling') {
       return (
         <VoiceProvider>
@@ -163,6 +216,7 @@ function App() {
       return (
         <LessonSelection
           childData={childData}
+          childId={DEV_CHILD_ID}
           onSelectLesson={handleSelectLesson}
           onBack={handleLessonsBack}
         />

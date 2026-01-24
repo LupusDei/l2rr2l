@@ -11,13 +11,28 @@ export interface Lesson {
   objectives: string[] | null
 }
 
+export type LessonProgressStatus = 'not-started' | 'in-progress' | 'completed'
+
+export interface LessonProgress {
+  status: LessonProgressStatus
+  score?: number | null
+  currentActivityIndex?: number
+}
+
 interface LessonCardProps {
   lesson: Lesson
+  progress?: LessonProgress
   onSelect: (lesson: Lesson) => void
 }
 
 const SUBJECT_EMOJIS: Record<string, string> = {
   reading: '📚',
+  phonics: '🔤',
+  spelling: '✏️',
+  'sight-words': '👀',
+  'word-families': '👨‍👩‍👧‍👦',
+  vocabulary: '📖',
+  comprehension: '🧠',
   math: '🔢',
   science: '🔬',
   art: '🎨',
@@ -25,6 +40,12 @@ const SUBJECT_EMOJIS: Record<string, string> = {
   nature: '🌿',
   animals: '🐾',
   default: '⭐',
+}
+
+const PROGRESS_CONFIG: Record<LessonProgressStatus, { label: string; icon: string; color: string }> = {
+  'not-started': { label: 'New', icon: '✨', color: '#868e96' },
+  'in-progress': { label: 'Continue', icon: '▶️', color: '#fab005' },
+  'completed': { label: 'Done', icon: '✅', color: '#40c057' },
 }
 
 const DIFFICULTY_CONFIG: Record<string, { label: string; color: string; stars: number }> = {
@@ -59,18 +80,38 @@ function getGradeLevelLabel(gradeLevel: string | null): string {
   return gradeLevel
 }
 
-export default function LessonCard({ lesson, onSelect }: LessonCardProps) {
+export default function LessonCard({ lesson, progress, onSelect }: LessonCardProps) {
   const subjectEmoji = getSubjectEmoji(lesson.subject)
   const difficultyConfig = getDifficultyConfig(lesson.difficulty)
   const duration = formatDuration(lesson.duration_minutes)
   const ageLabel = getGradeLevelLabel(lesson.grade_level)
+  const progressStatus = progress?.status || 'not-started'
+  const progressConfig = PROGRESS_CONFIG[progressStatus]
 
   const handleSelect = () => {
     onSelect(lesson)
   }
 
+  const buttonText = progressStatus === 'completed'
+    ? 'Play Again!'
+    : progressStatus === 'in-progress'
+    ? 'Continue!'
+    : "Let's Go!"
+
   return (
-    <article className="lesson-card">
+    <article className={`lesson-card ${progressStatus === 'completed' ? 'lesson-card-completed' : ''}`}>
+      {/* Progress indicator */}
+      <div
+        className="lesson-progress-indicator"
+        style={{ backgroundColor: progressConfig.color }}
+      >
+        <span aria-hidden="true">{progressConfig.icon}</span>
+        <span>{progressConfig.label}</span>
+        {progressStatus === 'completed' && progress?.score != null && (
+          <span className="lesson-score">{Math.round(progress.score)}%</span>
+        )}
+      </div>
+
       <div className="lesson-card-header">
         <span className="lesson-subject-emoji" aria-hidden="true">
           {subjectEmoji}
@@ -103,11 +144,11 @@ export default function LessonCard({ lesson, onSelect }: LessonCardProps) {
 
       <button
         type="button"
-        className="lesson-select-button"
+        className={`lesson-select-button ${progressStatus === 'in-progress' ? 'lesson-select-button-continue' : ''}`}
         onClick={handleSelect}
-        aria-label={`Start lesson: ${lesson.title}`}
+        aria-label={`${buttonText} ${lesson.title}`}
       >
-        Let's Go!
+        {buttonText}
       </button>
     </article>
   )

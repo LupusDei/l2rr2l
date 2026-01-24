@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import LessonCard from './LessonCard'
-import type { Lesson } from './LessonCard'
+import type { Lesson, LessonProgress, LessonProgressStatus } from './LessonCard'
 import LessonFilters from './LessonFilters'
 import type { FilterState } from './LessonFilters'
 import './LessonSelection.css'
 
 interface ChildData {
+  id?: string
   name: string
   age: number | null
   sex: string | null
@@ -14,8 +15,17 @@ interface ChildData {
 
 interface LessonSelectionProps {
   childData: ChildData
+  childId: string
   onSelectLesson: (lesson: Lesson) => void
   onBack: () => void
+}
+
+interface ProgressRecord {
+  lesson_id: string
+  status: string
+  score: number | null
+  overall_score: number | null
+  current_activity_index: number
 }
 
 // Simple cache for API results
@@ -72,10 +82,11 @@ function getRandomGreeting(): string {
   return GREETINGS[Math.floor(Math.random() * GREETINGS.length)]
 }
 
-export default function LessonSelection({ childData, onSelectLesson, onBack }: LessonSelectionProps) {
+export default function LessonSelection({ childData, childId, onSelectLesson, onBack }: LessonSelectionProps) {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [recommendedLessons, setRecommendedLessons] = useState<Lesson[]>([])
   const [subjects, setSubjects] = useState<string[]>([])
+  const [progressMap, setProgressMap] = useState<Map<string, LessonProgress>>(new Map())
   const [loading, setLoading] = useState(true)
   const [filterLoading, setFilterLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -195,12 +206,54 @@ export default function LessonSelection({ childData, onSelectLesson, onBack }: L
     }
   }, [])
 
+  // Fetch progress for all lessons
+  const fetchProgress = useCallback(async () => {
+    if (!childId) return
+
+    const cacheKey = `progress:${childId}`
+    const cached = getCached<ProgressRecord[]>(cacheKey)
+    if (cached) {
+      const map = new Map<string, LessonProgress>()
+      for (const p of cached) {
+        map.set(p.lesson_id, {
+          status: (p.status === 'in_progress' ? 'in-progress' : p.status) as LessonProgressStatus,
+          score: p.overall_score ?? p.score,
+          currentActivityIndex: p.current_activity_index,
+        })
+      }
+      setProgressMap(map)
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/progress/child/${childId}`)
+      if (response.ok) {
+        const data = await response.json()
+        const progressData = data.progress || []
+        setCache(cacheKey, progressData)
+
+        const map = new Map<string, LessonProgress>()
+        for (const p of progressData) {
+          map.set(p.lesson_id, {
+            status: (p.status === 'in_progress' ? 'in-progress' : p.status) as LessonProgressStatus,
+            score: p.overall_score ?? p.score,
+            currentActivityIndex: p.current_activity_index,
+          })
+        }
+        setProgressMap(map)
+      }
+    } catch {
+      // Silently fail - progress is optional enhancement
+    }
+  }, [childId])
+
   // Initial data fetch
   useEffect(() => {
     fetchLessons()
     fetchRecommendedLessons()
     fetchSubjects()
-  }, [fetchLessons, fetchRecommendedLessons, fetchSubjects])
+    fetchProgress()
+  }, [fetchLessons, fetchRecommendedLessons, fetchSubjects, fetchProgress])
 
   // Handle filter changes with debounce for search
   useEffect(() => {
@@ -305,6 +358,7 @@ export default function LessonSelection({ childData, onSelectLesson, onBack }: L
                     <LessonCard
                       key={lesson.id}
                       lesson={lesson}
+                      progress={progressMap.get(lesson.id)}
                       onSelect={onSelectLesson}
                     />
                   ))}
@@ -343,6 +397,7 @@ export default function LessonSelection({ childData, onSelectLesson, onBack }: L
                     <LessonCard
                       key={lesson.id}
                       lesson={lesson}
+                      progress={progressMap.get(lesson.id)}
                       onSelect={onSelectLesson}
                     />
                   ))}
