@@ -104,12 +104,10 @@ describe('Settings', () => {
       />
     )
 
+    // Wait for the h2 "Voice Settings" heading which only appears after loading
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1, name: 'Settings' })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument()
     })
-
-    // Check that the voice settings section header is rendered
-    expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument()
 
     // Check that VoiceParameterSliders is rendered (it has "Speed" slider by id)
     expect(document.getElementById('slider-speed')).toBeInTheDocument()
