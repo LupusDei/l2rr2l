@@ -1,0 +1,55 @@
+.word-builder {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  padding: var(--space-4);
+}
+
+.word-builder-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.word-builder-title {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 1.75rem;
+  color: #d35400;
+  margin: 0;
+  text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+.word-builder-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.coming-soon {
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+  padding: var(--space-8);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.factory-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: var(--space-4);
+}
+
+.coming-soon h2 {
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  color: #d35400;
+  margin: 0 0 var(--space-2);
+}
+
+.coming-soon p {
+  color: #666;
+  margin: 0;
+}

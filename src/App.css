@@ -397,6 +397,25 @@
     0 4px 10px rgba(240, 147, 251, 0.4);
 }
 
+.builder-card {
+  background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+  box-shadow:
+    0 6px 0 #a04000,
+    0 8px 20px rgba(243, 156, 18, 0.4);
+}
+
+.builder-card:hover {
+  box-shadow:
+    0 8px 0 #a04000,
+    0 12px 25px rgba(243, 156, 18, 0.5);
+}
+
+.builder-card:active {
+  box-shadow:
+    0 2px 0 #a04000,
+    0 4px 10px rgba(243, 156, 18, 0.4);
+}
+
 .game-icon {
   font-family: 'Comic Sans MS', 'Chalkboard', cursive;
   font-size: 2rem;

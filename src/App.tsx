@@ -5,12 +5,13 @@ import LessonSelection from './components/LessonSelection'
 import SpellingGame from './components/SpellingGame'
 import MemoryGame from './components/MemoryGame'
 import RhymeGame from './components/RhymeGame'
+import WordBuilder from './components/WordBuilder'
 import Settings from './components/Settings'
 import { VoiceProvider } from './hooks/useVoice'
 import type { Lesson } from './components/LessonCard'
 import { version } from '../package.json'
 
-type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling' | 'memory' | 'rhyme' | 'settings'
+type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling' | 'memory' | 'rhyme' | 'builder' | 'settings'
 
 // Temporary child ID for development (would come from auth in production)
 const DEV_CHILD_ID = 'dev-child-1'
@@ -74,6 +75,14 @@ function App() {
     setScreen('home')
   }
 
+  const handleBuilderGame = () => {
+    setScreen('builder')
+  }
+
+  const handleBuilderBack = () => {
+    setScreen('home')
+  }
+
   const handleSettings = () => {
     setScreen('settings')
   }
@@ -111,6 +120,14 @@ function App() {
     if (screen === 'rhyme') {
       return (
         <RhymeGame onBack={handleRhymeBack} />
+      )
+    }
+
+    if (screen === 'builder') {
+      return (
+        <VoiceProvider>
+          <WordBuilder onBack={handleBuilderBack} />
+        </VoiceProvider>
       )
     }
 
@@ -203,6 +220,11 @@ function App() {
               <span className="game-icon" aria-hidden="true">&#127925;</span>
               <span className="game-title">Rhyme Time</span>
               <span className="game-description">Find words that rhyme!</span>
+            </button>
+            <button className="game-card builder-card" type="button" onClick={handleBuilderGame}>
+              <span className="game-icon" aria-hidden="true">&#127981;</span>
+              <span className="game-title">Word Builder</span>
+              <span className="game-description">Build words in the factory!</span>
             </button>
           </div>
         </main>
