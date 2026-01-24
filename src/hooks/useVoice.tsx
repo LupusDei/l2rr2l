@@ -38,8 +38,32 @@ const DEFAULT_SETTINGS: VoiceSettings = {
 
 const VoiceContext = createContext<VoiceContextValue | null>(null)
 
+// Extend Window interface for SpeechRecognition
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition
+    webkitSpeechRecognition: typeof SpeechRecognition
+  }
+}
+
 interface VoiceProviderProps {
   children: ReactNode
+}
+
+// Feedback message helpers
+function getPositiveFeedback(): string {
+  const messages = ['Great job!', 'Perfect!', 'You said it!', 'Excellent!', 'Wonderful!', 'Amazing!']
+  return messages[Math.floor(Math.random() * messages.length)]
+}
+
+function getEncouragingFeedback(word: string): string {
+  const messages = [
+    `Try again! Say "${word}"`,
+    `Almost! Try saying "${word}" again`,
+    `Good try! Can you say "${word}"?`,
+    `Let's try "${word}" one more time!`,
+  ]
+  return messages[Math.floor(Math.random() * messages.length)]
 }
 
 export function VoiceProvider({ children }: VoiceProviderProps) {
@@ -53,6 +77,10 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
 
+  // Browser speech recognition refs for fallback
+  const speechRecognitionRef = useRef<SpeechRecognition | null>(null)
+  const browserRecognitionResultRef = useRef<{ transcribed: string; confidence: number } | null>(null)
+
   // Clean up audio element and speech synthesis on unmount
   useEffect(() => {
     return () => {
@@ -62,6 +90,10 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
       }
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
         mediaRecorderRef.current.stop()
+      }
+      if (speechRecognitionRef.current) {
+        speechRecognitionRef.current.abort()
+        speechRecognitionRef.current = null
       }
       // Cancel any ongoing browser speech synthesis
       if ('speechSynthesis' in window) {
@@ -179,6 +211,60 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
     setSettings(prev => ({ ...prev, ...newSettings }))
   }, [])
 
+  // Start browser speech recognition in parallel with MediaRecorder for fallback
+  const startBrowserSpeechRecognition = useCallback(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      console.info('Browser speech recognition not available')
+      return
+    }
+
+    // Clear previous result
+    browserRecognitionResultRef.current = null
+
+    const recognition = new SpeechRecognition()
+    recognition.continuous = false
+    recognition.interimResults = false
+    recognition.lang = 'en-US'
+    recognition.maxAlternatives = 1
+
+    recognition.onresult = (event) => {
+      const result = event.results[0]
+      browserRecognitionResultRef.current = {
+        transcribed: result[0].transcript,
+        confidence: result[0].confidence,
+      }
+    }
+
+    recognition.onerror = (event) => {
+      // Store error info for fallback to provide appropriate feedback
+      if (event.error === 'no-speech') {
+        browserRecognitionResultRef.current = { transcribed: '', confidence: 0 }
+      }
+      console.info('Browser speech recognition error (will use for fallback):', event.error)
+    }
+
+    speechRecognitionRef.current = recognition
+
+    try {
+      recognition.start()
+    } catch (error) {
+      console.info('Failed to start browser speech recognition:', error)
+    }
+  }, [])
+
+  // Stop browser speech recognition
+  const stopBrowserSpeechRecognition = useCallback(() => {
+    if (speechRecognitionRef.current) {
+      try {
+        speechRecognitionRef.current.stop()
+      } catch {
+        // Ignore errors when stopping
+      }
+      speechRecognitionRef.current = null
+    }
+  }, [])
+
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -196,14 +282,21 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
 
       mediaRecorderRef.current = mediaRecorder
       mediaRecorder.start()
+
+      // Also start browser speech recognition in parallel for fallback
+      startBrowserSpeechRecognition()
+
       setIsRecording(true)
     } catch (error) {
       console.error('Failed to start recording:', error)
       throw error
     }
-  }, [])
+  }, [startBrowserSpeechRecognition])
 
   const stopRecording = useCallback(async (): Promise<Blob | null> => {
+    // Stop browser speech recognition
+    stopBrowserSpeechRecognition()
+
     return new Promise((resolve) => {
       const mediaRecorder = mediaRecorderRef.current
       if (!mediaRecorder || mediaRecorder.state === 'inactive') {
@@ -225,7 +318,7 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
 
       mediaRecorder.stop()
     })
-  }, [])
+  }, [stopBrowserSpeechRecognition])
 
   const checkPronunciation = useCallback(async (expectedWord: string): Promise<PronunciationResult | null> => {
     const audioBlob = await stopRecording()
@@ -244,14 +337,58 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
       })
 
       if (!response.ok) {
-        console.warn('Pronunciation check failed')
-        return null
+        // Server API unavailable - fall back to browser speech recognition result
+        console.info('Pronunciation API unavailable, using browser speech recognition fallback')
+        return getBrowserRecognitionFallback(expectedWord)
       }
 
       return await response.json()
     } catch (error) {
-      console.error('Pronunciation check error:', error)
-      return null
+      // Network error or other failure - fall back to browser speech recognition result
+      console.info('Pronunciation check error, using browser fallback:', error)
+      return getBrowserRecognitionFallback(expectedWord)
+    }
+
+    function getBrowserRecognitionFallback(expectedWord: string): PronunciationResult {
+      const browserResult = browserRecognitionResultRef.current
+
+      // Check if browser speech recognition is even available
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      if (!SpeechRecognition) {
+        return {
+          isCorrect: false,
+          transcribed: '',
+          expected: expectedWord,
+          confidence: 0,
+          feedback: 'Speech recognition is not available in your browser. Try using Chrome or Edge.',
+        }
+      }
+
+      if (!browserResult || browserResult.transcribed === '') {
+        return {
+          isCorrect: false,
+          transcribed: '',
+          expected: expectedWord,
+          confidence: 0,
+          feedback: `I didn't hear anything. Try saying "${expectedWord}" again.`,
+        }
+      }
+
+      // Normalize for comparison
+      const transcribedNormalized = browserResult.transcribed.toLowerCase().trim()
+      const expectedNormalized = expectedWord.toLowerCase().trim()
+
+      const isCorrect =
+        transcribedNormalized === expectedNormalized ||
+        transcribedNormalized.includes(expectedNormalized)
+
+      return {
+        isCorrect,
+        transcribed: browserResult.transcribed,
+        expected: expectedWord,
+        confidence: browserResult.confidence,
+        feedback: isCorrect ? getPositiveFeedback() : getEncouragingFeedback(expectedWord),
+      }
     }
   }, [stopRecording])
 
