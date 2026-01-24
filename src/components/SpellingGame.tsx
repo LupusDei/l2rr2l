@@ -356,24 +356,26 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
         <button className="back-button" onClick={onBack} type="button">
           ← Back
         </button>
-        <button
-          className="repeat-button"
-          onClick={handleRepeat}
-          disabled={isSpeaking}
-          type="button"
-          aria-label="Repeat word"
-        >
-          🔊
-        </button>
-        <button
-          className={`pronunciation-button ${isRecording ? 'recording' : ''}`}
-          onClick={handlePronunciationToggle}
-          disabled={isSpeaking || showPronunciationFeedback}
-          type="button"
-          aria-label={isRecording ? 'Stop recording' : 'Say the word'}
-        >
-          {isRecording ? '⏹️' : '🎤'}
-        </button>
+        <div className="audio-controls">
+          <button
+            className="repeat-button"
+            onClick={handleRepeat}
+            disabled={isSpeaking}
+            type="button"
+            aria-label="Repeat word"
+          >
+            🔊
+          </button>
+          <button
+            className={`pronunciation-button ${isRecording ? 'recording' : ''}`}
+            onClick={handlePronunciationToggle}
+            disabled={isSpeaking || showPronunciationFeedback}
+            type="button"
+            aria-label={isRecording ? 'Stop recording' : 'Say the word'}
+          >
+            {isRecording ? '⏹️' : '🎤'}
+          </button>
+        </div>
         <div className="progress-indicator">
           ⭐ {wordsCompleted}
         </div>
