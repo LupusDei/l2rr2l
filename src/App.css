@@ -381,20 +381,20 @@
 .rhyme-card {
   background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   box-shadow:
-    0 6px 0 #d63384,
-    0 8px 20px rgba(240, 147, 251, 0.4);
+    0 6px 0 #d63a5a,
+    0 8px 20px rgba(245, 87, 108, 0.4);
 }
 
 .rhyme-card:hover {
   box-shadow:
-    0 8px 0 #d63384,
-    0 12px 25px rgba(240, 147, 251, 0.5);
+    0 8px 0 #d63a5a,
+    0 12px 25px rgba(245, 87, 108, 0.5);
 }
 
 .rhyme-card:active {
   box-shadow:
-    0 2px 0 #d63384,
-    0 4px 10px rgba(240, 147, 251, 0.4);
+    0 2px 0 #d63a5a,
+    0 4px 10px rgba(245, 87, 108, 0.4);
 }
 
 .builder-card {

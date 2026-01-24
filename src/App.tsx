@@ -119,7 +119,9 @@ function App() {
 
     if (screen === 'rhyme') {
       return (
-        <RhymeGame onBack={handleRhymeBack} />
+        <VoiceProvider>
+          <RhymeGame onBack={handleRhymeBack} />
+        </VoiceProvider>
       )
     }
 
