@@ -78,8 +78,24 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!response.ok) {
       const errorText = await response.text()
       console.error('ElevenLabs TTS error:', response.status, errorText)
+
+      // Parse ElevenLabs error for better messaging
+      let userMessage = 'Voice service temporarily unavailable.'
+      try {
+        const errorData = JSON.parse(errorText)
+        if (errorData.detail?.status === 'detected_unusual_activity') {
+          userMessage = 'ElevenLabs rate limited. Please try again later or use browser voice.'
+        } else if (errorData.detail?.status === 'model_deprecated_free_tier') {
+          userMessage = 'Voice model not available on free tier.'
+        } else if (errorData.detail?.message) {
+          userMessage = errorData.detail.message
+        }
+      } catch {
+        // Use default message
+      }
+
       return Response.json(
-        { error: `TTS error: ${response.status} - ${errorText.substring(0, 100)}` },
+        { error: userMessage, details: errorText.substring(0, 200) },
         { status: 503 }
       )
     }

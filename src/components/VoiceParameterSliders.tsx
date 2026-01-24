@@ -215,8 +215,14 @@ export default function VoiceParameterSliders({
       })
 
       if (!response.ok) {
-        // Fall back to browser TTS on API error
-        console.info('TTS API unavailable, using browser speech')
+        // Log the error details for debugging
+        try {
+          const errorData = await response.json()
+          console.info('TTS API error:', errorData.error || 'Unknown error')
+        } catch {
+          console.info('TTS API unavailable')
+        }
+        // Fall back to browser TTS
         await speakWithBrowserTTS(phrase)
         return
       }
