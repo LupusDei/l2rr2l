@@ -40,11 +40,51 @@ const DEFAULT_SETTINGS: VoiceSettings = {
 
 const VoiceContext = createContext<VoiceContextValue | null>(null)
 
+// Web Speech API types
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string
+}
+
+interface SpeechRecognitionResultList {
+  readonly length: number
+  [index: number]: SpeechRecognitionResult
+}
+
+interface SpeechRecognitionResult {
+  readonly length: number
+  [index: number]: SpeechRecognitionAlternative
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string
+  confidence: number
+}
+
+interface SpeechRecognitionInstance extends EventTarget {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  maxAlternatives: number
+  onresult: ((event: SpeechRecognitionEvent) => void) | null
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null
+  start(): void
+  stop(): void
+  abort(): void
+}
+
+interface SpeechRecognitionConstructor {
+  new (): SpeechRecognitionInstance
+}
+
 // Extend Window interface for SpeechRecognition
 declare global {
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition
-    webkitSpeechRecognition: typeof SpeechRecognition
+    SpeechRecognition?: SpeechRecognitionConstructor
+    webkitSpeechRecognition?: SpeechRecognitionConstructor
   }
 }
 
@@ -80,7 +120,7 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
   const audioChunksRef = useRef<Blob[]>([])
 
   // Browser speech recognition refs for fallback
-  const speechRecognitionRef = useRef<SpeechRecognition | null>(null)
+  const speechRecognitionRef = useRef<SpeechRecognitionInstance | null>(null)
   const browserRecognitionResultRef = useRef<{ transcribed: string; confidence: number } | null>(null)
 
   // Clean up audio element and speech synthesis on unmount
