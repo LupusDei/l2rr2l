@@ -1,0 +1,267 @@
+{
+  "version": "1.0.0",
+  "description": "Word family data for the word builder game. Each family contains a rime (word ending) and valid onsets (beginning letters) that form real words.",
+  "difficultyLevels": {
+    "1": {
+      "name": "Starter",
+      "description": "Common CVC word families with short-a sounds",
+      "targetAge": "4-5 years"
+    },
+    "2": {
+      "name": "Beginner",
+      "description": "Short-o and short-u word families",
+      "targetAge": "5-6 years"
+    },
+    "3": {
+      "name": "Developing",
+      "description": "Short-i and short-e word families",
+      "targetAge": "6-7 years"
+    }
+  },
+  "categories": ["short-a", "short-e", "short-i", "short-o", "short-u"],
+  "families": [
+    {
+      "id": "wf-at",
+      "rime": "at",
+      "difficulty": 1,
+      "category": "short-a",
+      "validOnsets": ["b", "c", "f", "h", "m", "p", "r", "s"],
+      "words": [
+        { "word": "bat", "onset": "b", "isReal": true, "emoji": "🦇" },
+        { "word": "cat", "onset": "c", "isReal": true, "emoji": "🐱" },
+        { "word": "fat", "onset": "f", "isReal": true },
+        { "word": "hat", "onset": "h", "isReal": true, "emoji": "🎩" },
+        { "word": "mat", "onset": "m", "isReal": true },
+        { "word": "pat", "onset": "p", "isReal": true },
+        { "word": "rat", "onset": "r", "isReal": true, "emoji": "🐀" },
+        { "word": "sat", "onset": "s", "isReal": true }
+      ]
+    },
+    {
+      "id": "wf-an",
+      "rime": "an",
+      "difficulty": 1,
+      "category": "short-a",
+      "validOnsets": ["b", "c", "f", "m", "p", "r", "t", "v"],
+      "words": [
+        { "word": "ban", "onset": "b", "isReal": true },
+        { "word": "can", "onset": "c", "isReal": true },
+        { "word": "fan", "onset": "f", "isReal": true },
+        { "word": "man", "onset": "m", "isReal": true, "emoji": "👨" },
+        { "word": "pan", "onset": "p", "isReal": true },
+        { "word": "ran", "onset": "r", "isReal": true, "emoji": "🏃" },
+        { "word": "tan", "onset": "t", "isReal": true },
+        { "word": "van", "onset": "v", "isReal": true, "emoji": "🚐" }
+      ]
+    },
+    {
+      "id": "wf-ap",
+      "rime": "ap",
+      "difficulty": 1,
+      "category": "short-a",
+      "validOnsets": ["c", "g", "l", "m", "n", "r", "s", "t"],
+      "words": [
+        { "word": "cap", "onset": "c", "isReal": true, "emoji": "🧢" },
+        { "word": "gap", "onset": "g", "isReal": true },
+        { "word": "lap", "onset": "l", "isReal": true },
+        { "word": "map", "onset": "m", "isReal": true, "emoji": "🗺️" },
+        { "word": "nap", "onset": "n", "isReal": true, "emoji": "😴" },
+        { "word": "rap", "onset": "r", "isReal": true },
+        { "word": "sap", "onset": "s", "isReal": true },
+        { "word": "tap", "onset": "t", "isReal": true }
+      ]
+    },
+    {
+      "id": "wf-ag",
+      "rime": "ag",
+      "difficulty": 1,
+      "category": "short-a",
+      "validOnsets": ["b", "g", "l", "n", "r", "s", "t", "w"],
+      "words": [
+        { "word": "bag", "onset": "b", "isReal": true, "emoji": "👜" },
+        { "word": "gag", "onset": "g", "isReal": true },
+        { "word": "lag", "onset": "l", "isReal": true },
+        { "word": "nag", "onset": "n", "isReal": true },
+        { "word": "rag", "onset": "r", "isReal": true },
+        { "word": "sag", "onset": "s", "isReal": true },
+        { "word": "tag", "onset": "t", "isReal": true, "emoji": "🏷️" },
+        { "word": "wag", "onset": "w", "isReal": true }
+      ]
+    },
+    {
+      "id": "wf-am",
+      "rime": "am",
+      "difficulty": 1,
+      "category": "short-a",
+      "validOnsets": ["d", "h", "j", "r", "y"],
+      "words": [
+        { "word": "dam", "onset": "d", "isReal": true },
+        { "word": "ham", "onset": "h", "isReal": true },
+        { "word": "jam", "onset": "j", "isReal": true, "emoji": "🍓" },
+        { "word": "ram", "onset": "r", "isReal": true, "emoji": "🐏" },
+        { "word": "yam", "onset": "y", "isReal": true }
+      ]
+    },
+    {
+      "id": "wf-op",
+      "rime": "op",
+      "difficulty": 2,
+      "category": "short-o",
+      "validOnsets": ["b", "c", "h", "m", "p", "t"],
+      "words": [
+        { "word": "bop", "onset": "b", "isReal": true },
+        { "word": "cop", "onset": "c", "isReal": true, "emoji": "👮" },
+        { "word": "hop", "onset": "h", "isReal": true, "emoji": "🐰" },
+        { "word": "mop", "onset": "m", "isReal": true },
+        { "word": "pop", "onset": "p", "isReal": true },
+        { "word": "top", "onset": "t", "isReal": true }
+      ]
+    },
+    {
+      "id": "wf-ot",
+      "rime": "ot",
+      "difficulty": 2,
+      "category": "short-o",
+      "validOnsets": ["c", "d", "g", "h", "j", "l", "n", "p", "r"],
+      "words": [
+        { "word": "cot", "onset": "c", "isReal": true },
+        { "word": "dot", "onset": "d", "isReal": true },
+        { "word": "got", "onset": "g", "isReal": true },
+        { "word": "hot", "onset": "h", "isReal": true, "emoji": "🔥" },
+        { "word": "jot", "onset": "j", "isReal": true },
+        { "word": "lot", "onset": "l", "isReal": true },
+        { "word": "not", "onset": "n", "isReal": true },
+        { "word": "pot", "onset": "p", "isReal": true, "emoji": "🍲" },
+        { "word": "rot", "onset": "r", "isReal": true }
+      ]
+    },
+    {
+      "id": "wf-og",
+      "rime": "og",
+      "difficulty": 2,
+      "category": "short-o",
+      "validOnsets": ["b", "c", "d", "f", "h", "j", "l"],
+      "words": [
+        { "word": "bog", "onset": "b", "isReal": true },
+        { "word": "cog", "onset": "c", "isReal": true },
+        { "word": "dog", "onset": "d", "isReal": true, "emoji": "🐕" },
+        { "word": "fog", "onset": "f", "isReal": true, "emoji": "🌫️" },
+        { "word": "hog", "onset": "h", "isReal": true, "emoji": "🐷" },
+        { "word": "jog", "onset": "j", "isReal": true, "emoji": "🏃" },
+        { "word": "log", "onset": "l", "isReal": true, "emoji": "🪵" }
+      ]
+    },
+    {
+      "id": "wf-un",
+      "rime": "un",
+      "difficulty": 2,
+      "category": "short-u",
+      "validOnsets": ["b", "f", "g", "p", "r", "s"],
+      "words": [
+        { "word": "bun", "onset": "b", "isReal": true },
+        { "word": "fun", "onset": "f", "isReal": true, "emoji": "🎉" },
+        { "word": "gun", "onset": "g", "isReal": true },
+        { "word": "pun", "onset": "p", "isReal": true },
+        { "word": "run", "onset": "r", "isReal": true, "emoji": "🏃" },
+        { "word": "sun", "onset": "s", "isReal": true, "emoji": "☀️" }
+      ]
+    },
+    {
+      "id": "wf-ug",
+      "rime": "ug",
+      "difficulty": 2,
+      "category": "short-u",
+      "validOnsets": ["b", "d", "h", "j", "m", "p", "r", "t"],
+      "words": [
+        { "word": "bug", "onset": "b", "isReal": true, "emoji": "🐛" },
+        { "word": "dug", "onset": "d", "isReal": true },
+        { "word": "hug", "onset": "h", "isReal": true, "emoji": "🤗" },
+        { "word": "jug", "onset": "j", "isReal": true },
+        { "word": "mug", "onset": "m", "isReal": true },
+        { "word": "pug", "onset": "p", "isReal": true, "emoji": "🐕" },
+        { "word": "rug", "onset": "r", "isReal": true },
+        { "word": "tug", "onset": "t", "isReal": true }
+      ]
+    },
+    {
+      "id": "wf-in",
+      "rime": "in",
+      "difficulty": 3,
+      "category": "short-i",
+      "validOnsets": ["b", "d", "f", "k", "p", "s", "t", "w"],
+      "words": [
+        { "word": "bin", "onset": "b", "isReal": true },
+        { "word": "din", "onset": "d", "isReal": true },
+        { "word": "fin", "onset": "f", "isReal": true },
+        { "word": "kin", "onset": "k", "isReal": true },
+        { "word": "pin", "onset": "p", "isReal": true, "emoji": "📌" },
+        { "word": "sin", "onset": "s", "isReal": true },
+        { "word": "tin", "onset": "t", "isReal": true },
+        { "word": "win", "onset": "w", "isReal": true, "emoji": "🏆" }
+      ]
+    },
+    {
+      "id": "wf-ip",
+      "rime": "ip",
+      "difficulty": 3,
+      "category": "short-i",
+      "validOnsets": ["d", "h", "l", "n", "r", "s", "t", "z"],
+      "words": [
+        { "word": "dip", "onset": "d", "isReal": true },
+        { "word": "hip", "onset": "h", "isReal": true },
+        { "word": "lip", "onset": "l", "isReal": true, "emoji": "👄" },
+        { "word": "nip", "onset": "n", "isReal": true },
+        { "word": "rip", "onset": "r", "isReal": true },
+        { "word": "sip", "onset": "s", "isReal": true },
+        { "word": "tip", "onset": "t", "isReal": true },
+        { "word": "zip", "onset": "z", "isReal": true }
+      ]
+    },
+    {
+      "id": "wf-ig",
+      "rime": "ig",
+      "difficulty": 3,
+      "category": "short-i",
+      "validOnsets": ["b", "d", "f", "g", "j", "p", "r", "w"],
+      "words": [
+        { "word": "big", "onset": "b", "isReal": true },
+        { "word": "dig", "onset": "d", "isReal": true },
+        { "word": "fig", "onset": "f", "isReal": true },
+        { "word": "gig", "onset": "g", "isReal": true },
+        { "word": "jig", "onset": "j", "isReal": true },
+        { "word": "pig", "onset": "p", "isReal": true, "emoji": "🐷" },
+        { "word": "rig", "onset": "r", "isReal": true },
+        { "word": "wig", "onset": "w", "isReal": true }
+      ]
+    },
+    {
+      "id": "wf-ed",
+      "rime": "ed",
+      "difficulty": 3,
+      "category": "short-e",
+      "validOnsets": ["b", "f", "l", "r", "w"],
+      "words": [
+        { "word": "bed", "onset": "b", "isReal": true, "emoji": "🛏️" },
+        { "word": "fed", "onset": "f", "isReal": true },
+        { "word": "led", "onset": "l", "isReal": true },
+        { "word": "red", "onset": "r", "isReal": true, "emoji": "🔴" },
+        { "word": "wed", "onset": "w", "isReal": true }
+      ]
+    },
+    {
+      "id": "wf-en",
+      "rime": "en",
+      "difficulty": 3,
+      "category": "short-e",
+      "validOnsets": ["d", "h", "m", "p", "t", "w"],
+      "words": [
+        { "word": "den", "onset": "d", "isReal": true },
+        { "word": "hen", "onset": "h", "isReal": true, "emoji": "🐔" },
+        { "word": "men", "onset": "m", "isReal": true },
+        { "word": "pen", "onset": "p", "isReal": true, "emoji": "🖊️" },
+        { "word": "ten", "onset": "t", "isReal": true, "emoji": "🔟" },
+        { "word": "wen", "onset": "w", "isReal": true }
+      ]
+    }
+  ]
+}
