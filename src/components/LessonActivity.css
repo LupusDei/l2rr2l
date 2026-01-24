@@ -1,0 +1,450 @@
+.lesson-activity {
+  background: white;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-instructions {
+  font-size: 1.25rem;
+  color: #4a5568;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.activity-error {
+  color: #e53e3e;
+  text-align: center;
+  padding: 2rem;
+}
+
+.activity-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.activity-button {
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+  min-width: 150px;
+}
+
+.activity-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.activity-button.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.activity-button.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.activity-button.secondary {
+  background: #edf2f7;
+  color: #4a5568;
+}
+
+.activity-button.secondary:hover:not(:disabled) {
+  background: #e2e8f0;
+}
+
+.activity-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Reading Activity */
+.activity-reading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.activity-image {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 1rem;
+  object-fit: contain;
+}
+
+.reading-content {
+  font-size: 1.5rem;
+  line-height: 1.8;
+  text-align: center;
+  color: #2d3748;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 1rem;
+  width: 100%;
+}
+
+/* Spelling Activity */
+.activity-spelling {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.spelling-hint {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hint-button {
+  background: #faf089;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.spelling-input {
+  font-size: 1.5rem;
+  padding: 1rem 1.5rem;
+  border: 3px solid #e2e8f0;
+  border-radius: 1rem;
+  text-align: center;
+  width: 100%;
+  max-width: 300px;
+  transition: border-color 0.2s;
+}
+
+.spelling-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* Phonics Activity */
+.activity-phonics {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.phonics-sound,
+.phonics-word {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sound-display {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #667eea;
+  background: #eef2ff;
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+}
+
+.word-display {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* Sight Words Activity */
+.activity-sight-words {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.sight-word-display {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #2d3748;
+  padding: 2rem;
+  background: #f7fafc;
+  border-radius: 1rem;
+  min-width: 200px;
+  text-align: center;
+}
+
+.sight-word-progress {
+  color: #718096;
+  font-size: 1rem;
+}
+
+/* Quiz Activity */
+.activity-quiz {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.quiz-question {
+  font-size: 1.5rem;
+  text-align: center;
+  color: #2d3748;
+  line-height: 1.5;
+}
+
+.quiz-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.quiz-option {
+  padding: 1.25rem;
+  font-size: 1.125rem;
+  background: #f7fafc;
+  border: 3px solid #e2e8f0;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quiz-option:hover:not(:disabled) {
+  background: #edf2f7;
+  border-color: #667eea;
+}
+
+.quiz-option.selected {
+  border-color: #667eea;
+  background: #eef2ff;
+}
+
+.quiz-option.correct {
+  background: #c6f6d5;
+  border-color: #48bb78;
+}
+
+.quiz-option.incorrect {
+  background: #fed7d7;
+  border-color: #f56565;
+}
+
+.quiz-explanation {
+  text-align: center;
+  padding: 1rem;
+  background: #f0fff4;
+  border-radius: 0.75rem;
+  color: #276749;
+}
+
+/* Matching Activity */
+.activity-matching {
+  flex: 1;
+}
+
+.matching-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.matching-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.matching-item {
+  padding: 1rem;
+  font-size: 1.125rem;
+  background: #f7fafc;
+  border: 3px solid #e2e8f0;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.matching-item:hover:not(:disabled) {
+  border-color: #667eea;
+}
+
+.matching-item.selected {
+  border-color: #667eea;
+  background: #eef2ff;
+}
+
+.matching-item.matched {
+  background: #c6f6d5;
+  border-color: #48bb78;
+  cursor: default;
+}
+
+/* Fill in Blank Activity */
+.activity-fill-blank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.fill-blank-sentence {
+  font-size: 1.5rem;
+  line-height: 2;
+  text-align: center;
+}
+
+.fill-blank-input {
+  font-size: 1.25rem;
+  padding: 0.5rem 1rem;
+  border: 3px solid #667eea;
+  border-radius: 0.5rem;
+  width: 150px;
+  text-align: center;
+  margin: 0 0.5rem;
+}
+
+.fill-blank-input.correct {
+  border-color: #48bb78;
+  background: #c6f6d5;
+}
+
+.fill-blank-input.incorrect {
+  border-color: #f56565;
+  background: #fed7d7;
+}
+
+.word-bank {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.word-bank-word {
+  padding: 0.75rem 1.25rem;
+  background: #edf2f7;
+  border: 2px solid #e2e8f0;
+  border-radius: 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.word-bank-word:hover:not(:disabled) {
+  background: #e2e8f0;
+  border-color: #667eea;
+}
+
+/* Listen Repeat Activity */
+.activity-listen-repeat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.phrase-display {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  text-align: center;
+  padding: 2rem;
+  background: #f7fafc;
+  border-radius: 1rem;
+}
+
+/* Word Building Activity */
+.activity-word-building {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.word-building-display {
+  display: flex;
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.onset {
+  color: #667eea;
+  background: #eef2ff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem 0 0 0.75rem;
+}
+
+.pattern {
+  color: #38a169;
+  background: #f0fff4;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+
+.word-result {
+  font-size: 2rem;
+  color: #4a5568;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .lesson-activity {
+    padding: 1rem;
+    border-radius: 1rem;
+    min-height: 250px;
+  }
+
+  .activity-instructions {
+    font-size: 1.125rem;
+  }
+
+  .activity-button {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    min-width: 120px;
+  }
+
+  .reading-content {
+    font-size: 1.25rem;
+  }
+
+  .sound-display {
+    font-size: 3rem;
+  }
+
+  .word-display,
+  .sight-word-display {
+    font-size: 2rem;
+  }
+
+  .quiz-options {
+    grid-template-columns: 1fr;
+  }
+
+  .matching-columns {
+    gap: 1rem;
+  }
+
+  .word-building-display {
+    font-size: 2rem;
+  }
+}

@@ -1,0 +1,131 @@
+.lesson-progress {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1rem;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.lesson-progress-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.lesson-exit-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: white;
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+.lesson-exit-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.lesson-exit-button:active {
+  transform: scale(0.95);
+}
+
+.lesson-progress-title {
+  flex: 1;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.lesson-progress-count {
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+
+.lesson-progress-bar-container {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 0.5rem;
+  height: 0.75rem;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.lesson-progress-bar {
+  background: white;
+  height: 100%;
+  border-radius: 0.5rem;
+  transition: width 0.3s ease-out;
+}
+
+.lesson-progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.lesson-progress-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.lesson-progress-dot.completed {
+  background: #4ade80;
+}
+
+.lesson-progress-dot.current {
+  background: white;
+  transform: scale(1.25);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .lesson-progress {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+  }
+
+  .lesson-progress-header {
+    gap: 0.5rem;
+  }
+
+  .lesson-exit-button {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+
+  .lesson-progress-title {
+    font-size: 1rem;
+  }
+
+  .lesson-progress-count {
+    font-size: 0.875rem;
+  }
+
+  .lesson-progress-dots {
+    gap: 0.375rem;
+  }
+
+  .lesson-progress-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+}

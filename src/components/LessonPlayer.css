@@ -1,0 +1,246 @@
+.lesson-player {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Objectives Screen */
+.lesson-objectives-screen {
+  background: white;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lesson-main-title {
+  font-size: 2rem;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.lesson-description {
+  font-size: 1.125rem;
+  color: #718096;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.lesson-objectives {
+  background: #f7fafc;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.lesson-objectives h2 {
+  font-size: 1.25rem;
+  color: #4a5568;
+  margin-bottom: 1rem;
+}
+
+.lesson-objectives ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lesson-objectives li {
+  padding: 0.5rem 0;
+  padding-left: 1.75rem;
+  position: relative;
+  color: #2d3748;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.lesson-objectives li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #48bb78;
+  font-weight: bold;
+}
+
+.lesson-meta-info {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.meta-item {
+  background: #edf2f7;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  color: #4a5568;
+}
+
+.lesson-objectives-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.lesson-button {
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+  min-width: 140px;
+}
+
+.lesson-button.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.lesson-button.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.lesson-button.secondary {
+  background: #edf2f7;
+  color: #4a5568;
+}
+
+.lesson-button.secondary:hover {
+  background: #e2e8f0;
+}
+
+.lesson-button:active {
+  transform: scale(0.98);
+}
+
+/* Activity Container */
+.lesson-activity-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+/* Navigation */
+.lesson-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 2px solid #e2e8f0;
+  background: white;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-button:hover:not(:disabled) {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.nav-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.nav-button.skip {
+  border-color: #fed7d7;
+  color: #c53030;
+}
+
+.nav-button.skip:hover:not(:disabled) {
+  background: #fff5f5;
+  border-color: #fc8181;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .lesson-player {
+    padding: 0.5rem;
+  }
+
+  .lesson-objectives-screen {
+    padding: 1.5rem;
+    border-radius: 1rem;
+  }
+
+  .lesson-main-title {
+    font-size: 1.5rem;
+  }
+
+  .lesson-description {
+    font-size: 1rem;
+  }
+
+  .lesson-objectives {
+    padding: 1rem;
+  }
+
+  .lesson-objectives h2 {
+    font-size: 1.125rem;
+  }
+
+  .lesson-objectives li {
+    font-size: 0.9375rem;
+  }
+
+  .lesson-meta-info {
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-size: 0.8125rem;
+  }
+
+  .lesson-objectives-buttons {
+    flex-direction: column-reverse;
+  }
+
+  .lesson-button {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 768px) {
+  .lesson-player {
+    padding: 0.75rem;
+  }
+
+  .lesson-main-title {
+    font-size: 1.75rem;
+  }
+}
