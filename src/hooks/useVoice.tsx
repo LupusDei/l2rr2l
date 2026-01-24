@@ -118,10 +118,46 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
   const isProcessingRef = useRef(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
+  const audioUnlockedRef = useRef(false)
 
   // Browser speech recognition refs for fallback
   const speechRecognitionRef = useRef<SpeechRecognitionInstance | null>(null)
   const browserRecognitionResultRef = useRef<{ transcribed: string; confidence: number } | null>(null)
+
+  // iOS/Safari requires audio to be "unlocked" with a user gesture
+  // This runs a silent utterance on first touch to enable audio playback
+  useEffect(() => {
+    const unlockAudio = () => {
+      if (audioUnlockedRef.current) return
+      audioUnlockedRef.current = true
+
+      // Unlock Web Speech API on iOS
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance('')
+        utterance.volume = 0
+        window.speechSynthesis.speak(utterance)
+      }
+
+      // Unlock Audio context by playing a silent sound
+      const silentAudio = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIgAANP8AAARMQAABNAAAAAAANIAAAAAA0gAAAAAMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA//tQxAADwAABpAAAACAAADSAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7UMQ/g8AAAaQAAAAgAAA0gAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+      silentAudio.play().catch(() => {
+        // Ignore errors - this is just to unlock
+      })
+
+      // Remove listeners after unlocking
+      document.removeEventListener('touchstart', unlockAudio)
+      document.removeEventListener('click', unlockAudio)
+    }
+
+    // Add listeners for first user interaction
+    document.addEventListener('touchstart', unlockAudio, { once: true })
+    document.addEventListener('click', unlockAudio, { once: true })
+
+    return () => {
+      document.removeEventListener('touchstart', unlockAudio)
+      document.removeEventListener('click', unlockAudio)
+    }
+  }, [])
 
   // Clean up audio element and speech synthesis on unmount
   useEffect(() => {
@@ -153,18 +189,42 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
         return
       }
 
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 0.9 // Slightly slower for children
-      utterance.pitch = 1.0
-      utterance.volume = 1.0
+      // iOS Safari fix: cancel any pending speech and resume if paused
+      const synth = window.speechSynthesis
+      synth.cancel()
 
-      utterance.onend = () => resolve()
-      utterance.onerror = () => {
-        console.warn('Browser speech synthesis failed')
-        resolve()
-      }
+      // iOS sometimes needs a small delay after cancel
+      setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(text)
+        utterance.rate = 0.9 // Slightly slower for children
+        utterance.pitch = 1.0
+        utterance.volume = 1.0
+        utterance.lang = 'en-US'
 
-      window.speechSynthesis.speak(utterance)
+        // Set a timeout in case onend never fires (iOS bug)
+        const timeoutId = setTimeout(() => {
+          console.warn('Speech synthesis timeout, resolving')
+          resolve()
+        }, 10000) // 10 second max
+
+        utterance.onend = () => {
+          clearTimeout(timeoutId)
+          resolve()
+        }
+
+        utterance.onerror = (event) => {
+          clearTimeout(timeoutId)
+          console.warn('Browser speech synthesis failed:', event)
+          resolve()
+        }
+
+        synth.speak(utterance)
+
+        // iOS Safari fix: resume if paused (happens on backgrounding)
+        if (synth.paused) {
+          synth.resume()
+        }
+      }, 50)
     })
   }, [])
 
