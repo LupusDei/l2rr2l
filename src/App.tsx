@@ -6,12 +6,13 @@ import SpellingGame from './components/SpellingGame'
 import MemoryGame from './components/MemoryGame'
 import RhymeGame from './components/RhymeGame'
 import WordBuilder from './components/WordBuilder'
+import PhonicsGame from './components/PhonicsGame'
 import Settings from './components/Settings'
 import { VoiceProvider } from './hooks/useVoice'
 import type { Lesson } from './components/LessonCard'
 import { version } from '../package.json'
 
-type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling' | 'memory' | 'rhyme' | 'builder' | 'settings'
+type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling' | 'memory' | 'rhyme' | 'builder' | 'phonics' | 'settings'
 
 // Temporary child ID for development (would come from auth in production)
 const DEV_CHILD_ID = 'dev-child-1'
@@ -83,6 +84,14 @@ function App() {
     setScreen('home')
   }
 
+  const handlePhonicsGame = () => {
+    setScreen('phonics')
+  }
+
+  const handlePhonicsBack = () => {
+    setScreen('home')
+  }
+
   const handleSettings = () => {
     setScreen('settings')
   }
@@ -129,6 +138,14 @@ function App() {
       return (
         <VoiceProvider>
           <WordBuilder onBack={handleBuilderBack} />
+        </VoiceProvider>
+      )
+    }
+
+    if (screen === 'phonics') {
+      return (
+        <VoiceProvider>
+          <PhonicsGame onBack={handlePhonicsBack} />
         </VoiceProvider>
       )
     }
@@ -227,6 +244,11 @@ function App() {
               <span className="game-icon" aria-hidden="true">&#127981;</span>
               <span className="game-title">Word Builder</span>
               <span className="game-description">Build words in the factory!</span>
+            </button>
+            <button className="game-card phonics-card" type="button" onClick={handlePhonicsGame}>
+              <span className="game-icon" aria-hidden="true">&#128264;</span>
+              <span className="game-title">Phonics Fun</span>
+              <span className="game-description">Match sounds to letters!</span>
             </button>
           </div>
         </main>

@@ -416,6 +416,25 @@
     0 4px 10px rgba(243, 156, 18, 0.4);
 }
 
+.phonics-card {
+  background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+  box-shadow:
+    0 6px 0 #006080,
+    0 8px 20px rgba(0, 180, 219, 0.4);
+}
+
+.phonics-card:hover {
+  box-shadow:
+    0 8px 0 #006080,
+    0 12px 25px rgba(0, 180, 219, 0.5);
+}
+
+.phonics-card:active {
+  box-shadow:
+    0 2px 0 #006080,
+    0 4px 10px rgba(0, 180, 219, 0.4);
+}
+
 .game-icon {
   font-family: 'Comic Sans MS', 'Chalkboard', cursive;
   font-size: 2rem;

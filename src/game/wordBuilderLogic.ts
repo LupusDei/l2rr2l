@@ -1,9 +1,11 @@
 // Word Builder Game Logic
 // Handles game state, validation, progression, and achievements
 
-import {
+import type {
   WordFamily,
   WordFamilyWord,
+} from './wordFamilies'
+import {
   difficultyLevels,
   getFamiliesByLevel,
   getFamilyByEnding,
@@ -389,7 +391,7 @@ function isLevelComplete(state: GameState, level: 1 | 2 | 3): boolean {
 // Advance to next level
 export function advanceLevel(state: GameState): GameState {
   const nextLevel = Math.min(state.currentLevel + 1, 3) as 1 | 2 | 3
-  let newState = { ...state, currentLevel: nextLevel, currentFamily: null }
+  let newState: GameState = { ...state, currentLevel: nextLevel, currentFamily: null }
   newState = initializeLevelProgress(newState, nextLevel)
   return selectRandomFamily(newState)
 }
