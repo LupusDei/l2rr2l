@@ -359,6 +359,25 @@
     0 4px 10px rgba(81, 207, 102, 0.4);
 }
 
+.memory-card {
+  background: linear-gradient(135deg, #4dabf7 0%, #748ffc 100%);
+  box-shadow:
+    0 6px 0 #4c6ef5,
+    0 8px 20px rgba(77, 171, 247, 0.4);
+}
+
+.memory-card:hover {
+  box-shadow:
+    0 8px 0 #4c6ef5,
+    0 12px 25px rgba(77, 171, 247, 0.5);
+}
+
+.memory-card:active {
+  box-shadow:
+    0 2px 0 #4c6ef5,
+    0 4px 10px rgba(77, 171, 247, 0.4);
+}
+
 .game-icon {
   font-family: 'Comic Sans MS', 'Chalkboard', cursive;
   font-size: 2rem;

@@ -3,12 +3,13 @@ import './App.css'
 import Onboarding from './components/Onboarding'
 import LessonSelection from './components/LessonSelection'
 import SpellingGame from './components/SpellingGame'
+import MemoryGame from './components/MemoryGame'
 import Settings from './components/Settings'
 import { VoiceProvider } from './hooks/useVoice'
 import type { Lesson } from './components/LessonCard'
 import { version } from '../package.json'
 
-type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling' | 'settings'
+type Screen = 'home' | 'onboarding' | 'lessons' | 'spelling' | 'memory' | 'settings'
 
 // Temporary child ID for development (would come from auth in production)
 const DEV_CHILD_ID = 'dev-child-1'
@@ -56,6 +57,14 @@ function App() {
     setScreen('home')
   }
 
+  const handleMemoryGame = () => {
+    setScreen('memory')
+  }
+
+  const handleMemoryBack = () => {
+    setScreen('home')
+  }
+
   const handleSettings = () => {
     setScreen('settings')
   }
@@ -78,6 +87,14 @@ function App() {
       return (
         <VoiceProvider>
           <SpellingGame onBack={handleSpellingBack} />
+        </VoiceProvider>
+      )
+    }
+
+    if (screen === 'memory') {
+      return (
+        <VoiceProvider>
+          <MemoryGame onBack={handleMemoryBack} />
         </VoiceProvider>
       )
     }
@@ -161,6 +178,11 @@ function App() {
               <span className="game-icon" aria-hidden="true">ABC</span>
               <span className="game-title">Spelling Game</span>
               <span className="game-description">Practice spelling words!</span>
+            </button>
+            <button className="game-card memory-card" type="button" onClick={handleMemoryGame}>
+              <span className="game-icon" aria-hidden="true">&#127183;</span>
+              <span className="game-title">Memory Game</span>
+              <span className="game-description">Match sight words!</span>
             </button>
           </div>
         </main>
