@@ -223,20 +223,15 @@ describe('VoiceParameterSliders', () => {
   })
 
   describe('preview functionality', () => {
-    it('disables play button when no voiceId is provided', () => {
+    it('play button is always enabled (uses browser TTS as fallback)', () => {
       render(<VoiceParameterSliders />)
 
       const playButton = screen.getByRole('button', { name: /play preview/i })
-      expect(playButton).toBeDisabled()
+      // Button is always enabled - uses browser TTS when no voiceId provided
+      expect(playButton).not.toBeDisabled()
     })
 
-    it('shows hint when no voice is selected', () => {
-      render(<VoiceParameterSliders />)
-
-      expect(screen.getByText(/select a voice above to preview/i)).toBeInTheDocument()
-    })
-
-    it('enables play button when voiceId is provided', () => {
+    it('play button works when voiceId is provided', () => {
       render(<VoiceParameterSliders voiceId="test-voice-id" />)
 
       const playButton = screen.getByRole('button', { name: /play preview/i })
