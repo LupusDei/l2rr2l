@@ -38,6 +38,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const stability = voiceSettings?.stability ?? body.stability ?? 0.5
     const similarityBoost = voiceSettings?.similarityBoost ?? body.similarityBoost ?? 0.75
 
+    console.log('TTS request:', { voiceId, textLength: text?.length, stability, similarityBoost })
+
     if (!text || typeof text !== 'string') {
       return Response.json({ error: 'Text is required' }, { status: 400 })
     }
@@ -49,6 +51,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         { status: 503 }
       )
     }
+
+    console.log('Calling ElevenLabs with voiceId:', voiceId)
 
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
@@ -73,7 +77,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       const errorText = await response.text()
       console.error('ElevenLabs TTS error:', response.status, errorText)
       return Response.json(
-        { error: 'TTS service error. Using browser speech synthesis.' },
+        { error: `TTS error: ${response.status} - ${errorText.substring(0, 100)}` },
         { status: 503 }
       )
     }
