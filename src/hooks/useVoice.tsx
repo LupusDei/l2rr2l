@@ -38,6 +38,29 @@ const DEFAULT_SETTINGS: VoiceSettings = {
   encouragementEnabled: true,
 }
 
+// LocalStorage key for voice settings (must match Settings.tsx)
+const STORAGE_KEY = 'l2rr2l_voice_settings_dev-child-1'
+
+// Load settings from localStorage or use defaults
+function loadSettingsFromStorage(): VoiceSettings {
+  try {
+    const cached = localStorage.getItem(STORAGE_KEY)
+    if (cached) {
+      const parsed = JSON.parse(cached)
+      return {
+        voiceId: parsed.voiceId || DEFAULT_SETTINGS.voiceId,
+        stability: parsed.stability ?? DEFAULT_SETTINGS.stability,
+        similarityBoost: parsed.similarityBoost ?? DEFAULT_SETTINGS.similarityBoost,
+        enabled: parsed.enabled ?? DEFAULT_SETTINGS.enabled,
+        encouragementEnabled: parsed.encouragementEnabled ?? DEFAULT_SETTINGS.encouragementEnabled,
+      }
+    }
+  } catch {
+    // Ignore localStorage errors
+  }
+  return DEFAULT_SETTINGS
+}
+
 const VoiceContext = createContext<VoiceContextValue | null>(null)
 
 // Web Speech API types
@@ -109,7 +132,8 @@ function getEncouragingFeedback(word: string): string {
 }
 
 export function VoiceProvider({ children }: VoiceProviderProps) {
-  const [settings, setSettings] = useState<VoiceSettings>(DEFAULT_SETTINGS)
+  // Load settings from localStorage on mount (lazy initialization)
+  const [settings, setSettings] = useState<VoiceSettings>(loadSettingsFromStorage)
   const [isLoading] = useState(false)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
