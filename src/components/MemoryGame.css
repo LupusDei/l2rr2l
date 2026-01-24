@@ -1,0 +1,307 @@
+.memory-game {
+  min-height: 100vh;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.memory-header {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+.memory-header .back-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.memory-header .back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.memory-stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.memory-stats .stat {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* Card grid */
+.memory-grid {
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 500px;
+  padding: 1rem;
+}
+
+/* Memory card */
+.memory-card {
+  aspect-ratio: 1;
+  perspective: 1000px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.memory-card:disabled {
+  cursor: default;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+  border-radius: 12px;
+}
+
+.memory-card.flipped .card-inner,
+.memory-card.matched .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-front {
+  background: linear-gradient(145deg, #ffffff, #e6e6e6);
+  border: 3px solid #ddd;
+}
+
+.card-symbol {
+  font-size: 2rem;
+  color: #888;
+}
+
+.card-back {
+  background: linear-gradient(145deg, #ffd43b, #fab005);
+  transform: rotateY(180deg);
+  border: 3px solid #f59f00;
+}
+
+.card-word {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+  text-transform: lowercase;
+}
+
+/* Matched state */
+.memory-card.matched .card-back {
+  background: linear-gradient(145deg, #51cf66, #40c057);
+  border-color: #37b24d;
+}
+
+.memory-card.matched .card-word {
+  color: white;
+}
+
+/* Hover effect for unflipped cards */
+.memory-card:not(.flipped):not(.matched):not(:disabled):hover .card-front {
+  background: linear-gradient(145deg, #f8f9fa, #dee2e6);
+  border-color: #adb5bd;
+}
+
+.memory-card:not(.flipped):not(.matched):not(:disabled):hover .card-symbol {
+  color: #666;
+}
+
+/* New game button */
+.new-game-button {
+  margin-top: 1.5rem;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #667eea;
+  background: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.new-game-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Celebration overlay */
+.celebration-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.celebration-content {
+  background: linear-gradient(145deg, #ffd43b, #fab005);
+  padding: 3rem;
+  border-radius: 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  max-width: 90%;
+  animation: bounceIn 0.5s ease;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.celebration-emoji {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+  animation: bounce 0.6s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.celebration-text {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 0.5rem;
+}
+
+.celebration-stats {
+  font-size: 1.1rem;
+  color: #555;
+  margin: 0 0 1.5rem;
+}
+
+.play-again-button {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(145deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.play-again-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Confetti */
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  animation: confettiFall 1.5s ease forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(400px) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .memory-game {
+    padding: 0.5rem;
+  }
+
+  .memory-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .memory-stats {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .memory-grid {
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .card-word {
+    font-size: 1rem;
+  }
+
+  .card-symbol {
+    font-size: 1.5rem;
+  }
+
+  .celebration-content {
+    padding: 2rem;
+  }
+
+  .celebration-emoji {
+    font-size: 3rem;
+  }
+
+  .celebration-text {
+    font-size: 1.5rem;
+  }
+}
