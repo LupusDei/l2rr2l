@@ -7,6 +7,13 @@ interface TTSRequest {
   stability?: number
   similarityBoost?: number
   speed?: number
+  // Also accept nested voiceSettings from frontend
+  voiceSettings?: {
+    stability?: number
+    similarityBoost?: number
+    style?: number
+    useSpeakerBoost?: boolean
+  }
 }
 
 interface Env {
@@ -25,7 +32,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   try {
     const body = await context.request.json() as TTSRequest
-    const { text, voiceId = 'default', stability = 0.5, similarityBoost = 0.75, speed = 1.0 } = body
+    const { text, voiceId = 'default', voiceSettings } = body
+
+    // Support both flat and nested parameters
+    const stability = voiceSettings?.stability ?? body.stability ?? 0.5
+    const similarityBoost = voiceSettings?.similarityBoost ?? body.similarityBoost ?? 0.75
 
     if (!text || typeof text !== 'string') {
       return Response.json({ error: 'Text is required' }, { status: 400 })
@@ -53,7 +64,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
           voice_settings: {
             stability,
             similarity_boost: similarityBoost,
-            speed,
           },
         }),
       }

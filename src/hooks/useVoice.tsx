@@ -282,14 +282,17 @@ export function VoiceProvider({ children }: VoiceProviderProps) {
           audio.onerror = () => {
             URL.revokeObjectURL(audioUrl)
             audioRef.current = null
-            console.warn('Audio playback failed')
-            resolve()
+            console.warn('Audio playback failed, trying browser TTS')
+            // Fall back to browser TTS on iOS when audio fails
+            speakWithBrowserFallback(text).then(resolve)
           }
 
-          audio.play().catch(() => {
+          audio.play().catch(async () => {
             URL.revokeObjectURL(audioUrl)
             audioRef.current = null
-            console.warn('Audio playback failed')
+            console.warn('Audio play rejected (iOS?), using browser TTS')
+            // Fall back to browser TTS when play() is rejected (common on iOS)
+            await speakWithBrowserFallback(text)
             resolve()
           })
         })

@@ -184,6 +184,21 @@ export default function VoiceParameterSliders({
         return
       }
 
+      // iOS fix: Create and prime audio element BEFORE async fetch
+      // This keeps it in the user gesture call stack
+      const audio = new Audio()
+      audio.playbackRate = settings.speed
+      audioRef.current = audio
+
+      // Play a tiny silent sound to unlock audio on iOS
+      try {
+        audio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIgAANP8AAARMQAABNAAAAAAANIAAAAAA0gAAAAAMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA//tQxAADwAABpAAAACAAADSAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7UMQ/g8AAAaQAAAAgAAA0gAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+        await audio.play()
+        audio.pause()
+      } catch {
+        // Ignore unlock errors
+      }
+
       const response = await fetch('/api/voice/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -208,10 +223,9 @@ export default function VoiceParameterSliders({
 
       const audioBlob = await response.blob()
       const audioUrl = URL.createObjectURL(audioBlob)
-      const audio = new Audio(audioUrl)
 
-      // Apply speed setting via playback rate
-      audio.playbackRate = settings.speed
+      // Set the actual audio source
+      audio.src = audioUrl
 
       audio.onended = () => {
         setIsPlaying(false)
@@ -226,7 +240,6 @@ export default function VoiceParameterSliders({
         speakWithBrowserTTS(phrase)
       }
 
-      audioRef.current = audio
       await audio.play()
     } catch (error) {
       console.error('Preview failed, trying browser TTS:', error)
