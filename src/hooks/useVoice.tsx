@@ -30,8 +30,8 @@ interface VoiceContextValue {
 }
 
 const DEFAULT_SETTINGS: VoiceSettings = {
-  // Rachel - a friendly, warm voice good for children's content
-  voiceId: 'EXAVITQu4vr4xnSDxMaL',
+  // Jessica - a clear, friendly voice good for children's learning
+  voiceId: 'cgSgspJ2msm6clMCkdW9',
   stability: 0.5,
   similarityBoost: 0.75,
   enabled: true,

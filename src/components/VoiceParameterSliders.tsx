@@ -120,10 +120,56 @@ export default function VoiceParameterSliders({
     onSave?.(settings)
   }, [onSave, settings])
 
+  // Fallback to browser TTS when API unavailable
+  const speakWithBrowserTTS = useCallback((text: string): Promise<void> => {
+    return new Promise((resolve) => {
+      if (!('speechSynthesis' in window)) {
+        resolve()
+        return
+      }
+
+      const synth = window.speechSynthesis
+      synth.cancel()
+
+      setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(text)
+        utterance.rate = settings.speed
+        utterance.pitch = 1.0
+        utterance.volume = 1.0
+        utterance.lang = 'en-US'
+
+        const timeoutId = setTimeout(() => {
+          setIsPlaying(false)
+          resolve()
+        }, 10000)
+
+        utterance.onend = () => {
+          clearTimeout(timeoutId)
+          setIsPlaying(false)
+          setTestPhraseIndex((i) => (i + 1) % TEST_PHRASES.length)
+          resolve()
+        }
+
+        utterance.onerror = () => {
+          clearTimeout(timeoutId)
+          setIsPlaying(false)
+          resolve()
+        }
+
+        synth.speak(utterance)
+
+        if (synth.paused) {
+          synth.resume()
+        }
+      }, 50)
+    })
+  }, [settings.speed])
+
   const handlePreview = useCallback(async () => {
-    if (!voiceId || isPlaying) return
+    if (isPlaying) return
 
     setIsPlaying(true)
+    const phrase = TEST_PHRASES[testPhraseIndex]
 
     try {
       // Stop any existing audio
@@ -132,12 +178,18 @@ export default function VoiceParameterSliders({
         audioRef.current = null
       }
 
+      // If no voice selected or using default, use browser TTS
+      if (!voiceId || voiceId === 'default') {
+        await speakWithBrowserTTS(phrase)
+        return
+      }
+
       const response = await fetch('/api/voice/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           voiceId,
-          text: TEST_PHRASES[testPhraseIndex],
+          text: phrase,
           voiceSettings: {
             stability: settings.stability,
             similarityBoost: settings.similarityBoost,
@@ -148,7 +200,10 @@ export default function VoiceParameterSliders({
       })
 
       if (!response.ok) {
-        throw new Error('Failed to generate speech')
+        // Fall back to browser TTS on API error
+        console.info('TTS API unavailable, using browser speech')
+        await speakWithBrowserTTS(phrase)
+        return
       }
 
       const audioBlob = await response.blob()
@@ -167,15 +222,17 @@ export default function VoiceParameterSliders({
       audio.onerror = () => {
         setIsPlaying(false)
         URL.revokeObjectURL(audioUrl)
+        // Try browser TTS as fallback
+        speakWithBrowserTTS(phrase)
       }
 
       audioRef.current = audio
       await audio.play()
     } catch (error) {
-      console.error('Preview failed:', error)
-      setIsPlaying(false)
+      console.error('Preview failed, trying browser TTS:', error)
+      await speakWithBrowserTTS(phrase)
     }
-  }, [voiceId, isPlaying, testPhraseIndex, settings])
+  }, [voiceId, isPlaying, testPhraseIndex, settings, speakWithBrowserTTS])
 
   const handleStopPreview = useCallback(() => {
     if (audioRef.current) {
@@ -323,16 +380,12 @@ export default function VoiceParameterSliders({
               type="button"
               className="preview-button play"
               onClick={handlePreview}
-              disabled={!voiceId}
             >
               <span className="button-icon">▶️</span>
               Play Preview
             </button>
           )}
         </div>
-        {!voiceId && (
-          <p className="preview-hint">Select a voice above to preview</p>
-        )}
       </div>
 
       {/* Save Button */}
