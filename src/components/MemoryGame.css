@@ -1,0 +1,344 @@
+/* ==========================================================================
+   Memory Game - Sight word matching game
+   ========================================================================== */
+
+.memory-game {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #fff0f6 0%, #e7f5ff 50%, #fff9db 100%);
+  padding: var(--space-4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header */
+.memory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.memory-header .back-button {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #495057;
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 25px;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.memory-header .back-button:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.memory-stats {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.memory-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #495057;
+  background: white;
+  border-radius: 25px;
+  padding: var(--space-2) var(--space-4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  font-size: 1rem;
+}
+
+/* Instructions */
+.memory-instructions {
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.memory-instructions p {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.5rem;
+  color: #495057;
+  margin: 0;
+}
+
+/* Card grid */
+.memory-grid {
+  display: grid;
+  gap: var(--space-2);
+  justify-content: center;
+  align-content: center;
+  flex: 1;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  padding: var(--space-2);
+}
+
+/* Match celebration toast */
+.match-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 20px;
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  animation: toast-pop 0.3s ease-out, toast-fade 1s ease-in 0.7s forwards;
+  z-index: 100;
+}
+
+@keyframes toast-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes toast-fade {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.9);
+  }
+}
+
+.match-toast-emoji {
+  font-size: 2rem;
+  animation: toast-bounce 0.5s ease infinite;
+}
+
+@keyframes toast-bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.match-toast-text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #51cf66;
+}
+
+/* ==========================================================================
+   Game Complete Overlay
+   ========================================================================== */
+
+.game-complete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fade-in 0.3s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.game-complete-content {
+  background: white;
+  border-radius: 30px;
+  padding: var(--space-8) var(--space-10);
+  text-align: center;
+  animation: pop-in 0.4s ease;
+  max-width: 90%;
+  width: 400px;
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.game-complete-emoji {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: var(--space-4);
+  animation: celebration-bounce 0.5s ease infinite;
+}
+
+@keyframes celebration-bounce {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+.game-complete-text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2rem;
+  color: #51cf66;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.game-complete-stats {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.25rem;
+  color: #495057;
+  margin: 0 0 var(--space-6) 0;
+}
+
+.game-complete-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.play-again-button {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+  border: none;
+  border-radius: 30px;
+  padding: var(--space-4) var(--space-6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(81, 207, 102, 0.4);
+}
+
+.play-again-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(81, 207, 102, 0.5);
+}
+
+.play-again-button:active {
+  transform: translateY(0);
+}
+
+.back-home-button {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  color: #868e96;
+  background: transparent;
+  border: 2px solid #dee2e6;
+  border-radius: 30px;
+  padding: var(--space-3) var(--space-5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-home-button:hover {
+  color: #495057;
+  border-color: #adb5bd;
+  background: #f8f9fa;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+/* Mobile-first base styles above */
+
+@media (min-width: 480px) {
+  .memory-game {
+    padding: var(--space-5);
+  }
+
+  .memory-grid {
+    gap: var(--space-3);
+  }
+
+  .memory-instructions p {
+    font-size: 1.75rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .memory-game {
+    padding: var(--space-6);
+  }
+
+  .memory-grid {
+    gap: var(--space-4);
+    max-width: 700px;
+  }
+
+  .memory-stat {
+    font-size: 1.5rem;
+    padding: var(--space-2) var(--space-5);
+  }
+
+  .stat-icon {
+    font-size: 1.25rem;
+  }
+
+  .memory-instructions p {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .memory-grid {
+    max-width: 800px;
+  }
+
+  .game-complete-content {
+    padding: var(--space-10) var(--space-12);
+  }
+
+  .game-complete-emoji {
+    font-size: 6rem;
+  }
+
+  .game-complete-text {
+    font-size: 2.5rem;
+  }
+
+  .game-complete-stats {
+    font-size: 1.5rem;
+  }
+
+  .game-complete-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
