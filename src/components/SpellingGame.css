@@ -22,7 +22,7 @@
 }
 
 .back-button {
-  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 1rem;
   font-weight: bold;
   color: #495057;
@@ -70,7 +70,7 @@
 }
 
 .progress-indicator {
-  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 1.25rem;
   font-weight: bold;
   color: #495057;
@@ -102,7 +102,7 @@
 }
 
 .hint-text {
-  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 1.5rem;
   color: #495057;
   margin: 0;
@@ -127,7 +127,7 @@
 
 /* Skip button */
 .skip-button {
-  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 1rem;
   color: #868e96;
   background: transparent;
@@ -211,14 +211,14 @@
 }
 
 .celebration-text {
-  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 2rem;
   color: #51cf66;
   margin: 0 0 var(--space-2) 0;
 }
 
 .celebration-word {
-  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 2.5rem;
   font-weight: bold;
   color: #495057;
@@ -228,7 +228,7 @@
 
 /* Streak indicator */
 .streak-indicator {
-  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 1.25rem;
   color: #ff6b6b;
   margin: 0 0 var(--space-2) 0;
@@ -553,7 +553,7 @@
 }
 
 .recording-text {
-  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 1.1rem;
   font-weight: bold;
 }
@@ -595,7 +595,7 @@
 }
 
 .pronunciation-feedback-text {
-  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 1.75rem;
   color: #495057;
   margin: 0 0 var(--space-3) 0;
@@ -610,7 +610,7 @@
 }
 
 .pronunciation-transcribed {
-  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 1rem;
   color: #868e96;
   margin: 0;
