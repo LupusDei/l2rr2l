@@ -4,6 +4,9 @@ import type { GameWord, GameWordsData } from './types'
 export type { GameWord, GameWordsData, WordCategory, DifficultyLevel } from './types'
 export { getWordsByDifficulty, getWordsByCategory, getWordsByVowelSound } from './types'
 
+// Sight word data for memory game
+export * from './sight-words'
+
 export const gameWords: GameWordsData = gameWordsData as GameWordsData
 
 export function getAllWords(): GameWord[] {
