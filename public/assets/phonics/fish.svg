@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
+  <!-- Body -->
+  <ellipse cx="75" cy="75" rx="50" ry="30" fill="#4ecdc4"/>
+  <!-- Tail -->
+  <polygon points="125,75 145,55 145,95" fill="#4ecdc4"/>
+  <!-- Fin top -->
+  <polygon points="60,45 75,25 90,45" fill="#45b7aa"/>
+  <!-- Fin bottom -->
+  <polygon points="70,105 85,115 85,105" fill="#45b7aa"/>
+  <!-- Eye -->
+  <circle cx="45" cy="70" r="8" fill="#fff"/>
+  <circle cx="45" cy="70" r="4" fill="#333"/>
+  <!-- Scales pattern -->
+  <path d="M50 75 Q60 65, 70 75 Q80 85, 90 75 Q100 65, 110 75" stroke="#45b7aa" stroke-width="2" fill="none"/>
+  <!-- Mouth -->
+  <circle cx="28" cy="78" r="4" fill="#333"/>
+</svg>

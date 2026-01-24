@@ -34,3 +34,6 @@ export function getRandomWords(count: number, difficulty?: 1 | 2 | 3): GameWord[
   const shuffled = pool.sort(() => Math.random() - 0.5)
   return shuffled.slice(0, count)
 }
+
+// Phonics game data exports
+export * from './phonics'

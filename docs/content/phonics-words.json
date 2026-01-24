@@ -1,0 +1,359 @@
+{
+  "version": "1.0.0",
+  "description": "Word list for phonics sound matching game - organized by beginning sounds",
+  "words": [
+    {
+      "id": "ball",
+      "word": "ball",
+      "beginningSound": "b",
+      "phonemes": ["b", "all"],
+      "difficulty": 1,
+      "image": "/assets/phonics/ball.svg",
+      "emoji": "⚽",
+      "audio": "/assets/audio/ball.mp3",
+      "category": "toys"
+    },
+    {
+      "id": "bed",
+      "word": "bed",
+      "beginningSound": "b",
+      "phonemes": ["b", "e", "d"],
+      "difficulty": 1,
+      "image": "/assets/phonics/bed.svg",
+      "emoji": "🛏️",
+      "audio": "/assets/audio/bed.mp3",
+      "category": "home"
+    },
+    {
+      "id": "bus",
+      "word": "bus",
+      "beginningSound": "b",
+      "phonemes": ["b", "u", "s"],
+      "difficulty": 1,
+      "image": "/assets/phonics/bus.svg",
+      "emoji": "🚌",
+      "audio": "/assets/audio/bus.mp3",
+      "category": "vehicles"
+    },
+    {
+      "id": "cat",
+      "word": "cat",
+      "beginningSound": "c",
+      "phonemes": ["c", "a", "t"],
+      "difficulty": 1,
+      "image": "/assets/phonics/cat.svg",
+      "emoji": "🐱",
+      "audio": "/assets/audio/cat.mp3",
+      "category": "animals"
+    },
+    {
+      "id": "cup",
+      "word": "cup",
+      "beginningSound": "c",
+      "phonemes": ["c", "u", "p"],
+      "difficulty": 1,
+      "image": "/assets/phonics/cup.svg",
+      "emoji": "🥤",
+      "audio": "/assets/audio/cup.mp3",
+      "category": "home"
+    },
+    {
+      "id": "car",
+      "word": "car",
+      "beginningSound": "c",
+      "phonemes": ["c", "ar"],
+      "difficulty": 2,
+      "image": "/assets/phonics/car.svg",
+      "emoji": "🚗",
+      "audio": "/assets/audio/car.mp3",
+      "category": "vehicles"
+    },
+    {
+      "id": "dog",
+      "word": "dog",
+      "beginningSound": "d",
+      "phonemes": ["d", "o", "g"],
+      "difficulty": 1,
+      "image": "/assets/phonics/dog.svg",
+      "emoji": "🐕",
+      "audio": "/assets/audio/dog.mp3",
+      "category": "animals"
+    },
+    {
+      "id": "duck",
+      "word": "duck",
+      "beginningSound": "d",
+      "phonemes": ["d", "u", "ck"],
+      "difficulty": 2,
+      "image": "/assets/phonics/duck.svg",
+      "emoji": "🦆",
+      "audio": "/assets/audio/duck.mp3",
+      "category": "animals"
+    },
+    {
+      "id": "fish",
+      "word": "fish",
+      "beginningSound": "f",
+      "phonemes": ["f", "i", "sh"],
+      "difficulty": 1,
+      "image": "/assets/phonics/fish.svg",
+      "emoji": "🐟",
+      "audio": "/assets/audio/fish.mp3",
+      "category": "animals"
+    },
+    {
+      "id": "fan",
+      "word": "fan",
+      "beginningSound": "f",
+      "phonemes": ["f", "a", "n"],
+      "difficulty": 2,
+      "image": "/assets/phonics/fan.svg",
+      "emoji": "🌀",
+      "audio": "/assets/audio/fan.mp3",
+      "category": "home"
+    },
+    {
+      "id": "fox",
+      "word": "fox",
+      "beginningSound": "f",
+      "phonemes": ["f", "o", "x"],
+      "difficulty": 2,
+      "image": "/assets/phonics/fox.svg",
+      "emoji": "🦊",
+      "audio": "/assets/audio/fox.mp3",
+      "category": "animals"
+    },
+    {
+      "id": "hat",
+      "word": "hat",
+      "beginningSound": "h",
+      "phonemes": ["h", "a", "t"],
+      "difficulty": 1,
+      "image": "/assets/phonics/hat.svg",
+      "emoji": "🎩",
+      "audio": "/assets/audio/hat.mp3",
+      "category": "clothing"
+    },
+    {
+      "id": "hen",
+      "word": "hen",
+      "beginningSound": "h",
+      "phonemes": ["h", "e", "n"],
+      "difficulty": 2,
+      "image": "/assets/phonics/hen.svg",
+      "emoji": "🐔",
+      "audio": "/assets/audio/hen.mp3",
+      "category": "animals"
+    },
+    {
+      "id": "house",
+      "word": "house",
+      "beginningSound": "h",
+      "phonemes": ["h", "ou", "se"],
+      "difficulty": 3,
+      "image": "/assets/phonics/house.svg",
+      "emoji": "🏠",
+      "audio": "/assets/audio/house.mp3",
+      "category": "home"
+    },
+    {
+      "id": "map",
+      "word": "map",
+      "beginningSound": "m",
+      "phonemes": ["m", "a", "p"],
+      "difficulty": 1,
+      "image": "/assets/phonics/map.svg",
+      "emoji": "🗺️",
+      "audio": "/assets/audio/map.mp3",
+      "category": "objects"
+    },
+    {
+      "id": "moon",
+      "word": "moon",
+      "beginningSound": "m",
+      "phonemes": ["m", "oo", "n"],
+      "difficulty": 2,
+      "image": "/assets/phonics/moon.svg",
+      "emoji": "🌙",
+      "audio": "/assets/audio/moon.mp3",
+      "category": "nature"
+    },
+    {
+      "id": "net",
+      "word": "net",
+      "beginningSound": "n",
+      "phonemes": ["n", "e", "t"],
+      "difficulty": 2,
+      "image": "/assets/phonics/net.svg",
+      "emoji": "🥅",
+      "audio": "/assets/audio/net.mp3",
+      "category": "objects"
+    },
+    {
+      "id": "nut",
+      "word": "nut",
+      "beginningSound": "n",
+      "phonemes": ["n", "u", "t"],
+      "difficulty": 2,
+      "image": "/assets/phonics/nut.svg",
+      "emoji": "🥜",
+      "audio": "/assets/audio/nut.mp3",
+      "category": "food"
+    },
+    {
+      "id": "pig",
+      "word": "pig",
+      "beginningSound": "p",
+      "phonemes": ["p", "i", "g"],
+      "difficulty": 1,
+      "image": "/assets/phonics/pig.svg",
+      "emoji": "🐷",
+      "audio": "/assets/audio/pig.mp3",
+      "category": "animals"
+    },
+    {
+      "id": "pot",
+      "word": "pot",
+      "beginningSound": "p",
+      "phonemes": ["p", "o", "t"],
+      "difficulty": 2,
+      "image": "/assets/phonics/pot.svg",
+      "emoji": "🍲",
+      "audio": "/assets/audio/pot.mp3",
+      "category": "home"
+    },
+    {
+      "id": "sun",
+      "word": "sun",
+      "beginningSound": "s",
+      "phonemes": ["s", "u", "n"],
+      "difficulty": 1,
+      "image": "/assets/phonics/sun.svg",
+      "emoji": "☀️",
+      "audio": "/assets/audio/sun.mp3",
+      "category": "nature"
+    },
+    {
+      "id": "sock",
+      "word": "sock",
+      "beginningSound": "s",
+      "phonemes": ["s", "o", "ck"],
+      "difficulty": 2,
+      "image": "/assets/phonics/sock.svg",
+      "emoji": "🧦",
+      "audio": "/assets/audio/sock.mp3",
+      "category": "clothing"
+    },
+    {
+      "id": "star",
+      "word": "star",
+      "beginningSound": "s",
+      "phonemes": ["s", "t", "ar"],
+      "difficulty": 3,
+      "image": "/assets/phonics/star.svg",
+      "emoji": "⭐",
+      "audio": "/assets/audio/star.mp3",
+      "category": "nature"
+    },
+    {
+      "id": "top",
+      "word": "top",
+      "beginningSound": "t",
+      "phonemes": ["t", "o", "p"],
+      "difficulty": 1,
+      "image": "/assets/phonics/top.svg",
+      "emoji": "🔝",
+      "audio": "/assets/audio/top.mp3",
+      "category": "objects"
+    },
+    {
+      "id": "ten",
+      "word": "ten",
+      "beginningSound": "t",
+      "phonemes": ["t", "e", "n"],
+      "difficulty": 2,
+      "image": "/assets/phonics/ten.svg",
+      "emoji": "🔟",
+      "audio": "/assets/audio/ten.mp3",
+      "category": "numbers"
+    },
+    {
+      "id": "tree",
+      "word": "tree",
+      "beginningSound": "t",
+      "phonemes": ["t", "r", "ee"],
+      "difficulty": 3,
+      "image": "/assets/phonics/tree.svg",
+      "emoji": "🌳",
+      "audio": "/assets/audio/tree.mp3",
+      "category": "nature"
+    },
+    {
+      "id": "rug",
+      "word": "rug",
+      "beginningSound": "r",
+      "phonemes": ["r", "u", "g"],
+      "difficulty": 2,
+      "image": "/assets/phonics/rug.svg",
+      "emoji": "🟫",
+      "audio": "/assets/audio/rug.mp3",
+      "category": "home"
+    },
+    {
+      "id": "rain",
+      "word": "rain",
+      "beginningSound": "r",
+      "phonemes": ["r", "ai", "n"],
+      "difficulty": 3,
+      "image": "/assets/phonics/rain.svg",
+      "emoji": "🌧️",
+      "audio": "/assets/audio/rain.mp3",
+      "category": "nature"
+    },
+    {
+      "id": "goat",
+      "word": "goat",
+      "beginningSound": "g",
+      "phonemes": ["g", "oa", "t"],
+      "difficulty": 2,
+      "image": "/assets/phonics/goat.svg",
+      "emoji": "🐐",
+      "audio": "/assets/audio/goat.mp3",
+      "category": "animals"
+    },
+    {
+      "id": "gift",
+      "word": "gift",
+      "beginningSound": "g",
+      "phonemes": ["g", "i", "f", "t"],
+      "difficulty": 3,
+      "image": "/assets/phonics/gift.svg",
+      "emoji": "🎁",
+      "audio": "/assets/audio/gift.mp3",
+      "category": "objects"
+    }
+  ],
+  "beginningSounds": ["b", "c", "d", "f", "g", "h", "m", "n", "p", "r", "s", "t"],
+  "difficultyLevels": {
+    "1": {
+      "name": "Starter",
+      "description": "Common words with clear, easy-to-identify beginning sounds",
+      "targetAge": "3-4 years"
+    },
+    "2": {
+      "name": "Beginner",
+      "description": "Common words requiring stronger phonemic awareness",
+      "targetAge": "4-5 years"
+    },
+    "3": {
+      "name": "Developing",
+      "description": "Words with blends or less common sounds",
+      "targetAge": "5-6 years"
+    }
+  },
+  "categories": ["animals", "home", "nature", "clothing", "vehicles", "objects", "toys", "food", "numbers"],
+  "assetNotes": {
+    "images": "SVG illustrations should be colorful, child-friendly, and clearly depict the word. Size: 150x150px. Fallback to emoji for MVP.",
+    "audio": "Use ElevenLabs TTS to generate pronunciation. Clear, child-appropriate pace."
+  }
+}
