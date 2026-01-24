@@ -14,10 +14,24 @@ interface ProgressRow {
   status: string
   score: number | null
   time_spent: number
+  current_activity_index: number
+  overall_score: number | null
   started_at: string | null
   completed_at: string | null
   created_at: string
   updated_at: string
+}
+
+interface ActivityProgressRow {
+  id: string
+  child_id: string
+  lesson_id: string
+  activity_id: string
+  completed: number
+  score: number | null
+  attempts: number
+  time_spent_seconds: number
+  completed_at: string | null
 }
 
 /**
@@ -88,6 +102,26 @@ export async function handleProgress(
     if (request.method === 'PUT' && !action) {
       return await updateProgress(request, env, childId, lessonId)
     }
+
+    // POST /api/progress/child/:childId/lesson/:lessonId/activity
+    if (request.method === 'POST' && action === 'activity') {
+      return await saveActivityProgress(request, env, childId, lessonId)
+    }
+
+    // GET /api/progress/child/:childId/lesson/:lessonId/activities
+    if (request.method === 'GET' && action === 'activities') {
+      return await getActivityProgress(env, childId, lessonId)
+    }
+  }
+
+  // GET /api/progress/child/:childId/stats
+  if (request.method === 'GET' && remainingPath[0] === 'stats') {
+    return await getDetailedStats(env, childId)
+  }
+
+  // GET /api/progress/child/:childId/recent
+  if (request.method === 'GET' && remainingPath[0] === 'recent') {
+    return await getRecentActivity(env, childId)
   }
 
   return errorResponse('Method not allowed', 405)
@@ -288,4 +322,190 @@ async function getProgressSummary(env: Env, childId: string): Promise<Response> 
   }>()
 
   return jsonResponse({ summary: stats })
+}
+
+/**
+ * POST /api/progress/child/:childId/lesson/:lessonId/activity - save activity progress
+ */
+async function saveActivityProgress(
+  request: Request,
+  env: Env,
+  childId: string,
+  lessonId: string
+): Promise<Response> {
+  const body = await request.json() as {
+    activityId: string
+    completed: boolean
+    score?: number
+    attempts?: number
+    timeSpentSeconds?: number
+    currentActivityIndex?: number
+  }
+
+  const { activityId, completed, score, attempts, timeSpentSeconds, currentActivityIndex } = body
+
+  if (!activityId) {
+    return errorResponse('activityId is required', 400)
+  }
+
+  // Check if activity progress exists
+  const existing = await env.DB.prepare(
+    'SELECT id FROM activity_progress WHERE child_id = ? AND activity_id = ?'
+  ).bind(childId, activityId).first<{ id: string }>()
+
+  if (existing) {
+    await env.DB.prepare(`
+      UPDATE activity_progress
+      SET completed = ?,
+          score = COALESCE(?, score),
+          attempts = COALESCE(?, attempts) + 1,
+          time_spent_seconds = COALESCE(?, 0) + time_spent_seconds,
+          completed_at = CASE WHEN ? = 1 THEN datetime('now') ELSE completed_at END,
+          updated_at = datetime('now')
+      WHERE id = ?
+    `).bind(
+      completed ? 1 : 0,
+      score ?? null,
+      attempts ?? 0,
+      timeSpentSeconds ?? 0,
+      completed ? 1 : 0,
+      existing.id
+    ).run()
+  } else {
+    const id = crypto.randomUUID()
+    await env.DB.prepare(`
+      INSERT INTO activity_progress (id, child_id, lesson_id, activity_id, completed, score, attempts, time_spent_seconds, completed_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      id,
+      childId,
+      lessonId,
+      activityId,
+      completed ? 1 : 0,
+      score ?? null,
+      attempts ?? 1,
+      timeSpentSeconds ?? 0,
+      completed ? new Date().toISOString() : null
+    ).run()
+  }
+
+  // Update lesson progress current_activity_index if provided
+  if (currentActivityIndex !== undefined) {
+    await env.DB.prepare(`
+      UPDATE progress
+      SET current_activity_index = ?, updated_at = datetime('now')
+      WHERE child_id = ? AND lesson_id = ?
+    `).bind(currentActivityIndex, childId, lessonId).run()
+  }
+
+  return jsonResponse({ success: true })
+}
+
+/**
+ * GET /api/progress/child/:childId/lesson/:lessonId/activities - get activity progress
+ */
+async function getActivityProgress(
+  env: Env,
+  childId: string,
+  lessonId: string
+): Promise<Response> {
+  const result = await env.DB.prepare(`
+    SELECT * FROM activity_progress
+    WHERE child_id = ? AND lesson_id = ?
+    ORDER BY created_at ASC
+  `).bind(childId, lessonId).all<ActivityProgressRow>()
+
+  return jsonResponse({ activities: result.results || [] })
+}
+
+/**
+ * GET /api/progress/child/:childId/stats - get detailed learning statistics
+ */
+async function getDetailedStats(env: Env, childId: string): Promise<Response> {
+  // Overall stats
+  const overall = await env.DB.prepare(`
+    SELECT
+      COUNT(*) as total_lessons,
+      SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_lessons,
+      SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress_lessons,
+      AVG(CASE WHEN overall_score IS NOT NULL THEN overall_score END) as average_score,
+      SUM(time_spent) as total_time_seconds
+    FROM progress WHERE child_id = ?
+  `).bind(childId).first<{
+    total_lessons: number
+    completed_lessons: number
+    in_progress_lessons: number
+    average_score: number | null
+    total_time_seconds: number
+  }>()
+
+  // Stats by subject
+  const bySubject = await env.DB.prepare(`
+    SELECT
+      l.subject,
+      COUNT(*) as lessons_started,
+      SUM(CASE WHEN p.status = 'completed' THEN 1 ELSE 0 END) as lessons_completed,
+      AVG(CASE WHEN p.overall_score IS NOT NULL THEN p.overall_score END) as average_score
+    FROM progress p
+    JOIN lessons l ON p.lesson_id = l.id
+    WHERE p.child_id = ?
+    GROUP BY l.subject
+  `).bind(childId).all<{
+    subject: string
+    lessons_started: number
+    lessons_completed: number
+    average_score: number | null
+  }>()
+
+  // Achievements/badges calculation
+  const badges = []
+  if (overall && overall.completed_lessons >= 1) {
+    badges.push({ id: 'first-lesson', name: 'First Steps', description: 'Completed your first lesson!' })
+  }
+  if (overall && overall.completed_lessons >= 5) {
+    badges.push({ id: 'five-lessons', name: 'Getting Started', description: 'Completed 5 lessons!' })
+  }
+  if (overall && overall.completed_lessons >= 10) {
+    badges.push({ id: 'ten-lessons', name: 'Star Student', description: 'Completed 10 lessons!' })
+  }
+  if (overall && overall.average_score && overall.average_score >= 90) {
+    badges.push({ id: 'high-achiever', name: 'High Achiever', description: 'Average score of 90% or higher!' })
+  }
+  if (overall && overall.total_time_seconds >= 3600) {
+    badges.push({ id: 'dedicated', name: 'Dedicated Learner', description: 'Spent 1 hour learning!' })
+  }
+
+  return jsonResponse({
+    stats: {
+      overall: overall || {
+        total_lessons: 0,
+        completed_lessons: 0,
+        in_progress_lessons: 0,
+        average_score: null,
+        total_time_seconds: 0,
+      },
+      bySubject: bySubject.results || [],
+      badges,
+    },
+  })
+}
+
+/**
+ * GET /api/progress/child/:childId/recent - get recent activity
+ */
+async function getRecentActivity(env: Env, childId: string): Promise<Response> {
+  const recent = await env.DB.prepare(`
+    SELECT p.*, l.title as lesson_title, l.subject, l.thumbnail_url
+    FROM progress p
+    JOIN lessons l ON p.lesson_id = l.id
+    WHERE p.child_id = ?
+    ORDER BY p.updated_at DESC
+    LIMIT 10
+  `).bind(childId).all<ProgressRow & {
+    lesson_title: string
+    subject: string
+    thumbnail_url: string | null
+  }>()
+
+  return jsonResponse({ recent: recent.results || [] })
 }
