@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-import { initializeDb } from './db/index.js'
+import { initializeDb, seedLessons } from './db/index.js'
 import apiRoutes from './routes/api.js'
 import voiceRoutes from './routes/voice.js'
 import authRoutes from './routes/auth.js'
@@ -10,6 +10,7 @@ import progressRoutes from './routes/progress.js'
 import lessonsRoutes from './routes/lessons.js'
 
 initializeDb()
+seedLessons()
 
 const app = express()
 const PORT = process.env.PORT || 3001

@@ -1,10 +1,11 @@
 import Database from 'better-sqlite3'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { mkdirSync, existsSync } from 'fs'
+import { mkdirSync, existsSync, readFileSync, readdirSync } from 'fs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const dbDir = join(__dirname, '../../data')
+const lessonsDir = join(__dirname, '../../src/lessons')
 
 if (!existsSync(dbDir)) {
   mkdirSync(dbDir, { recursive: true })
@@ -181,4 +182,77 @@ export function rebuildLessonsFts() {
 
 export function closeDb() {
   db.close()
+}
+
+interface SeedLesson {
+  id: string
+  title: string
+  description?: string
+  subject: string
+  difficulty?: string
+  durationMinutes?: number
+  objectives?: string[]
+  activities?: unknown[]
+  tags?: string[]
+  ageRange?: { min: number; max: number }
+}
+
+export function seedLessons() {
+  // Check if lessons already exist
+  const count = (db.prepare('SELECT COUNT(*) as count FROM lessons').get() as { count: number }).count
+  if (count > 0) {
+    return // Already seeded
+  }
+
+  // Read all JSON files from lessons directory
+  if (!existsSync(lessonsDir)) {
+    console.log('Lessons directory not found, skipping seed')
+    return
+  }
+
+  const files = readdirSync(lessonsDir).filter(f => f.endsWith('.json'))
+
+  const insertStmt = db.prepare(`
+    INSERT INTO lessons (
+      id, title, subject, description, difficulty,
+      duration_minutes, age_min, age_max, objectives,
+      activities, tags, source, is_published
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'curated', 1)
+  `)
+
+  // Map frontend difficulty values to database values
+  const difficultyMap: Record<string, string> = {
+    'beginner': 'beginner',
+    'intermediate': 'medium',
+    'advanced': 'advanced',
+    'easy': 'easy',
+    'medium': 'medium',
+    'hard': 'hard',
+  }
+
+  for (const file of files) {
+    try {
+      const content = readFileSync(join(lessonsDir, file), 'utf-8')
+      const lesson: SeedLesson = JSON.parse(content)
+      const difficulty = lesson.difficulty ? difficultyMap[lesson.difficulty] || lesson.difficulty : null
+
+      insertStmt.run(
+        lesson.id,
+        lesson.title,
+        lesson.subject,
+        lesson.description || null,
+        difficulty,
+        lesson.durationMinutes || null,
+        lesson.ageRange?.min || null,
+        lesson.ageRange?.max || null,
+        lesson.objectives ? JSON.stringify(lesson.objectives.map(o => ({ description: o }))) : null,
+        lesson.activities ? JSON.stringify(lesson.activities) : null,
+        lesson.tags ? JSON.stringify(lesson.tags) : null
+      )
+      console.log(`Seeded lesson: ${lesson.title}`)
+    } catch (err) {
+      console.error(`Failed to seed lesson from ${file}:`, err)
+    }
+  }
 }
