@@ -225,15 +225,6 @@
   margin: 0 0 var(--space-2) 0;
 }
 
-.celebration-word {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #495057;
-  margin: 0;
-  letter-spacing: 0.2em;
-}
-
 /* Streak indicator */
 .streak-indicator {
   font-family: Arial, Helvetica, sans-serif;
@@ -622,4 +613,140 @@
   font-size: 1rem;
   color: #868e96;
   margin: 0;
+}
+
+/* ==========================================================================
+   Screen Celebration Effect
+   ========================================================================== */
+
+.spelling-game.screen-celebration {
+  animation: screen-shake 0.5s ease-out;
+}
+
+@keyframes screen-shake {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  10% {
+    transform: translateX(-2px) translateY(-1px);
+  }
+  20% {
+    transform: translateX(2px) translateY(1px);
+  }
+  30% {
+    transform: translateX(-1px) translateY(-2px);
+  }
+  40% {
+    transform: translateX(1px) translateY(2px);
+  }
+  50% {
+    transform: translateX(-1px) translateY(-1px);
+  }
+  60% {
+    transform: translateX(1px) translateY(1px);
+  }
+  70% {
+    transform: translateX(0) translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Near-Correct Encouragement Popup
+   ========================================================================== */
+
+.near-correct-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #fff9db 0%, #fff0f6 100%);
+  border: 4px solid #ffd43b;
+  border-radius: 24px;
+  padding: var(--space-4) var(--space-8);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  z-index: 500;
+  animation: popup-bounce 1.2s ease forwards;
+  box-shadow: 0 8px 30px rgba(255, 212, 59, 0.4);
+}
+
+@keyframes popup-bounce {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  15% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  30% {
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  45% {
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  80% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -60%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+.near-correct-emoji {
+  font-size: 2.5rem;
+  animation: emoji-wiggle 0.3s ease-in-out infinite;
+}
+
+@keyframes emoji-wiggle {
+  0%, 100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+.near-correct-text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #f59f00;
+}
+
+/* ==========================================================================
+   Enhanced Word Reveal Animation
+   ========================================================================== */
+
+.celebration-word {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #495057;
+  margin: 0;
+  letter-spacing: 0.2em;
+  animation: word-reveal 0.8s ease-out;
+}
+
+@keyframes word-reveal {
+  0% {
+    letter-spacing: 0.5em;
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    letter-spacing: 0.3em;
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    letter-spacing: 0.2em;
+    transform: scale(1);
+  }
 }

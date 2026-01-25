@@ -21,7 +21,22 @@
   cursor: grab;
   user-select: none;
   touch-action: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  animation: idle-wiggle 3s ease-in-out infinite;
+  animation-delay: var(--wiggle-delay, 0s);
+}
+
+/* Idle wiggle animation to attract attention */
+@keyframes idle-wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
 }
 
 /* Different colors for variety */
@@ -47,18 +62,24 @@
     0 6px 15px rgba(255, 212, 59, 0.4);
 }
 
-/* Hover state */
-.letter-tile:hover:not(.disabled):not(.placed) {
-  transform: translateY(-2px) scale(1.05);
+/* Hover state - enhanced bounce effect */
+.letter-tile:hover:not(.disabled):not(.placed):not(.dragging) {
+  transform: translateY(-4px) scale(1.08);
+  animation: none;
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.15),
+    0 12px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* Dragging state */
+/* Dragging state - spring-like feel with glow */
 .letter-tile.dragging {
   cursor: grabbing;
+  animation: none;
   box-shadow:
-    0 8px 0 rgba(0, 0, 0, 0.2),
-    0 12px 25px rgba(0, 0, 0, 0.3);
-  opacity: 0.9;
+    0 10px 0 rgba(0, 0, 0, 0.15),
+    0 15px 30px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(255, 255, 255, 0.5);
+  filter: brightness(1.1);
 }
 
 /* Disabled state (already placed) */

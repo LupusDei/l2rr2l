@@ -75,6 +75,14 @@ const progressPhrases = [
 // Minimum time between encouragements (ms) to avoid being annoying
 const ENCOURAGEMENT_THROTTLE_MS = 4000
 
+// Near-correct encouragement messages (when wrong but close)
+const nearCorrectMessages = [
+  { text: "Almost!", emoji: "💪" },
+  { text: "Try again!", emoji: "🎯" },
+  { text: "So close!", emoji: "✨" },
+  { text: "Keep trying!", emoji: "🌟" },
+]
+
 // Generate confetti positions once, outside component
 function generateConfettiPositions(count: number = 40) {
   const shapes = ['square', 'circle', 'rectangle'] as const
@@ -122,6 +130,8 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
   const [isStreakCelebration, setIsStreakCelebration] = useState(false)
   const [pronunciationResult, setPronunciationResult] = useState<PronunciationResult | null>(null)
   const [showPronunciationFeedback, setShowPronunciationFeedback] = useState(false)
+  const [nearCorrectFeedback, setNearCorrectFeedback] = useState<{ text: string; emoji: string } | null>(null)
+  const [showScreenCelebration, setShowScreenCelebration] = useState(false)
   const zoneBoundsRef = useRef<Map<number, DOMRect>>(new Map())
   const hasAnnouncedRef = useRef(false)
   const lastEncouragementRef = useRef<number>(0)
@@ -292,6 +302,8 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
           }
 
           setShowCelebration(true)
+          setShowScreenCelebration(true)
+          setTimeout(() => setShowScreenCelebration(false), 600)
 
           // Voice celebration - say the phrase after sound effect
           setTimeout(() => {
@@ -331,9 +343,14 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
           }
         }
       } else {
-        // Wrong position - trigger shake animation
+        // Wrong position - trigger shake animation and encouragement
         setWrongZoneIndex(targetZoneIndex)
         setTimeout(() => setWrongZoneIndex(null), 400)
+
+        // Show near-correct encouragement popup
+        const randomNearCorrect = nearCorrectMessages[Math.floor(Math.random() * nearCorrectMessages.length)]
+        setNearCorrectFeedback(randomNearCorrect)
+        setTimeout(() => setNearCorrectFeedback(null), 1200)
       }
     }
 
@@ -350,7 +367,7 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
   }
 
   return (
-    <div className="spelling-game">
+    <div className={`spelling-game ${showScreenCelebration ? 'screen-celebration' : ''}`}>
       {/* Header */}
       <header className="spelling-header">
         <button className="back-button" onClick={onBack} type="button">
@@ -483,6 +500,14 @@ export default function SpellingGame({ onBack }: SpellingGameProps) {
         <div className="recording-indicator">
           <span className="recording-pulse"></span>
           <span className="recording-text">Say "{currentWord.word}"...</span>
+        </div>
+      )}
+
+      {/* Near-correct encouragement popup */}
+      {nearCorrectFeedback && (
+        <div className="near-correct-popup">
+          <span className="near-correct-emoji">{nearCorrectFeedback.emoji}</span>
+          <span className="near-correct-text">{nearCorrectFeedback.text}</span>
         </div>
       )}
 

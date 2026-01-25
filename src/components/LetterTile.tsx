@@ -96,16 +96,21 @@ export default function LetterTile({
     }
   }, [isDragging, handleMove, handleEnd])
 
+  // Staggered wiggle delay based on tile id
+  const tileIndex = parseInt(id.replace('tile-', ''), 10) || 0
+  const wiggleDelay = `${tileIndex * 0.4}s`
+
   return (
     <div
       ref={tileRef}
       className={`letter-tile ${isDragging ? 'dragging' : ''} ${disabled ? 'disabled' : ''} ${placed ? 'placed' : ''}`}
       style={{
         transform: isDragging
-          ? `translate(${position.x}px, ${position.y}px) scale(1.1)`
+          ? `translate(${position.x}px, ${position.y}px) scale(1.15) rotate(${position.x * 0.05}deg)`
           : 'translate(0, 0) scale(1)',
         zIndex: isDragging ? 100 : 1,
-      }}
+        '--wiggle-delay': wiggleDelay,
+      } as React.CSSProperties}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       data-letter={letter}
