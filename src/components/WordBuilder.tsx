@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useVoice } from '../hooks/useVoice'
 import './WordBuilder.css'
 
@@ -10,25 +10,39 @@ interface WordPuzzle {
   word: string
   emoji: string
   hint: string
+  phonemes: string[] // Phoneme breakdown for learning
+}
+
+// Confetti particle for celebration effect
+interface ConfettiParticle {
+  id: number
+  x: number
+  y: number
+  color: string
+  rotation: number
+  scale: number
+  delay: number
 }
 
 const WORD_PUZZLES: WordPuzzle[] = [
-  { word: 'cat', emoji: '🐱', hint: 'A furry pet that meows' },
-  { word: 'dog', emoji: '🐕', hint: 'A furry pet that barks' },
-  { word: 'sun', emoji: '☀️', hint: 'It shines in the sky' },
-  { word: 'hat', emoji: '🎩', hint: 'You wear it on your head' },
-  { word: 'cup', emoji: '🥤', hint: 'You drink from it' },
-  { word: 'bed', emoji: '🛏️', hint: 'You sleep on it' },
-  { word: 'bus', emoji: '🚌', hint: 'A big vehicle for people' },
-  { word: 'car', emoji: '🚗', hint: 'You drive it' },
-  { word: 'pen', emoji: '🖊️', hint: 'You write with it' },
-  { word: 'pig', emoji: '🐷', hint: 'A pink farm animal' },
-  { word: 'box', emoji: '📦', hint: 'You put things inside' },
-  { word: 'fox', emoji: '🦊', hint: 'A clever orange animal' },
-  { word: 'red', emoji: '🔴', hint: 'The color of apples' },
-  { word: 'run', emoji: '🏃', hint: 'Move fast with your legs' },
-  { word: 'hop', emoji: '🐰', hint: 'Jump like a bunny' },
+  { word: 'cat', emoji: '🐱', hint: 'A furry pet that meows', phonemes: ['c', 'a', 't'] },
+  { word: 'dog', emoji: '🐕', hint: 'A furry pet that barks', phonemes: ['d', 'o', 'g'] },
+  { word: 'sun', emoji: '☀️', hint: 'It shines in the sky', phonemes: ['s', 'u', 'n'] },
+  { word: 'hat', emoji: '🎩', hint: 'You wear it on your head', phonemes: ['h', 'a', 't'] },
+  { word: 'cup', emoji: '🥤', hint: 'You drink from it', phonemes: ['c', 'u', 'p'] },
+  { word: 'bed', emoji: '🛏️', hint: 'You sleep on it', phonemes: ['b', 'e', 'd'] },
+  { word: 'bus', emoji: '🚌', hint: 'A big vehicle for people', phonemes: ['b', 'u', 's'] },
+  { word: 'car', emoji: '🚗', hint: 'You drive it', phonemes: ['c', 'ar'] },
+  { word: 'pen', emoji: '🖊️', hint: 'You write with it', phonemes: ['p', 'e', 'n'] },
+  { word: 'pig', emoji: '🐷', hint: 'A pink farm animal', phonemes: ['p', 'i', 'g'] },
+  { word: 'box', emoji: '📦', hint: 'You put things inside', phonemes: ['b', 'o', 'x'] },
+  { word: 'fox', emoji: '🦊', hint: 'A clever orange animal', phonemes: ['f', 'o', 'x'] },
+  { word: 'red', emoji: '🔴', hint: 'The color of apples', phonemes: ['r', 'e', 'd'] },
+  { word: 'run', emoji: '🏃', hint: 'Move fast with your legs', phonemes: ['r', 'u', 'n'] },
+  { word: 'hop', emoji: '🐰', hint: 'Jump like a bunny', phonemes: ['h', 'o', 'p'] },
 ]
+
+const CONFETTI_COLORS = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#95e1d3', '#f38181', '#aa96da', '#fcbad3']
 
 const ENCOURAGEMENTS = [
   "Great job!", "You got it!", "Awesome!", "Perfect!",
@@ -51,6 +65,9 @@ interface GameState {
   showFeedback: boolean
   isCorrect: boolean | null
   gameComplete: boolean
+  showPhonemes: boolean
+  confetti: ConfettiParticle[]
+  animatingLetterIndex: number | null
 }
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -62,8 +79,22 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled
 }
 
+// Generate confetti particles for celebration
+function generateConfetti(count: number): ConfettiParticle[] {
+  return Array.from({ length: count }, (_, i) => ({
+    id: Date.now() + i,
+    x: Math.random() * 100,
+    y: -10 - Math.random() * 20,
+    color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+    rotation: Math.random() * 360,
+    scale: 0.5 + Math.random() * 0.5,
+    delay: Math.random() * 0.5,
+  }))
+}
+
 export default function WordBuilder({ onBack }: WordBuilderProps) {
   const { speak, settings } = useVoice()
+  const confettiContainerRef = useRef<HTMLDivElement>(null)
   const [gameState, setGameState] = useState<GameState>({
     currentPuzzle: null,
     availableLetters: [],
@@ -75,6 +106,9 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
     showFeedback: false,
     isCorrect: null,
     gameComplete: false,
+    showPhonemes: false,
+    confetti: [],
+    animatingLetterIndex: null,
   })
 
   const generateRound = useCallback(() => {
@@ -96,6 +130,9 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
       builtWord: [],
       showFeedback: false,
       isCorrect: null,
+      showPhonemes: false,
+      confetti: [],
+      animatingLetterIndex: null,
     }))
 
     if (settings.enabled) {
@@ -112,17 +149,23 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
   }, [generateRound, gameState.gameComplete, gameState.currentPuzzle])
 
   const handleLetterClick = (letter: string, index: number) => {
-    if (gameState.showFeedback) return
+    if (gameState.showFeedback || gameState.animatingLetterIndex !== null) return
 
-    // Remove letter from available and add to built word
-    const newAvailable = [...gameState.availableLetters]
-    newAvailable.splice(index, 1)
+    // Set animating state for smooth transition
+    setGameState(prev => ({ ...prev, animatingLetterIndex: index }))
 
-    setGameState(prev => ({
-      ...prev,
-      availableLetters: newAvailable,
-      builtWord: [...prev.builtWord, letter],
-    }))
+    // Remove letter from available and add to built word after brief animation
+    setTimeout(() => {
+      const newAvailable = [...gameState.availableLetters]
+      newAvailable.splice(index, 1)
+
+      setGameState(prev => ({
+        ...prev,
+        availableLetters: newAvailable,
+        builtWord: [...prev.builtWord, letter],
+        animatingLetterIndex: null,
+      }))
+    }, 150)
   }
 
   const handleBuiltLetterClick = (letter: string, index: number) => {
@@ -145,28 +188,47 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
     const builtWordStr = gameState.builtWord.join('')
     const isCorrect = builtWordStr === gameState.currentPuzzle.word
 
+    // Generate confetti for correct answers
+    const newConfetti = isCorrect ? generateConfetti(30) : []
+
     setGameState(prev => ({
       ...prev,
       isCorrect,
       showFeedback: true,
+      showPhonemes: true, // Show phoneme breakdown
       score: isCorrect ? prev.score + (10 * (prev.streak + 1)) : prev.score,
       streak: isCorrect ? prev.streak + 1 : 0,
+      confetti: newConfetti,
     }))
 
-    if (settings.enabled && settings.encouragementEnabled) {
+    if (settings.enabled) {
       if (isCorrect) {
-        const msg = ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]
-        await speak(msg)
+        // Pronounce the word first, then encouragement
+        await speak(gameState.currentPuzzle.word)
+        if (settings.encouragementEnabled) {
+          const msg = ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]
+          await speak(msg)
+        }
       } else {
+        // Show correct word pronunciation
         await speak(`The word is ${gameState.currentPuzzle.word}`)
       }
     }
+
+    // Clear confetti after animation
+    setTimeout(() => {
+      setGameState(prev => ({ ...prev, confetti: [] }))
+    }, 2500)
 
     // Move to next round after delay
     setTimeout(() => {
       const nextRound = gameState.round + 1
       if (nextRound >= gameState.totalRounds) {
-        setGameState(prev => ({ ...prev, gameComplete: true }))
+        setGameState(prev => ({
+          ...prev,
+          gameComplete: true,
+          confetti: generateConfetti(50), // Big celebration for game complete
+        }))
         if (settings.enabled) {
           const celebration = CELEBRATIONS[Math.floor(Math.random() * CELEBRATIONS.length)]
           speak(celebration)
@@ -178,7 +240,7 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
           currentPuzzle: null,
         }))
       }
-    }, 2000)
+    }, 2500)
   }
 
   const handleClear = () => {
@@ -211,16 +273,36 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
       showFeedback: false,
       isCorrect: null,
       gameComplete: false,
+      showPhonemes: false,
+      confetti: [],
+      animatingLetterIndex: null,
     })
   }
 
   if (gameState.gameComplete) {
     return (
       <div className="word-builder">
+        {/* Confetti celebration */}
+        {gameState.confetti.length > 0 && (
+          <div className="confetti-container" ref={confettiContainerRef}>
+            {gameState.confetti.map((particle) => (
+              <div
+                key={particle.id}
+                className="confetti-particle"
+                style={{
+                  left: `${particle.x}%`,
+                  backgroundColor: particle.color,
+                  transform: `rotate(${particle.rotation}deg) scale(${particle.scale})`,
+                  animationDelay: `${particle.delay}s`,
+                }}
+              />
+            ))}
+          </div>
+        )}
         <div className="game-complete">
-          <div className="celebration-icon">🏆</div>
-          <h2>Amazing Work!</h2>
-          <p className="final-score">Score: {gameState.score}</p>
+          <div className="celebration-icon bounce-in">🏆</div>
+          <h2 className="slide-up">Amazing Work!</h2>
+          <p className="final-score pulse">Score: {gameState.score}</p>
           <p className="rounds-info">You built {gameState.totalRounds} words!</p>
           <div className="complete-buttons">
             <button className="play-again-btn" onClick={handlePlayAgain}>
@@ -237,6 +319,24 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
 
   return (
     <div className="word-builder">
+      {/* Confetti celebration */}
+      {gameState.confetti.length > 0 && (
+        <div className="confetti-container" ref={confettiContainerRef}>
+          {gameState.confetti.map((particle) => (
+            <div
+              key={particle.id}
+              className="confetti-particle"
+              style={{
+                left: `${particle.x}%`,
+                backgroundColor: particle.color,
+                transform: `rotate(${particle.rotation}deg) scale(${particle.scale})`,
+                animationDelay: `${particle.delay}s`,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
       <header className="word-builder-header">
         <button className="back-button" onClick={onBack} type="button">
           ← Back
@@ -244,7 +344,9 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
         <h1 className="word-builder-title">Word Builder</h1>
         <div className="game-stats">
           <span className="score">Score: {gameState.score}</span>
-          <span className="streak">🔥 {gameState.streak}</span>
+          <span className={`streak ${gameState.streak >= 3 ? 'streak-hot' : ''}`}>
+            🔥 {gameState.streak}
+          </span>
           <span className="round">Round {gameState.round + 1}/{gameState.totalRounds}</span>
         </div>
       </header>
@@ -252,8 +354,8 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
       <main className="word-builder-content">
         {gameState.currentPuzzle && (
           <>
-            <div className="puzzle-display">
-              <span className="puzzle-emoji">{gameState.currentPuzzle.emoji}</span>
+            <div className="puzzle-display fade-in">
+              <span className="puzzle-emoji bounce-in">{gameState.currentPuzzle.emoji}</span>
               <p className="puzzle-hint">{gameState.currentPuzzle.hint}</p>
               <button className="hint-btn" onClick={handleHint} type="button">
                 🔊 Hear Hint
@@ -269,10 +371,11 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
                   gameState.builtWord.map((letter, index) => (
                     <button
                       key={`built-${index}`}
-                      className={`letter-tile built ${gameState.showFeedback ? (gameState.isCorrect ? 'correct' : 'incorrect') : ''}`}
+                      className={`letter-tile built pop-in ${gameState.showFeedback ? (gameState.isCorrect ? 'correct' : 'incorrect') : ''}`}
                       onClick={() => handleBuiltLetterClick(letter, index)}
                       disabled={gameState.showFeedback}
                       type="button"
+                      style={{ animationDelay: `${index * 0.05}s` }}
                     >
                       {letter.toUpperCase()}
                     </button>
@@ -287,9 +390,9 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
                 {gameState.availableLetters.map((letter, index) => (
                   <button
                     key={`avail-${index}`}
-                    className="letter-tile available"
+                    className={`letter-tile available ${gameState.animatingLetterIndex === index ? 'animating-out' : ''}`}
                     onClick={() => handleLetterClick(letter, index)}
-                    disabled={gameState.showFeedback}
+                    disabled={gameState.showFeedback || gameState.animatingLetterIndex !== null}
                     type="button"
                   >
                     {letter.toUpperCase()}
@@ -318,12 +421,30 @@ export default function WordBuilder({ onBack }: WordBuilderProps) {
             </div>
 
             {gameState.showFeedback && (
-              <div className={`feedback ${gameState.isCorrect ? 'correct' : 'incorrect'}`}>
+              <div className={`feedback slide-up ${gameState.isCorrect ? 'correct' : 'incorrect'}`}>
                 {gameState.isCorrect ? (
                   <>✓ Correct! The word is "{gameState.currentPuzzle.word}"</>
                 ) : (
                   <>✗ The word was "{gameState.currentPuzzle.word}"</>
                 )}
+              </div>
+            )}
+
+            {/* Phoneme breakdown for word learning */}
+            {gameState.showPhonemes && gameState.currentPuzzle && (
+              <div className="phoneme-breakdown slide-up">
+                <p className="phoneme-label">Sound it out:</p>
+                <div className="phoneme-tiles">
+                  {gameState.currentPuzzle.phonemes.map((phoneme, index) => (
+                    <span
+                      key={`phoneme-${index}`}
+                      className="phoneme-tile pop-in"
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      {phoneme}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
           </>

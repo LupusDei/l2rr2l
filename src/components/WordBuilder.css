@@ -359,6 +359,145 @@
   40%, 80% { transform: translateX(5px); }
 }
 
+@keyframes bounceIn {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0) translateY(20px); opacity: 0; }
+  70% { transform: scale(1.1) translateY(-5px); }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes animateOut {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.5) translateY(-30px); opacity: 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes streakGlow {
+  0%, 100% { box-shadow: 0 0 5px #f39c12; }
+  50% { box-shadow: 0 0 20px #f39c12, 0 0 30px #e67e22; }
+}
+
+/* Animation utility classes */
+.bounce-in {
+  animation: bounceIn 0.5s ease-out forwards;
+}
+
+.slide-up {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.pop-in {
+  animation: popIn 0.3s ease-out forwards;
+}
+
+.pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Confetti container */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.confetti-particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  animation: confettiFall 2.5s ease-out forwards;
+}
+
+/* Letter tile animations */
+.letter-tile.animating-out {
+  animation: animateOut 0.15s ease-out forwards;
+}
+
+/* Streak hot animation */
+.streak-hot {
+  animation: streakGlow 1s ease-in-out infinite;
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
+}
+
+/* Phoneme breakdown styles */
+.phoneme-breakdown {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.phoneme-label {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.phoneme-tiles {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.phoneme-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 1.25rem;
+  font-weight: bold;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  min-width: 2rem;
+  box-shadow: 0 3px 0 rgba(102, 126, 234, 0.5);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 /* Mobile responsive */
 @media (max-width: 480px) {
   .puzzle-emoji {
