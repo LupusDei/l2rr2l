@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useVoice, type PronunciationResult } from '../hooks/useVoice'
 import { getRandomWords, type SightWordLevel, sightWordLevels } from '../game-data/sight-words'
+import Confetti from './Confetti'
 import './ReadAloudGame.css'
 
 interface ReadAloudGameProps {
@@ -11,12 +12,14 @@ interface GameState {
   currentWord: string
   score: number
   streak: number
+  bestStreak: number
   round: number
   totalRounds: number
   result: PronunciationResult | null
   showFeedback: boolean
   gameComplete: boolean
   level: SightWordLevel
+  showConfetti: boolean
 }
 
 const ENCOURAGEMENTS = [
@@ -29,18 +32,27 @@ const CELEBRATIONS = [
   "You're reading so well!", "Keep up the great work!"
 ]
 
+const MILESTONE_MESSAGES: { [key: number]: string } = {
+  3: 'Three in a row! Amazing!',
+  5: 'Five streak! Unstoppable!',
+  7: 'Seven perfect! Reading star!',
+  10: 'Perfect 10! Reading superstar!',
+}
+
 export default function ReadAloudGame({ onBack }: ReadAloudGameProps) {
   const { speak, settings, isRecording, startRecording, checkPronunciation } = useVoice()
   const [gameState, setGameState] = useState<GameState>({
     currentWord: '',
     score: 0,
     streak: 0,
+    bestStreak: 0,
     round: 0,
     totalRounds: 10,
     result: null,
     showFeedback: false,
     gameComplete: false,
     level: 'pre-primer',
+    showConfetti: false,
   })
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -80,19 +92,29 @@ export default function ReadAloudGame({ onBack }: ReadAloudGameProps) {
 
       if (result) {
         const isCorrect = result.isCorrect
+        const newStreak = isCorrect ? gameState.streak + 1 : 0
+        const isMilestone = isCorrect && MILESTONE_MESSAGES[newStreak]
+        const triggerConfetti = isCorrect && (newStreak >= 3 || isMilestone)
 
         setGameState(prev => ({
           ...prev,
           result,
           showFeedback: true,
           score: isCorrect ? prev.score + (10 * (prev.streak + 1)) : prev.score,
-          streak: isCorrect ? prev.streak + 1 : 0,
+          streak: newStreak,
+          bestStreak: Math.max(prev.bestStreak, newStreak),
+          showConfetti: triggerConfetti,
         }))
 
         if (settings.enabled && settings.encouragementEnabled) {
           if (isCorrect) {
-            const msg = ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]
-            await speak(msg)
+            // Check for milestone celebration first
+            if (isMilestone) {
+              await speak(MILESTONE_MESSAGES[newStreak])
+            } else {
+              const msg = ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]
+              await speak(msg)
+            }
           } else {
             await speak(result.feedback)
           }
@@ -102,7 +124,7 @@ export default function ReadAloudGame({ onBack }: ReadAloudGameProps) {
         setTimeout(() => {
           const nextRound = gameState.round + 1
           if (nextRound >= gameState.totalRounds) {
-            setGameState(prev => ({ ...prev, gameComplete: true }))
+            setGameState(prev => ({ ...prev, gameComplete: true, showConfetti: true }))
             if (settings.enabled) {
               const celebration = CELEBRATIONS[Math.floor(Math.random() * CELEBRATIONS.length)]
               speak(celebration)
@@ -112,6 +134,7 @@ export default function ReadAloudGame({ onBack }: ReadAloudGameProps) {
               ...prev,
               round: nextRound,
               currentWord: '',
+              showConfetti: false,
             }))
           }
         }, 2000)
@@ -131,12 +154,14 @@ export default function ReadAloudGame({ onBack }: ReadAloudGameProps) {
       currentWord: '',
       score: 0,
       streak: 0,
+      bestStreak: 0,
       round: 0,
       totalRounds: 10,
       result: null,
       showFeedback: false,
       gameComplete: false,
       level: gameState.level,
+      showConfetti: false,
     })
   }
 
@@ -173,11 +198,21 @@ export default function ReadAloudGame({ onBack }: ReadAloudGameProps) {
   if (gameState.gameComplete) {
     return (
       <div className="read-aloud-game">
+        <Confetti active={gameState.showConfetti} duration={4000} pieceCount={100} />
         <div className="game-complete">
-          <div className="celebration-icon">🎉</div>
-          <h2>Great Reading!</h2>
+          <div className="celebration-icon">🏆</div>
+          <h2>Amazing Reading!</h2>
           <p className="final-score">Score: {gameState.score}</p>
-          <p className="rounds-info">You read {gameState.totalRounds} words!</p>
+          <div className="stats-row">
+            <div className="stat-item">
+              <span className="stat-value">{gameState.totalRounds}</span>
+              <span className="stat-label">Words Read</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-value">{gameState.bestStreak}</span>
+              <span className="stat-label">Best Streak</span>
+            </div>
+          </div>
           <div className="complete-buttons">
             <button className="play-again-btn" onClick={handlePlayAgain}>
               Play Again
@@ -191,8 +226,21 @@ export default function ReadAloudGame({ onBack }: ReadAloudGameProps) {
     )
   }
 
+  // Handle confetti completion
+  const handleConfettiComplete = () => {
+    if (!gameState.gameComplete) {
+      setGameState(prev => ({ ...prev, showConfetti: false }))
+    }
+  }
+
   return (
     <div className="read-aloud-game">
+      <Confetti
+        active={gameState.showConfetti}
+        duration={2000}
+        pieceCount={50}
+        onComplete={handleConfettiComplete}
+      />
       <header className="game-header">
         <button className="back-button" onClick={onBack} type="button">
           ← Back
@@ -282,6 +330,14 @@ export default function ReadAloudGame({ onBack }: ReadAloudGameProps) {
                 Skip this word
               </button>
             )}
+
+            {/* Progress bar */}
+            <div className="progress-bar-container">
+              <div
+                className="progress-bar-fill"
+                style={{ width: `${((gameState.round) / gameState.totalRounds) * 100}%` }}
+              />
+            </div>
           </>
         )}
       </main>
