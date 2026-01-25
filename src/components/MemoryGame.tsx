@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import './MemoryGame.css'
 import { getRandomWordsForGame, type SightWord } from '../game/sightWords'
-import { playCorrectSound, playWordCompleteSound } from '../game/sounds'
+import { playCorrectSound, playWrongSound, playWordCompleteSound } from '../game/sounds'
 import { useVoice } from '../hooks/useVoice'
 
 interface MemoryGameProps {
@@ -15,9 +15,11 @@ interface Card {
   word: string
   isFlipped: boolean
   isMatched: boolean
+  justMatched?: boolean
+  mismatch?: boolean
 }
 
-// Celebration messages
+// Celebration messages for game completion
 const celebrationMessages = [
   { text: 'Amazing!', emoji: '🌟' },
   { text: 'Great Job!', emoji: '🎉' },
@@ -25,6 +27,23 @@ const celebrationMessages = [
   { text: 'Fantastic!', emoji: '🚀' },
   { text: 'You Did It!', emoji: '🏆' },
 ]
+
+// Match celebration messages (shown briefly when finding a match)
+const matchMessages = [
+  'Nice!',
+  'Great!',
+  'Yes!',
+  'Awesome!',
+  'Perfect!',
+]
+
+// Streak messages
+const streakMessages: Record<number, string> = {
+  2: 'Double match!',
+  3: 'Triple streak!',
+  4: 'On fire!',
+  5: 'Unstoppable!',
+}
 
 // Generate confetti positions
 function generateConfettiPositions(count: number = 30) {
@@ -61,6 +80,9 @@ export default function MemoryGame({ onBack, level, gridSize = 12 }: MemoryGameP
   const [showCelebration, setShowCelebration] = useState(false)
   const [celebrationMessage, setCelebrationMessage] = useState(celebrationMessages[0])
   const [isProcessing, setIsProcessing] = useState(false)
+  const [streak, setStreak] = useState(0)
+  const [matchPopup, setMatchPopup] = useState<{ text: string; visible: boolean }>({ text: '', visible: false })
+  const [lastMatchedWord, setLastMatchedWord] = useState<string | null>(null)
   const hasAnnouncedRef = useRef(false)
 
   const totalPairs = gridSize / 2
@@ -73,6 +95,9 @@ export default function MemoryGame({ onBack, level, gridSize = 12 }: MemoryGameP
     setMatchedPairs(0)
     setShowCelebration(false)
     setIsProcessing(false)
+    setStreak(0)
+    setMatchPopup({ text: '', visible: false })
+    setLastMatchedWord(null)
     hasAnnouncedRef.current = false
   }, [gridSize, level])
 
@@ -86,6 +111,12 @@ export default function MemoryGame({ onBack, level, gridSize = 12 }: MemoryGameP
       return () => clearTimeout(timer)
     }
   }, [cards.length, speak])
+
+  // Show match popup briefly
+  const showMatchMessage = useCallback((text: string) => {
+    setMatchPopup({ text, visible: true })
+    setTimeout(() => setMatchPopup({ text: '', visible: false }), 1000)
+  }, [])
 
   // Handle card click
   const handleCardClick = useCallback((cardId: number) => {
@@ -121,15 +152,30 @@ export default function MemoryGame({ onBack, level, gridSize = 12 }: MemoryGameP
       if (firstCard.word === secondCard.word) {
         // Match found!
         playCorrectSound()
+        const newStreak = streak + 1
+        setStreak(newStreak)
+
+        // Show match celebration with sparkle effect
+        setCards(prev => prev.map(c =>
+          c.id === firstId || c.id === secondId
+            ? { ...c, justMatched: true }
+            : c
+        ))
+
+        // Show streak or match message
+        const streakMsg = streakMessages[newStreak]
+        const matchMsg = matchMessages[Math.floor(Math.random() * matchMessages.length)]
+        showMatchMessage(streakMsg || matchMsg)
 
         setTimeout(() => {
           setCards(prev => prev.map(c =>
             c.id === firstId || c.id === secondId
-              ? { ...c, isMatched: true }
+              ? { ...c, isMatched: true, justMatched: false }
               : c
           ))
           setFlippedCards([])
           setIsProcessing(false)
+          setLastMatchedWord(firstCard.word)
 
           const newMatchedPairs = matchedPairs + 1
           setMatchedPairs(newMatchedPairs)
@@ -142,25 +188,37 @@ export default function MemoryGame({ onBack, level, gridSize = 12 }: MemoryGameP
               setCelebrationMessage(msg)
               setShowCelebration(true)
               speak(`${msg.text} You found all the matches!`)
-            }, 500)
+            }, 400)
           } else {
-            speak('Match!')
+            // Speak the matched word to reinforce learning
+            setTimeout(() => speak(firstCard.word), 200)
           }
-        }, 600)
+        }, 500)
       } else {
-        // No match - flip cards back after delay
+        // No match - show mismatch animation
+        playWrongSound()
+        setStreak(0) // Reset streak on mismatch
+
+        // Add mismatch shake effect
+        setCards(prev => prev.map(c =>
+          c.id === firstId || c.id === secondId
+            ? { ...c, mismatch: true }
+            : c
+        ))
+
+        // Flip cards back after delay
         setTimeout(() => {
           setCards(prev => prev.map(c =>
             c.id === firstId || c.id === secondId
-              ? { ...c, isFlipped: false }
+              ? { ...c, isFlipped: false, mismatch: false }
               : c
           ))
           setFlippedCards([])
           setIsProcessing(false)
-        }, 1200)
+        }, 900)
       }
     }
-  }, [cards, flippedCards, isProcessing, isSpeaking, matchedPairs, speak, totalPairs])
+  }, [cards, flippedCards, isProcessing, isSpeaking, matchedPairs, showMatchMessage, speak, streak, totalPairs])
 
   // Play again
   const handlePlayAgain = useCallback(() => {
@@ -188,8 +246,23 @@ export default function MemoryGame({ onBack, level, gridSize = 12 }: MemoryGameP
         <div className="memory-stats">
           <span className="stat">Moves: {moves}</span>
           <span className="stat">Matches: {matchedPairs}/{totalPairs}</span>
+          {streak >= 2 && <span className="stat streak-stat">Streak: {streak}</span>}
         </div>
       </header>
+
+      {/* Match popup */}
+      {matchPopup.visible && (
+        <div className="match-popup">
+          {matchPopup.text}
+        </div>
+      )}
+
+      {/* Last matched word reinforcement */}
+      {lastMatchedWord && !showCelebration && (
+        <div className="word-reinforcement" key={lastMatchedWord}>
+          <span className="reinforcement-word">{lastMatchedWord}</span>
+        </div>
+      )}
 
       {/* Celebration overlay */}
       {showCelebration && (
@@ -233,7 +306,7 @@ export default function MemoryGame({ onBack, level, gridSize = 12 }: MemoryGameP
         {cards.map(card => (
           <button
             key={card.id}
-            className={`memory-card ${card.isFlipped ? 'flipped' : ''} ${card.isMatched ? 'matched' : ''}`}
+            className={`memory-card ${card.isFlipped ? 'flipped' : ''} ${card.isMatched ? 'matched' : ''} ${card.justMatched ? 'just-matched' : ''} ${card.mismatch ? 'mismatch' : ''}`}
             onClick={() => handleCardClick(card.id)}
             disabled={card.isFlipped || card.isMatched || isProcessing}
             type="button"
@@ -245,6 +318,7 @@ export default function MemoryGame({ onBack, level, gridSize = 12 }: MemoryGameP
               </div>
               <div className="card-back">
                 <span className="card-word">{card.word}</span>
+                {card.justMatched && <span className="sparkle-effect"></span>}
               </div>
             </div>
           </button>

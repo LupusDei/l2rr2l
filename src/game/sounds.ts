@@ -43,6 +43,38 @@ export function playCorrectSound(): void {
   }
 }
 
+// Play a gentle "wrong" sound - descending tone
+export function playWrongSound(): void {
+  try {
+    const ctx = getAudioContext()
+    const now = ctx.currentTime
+
+    // Two quick descending notes for a gentle "nope"
+    const frequencies = [392, 330] // G4, E4
+
+    frequencies.forEach((freq, i) => {
+      const oscillator = ctx.createOscillator()
+      const gainNode = ctx.createGain()
+
+      oscillator.connect(gainNode)
+      gainNode.connect(ctx.destination)
+
+      oscillator.type = 'sine'
+      oscillator.frequency.value = freq
+
+      const startTime = now + i * 0.12
+      gainNode.gain.setValueAtTime(0, startTime)
+      gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.02)
+      gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.2)
+
+      oscillator.start(startTime)
+      oscillator.stop(startTime + 0.25)
+    })
+  } catch {
+    // Silently fail if audio isn't available
+  }
+}
+
 // Play a celebratory sound for word completion
 export function playWordCompleteSound(): void {
   try {

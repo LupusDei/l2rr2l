@@ -74,7 +74,7 @@
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.5s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 12px;
 }
 
@@ -129,6 +129,50 @@
   color: white;
 }
 
+/* Just matched - sparkle/glow effect */
+.memory-card.just-matched .card-back {
+  animation: matchGlow 0.5s ease;
+  box-shadow: 0 0 20px rgba(81, 207, 102, 0.8), 0 0 40px rgba(81, 207, 102, 0.4);
+}
+
+@keyframes matchGlow {
+  0% { transform: rotateY(180deg) scale(1); }
+  50% { transform: rotateY(180deg) scale(1.08); }
+  100% { transform: rotateY(180deg) scale(1); }
+}
+
+.sparkle-effect {
+  position: absolute;
+  inset: -10px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+  animation: sparkle 0.5s ease-out;
+  pointer-events: none;
+}
+
+@keyframes sparkle {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+/* Mismatch shake effect */
+.memory-card.mismatch .card-inner {
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotateY(180deg) translateX(0); }
+  20% { transform: rotateY(180deg) translateX(-8px); }
+  40% { transform: rotateY(180deg) translateX(8px); }
+  60% { transform: rotateY(180deg) translateX(-6px); }
+  80% { transform: rotateY(180deg) translateX(6px); }
+}
+
+.memory-card.mismatch .card-back {
+  background: linear-gradient(145deg, #ff8787, #fa5252);
+  border-color: #f03e3e;
+}
+
 /* Hover effect for unflipped cards */
 .memory-card:not(.flipped):not(.matched):not(:disabled):hover .card-front {
   background: linear-gradient(145deg, #f8f9fa, #dee2e6);
@@ -137,6 +181,83 @@
 
 .memory-card:not(.flipped):not(.matched):not(:disabled):hover .card-symbol {
   color: #666;
+}
+
+/* Active/tap feedback */
+.memory-card:not(.flipped):not(.matched):not(:disabled):active .card-inner {
+  transform: scale(0.95);
+}
+
+.memory-card:not(.flipped):not(.matched):not(:disabled):active .card-front {
+  background: linear-gradient(145deg, #e9ecef, #ced4da);
+}
+
+/* Match popup */
+.match-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(145deg, #ffd43b, #fab005);
+  color: #333;
+  font-size: 2rem;
+  font-weight: bold;
+  padding: 1rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 50;
+  animation: popIn 0.3s ease, popOut 0.3s ease 0.7s forwards;
+}
+
+@keyframes popIn {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  70% { transform: translate(-50%, -50%) scale(1.1); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes popOut {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8) translateY(-20px); }
+}
+
+/* Streak indicator */
+.streak-stat {
+  background: linear-gradient(145deg, #ff922b, #fd7e14) !important;
+  animation: streakPulse 0.5s ease;
+}
+
+@keyframes streakPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Word reinforcement display */
+.word-reinforcement {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  animation: wordFadeInOut 2s ease forwards;
+}
+
+.reinforcement-word {
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  text-transform: lowercase;
+}
+
+@keyframes wordFadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
 }
 
 /* New game button */
