@@ -43,3 +43,6 @@ export * from './phonics'
 
 // Word families game data exports
 export * from './word-families'
+
+// Read-aloud game data exports
+export * from './read-aloud'
