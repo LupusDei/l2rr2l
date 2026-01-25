@@ -20,6 +20,9 @@ type Screen = 'home' | 'onboarding' | 'lessons' | 'lesson-player' | 'spelling' |
 // Temporary child ID for development (would come from auth in production)
 const DEV_CHILD_ID = 'dev-child-1'
 
+// LocalStorage key for child profile data
+const CHILD_DATA_STORAGE_KEY = `l2rr2l_child_data_${DEV_CHILD_ID}`
+
 interface ChildData {
   name: string
   age: number | null
@@ -27,18 +30,46 @@ interface ChildData {
   avatar: string | null
 }
 
+// Load child data from localStorage
+function loadChildData(): ChildData | null {
+  try {
+    const cached = localStorage.getItem(CHILD_DATA_STORAGE_KEY)
+    if (cached) {
+      return JSON.parse(cached) as ChildData
+    }
+  } catch {
+    // Ignore localStorage errors
+  }
+  return null
+}
+
+// Save child data to localStorage
+function saveChildData(data: ChildData): void {
+  try {
+    localStorage.setItem(CHILD_DATA_STORAGE_KEY, JSON.stringify(data))
+  } catch {
+    // Ignore localStorage errors
+  }
+}
+
 function App() {
+  // Initialize childData from localStorage
   const [screen, setScreen] = useState<Screen>('home')
-  const [childData, setChildData] = useState<ChildData | null>(null)
+  const [childData, setChildData] = useState<ChildData | null>(loadChildData)
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null)
 
   const handleGetStarted = () => {
-    setScreen('onboarding')
+    // If user already has profile data, go directly to lessons
+    if (childData) {
+      setScreen('lessons')
+    } else {
+      setScreen('onboarding')
+    }
   }
 
   const handleOnboardingComplete = (data: ChildData) => {
     setChildData(data)
-    // TODO: Save to backend
+    saveChildData(data) // Persist to localStorage
     console.log('Onboarding complete:', data)
     setScreen('lessons')
   }
