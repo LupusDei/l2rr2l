@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useVoice } from '../hooks/useVoice'
 import { getRandomPhonicsWords, getBeginningSounds, type PhonicsWord } from '../game-data/phonics'
+import { playCorrectSound, playWordCompleteSound } from '../game/sounds'
 import './PhonicsGame.css'
 
 interface PhonicsGameProps {
@@ -17,6 +18,9 @@ interface GameState {
   isCorrect: boolean | null
   showFeedback: boolean
   gameComplete: boolean
+  selectedSound: string | null
+  isSpeaking: boolean
+  showCelebration: boolean
 }
 
 const ENCOURAGEMENTS = [
@@ -25,12 +29,30 @@ const ENCOURAGEMENTS = [
 ]
 
 const CELEBRATIONS = [
-  "You're a phonics champion!", "Incredible work!",
-  "You really know your sounds!", "Keep up the great work!"
+  { text: "You're a phonics champion!", emoji: '🏆' },
+  { text: "Incredible work!", emoji: '🌟' },
+  { text: "You really know your sounds!", emoji: '🎉' },
+  { text: "Keep up the great work!", emoji: '✨' },
+  { text: "Sound superstar!", emoji: '🚀' },
 ]
+
+// Generate confetti positions
+function generateConfettiPositions(count: number = 30) {
+  const colors = ['#ff6b6b', '#ffd43b', '#51cf66', '#4dabf7', '#cc5de8', '#ff922b']
+  return Array.from({ length: count }).map((_, i) => ({
+    id: i,
+    left: `${Math.random() * 100}%`,
+    delay: `${Math.random() * 0.5}s`,
+    color: colors[i % colors.length],
+    duration: 1 + Math.random() * 0.5,
+  }))
+}
+
+const confettiPositions = generateConfettiPositions(30)
 
 export default function PhonicsGame({ onBack }: PhonicsGameProps) {
   const { speak, settings } = useVoice()
+  const [celebrationMessage, setCelebrationMessage] = useState(CELEBRATIONS[0])
   const [gameState, setGameState] = useState<GameState>({
     currentWord: null,
     options: [],
@@ -41,6 +63,9 @@ export default function PhonicsGame({ onBack }: PhonicsGameProps) {
     isCorrect: null,
     showFeedback: false,
     gameComplete: false,
+    selectedSound: null,
+    isSpeaking: false,
+    showCelebration: false,
   })
 
   const generateRound = useCallback(() => {
@@ -66,12 +91,17 @@ export default function PhonicsGame({ onBack }: PhonicsGameProps) {
       options,
       isCorrect: null,
       showFeedback: false,
+      selectedSound: null,
+      isSpeaking: false,
     }))
 
     // Speak the word
     if (settings.enabled) {
       setTimeout(() => {
-        speak(`What sound does ${currentWord.word} start with?`)
+        setGameState(prev => ({ ...prev, isSpeaking: true }))
+        speak(`What sound does ${currentWord.word} start with?`).then(() => {
+          setGameState(prev => ({ ...prev, isSpeaking: false }))
+        })
       }, 500)
     }
   }, [speak, settings.enabled])
@@ -82,15 +112,21 @@ export default function PhonicsGame({ onBack }: PhonicsGameProps) {
     }
   }, [generateRound, gameState.gameComplete, gameState.currentWord])
 
-  const handleAnswer = async (selectedSound: string) => {
+  const handleAnswer = async (sound: string) => {
     if (gameState.showFeedback || !gameState.currentWord) return
 
-    const isCorrect = selectedSound === gameState.currentWord.beginningSound
+    const isCorrect = sound === gameState.currentWord.beginningSound
+
+    // Play sound effect immediately
+    if (isCorrect) {
+      playCorrectSound()
+    }
 
     setGameState(prev => ({
       ...prev,
       isCorrect,
       showFeedback: true,
+      selectedSound: sound,
       score: isCorrect ? prev.score + (10 * (prev.streak + 1)) : prev.score,
       streak: isCorrect ? prev.streak + 1 : 0,
     }))
@@ -108,16 +144,19 @@ export default function PhonicsGame({ onBack }: PhonicsGameProps) {
     setTimeout(() => {
       const nextRound = gameState.round + 1
       if (nextRound >= gameState.totalRounds) {
-        setGameState(prev => ({ ...prev, gameComplete: true }))
+        playWordCompleteSound()
+        const celebration = CELEBRATIONS[Math.floor(Math.random() * CELEBRATIONS.length)]
+        setCelebrationMessage(celebration)
+        setGameState(prev => ({ ...prev, gameComplete: true, showCelebration: true }))
         if (settings.enabled) {
-          const celebration = CELEBRATIONS[Math.floor(Math.random() * CELEBRATIONS.length)]
-          speak(celebration)
+          speak(celebration.text)
         }
       } else {
         setGameState(prev => ({
           ...prev,
           round: nextRound,
           currentWord: null,
+          selectedSound: null,
         }))
       }
     }, 1500)
@@ -134,32 +173,64 @@ export default function PhonicsGame({ onBack }: PhonicsGameProps) {
       isCorrect: null,
       showFeedback: false,
       gameComplete: false,
+      selectedSound: null,
+      isSpeaking: false,
+      showCelebration: false,
     })
   }
 
   const handleRepeatWord = () => {
     if (gameState.currentWord && settings.enabled) {
-      speak(gameState.currentWord.word)
+      setGameState(prev => ({ ...prev, isSpeaking: true }))
+      speak(gameState.currentWord.word).then(() => {
+        setGameState(prev => ({ ...prev, isSpeaking: false }))
+      })
+    }
+  }
+
+  const speakSound = (sound: string) => {
+    if (settings.enabled) {
+      speak(`${sound} says ${sound}`)
     }
   }
 
   if (gameState.gameComplete) {
     return (
       <div className="phonics-game">
-        <div className="game-complete">
-          <div className="celebration-icon">🎉</div>
-          <h2>Great Job!</h2>
-          <p className="final-score">Score: {gameState.score}</p>
-          <p className="rounds-info">You completed {gameState.totalRounds} rounds!</p>
-          <div className="complete-buttons">
-            <button className="play-again-btn" onClick={handlePlayAgain}>
-              Play Again
-            </button>
-            <button className="back-btn" onClick={onBack}>
-              Back to Home
-            </button>
+        {gameState.showCelebration && (
+          <div className="celebration-overlay">
+            <div className="celebration-content">
+              <span className="celebration-emoji">{celebrationMessage.emoji}</span>
+              <h2 className="celebration-text">{celebrationMessage.text}</h2>
+              <p className="celebration-stats">
+                Score: {gameState.score}
+              </p>
+              <p className="rounds-info">You completed {gameState.totalRounds} rounds!</p>
+              <div className="complete-buttons">
+                <button className="play-again-btn" onClick={handlePlayAgain} type="button">
+                  Play Again
+                </button>
+                <button className="back-btn" onClick={onBack} type="button">
+                  Back to Home
+                </button>
+              </div>
+              <div className="confetti">
+                {confettiPositions.map(({ id, left, delay, color, duration }) => (
+                  <span
+                    key={id}
+                    className="confetti-piece"
+                    style={{
+                      left,
+                      animationDelay: delay,
+                      backgroundColor: color,
+                      animationDuration: `${duration}s`,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     )
   }
@@ -183,39 +254,66 @@ export default function PhonicsGame({ onBack }: PhonicsGameProps) {
           <>
             <div className="word-display">
               <span className="word-emoji">{gameState.currentWord.emoji}</span>
-              <h2 className="current-word">{gameState.currentWord.word}</h2>
-              <button className="repeat-btn" onClick={handleRepeatWord} type="button">
-                🔊 Hear Word
+              <h2 className="current-word">
+                <span className={`first-letter ${gameState.showFeedback && gameState.isCorrect ? 'highlight' : ''}`}>
+                  {gameState.currentWord.word.charAt(0).toUpperCase()}
+                </span>
+                {gameState.currentWord.word.slice(1)}
+              </h2>
+              <button
+                className={`repeat-btn ${gameState.isSpeaking ? 'speaking' : ''}`}
+                onClick={handleRepeatWord}
+                type="button"
+              >
+                <span className="sound-icon">🔊</span>
+                <span className="sound-waves">
+                  <span className="wave"></span>
+                  <span className="wave"></span>
+                  <span className="wave"></span>
+                </span>
+                Hear Word
               </button>
             </div>
 
             <p className="instruction">What sound does this word start with?</p>
 
             <div className="options-grid">
-              {gameState.options.map((sound) => (
-                <button
-                  key={sound}
-                  className={`option-btn ${
-                    gameState.showFeedback
-                      ? sound === gameState.currentWord?.beginningSound
-                        ? 'correct'
-                        : gameState.isCorrect === false && sound === gameState.options.find(o => o !== gameState.currentWord?.beginningSound)
-                          ? ''
-                          : ''
-                      : ''
-                  } ${gameState.showFeedback && sound === gameState.currentWord?.beginningSound ? 'correct' : ''}`}
-                  onClick={() => handleAnswer(sound)}
-                  disabled={gameState.showFeedback}
-                  type="button"
-                >
-                  {sound.toUpperCase()}
-                </button>
-              ))}
+              {gameState.options.map((sound) => {
+                const isCorrectSound = sound === gameState.currentWord?.beginningSound
+                const isSelected = sound === gameState.selectedSound
+                const showAsCorrect = gameState.showFeedback && isCorrectSound
+                const showAsWrong = gameState.showFeedback && isSelected && !isCorrectSound
+
+                return (
+                  <button
+                    key={sound}
+                    className={`option-btn ${showAsCorrect ? 'correct' : ''} ${showAsWrong ? 'wrong' : ''}`}
+                    onClick={() => handleAnswer(sound)}
+                    onMouseEnter={() => !gameState.showFeedback && speakSound(sound)}
+                    disabled={gameState.showFeedback}
+                    type="button"
+                  >
+                    <span className="sound-letter">{sound.toUpperCase()}</span>
+                    {showAsCorrect && <span className="check-mark">✓</span>}
+                    {showAsWrong && <span className="wrong-mark">✗</span>}
+                  </button>
+                )
+              })}
             </div>
 
             {gameState.showFeedback && (
               <div className={`feedback ${gameState.isCorrect ? 'correct' : 'incorrect'}`}>
-                {gameState.isCorrect ? '✓ Correct!' : `✗ It starts with "${gameState.currentWord.beginningSound}"`}
+                {gameState.isCorrect ? (
+                  <span className="feedback-content">
+                    <span className="feedback-icon">✓</span>
+                    Correct! "{gameState.currentWord.beginningSound}" makes the {gameState.currentWord.beginningSound} sound!
+                  </span>
+                ) : (
+                  <span className="feedback-content">
+                    <span className="feedback-icon">💡</span>
+                    "{gameState.currentWord.word}" starts with the "{gameState.currentWord.beginningSound}" sound
+                  </span>
+                )}
               </div>
             )}
           </>
