@@ -93,7 +93,7 @@ export default function ReadAloudGame({ onBack }: ReadAloudGameProps) {
       if (result) {
         const isCorrect = result.isCorrect
         const newStreak = isCorrect ? gameState.streak + 1 : 0
-        const isMilestone = isCorrect && MILESTONE_MESSAGES[newStreak]
+        const isMilestone = isCorrect && !!MILESTONE_MESSAGES[newStreak]
         const triggerConfetti = isCorrect && (newStreak >= 3 || isMilestone)
 
         setGameState(prev => ({
@@ -109,8 +109,9 @@ export default function ReadAloudGame({ onBack }: ReadAloudGameProps) {
         if (settings.enabled && settings.encouragementEnabled) {
           if (isCorrect) {
             // Check for milestone celebration first
-            if (isMilestone) {
-              await speak(MILESTONE_MESSAGES[newStreak])
+            const milestoneMessage = MILESTONE_MESSAGES[newStreak]
+            if (milestoneMessage) {
+              await speak(milestoneMessage)
             } else {
               const msg = ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]
               await speak(msg)

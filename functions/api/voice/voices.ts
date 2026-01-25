@@ -1,15 +1,8 @@
 // Available voices API endpoint
 // GET /api/voice/voices - Get list of available voices
+// Uses ElevenLabs SDK for better API handling
 
-// ElevenLabs API response format
-interface ElevenLabsVoice {
-  voice_id: string
-  name: string
-  category?: string
-  description?: string
-  preview_url?: string
-  labels?: Record<string, string>
-}
+import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js'
 
 // Frontend format (camelCase)
 interface Voice {
@@ -42,29 +35,19 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }
 
   try {
-    const response = await fetch('https://api.elevenlabs.io/v1/voices', {
-      headers: {
-        'xi-api-key': apiKey,
-      },
-    })
-
-    if (!response.ok) {
-      console.error('ElevenLabs API error:', response.status)
-      return Response.json({ voices: [DEFAULT_VOICE] })
-    }
-
-    const data = await response.json() as { voices: ElevenLabsVoice[] }
+    const client = new ElevenLabsClient({ apiKey })
+    const response = await client.voices.getAll()
 
     // Convert to frontend format with camelCase and include preview URLs
     const voices: Voice[] = [
       DEFAULT_VOICE,
-      ...data.voices.map(v => ({
-        voiceId: v.voice_id,
-        name: v.name,
+      ...response.voices.map(v => ({
+        voiceId: v.voiceId,
+        name: v.name ?? 'Unknown',
         category: v.category || 'premade',
-        description: v.description,
-        previewUrl: v.preview_url,
-        labels: v.labels
+        description: v.description ?? undefined,
+        previewUrl: v.previewUrl ?? undefined,
+        labels: v.labels as Record<string, string> | undefined,
       }))
     ]
 

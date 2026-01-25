@@ -1,5 +1,8 @@
 // Text-to-Speech API endpoint
 // POST /api/voice/tts - Convert text to speech
+// Uses ElevenLabs SDK for better API handling and compatibility
+
+import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js'
 
 interface TTSRequest {
   text: string
@@ -20,6 +23,36 @@ interface Env {
   ELEVENLABS_API_KEY?: string
 }
 
+// Default voice ID (Rachel - clear, warm voice)
+const DEFAULT_ELEVENLABS_VOICE = 'EXAVITQu4vr4xnSDxMaL'
+
+/**
+ * Convert a ReadableStream to ArrayBuffer
+ */
+async function streamToArrayBuffer(stream: ReadableStream<Uint8Array>): Promise<ArrayBuffer> {
+  const reader = stream.getReader()
+  const chunks: Uint8Array[] = []
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    if (value) chunks.push(value)
+  }
+
+  // Calculate total length
+  const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0)
+  const result = new Uint8Array(totalLength)
+
+  // Copy chunks into result
+  let offset = 0
+  for (const chunk of chunks) {
+    result.set(chunk, offset)
+    offset += chunk.length
+  }
+
+  return result.buffer
+}
+
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const apiKey = context.env.ELEVENLABS_API_KEY
 
@@ -37,6 +70,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     // Support both flat and nested parameters
     const stability = voiceSettings?.stability ?? body.stability ?? 0.5
     const similarityBoost = voiceSettings?.similarityBoost ?? body.similarityBoost ?? 0.75
+    const style = voiceSettings?.style ?? 0
+    const useSpeakerBoost = voiceSettings?.useSpeakerBoost ?? true
 
     console.log('TTS request:', { voiceId, textLength: text?.length, stability, similarityBoost })
 
@@ -52,56 +87,27 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       )
     }
 
-    console.log('Calling ElevenLabs with voiceId:', voiceId)
+    // Use the ElevenLabs SDK for better API handling
+    const client = new ElevenLabsClient({ apiKey })
+    const effectiveVoiceId = voiceId === 'default' ? DEFAULT_ELEVENLABS_VOICE : voiceId
 
-    const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
-      {
-        method: 'POST',
-        headers: {
-          'xi-api-key': apiKey,
-          'Content-Type': 'application/json',
-          'Accept': 'audio/mpeg',
-          'User-Agent': 'L2RR2L-Learning-App/1.0',
-        },
-        body: JSON.stringify({
-          text,
-          model_id: 'eleven_flash_v2_5',
-          voice_settings: {
-            stability,
-            similarity_boost: similarityBoost,
-          },
-        }),
-      }
-    )
+    console.log('Calling ElevenLabs SDK with voiceId:', effectiveVoiceId)
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('ElevenLabs TTS error:', response.status, errorText)
+    const audioStream = await client.textToSpeech.convert(effectiveVoiceId, {
+      text,
+      modelId: 'eleven_flash_v2_5',
+      outputFormat: 'mp3_44100_128',
+      voiceSettings: {
+        stability,
+        similarityBoost,
+        style,
+        useSpeakerBoost,
+      },
+    })
 
-      // Parse ElevenLabs error for better messaging
-      let userMessage = 'Voice service temporarily unavailable.'
-      try {
-        const errorData = JSON.parse(errorText)
-        if (errorData.detail?.status === 'detected_unusual_activity') {
-          userMessage = 'ElevenLabs rate limited. Please try again later or use browser voice.'
-        } else if (errorData.detail?.status === 'model_deprecated_free_tier') {
-          userMessage = 'Voice model not available on free tier.'
-        } else if (errorData.detail?.message) {
-          userMessage = errorData.detail.message
-        }
-      } catch {
-        // Use default message
-      }
+    // Convert stream to ArrayBuffer
+    const audioBuffer = await streamToArrayBuffer(audioStream)
 
-      return Response.json(
-        { error: userMessage, details: errorText.substring(0, 200) },
-        { status: 503 }
-      )
-    }
-
-    // Return audio as binary
-    const audioBuffer = await response.arrayBuffer()
     return new Response(audioBuffer, {
       headers: {
         'Content-Type': 'audio/mpeg',
@@ -110,8 +116,21 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     })
   } catch (error) {
     console.error('TTS error:', error)
+
+    // Parse ElevenLabs error for better messaging
+    let userMessage = 'Voice service temporarily unavailable.'
+    const errorMessage = error instanceof Error ? error.message : String(error)
+
+    if (errorMessage.includes('detected_unusual_activity')) {
+      userMessage = 'ElevenLabs rate limited. Please try again later or use browser voice.'
+    } else if (errorMessage.includes('model_deprecated_free_tier')) {
+      userMessage = 'Voice model not available on free tier.'
+    } else if (errorMessage.includes('quota')) {
+      userMessage = 'Voice quota exceeded. Please try again later.'
+    }
+
     return Response.json(
-      { error: 'TTS service unavailable. Using browser speech synthesis.' },
+      { error: userMessage, details: errorMessage.substring(0, 200) },
       { status: 503 }
     )
   }
