@@ -8,13 +8,14 @@ import MemoryGame from './components/MemoryGame'
 import RhymeGame from './components/RhymeGame'
 import WordBuilder from './components/WordBuilder'
 import PhonicsGame from './components/PhonicsGame'
+import ReadAloudGame from './components/ReadAloudGame'
 import Settings from './components/Settings'
 import { VoiceProvider } from './hooks/useVoice'
 import type { Lesson as LegacyLesson } from './components/LessonCard'
 import type { Lesson, ActivityProgress } from './types/lesson'
 import { version } from '../package.json'
 
-type Screen = 'home' | 'onboarding' | 'lessons' | 'lesson-player' | 'spelling' | 'memory' | 'rhyme' | 'builder' | 'phonics' | 'settings'
+type Screen = 'home' | 'onboarding' | 'lessons' | 'lesson-player' | 'spelling' | 'memory' | 'rhyme' | 'builder' | 'phonics' | 'readaloud' | 'settings'
 
 // Temporary child ID for development (would come from auth in production)
 const DEV_CHILD_ID = 'dev-child-1'
@@ -133,6 +134,14 @@ function App() {
     setScreen('home')
   }
 
+  const handleReadAloudGame = () => {
+    setScreen('readaloud')
+  }
+
+  const handleReadAloudBack = () => {
+    setScreen('home')
+  }
+
   const handleSettings = () => {
     setScreen('settings')
   }
@@ -199,6 +208,14 @@ function App() {
       return (
         <VoiceProvider>
           <PhonicsGame onBack={handlePhonicsBack} />
+        </VoiceProvider>
+      )
+    }
+
+    if (screen === 'readaloud') {
+      return (
+        <VoiceProvider>
+          <ReadAloudGame onBack={handleReadAloudBack} />
         </VoiceProvider>
       )
     }
@@ -303,6 +320,11 @@ function App() {
               <span className="game-icon" aria-hidden="true">&#128264;</span>
               <span className="game-title">Phonics Fun</span>
               <span className="game-description">Match sounds to letters!</span>
+            </button>
+            <button className="game-card readaloud-card" type="button" onClick={handleReadAloudGame}>
+              <span className="game-icon" aria-hidden="true">&#128483;</span>
+              <span className="game-title">Read Aloud</span>
+              <span className="game-description">Practice reading words!</span>
             </button>
           </div>
         </main>
