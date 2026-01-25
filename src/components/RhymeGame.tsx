@@ -9,6 +9,51 @@ import {
 import { playCorrectSound, playWordCompleteSound } from '../game/sounds'
 import { useVoice } from '../hooks/useVoice'
 
+// Extract the rhyming ending from a word (the part that rhymes)
+function getRhymePattern(word: string): { prefix: string; pattern: string } {
+  // Common rhyme patterns - find the longest matching ending
+  const patterns = [
+    'ight', 'ound', 'tion', 'ness', 'ment', 'able', 'ible',
+    'ing', 'ang', 'ong', 'ung', 'ink', 'ank', 'onk', 'unk',
+    'ack', 'eck', 'ick', 'ock', 'uck', 'all', 'ell', 'ill', 'oll', 'ull',
+    'at', 'et', 'it', 'ot', 'ut', 'an', 'en', 'in', 'on', 'un',
+    'ap', 'ep', 'ip', 'op', 'up', 'ar', 'er', 'ir', 'or', 'ur',
+    'ay', 'ey', 'oy', 'aw', 'ow', 'ew', 'oo', 'ee', 'ea',
+    'ake', 'ike', 'oke', 'uke', 'ace', 'ice', 'ose', 'use',
+    'ame', 'ime', 'ome', 'ade', 'ide', 'ode', 'ude',
+    'ain', 'ine', 'one', 'une', 'ane', 'ene',
+    'air', 'ear', 'ore', 'are', 'ire', 'ure',
+    'ash', 'esh', 'ish', 'osh', 'ush',
+    'ath', 'eth', 'ith', 'oth', 'uth',
+    'amp', 'emp', 'imp', 'omp', 'ump',
+    'and', 'end', 'ind', 'ond', 'und',
+    'ant', 'ent', 'int', 'ont', 'unt',
+    'est', 'ist', 'ost', 'ust',
+    'ck', 'ng', 'nk', 'mp', 'nd', 'nt', 'st',
+  ]
+
+  const lowerWord = word.toLowerCase()
+  for (const pattern of patterns) {
+    if (lowerWord.endsWith(pattern)) {
+      const prefixEnd = lowerWord.length - pattern.length
+      return {
+        prefix: word.slice(0, prefixEnd),
+        pattern: word.slice(prefixEnd),
+      }
+    }
+  }
+
+  // Fallback: last 2 characters as pattern
+  if (word.length > 2) {
+    return {
+      prefix: word.slice(0, -2),
+      pattern: word.slice(-2),
+    }
+  }
+
+  return { prefix: '', pattern: word }
+}
+
 interface RhymeGameProps {
   onBack: () => void
   difficulty?: 1 | 2 | 3
@@ -46,11 +91,46 @@ function generateConfettiPositions(count: number = 30) {
   }))
 }
 
-const confettiPositions = generateConfettiPositions(30)
+const confettiPositions = generateConfettiPositions(40)
+
+// Generate sparkle positions for correct answer celebration
+function generateSparklePositions(count: number = 8) {
+  return Array.from({ length: count }).map((_, i) => ({
+    id: i,
+    top: `${20 + Math.random() * 60}%`,
+    left: `${10 + Math.random() * 80}%`,
+    delay: `${Math.random() * 0.3}s`,
+    size: 12 + Math.random() * 12,
+  }))
+}
 
 // Get display emoji from option
 function getOptionEmoji(option: RhymeWord | RhymeDistractor): string {
   return option.emoji
+}
+
+// Component for displaying word with highlighted rhyme pattern
+function HighlightedWord({
+  word,
+  highlight,
+  className = '',
+}: {
+  word: string
+  highlight: boolean
+  className?: string
+}) {
+  const { prefix, pattern } = getRhymePattern(word)
+
+  if (!highlight) {
+    return <span className={className}>{word}</span>
+  }
+
+  return (
+    <span className={className}>
+      {prefix}
+      <span className="rhyme-pattern">{pattern}</span>
+    </span>
+  )
 }
 
 export default function RhymeGame({
@@ -77,20 +157,30 @@ export default function RhymeGame({
   const [showStreakMilestone, setShowStreakMilestone] = useState<number | null>(
     null
   )
+  const [isEntering, setIsEntering] = useState(false)
+  const [showSparkles, setShowSparkles] = useState(false)
+  const [sparklePositions, setSparklePositions] = useState<ReturnType<typeof generateSparklePositions>>([])
   const hasAnnouncedRef = useRef(false)
+  const targetWordRef = useRef<HTMLDivElement>(null)
 
   const levelInfo = difficultyInfo[difficulty]
 
-  // Generate a new question
+  // Generate a new question with smooth transition
   const nextQuestion = useCallback(() => {
+    setIsEntering(true)
     setCurrentQuestion(generateRhymeQuestion(difficulty, 2))
     setSelectedOption(null)
     setShowResult(false)
+    setShowSparkles(false)
     setQuestionsAnswered((prev) => prev + 1)
+
+    // Reset entering state after animation
+    setTimeout(() => setIsEntering(false), 600)
   }, [difficulty])
 
   // Reset game
   const resetGame = useCallback(() => {
+    setIsEntering(true)
     setCurrentQuestion(generateRhymeQuestion(difficulty, 2))
     setScore(0)
     setStreak(0)
@@ -98,7 +188,9 @@ export default function RhymeGame({
     setSelectedOption(null)
     setShowResult(false)
     setShowCelebration(false)
+    setShowSparkles(false)
     hasAnnouncedRef.current = false
+    setTimeout(() => setIsEntering(false), 600)
   }, [difficulty])
 
   // Announce game start
@@ -136,19 +228,25 @@ export default function RhymeGame({
         const newStreak = streak + 1
         setStreak(newStreak)
 
+        // Show sparkle celebration
+        setSparklePositions(generateSparklePositions(8))
+        setShowSparkles(true)
+        setTimeout(() => setShowSparkles(false), 800)
+
         // Check for streak milestone
         if (streakMilestones.includes(newStreak)) {
           setShowStreakMilestone(newStreak)
-          setTimeout(() => setShowStreakMilestone(null), 1000)
+          setTimeout(() => setShowStreakMilestone(null), 1200)
         }
 
-        // Speak feedback
+        // Speak feedback with rhyme pattern emphasis
+        const { pattern } = getRhymePattern(option.word)
         speak(
-          `Yes! ${option.word} rhymes with ${currentQuestion.targetWord.word}!`
+          `Yes! ${option.word} rhymes with ${currentQuestion.targetWord.word}! They both end in ${pattern}!`
         )
       } else {
         setStreak(0)
-        speak(`Oops! ${option.word} doesn't rhyme. Try again!`)
+        speak(`Oops! ${option.word} doesn't rhyme with ${currentQuestion.targetWord.word}. Try again!`)
       }
 
       // Check for level complete
@@ -272,9 +370,17 @@ export default function RhymeGame({
       )}
 
       {/* Target word */}
-      <div className="target-word-container">
+      <div
+        ref={targetWordRef}
+        className={`target-word-container${isEntering ? ' entering' : ''}`}
+      >
         <span className="target-emoji">{currentQuestion.targetWord.emoji}</span>
-        <h2 className="target-word">{currentQuestion.targetWord.word}</h2>
+        <h2 className="target-word">
+          <HighlightedWord
+            word={currentQuestion.targetWord.word}
+            highlight={showResult}
+          />
+        </h2>
         <p className="target-prompt">Find the word that rhymes!</p>
         <button
           className="speak-button"
@@ -287,6 +393,25 @@ export default function RhymeGame({
           </span>
           Hear Word
         </button>
+
+        {/* Sparkle celebration */}
+        {showSparkles && (
+          <div className="sparkle-container">
+            {sparklePositions.map(({ id, top, left, delay, size }) => (
+              <span
+                key={id}
+                className="sparkle"
+                style={{
+                  top,
+                  left,
+                  animationDelay: delay,
+                  width: size,
+                  height: size,
+                }}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Answer choices */}
@@ -317,7 +442,11 @@ export default function RhymeGame({
               aria-label={option.word}
             >
               <span className="choice-emoji">{getOptionEmoji(option)}</span>
-              <span className="choice-word">{option.word}</span>
+              <HighlightedWord
+                word={option.word}
+                highlight={showResult && isCorrectAnswer}
+                className="choice-word"
+              />
             </button>
           )
         })}
