@@ -1,0 +1,378 @@
+.read-aloud-game {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  padding: 1rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.read-aloud-game .game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+}
+
+.read-aloud-game .game-header h1 {
+  margin: 0;
+  color: white;
+  font-size: 1.5rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.read-aloud-game .back-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.read-aloud-game .back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.read-aloud-game .game-stats {
+  display: flex;
+  gap: 1rem;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.read-aloud-game .score,
+.read-aloud-game .streak,
+.read-aloud-game .round {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+}
+
+.read-aloud-game .game-content {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.level-selector {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.level-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid transparent;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: Arial, Helvetica, sans-serif;
+  transition: all 0.2s ease;
+}
+
+.level-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.level-btn.active {
+  background: white;
+  color: #0891b2;
+  font-weight: bold;
+}
+
+.read-aloud-game .word-display {
+  background: white;
+  border-radius: 2rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.target-word {
+  font-size: 4rem;
+  color: #333;
+  margin: 0 0 1rem 0;
+  font-family: Arial, Helvetica, sans-serif;
+  text-transform: lowercase;
+  letter-spacing: 0.1em;
+}
+
+.read-aloud-game .repeat-btn {
+  background: #06b6d4;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.read-aloud-game .repeat-btn:hover {
+  background: #0891b2;
+}
+
+.read-aloud-game .instruction {
+  color: white;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.mic-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.mic-button {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: white;
+  border: 4px solid #e5e7eb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.mic-button:hover:not(:disabled) {
+  transform: scale(1.05);
+  border-color: #06b6d4;
+}
+
+.mic-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.mic-button.recording {
+  background: #fee2e2;
+  border-color: #ef4444;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.mic-button.processing {
+  background: #fef3c7;
+  border-color: #f59e0b;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+  }
+}
+
+.mic-icon {
+  font-size: 3rem;
+}
+
+.recording-icon {
+  animation: bounce 0.5s ease infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+.recording-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.recording-dot {
+  width: 12px;
+  height: 12px;
+  background: #ef4444;
+  border-radius: 50%;
+  animation: blink 1s ease infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.read-aloud-game .feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 2rem;
+  border-radius: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-bottom: 1rem;
+}
+
+.read-aloud-game .feedback.correct {
+  background: #4ade80;
+  color: white;
+}
+
+.read-aloud-game .feedback.incorrect {
+  background: #f87171;
+  color: white;
+}
+
+.feedback-icon {
+  font-size: 2rem;
+}
+
+.feedback-text {
+  text-align: center;
+}
+
+.transcribed {
+  font-size: 0.9rem;
+  font-weight: normal;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.skip-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  transition: all 0.2s ease;
+}
+
+.skip-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Game Complete Screen */
+.read-aloud-game .game-complete {
+  background: white;
+  border-radius: 2rem;
+  padding: 3rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.read-aloud-game .celebration-icon {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+}
+
+.read-aloud-game .game-complete h2 {
+  color: #333;
+  font-size: 2.5rem;
+  margin: 0 0 1rem 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.read-aloud-game .final-score {
+  font-size: 2rem;
+  color: #06b6d4;
+  font-weight: bold;
+  margin: 0 0 0.5rem 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.read-aloud-game .rounds-info {
+  color: #666;
+  font-size: 1.2rem;
+  margin: 0 0 2rem 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.read-aloud-game .complete-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.read-aloud-game .play-again-btn {
+  background: #06b6d4;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.read-aloud-game .play-again-btn:hover {
+  background: #0891b2;
+}
+
+.read-aloud-game .back-btn {
+  background: #e5e7eb;
+  color: #333;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.read-aloud-game .back-btn:hover {
+  background: #d1d5db;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .target-word {
+    font-size: 3rem;
+  }
+
+  .mic-button {
+    width: 100px;
+    height: 100px;
+  }
+
+  .mic-icon {
+    font-size: 2.5rem;
+  }
+
+  .read-aloud-game .game-stats {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .level-selector {
+    gap: 0.25rem;
+  }
+
+  .level-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
