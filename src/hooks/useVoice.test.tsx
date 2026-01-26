@@ -314,3 +314,120 @@ describe('Voice settings persistence flow', () => {
     expect(window.localStorage.getItem).toHaveBeenCalledWith(STORAGE_KEY)
   })
 })
+
+describe('Browser TTS fallback', () => {
+  const STORAGE_KEY = 'l2rr2l_voice_settings_dev-child-1'
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.useRealTimers()
+
+    // Setup localStorage
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: vi.fn((key: string) => {
+          if (key === STORAGE_KEY) {
+            return JSON.stringify({
+              voiceId: 'elevenlabs-voice-123',
+              stability: 0.5,
+              similarityBoost: 0.75,
+              enabled: true,
+            })
+          }
+          return null
+        }),
+        setItem: vi.fn(),
+        removeItem: vi.fn(),
+        clear: vi.fn(),
+      },
+      writable: true,
+    })
+
+    // Mock Web Speech API
+    Object.defineProperty(window, 'speechSynthesis', {
+      value: {
+        speak: vi.fn(),
+        cancel: vi.fn(),
+        paused: false,
+        resume: vi.fn(),
+      },
+      writable: true,
+    })
+
+    global.SpeechSynthesisUtterance = MockSpeechSynthesisUtterance as unknown as typeof SpeechSynthesisUtterance
+  })
+
+  it('falls back to browser TTS when TTS API returns 503 error', async () => {
+    // Mock fetch to return 503 (service unavailable)
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 503,
+      json: () => Promise.resolve({ error: 'Voice service temporarily unavailable.' }),
+    })
+    global.fetch = mockFetch
+
+    render(
+      <VoiceProvider>
+        <TestConsumer />
+      </VoiceProvider>
+    )
+
+    const speakButton = screen.getByText('Speak')
+    await userEvent.click(speakButton)
+
+    // Wait for the TTS API call
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalledWith('/api/voice/tts', expect.anything())
+    })
+
+    // Wait a bit for the fallback to browser TTS
+    await waitFor(() => {
+      expect(window.speechSynthesis.speak).toHaveBeenCalled()
+    }, { timeout: 500 })
+  })
+
+  it('falls back to browser TTS when TTS API request fails with network error', async () => {
+    // Mock fetch to throw network error
+    const mockFetch = vi.fn().mockRejectedValue(new Error('Network error'))
+    global.fetch = mockFetch
+
+    render(
+      <VoiceProvider>
+        <TestConsumer />
+      </VoiceProvider>
+    )
+
+    const speakButton = screen.getByText('Speak')
+    await userEvent.click(speakButton)
+
+    // Wait for the fallback to browser TTS
+    await waitFor(() => {
+      expect(window.speechSynthesis.speak).toHaveBeenCalled()
+    }, { timeout: 500 })
+  })
+
+  it('attempts TTS API with user-selected voiceId before falling back', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 503,
+    })
+    global.fetch = mockFetch
+
+    render(
+      <VoiceProvider>
+        <TestConsumer />
+      </VoiceProvider>
+    )
+
+    const speakButton = screen.getByText('Speak')
+    await userEvent.click(speakButton)
+
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalled()
+    })
+
+    // Verify the TTS API was called with the correct voiceId from settings
+    const callBody = JSON.parse(mockFetch.mock.calls[0][1].body)
+    expect(callBody.voiceId).toBe('elevenlabs-voice-123')
+  })
+})
