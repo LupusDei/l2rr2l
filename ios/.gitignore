@@ -3,6 +3,13 @@
 *.xcuserdatad/
 *.xcscmblueprint
 *.xccheckout
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+/*.gcno
+**/xcshareddata/WorkspaceSettings.xcsettings
 DerivedData/
 *.moved-aside
 *.pbxuser
@@ -24,16 +31,27 @@ build/
 # Swift Package Manager
 .build/
 .swiftpm/
+.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+.swiftpm/xcode/xcuserdata
 Package.resolved
 
-# CocoaPods (not used but good to have)
+# CocoaPods
 Pods/
 Podfile.lock
 
-# Carthage (not used but good to have)
+# Carthage
 Carthage/Build
 
-# OS
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Code Injection
+iOSInjectionProject/
+
+# OS / macOS
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -42,6 +60,8 @@ Carthage/Build
 *.idea/
 *.vscode/
 
-# Secrets
+# Secrets / Environment
 *.xcconfig.local
 Secrets.swift
+.env
+.env.local
