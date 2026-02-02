@@ -7,7 +7,9 @@
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
 !*.xcodeproj/project.xcworkspace/
+*.xcworkspace/*
 !*.xcworkspace/contents.xcworkspacedata
+!*.xcworkspace/xcshareddata/
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
 DerivedData/
@@ -24,6 +26,7 @@ xcuserdata/
 
 # Build
 build/
+*.build/
 *.ipa
 *.dSYM.zip
 *.dSYM
@@ -40,21 +43,26 @@ Pods/
 Podfile.lock
 
 # Carthage
-Carthage/Build
+Carthage/Build/
 
 # Fastlane
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
+fastlane/screenshots
 fastlane/test_output
 
 # Code Injection
 iOSInjectionProject/
 
+# Bundle artifacts
+*.jsbundle
+
 # OS / macOS
 .DS_Store
 .AppleDouble
 .LSOverride
+._*
 
 # IDE
 *.idea/
@@ -65,3 +73,7 @@ iOSInjectionProject/
 Secrets.swift
 .env
 .env.local
+*.pem
+*.p8
+*.p12
+*.mobileprovision
