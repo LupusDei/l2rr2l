@@ -7,6 +7,7 @@ struct SpellingGameView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var showConfetti = false
+    @State private var showGameCompleteConfetti = false
     @State private var shakeAnswer = false
 
     var body: some View {
@@ -49,6 +50,12 @@ struct SpellingGameView: View {
                 triggerCelebration()
             }
         }
+        .onChange(of: viewModel.gameState) { _, state in
+            if state == .gameComplete {
+                showGameCompleteConfetti = true
+            }
+        }
+        .confetti(isActive: $showGameCompleteConfetti, configuration: .gameComplete)
     }
 
     // MARK: - Header
@@ -351,6 +358,9 @@ struct SpellingGameView: View {
             .scaleEffect(showConfetti ? 1.0 : 0.5)
             .opacity(showConfetti ? 1.0 : 0)
             .animation(.spring(response: 0.4, dampingFraction: 0.6), value: showConfetti)
+
+            // Confetti particles
+            ConfettiView(isActive: $showConfetti, configuration: .streakMilestone)
         }
         .onTapGesture {
             showConfetti = false
