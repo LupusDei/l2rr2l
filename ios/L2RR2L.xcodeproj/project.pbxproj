@@ -74,6 +74,7 @@
 		A1B2C3D50000000000000208 /* ViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelProtocol.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000209 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000210 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000300 /* L2RR2L.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = L2RR2L.entitlements; sourceTree = "<group>"; };
 		A1B2C3D90000000000000001 /* L2RR2L.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = L2RR2L.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D90000000000000010 /* L2RR2LTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = L2RR2LTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D90000000000000020 /* L2RR2LUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = L2RR2LUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,6 +118,7 @@
 		A1B2C3DB0000000000000002 /* L2RR2L */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D50000000000000300 /* L2RR2L.entitlements */,
 				A1B2C3DB0000000000000003 /* App */,
 				A1B2C3DB0000000000000004 /* Features */,
 				A1B2C3DB0000000000000005 /* Core */,
@@ -615,6 +617,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = L2RR2L/L2RR2L.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"L2RR2L/Preview Content\"";
@@ -647,6 +650,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = L2RR2L/L2RR2L.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"L2RR2L/Preview Content\"";
