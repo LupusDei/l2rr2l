@@ -199,6 +199,24 @@ public enum L2RTheme {
         public static let xlarge: CGFloat = 60
     }
 
+    // MARK: - Layout Constants
+
+    public enum Layout {
+        // Corner radii (matching CornerRadius for convenience)
+        public static let cornerRadiusSmall: CGFloat = 8
+        public static let cornerRadiusMedium: CGFloat = 12
+        public static let cornerRadiusLarge: CGFloat = 16
+        public static let cornerRadiusXL: CGFloat = 24
+
+        // Interactive elements
+        public static let minTouchTarget: CGFloat = 44
+        public static let buttonHeight: CGFloat = 52
+        public static let cardPadding: CGFloat = 16
+
+        // Content constraints
+        public static let maxContentWidth: CGFloat = 600
+    }
+
     // MARK: - Shadows
 
     public enum Shadow {
