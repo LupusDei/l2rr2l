@@ -15,6 +15,21 @@
 		A1B2C3D40000000000000010 /* L2RR2LTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000010 /* L2RR2LTests.swift */; };
 		A1B2C3D40000000000000020 /* L2RR2LUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000020 /* L2RR2LUITests.swift */; };
 		A1B2C3D40000000000000021 /* L2RR2LUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */; };
+		A1B2C3D40000000000000100 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000100 /* HomeView.swift */; };
+		A1B2C3D40000000000000101 /* AnimatedBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000101 /* AnimatedBackgroundView.swift */; };
+		A1B2C3D40000000000000102 /* L2RLogoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000102 /* L2RLogoView.swift */; };
+		A1B2C3D40000000000000103 /* GameGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000103 /* GameGridView.swift */; };
+		A1B2C3D40000000000000200 /* L2RTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000200 /* L2RTheme.swift */; };
+		A1B2C3D40000000000000201 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000201 /* ThemeManager.swift */; };
+		A1B2C3D40000000000000202 /* ThemeModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000202 /* ThemeModifiers.swift */; };
+		A1B2C3D40000000000000203 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000203 /* Color+Hex.swift */; };
+		A1B2C3D40000000000000204 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000204 /* DependencyContainer.swift */; };
+		A1B2C3D40000000000000205 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000205 /* AppState.swift */; };
+		A1B2C3D40000000000000206 /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000206 /* BaseViewModel.swift */; };
+		A1B2C3D40000000000000207 /* ServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000207 /* ServiceProtocol.swift */; };
+		A1B2C3D40000000000000208 /* ViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000208 /* ViewModelProtocol.swift */; };
+		A1B2C3D40000000000000209 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000209 /* LoginViewModel.swift */; };
+		A1B2C3D40000000000000210 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000210 /* LoginView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +59,21 @@
 		A1B2C3D50000000000000010 /* L2RR2LTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LTests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000020 /* L2RR2LUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LUITests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000100 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000101 /* AnimatedBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedBackgroundView.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000102 /* L2RLogoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RLogoView.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000103 /* GameGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameGridView.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000200 /* L2RTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RTheme.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000201 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000202 /* ThemeModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeModifiers.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000203 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		A1B2C3D50000000000000204 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000205 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000206 /* BaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000207 /* ServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProtocol.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000208 /* ViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelProtocol.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000209 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000210 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		A1B2C3D90000000000000001 /* L2RR2L.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = L2RR2L.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D90000000000000010 /* L2RR2LTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = L2RR2LTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D90000000000000020 /* L2RR2LUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = L2RR2LUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,10 +120,30 @@
 				A1B2C3DB0000000000000003 /* App */,
 				A1B2C3DB0000000000000004 /* Features */,
 				A1B2C3DB0000000000000005 /* Core */,
+				A1B2C3DB0000000000000200 /* Theme */,
+				A1B2C3DB0000000000000201 /* Extensions */,
 				A1B2C3DB0000000000000006 /* Resources */,
 				A1B2C3DB0000000000000007 /* Preview Content */,
 			);
 			path = L2RR2L;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000000200 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000000200 /* L2RTheme.swift */,
+				A1B2C3D50000000000000201 /* ThemeManager.swift */,
+				A1B2C3D50000000000000202 /* ThemeModifiers.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000000201 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000000203 /* Color+Hex.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		A1B2C3DB0000000000000003 /* App */ = {
@@ -109,39 +159,106 @@
 		A1B2C3DB0000000000000004 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3DB0000000000000107 /* Auth */,
+				A1B2C3DB0000000000000104 /* Home */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000000107 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3DB0000000000000108 /* ViewModels */,
+				A1B2C3DB0000000000000109 /* Views */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000000108 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000000209 /* LoginViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000000109 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000000210 /* LoginView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000000104 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3DB0000000000000105 /* Views */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000000105 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000000100 /* HomeView.swift */,
+				A1B2C3DB0000000000000106 /* Components */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000000106 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000000101 /* AnimatedBackgroundView.swift */,
+				A1B2C3D50000000000000102 /* L2RLogoView.swift */,
+				A1B2C3D50000000000000103 /* GameGridView.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		A1B2C3DB0000000000000005 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3DB0000000000000051 /* Services */,
-				A1B2C3DB0000000000000052 /* Models */,
-				A1B2C3DB0000000000000053 /* Extensions */,
+				A1B2C3DB0000000000000054 /* Architecture */,
+				A1B2C3DB0000000000000055 /* DI */,
+				A1B2C3DB0000000000000056 /* Protocols */,
+				A1B2C3DB0000000000000057 /* State */,
 			);
 			path = Core;
 			sourceTree = "<group>";
 		};
-		A1B2C3DB0000000000000051 /* Services */ = {
+		A1B2C3DB0000000000000054 /* Architecture */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D50000000000000206 /* BaseViewModel.swift */,
 			);
-			path = Services;
+			path = Architecture;
 			sourceTree = "<group>";
 		};
-		A1B2C3DB0000000000000052 /* Models */ = {
+		A1B2C3DB0000000000000055 /* DI */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D50000000000000204 /* DependencyContainer.swift */,
 			);
-			path = Models;
+			path = DI;
 			sourceTree = "<group>";
 		};
-		A1B2C3DB0000000000000053 /* Extensions */ = {
+		A1B2C3DB0000000000000056 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D50000000000000207 /* ServiceProtocol.swift */,
+				A1B2C3D50000000000000208 /* ViewModelProtocol.swift */,
 			);
-			path = Extensions;
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000000057 /* State */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000000205 /* AppState.swift */,
+			);
+			path = State;
 			sourceTree = "<group>";
 		};
 		A1B2C3DB0000000000000006 /* Resources */ = {
@@ -321,6 +438,21 @@
 				A1B2C3D40000000000000003 /* ContentView.swift in Sources */,
 				A1B2C3D40000000000000002 /* AppDelegate.swift in Sources */,
 				A1B2C3D40000000000000001 /* L2RR2LApp.swift in Sources */,
+				A1B2C3D40000000000000100 /* HomeView.swift in Sources */,
+				A1B2C3D40000000000000101 /* AnimatedBackgroundView.swift in Sources */,
+				A1B2C3D40000000000000102 /* L2RLogoView.swift in Sources */,
+				A1B2C3D40000000000000103 /* GameGridView.swift in Sources */,
+				A1B2C3D40000000000000200 /* L2RTheme.swift in Sources */,
+				A1B2C3D40000000000000201 /* ThemeManager.swift in Sources */,
+				A1B2C3D40000000000000202 /* ThemeModifiers.swift in Sources */,
+				A1B2C3D40000000000000203 /* Color+Hex.swift in Sources */,
+				A1B2C3D40000000000000204 /* DependencyContainer.swift in Sources */,
+				A1B2C3D40000000000000205 /* AppState.swift in Sources */,
+				A1B2C3D40000000000000206 /* BaseViewModel.swift in Sources */,
+				A1B2C3D40000000000000207 /* ServiceProtocol.swift in Sources */,
+				A1B2C3D40000000000000208 /* ViewModelProtocol.swift in Sources */,
+				A1B2C3D40000000000000209 /* LoginViewModel.swift in Sources */,
+				A1B2C3D40000000000000210 /* LoginView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
