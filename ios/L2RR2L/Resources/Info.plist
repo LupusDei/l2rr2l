@@ -19,7 +19,17 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>APP_ENVIRONMENT</key>
+	<string>$(APP_ENVIRONMENT)</string>
+	<key>API_BASE_URL</key>
+	<string>$(API_BASE_URL)</string>
+	<key>ENABLE_DEBUG_LOGGING</key>
+	<string>$(ENABLE_DEBUG_LOGGING)</string>
+	<key>ENABLE_ANALYTICS</key>
+	<string>$(ENABLE_ANALYTICS)</string>
+	<key>ENABLE_CRASH_REPORTING</key>
+	<string>$(ENABLE_CRASH_REPORTING)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>

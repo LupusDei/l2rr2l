@@ -37,8 +37,7 @@ final class APIClient {
     var authToken: String?
 
     private init() {
-        // Default to localhost for development
-        self.baseURL = URL(string: "http://localhost:3000/api")!
+        self.baseURL = Configuration.apiBaseURL
         self.session = URLSession.shared
 
         self.decoder = JSONDecoder()

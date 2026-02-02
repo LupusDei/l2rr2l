@@ -12,7 +12,7 @@ public actor APIClient {
     private let maxRetries: Int
 
     public init(
-        baseURL: URL = URL(string: "https://l2rr2l.pages.dev/api")!,
+        baseURL: URL = Configuration.apiBaseURL,
         session: URLSession = .shared,
         maxRetries: Int = 2
     ) {
