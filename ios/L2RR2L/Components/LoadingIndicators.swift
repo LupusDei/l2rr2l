@@ -27,6 +27,7 @@ enum LoadingSize {
 // MARK: - Loading Spinner
 
 struct LoadingSpinner: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let size: LoadingSize
     var color: Color = L2RTheme.primary
 
@@ -43,8 +44,9 @@ struct LoadingSpinner: View {
                 )
             )
             .frame(width: size.dimension, height: size.dimension)
-            .rotationEffect(.degrees(isAnimating ? 360 : 0))
+            .rotationEffect(.degrees(isAnimating && !reduceMotion ? 360 : 0))
             .onAppear {
+                guard !reduceMotion else { return }
                 withAnimation(
                     .linear(duration: 1.0)
                     .repeatForever(autoreverses: false)
@@ -99,27 +101,31 @@ struct ProgressBar: View {
 // MARK: - Shimmer Modifier
 
 struct ShimmerModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var phase: CGFloat = 0
 
     func body(content: Content) -> some View {
         content
             .overlay(
                 GeometryReader { geometry in
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0),
-                            Color.white.opacity(0.5),
-                            Color.white.opacity(0)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                    .frame(width: geometry.size.width * 0.6)
-                    .offset(x: -geometry.size.width * 0.3 + (geometry.size.width * 1.6) * phase)
+                    if !reduceMotion {
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0),
+                                Color.white.opacity(0.5),
+                                Color.white.opacity(0)
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        .frame(width: geometry.size.width * 0.6)
+                        .offset(x: -geometry.size.width * 0.3 + (geometry.size.width * 1.6) * phase)
+                    }
                 }
                 .mask(content)
             )
             .onAppear {
+                guard !reduceMotion else { return }
                 withAnimation(
                     .linear(duration: 1.5)
                     .repeatForever(autoreverses: false)
@@ -230,6 +236,7 @@ struct FullScreenLoader: View {
 // MARK: - Loading Overlay Modifier
 
 struct LoadingOverlayModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let isLoading: Bool
     let message: String?
 
@@ -243,7 +250,7 @@ struct LoadingOverlayModifier: ViewModifier {
                     .transition(.opacity)
             }
         }
-        .animation(.easeInOut(duration: L2RTheme.Animation.normal), value: isLoading)
+        .animation(reduceMotion ? nil : .easeInOut(duration: L2RTheme.Animation.normal), value: isLoading)
     }
 }
 

@@ -55,6 +55,7 @@ public struct ConfettiView: View {
         )
     }
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private let configuration: Configuration
     @Binding var isActive: Bool
 
@@ -67,6 +68,24 @@ public struct ConfettiView: View {
     }
 
     public var body: some View {
+        // Skip confetti entirely when Reduce Motion is enabled
+        if reduceMotion {
+            Color.clear
+                .onChange(of: isActive) { _, active in
+                    if active {
+                        // Just reset the binding without animation
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            isActive = false
+                        }
+                    }
+                }
+        } else {
+            confettiContent
+        }
+    }
+
+    @ViewBuilder
+    private var confettiContent: some View {
         GeometryReader { geometry in
             TimelineView(.animation) { timeline in
                 Canvas { context, size in

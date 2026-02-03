@@ -13,6 +13,7 @@ enum TileState: Equatable {
 // MARK: - Letter Tile
 
 struct LetterTile: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let letter: Character
     let state: TileState
     var color: Color = L2RTheme.primary
@@ -56,8 +57,8 @@ struct LetterTile: View {
                     triggerHaptic(.success)
                 }
             }
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: state)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isDragging)
+            .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.7), value: state)
+            .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.7), value: isDragging)
     }
 
     // MARK: - Background
@@ -176,8 +177,12 @@ struct LetterTile: View {
             }
             .onEnded { _ in
                 isDragging = false
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                if reduceMotion {
                     dragOffset = .zero
+                } else {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        dragOffset = .zero
+                    }
                 }
                 onDragEnded?()
             }
@@ -187,6 +192,8 @@ struct LetterTile: View {
 
     private func playShakeAnimation() {
         triggerHaptic(.error)
+        // Skip shake animation when Reduce Motion is enabled
+        guard !reduceMotion else { return }
         withAnimation(.linear(duration: 0.08)) {
             shakeOffset = 8
         }

@@ -9,10 +9,10 @@ import SwiftUI
 /// - Subtle continuous float animation after settling
 /// - Optional tap interaction for playful bounce
 struct L2RLogoView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var lettersVisible: [Bool] = Array(repeating: false, count: 6)
     @State private var isFloating = false
     @State private var tappedIndex: Int? = nil
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let logoText = Array("L2RR2L")
 
@@ -35,7 +35,7 @@ struct L2RLogoView: View {
                         .opacity(lettersVisible[index] ? 1.0 : 0.0)
                         .offset(y: letterOffset(for: index))
                         .animation(
-                            .spring(response: 0.5, dampingFraction: 0.6)
+                            reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.6)
                                 .delay(Double(index) * 0.1),
                             value: lettersVisible[index]
                         )
@@ -59,7 +59,7 @@ struct L2RLogoView: View {
                     .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .medium))
                     .foregroundStyle(L2RTheme.textSecondary)
                     .opacity(lettersVisible.last == true ? 1.0 : 0.0)
-                    .animation(.easeIn(duration: 0.3).delay(0.7), value: lettersVisible.last)
+                    .animation(reduceMotion ? nil : .easeIn(duration: 0.3).delay(0.7), value: lettersVisible.last)
             }
         }
         .onAppear {
@@ -111,6 +111,13 @@ struct L2RLogoView: View {
     }
 
     private func animateLetters() {
+        // When Reduce Motion is enabled, show all letters immediately
+        if reduceMotion {
+            for index in logoText.indices {
+                lettersVisible[index] = true
+            }
+            return
+        }
         for index in logoText.indices {
             DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.1) {
                 lettersVisible[index] = true
