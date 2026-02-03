@@ -50,6 +50,29 @@ public struct FlipCard: View {
             guard !isMatched else { return }
             onFlip()
         }
+        .accessibilityLabel(accessibilityLabelText)
+        .accessibilityHint(accessibilityHintText)
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private var accessibilityLabelText: String {
+        if isMatched {
+            return "Matched card showing '\(word)'"
+        } else if isFlipped {
+            return "Card face up showing '\(word)'"
+        } else {
+            return "Card face down"
+        }
+    }
+
+    private var accessibilityHintText: String {
+        if isMatched {
+            return "Already matched"
+        } else if isFlipped {
+            return "Find the matching card"
+        } else {
+            return "Double tap to flip"
+        }
     }
 }
 

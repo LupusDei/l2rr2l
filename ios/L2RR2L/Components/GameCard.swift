@@ -93,6 +93,10 @@ struct GameCard: View {
                 }
             }
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(game.name). \(game.description)")
+        .accessibilityHint("Double tap to play")
+        .accessibilityAddTraits(.isButton)
     }
 
     private var gameIcon: some View {
@@ -161,6 +165,10 @@ struct CompactGameCard: View {
             }
             .frame(height: 100)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(game.name)
+        .accessibilityHint("Double tap to play")
+        .accessibilityAddTraits(.isButton)
     }
 }
 

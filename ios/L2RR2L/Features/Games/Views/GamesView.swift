@@ -81,6 +81,9 @@ struct GamesView: View {
             .shadow(color: shadowColor.opacity(0.4), radius: 4, x: 0, y: 4)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint("Double tap to play")
+        .accessibilityAddTraits(.isButton)
     }
 }
 

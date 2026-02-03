@@ -58,6 +58,7 @@ struct HomeView: View {
                     .frame(width: L2RTheme.TouchTarget.comfortable, height: L2RTheme.TouchTarget.comfortable)
                     .contentShape(Rectangle())
             }
+            .accessibilityLabel("Settings")
         }
         .padding(.top, L2RTheme.Spacing.sm)
     }
@@ -99,6 +100,8 @@ struct HomeView: View {
                 y: L2RTheme.Shadow.buttonDepth
             )
         }
+        .accessibilityLabel("Continue Learning")
+        .accessibilityHint("Resume your current lesson")
         .pulsing()
         .padding(.horizontal, L2RTheme.Spacing.lg)
     }

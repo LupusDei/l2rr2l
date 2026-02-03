@@ -70,6 +70,7 @@ struct SpellingGameView: View {
                     .font(.system(size: 28))
                     .foregroundStyle(.white.opacity(0.8))
             }
+            .accessibilityLabel("Close game")
 
             Spacer()
 
@@ -81,6 +82,8 @@ struct SpellingGameView: View {
                     .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
                     .foregroundStyle(.white)
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Score: \(viewModel.score) points")
 
             Spacer()
 
@@ -92,6 +95,8 @@ struct SpellingGameView: View {
                         .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
                         .foregroundStyle(.white)
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Streak: \(viewModel.streak) correct answers in a row")
             }
         }
         .padding(.horizontal, L2RTheme.Spacing.md)
@@ -128,6 +133,8 @@ struct SpellingGameView: View {
                             .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                     )
             }
+            .accessibilityLabel("Start Game")
+            .accessibilityHint("Begin the spelling game")
         }
     }
 
@@ -139,6 +146,7 @@ struct SpellingGameView: View {
             if let word = viewModel.currentWord {
                 Text(word.hint)
                     .font(.system(size: 80))
+                    .accessibilityLabel("Hint: \(word.hint)")
 
                 // Word (shown when correct, hidden otherwise)
                 if viewModel.gameState == .correct {
@@ -211,6 +219,8 @@ struct SpellingGameView: View {
                 )
             }
             .disabled(viewModel.gameState != .playing)
+            .accessibilityLabel("Shuffle letters")
+            .accessibilityHint("Rearrange the available letters randomly")
 
             Spacer()
 
@@ -233,6 +243,8 @@ struct SpellingGameView: View {
                             .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                     )
                 }
+                .accessibilityLabel("Next word")
+                .accessibilityHint("Move to the next word")
             } else {
                 Button {
                     let correct = viewModel.checkAnswer()
@@ -255,6 +267,8 @@ struct SpellingGameView: View {
                     )
                 }
                 .disabled(!viewModel.allLettersPlaced)
+                .accessibilityLabel("Check answer")
+                .accessibilityHint(viewModel.allLettersPlaced ? "Verify your spelling" : "Place all letters first")
             }
 
             Spacer()
@@ -277,6 +291,8 @@ struct SpellingGameView: View {
                 )
             }
             .disabled(viewModel.gameState != .playing)
+            .accessibilityLabel("Clear all")
+            .accessibilityHint("Remove all placed letters")
         }
         .padding(.horizontal, L2RTheme.Spacing.md)
         .padding(.bottom, L2RTheme.Spacing.md)
@@ -297,10 +313,12 @@ struct SpellingGameView: View {
                 Text("Score: \(viewModel.score) / \(viewModel.totalRounds)")
                     .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
                     .foregroundStyle(.white)
+                    .accessibilityLabel("Final score: \(viewModel.score) out of \(viewModel.totalRounds)")
 
                 Text("Best Streak: \(viewModel.bestStreak)")
                     .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .medium))
                     .foregroundStyle(.white.opacity(0.9))
+                    .accessibilityLabel("Best streak: \(viewModel.bestStreak) correct answers in a row")
             }
 
             HStack(spacing: L2RTheme.Spacing.lg) {
@@ -318,6 +336,8 @@ struct SpellingGameView: View {
                                 .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                         )
                 }
+                .accessibilityLabel("Play Again")
+                .accessibilityHint("Start a new game")
 
                 Button {
                     dismiss()
@@ -332,6 +352,8 @@ struct SpellingGameView: View {
                                 .fill(.white.opacity(0.2))
                         )
                 }
+                .accessibilityLabel("Done")
+                .accessibilityHint("Return to games menu")
             }
         }
     }
