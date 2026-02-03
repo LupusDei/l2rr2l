@@ -1,0 +1,36 @@
+# Fastfile for L2RR2L iOS App
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Capture App Store screenshots"
+  lane :screenshots do
+    capture_screenshots(
+      workspace: "L2RR2L.xcodeproj/project.xcworkspace",
+      scheme: "L2RR2L"
+    )
+  end
+
+  desc "Upload screenshots to App Store Connect"
+  lane :upload_screenshots do
+    upload_to_app_store(
+      skip_binary_upload: true,
+      skip_metadata: true
+    )
+  end
+
+  desc "Generate framed screenshots with device frames"
+  lane :frame_screenshots do
+    frame_screenshots(
+      path: "./fastlane/screenshots",
+      white: false,
+      use_platform: "IOS"
+    )
+  end
+
+  desc "Full screenshot workflow: capture, frame, and organize"
+  lane :full_screenshots do
+    screenshots
+    frame_screenshots
+  end
+end

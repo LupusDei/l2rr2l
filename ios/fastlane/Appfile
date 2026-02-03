@@ -1,0 +1,17 @@
+# Appfile - App Store Connect configuration
+# For more information see: https://docs.fastlane.tools/advanced/Appfile/
+
+# App identifier (bundle ID)
+app_identifier("com.l2rr2l.app")
+
+# Apple ID email
+# apple_id("your-apple-id@example.com")
+
+# App Store Connect Team ID
+# itc_team_id("123456789")
+
+# Developer Portal Team ID
+# team_id("ABCD1234EF")
+
+# For more configuration options see:
+# https://docs.fastlane.tools/advanced/Appfile/

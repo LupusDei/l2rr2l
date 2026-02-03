@@ -28,6 +28,8 @@
 		A1B2C3D40000000000000023 /* GameUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000023 /* GameUITests.swift */; };
 		A1B2C3D40000000000000024 /* OnboardingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000024 /* OnboardingUITests.swift */; };
 		A1B2C3D40000000000000025 /* UITestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000025 /* UITestHelpers.swift */; };
+		A1B2C3D40000000000000026 /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000026 /* ScreenshotTests.swift */; };
+		A1B2C3D40000000000000027 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000027 /* SnapshotHelper.swift */; };
 		A1B2C3D40000000000000300 /* AccessibilityIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000300 /* AccessibilityIdentifiers.swift */; };
 		A1B2C3D40000000000000100 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000100 /* HomeView.swift */; };
 		A1B2C3D40000000000000101 /* AnimatedBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000101 /* AnimatedBackgroundView.swift */; };
@@ -86,6 +88,8 @@
 		A1B2C3D50000000000000023 /* GameUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameUITests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000024 /* OnboardingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingUITests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000025 /* UITestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestHelpers.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000026 /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000027 /* SnapshotHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000300 /* AccessibilityIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityIdentifiers.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000100 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000101 /* AnimatedBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedBackgroundView.swift; sourceTree = "<group>"; };
@@ -373,6 +377,8 @@
 				A1B2C3D50000000000000020 /* L2RR2LUITests.swift */,
 				A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */,
 				A1B2C3D50000000000000024 /* OnboardingUITests.swift */,
+				A1B2C3D50000000000000026 /* ScreenshotTests.swift */,
+				A1B2C3D50000000000000027 /* SnapshotHelper.swift */,
 			);
 			path = L2RR2LUITests;
 			sourceTree = "<group>";
@@ -574,6 +580,8 @@
 				A1B2C3D40000000000000023 /* GameUITests.swift in Sources */,
 				A1B2C3D40000000000000024 /* OnboardingUITests.swift in Sources */,
 				A1B2C3D40000000000000025 /* UITestHelpers.swift in Sources */,
+				A1B2C3D40000000000000026 /* ScreenshotTests.swift in Sources */,
+				A1B2C3D40000000000000027 /* SnapshotHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
