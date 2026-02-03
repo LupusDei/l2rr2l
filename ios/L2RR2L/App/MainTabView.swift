@@ -48,7 +48,7 @@ struct HomeTabView: View {
                 .navigationDestination(for: LessonDestination.self) { destination in
                     switch destination {
                     case .detail(let id):
-                        LessonDetailPlaceholderView(lessonId: id)
+                        LessonDetailContainerView(lessonId: id)
                     case .player(let id):
                         LessonPlayerPlaceholderView(lessonId: id)
                     }
@@ -68,7 +68,7 @@ struct LessonsTabView: View {
                 .navigationDestination(for: LessonDestination.self) { destination in
                     switch destination {
                     case .detail(let id):
-                        LessonDetailPlaceholderView(lessonId: id)
+                        LessonDetailContainerView(lessonId: id)
                     case .player(let id):
                         LessonPlayerPlaceholderView(lessonId: id)
                     }
