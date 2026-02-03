@@ -2,6 +2,7 @@ import SwiftUI
 
 /// A draggable letter tile for the spelling game.
 struct LetterTile: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let tile: LetterTileModel
     let onTap: () -> Void
 
@@ -27,8 +28,8 @@ struct LetterTile: View {
             )
             .scaleEffect(isDragging ? 1.1 : 1.0)
             .opacity(tile.isPlaced ? 0.3 : 1.0)
-            .animation(L2RTheme.Animation.bounce, value: isDragging)
-            .animation(.easeInOut(duration: 0.2), value: tile.isPlaced)
+            .animation(reduceMotion ? nil : L2RTheme.Animation.bounce, value: isDragging)
+            .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: tile.isPlaced)
             .onTapGesture {
                 guard !tile.isPlaced else { return }
                 onTap()

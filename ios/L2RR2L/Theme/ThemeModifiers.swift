@@ -4,6 +4,7 @@ import SwiftUI
 
 /// Float animation modifier for decorative elements
 public struct FloatModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isFloating = false
     let amplitude: CGFloat
 
@@ -13,39 +14,42 @@ public struct FloatModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
-            .offset(y: isFloating ? -amplitude : 0)
-            .animation(L2RTheme.Animation.float, value: isFloating)
+            .offset(y: isFloating && !reduceMotion ? -amplitude : 0)
+            .animation(reduceMotion ? nil : L2RTheme.Animation.float, value: isFloating)
             .onAppear { isFloating = true }
     }
 }
 
 /// Twinkle animation modifier for star decorations
 public struct TwinkleModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isTwinkling = false
 
     public func body(content: Content) -> some View {
         content
-            .opacity(isTwinkling ? 1.0 : 0.6)
-            .scaleEffect(isTwinkling ? 1.2 : 1.0)
-            .animation(L2RTheme.Animation.twinkle, value: isTwinkling)
+            .opacity(isTwinkling && !reduceMotion ? 1.0 : 0.6)
+            .scaleEffect(isTwinkling && !reduceMotion ? 1.2 : 1.0)
+            .animation(reduceMotion ? nil : L2RTheme.Animation.twinkle, value: isTwinkling)
             .onAppear { isTwinkling = true }
     }
 }
 
 /// Wiggle animation modifier for game icons
 public struct WiggleModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isWiggling = false
 
     public func body(content: Content) -> some View {
         content
-            .rotationEffect(.degrees(isWiggling ? 3 : -3))
-            .animation(L2RTheme.Animation.wiggle, value: isWiggling)
+            .rotationEffect(.degrees(isWiggling && !reduceMotion ? 3 : 0))
+            .animation(reduceMotion ? nil : L2RTheme.Animation.wiggle, value: isWiggling)
             .onAppear { isWiggling = true }
     }
 }
 
 /// Bounce animation modifier for logo letters
 public struct BounceModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isBouncing = false
     let delay: Double
 
@@ -55,12 +59,13 @@ public struct BounceModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
-            .offset(y: isBouncing ? -8 : 0)
+            .offset(y: isBouncing && !reduceMotion ? -8 : 0)
             .animation(
-                L2RTheme.Animation.bounce.delay(delay),
+                reduceMotion ? nil : L2RTheme.Animation.bounce.delay(delay),
                 value: isBouncing
             )
             .onAppear {
+                guard !reduceMotion else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                     withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
                         isBouncing = true
@@ -72,12 +77,13 @@ public struct BounceModifier: ViewModifier {
 
 /// Pulse animation modifier for CTA buttons
 public struct PulseModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isPulsing = false
 
     public func body(content: Content) -> some View {
         content
-            .scaleEffect(isPulsing ? 1.02 : 1.0)
-            .animation(L2RTheme.Animation.pulse, value: isPulsing)
+            .scaleEffect(isPulsing && !reduceMotion ? 1.02 : 1.0)
+            .animation(reduceMotion ? nil : L2RTheme.Animation.pulse, value: isPulsing)
             .onAppear { isPulsing = true }
     }
 }

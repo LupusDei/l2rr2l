@@ -3,6 +3,7 @@ import SwiftUI
 /// A 3D flip card for the Memory Game that displays sight words.
 /// Features smooth Y-axis rotation animation with distinct front (card back) and back (word) faces.
 public struct FlipCard: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let word: String
     @Binding var isFlipped: Bool
     let isMatched: Bool
@@ -43,9 +44,9 @@ public struct FlipCard: View {
                 )
                 .opacity(isFlipped ? 1 : 0)
         }
-        .animation(.easeInOut(duration: flipDuration), value: isFlipped)
+        .animation(reduceMotion ? nil : .easeInOut(duration: flipDuration), value: isFlipped)
         .scaleEffect(isMatched ? 1.05 : 1.0)
-        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isMatched)
+        .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6), value: isMatched)
         .onTapGesture {
             guard !isMatched else { return }
             onFlip()
