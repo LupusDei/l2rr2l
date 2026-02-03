@@ -194,6 +194,7 @@
 			children = (
 				A1B2C3DB0000000000000107 /* Auth */,
 				A1B2C3DB0000000000000104 /* Home */,
+				A1B2C3DB0000000000002000 /* MemoryGame */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -418,6 +419,7 @@
 			children = (
 				A1B2C3D50000000000001008 /* SpellingGameViewModelTests.swift */,
 				A1B2C3D50000000000001009 /* PhonicsGameViewModelTests.swift */,
+				A1B2C3D50000000000001010 /* MemoryGameViewModelTests.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -589,6 +591,7 @@
 				A1B2C3D40000000000001007 /* SpeechRecognitionServiceTests.swift in Sources */,
 				A1B2C3D40000000000001008 /* SpellingGameViewModelTests.swift in Sources */,
 				A1B2C3D40000000000001009 /* PhonicsGameViewModelTests.swift in Sources */,
+				A1B2C3D40000000000001010 /* MemoryGameViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
