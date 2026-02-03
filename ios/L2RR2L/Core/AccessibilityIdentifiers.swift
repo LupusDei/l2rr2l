@@ -74,6 +74,24 @@ enum AccessibilityIdentifiers {
         static let gameComplete = "spelling.game.complete"
     }
 
+    // MARK: - Rhyme Game
+    enum RhymeGame {
+        static let startButton = "rhyme.start.button"
+        static let closeButton = "rhyme.close.button"
+        static let scoreLabel = "rhyme.score.label"
+        static let streakLabel = "rhyme.streak.label"
+        static let roundLabel = "rhyme.round.label"
+        static let listenButton = "rhyme.listen.button"
+        static let targetWord = "rhyme.target.word"
+        static let optionsGrid = "rhyme.options.grid"
+        static func optionCard(id: String) -> String {
+            "rhyme.option.\(id)"
+        }
+        static let playAgainButton = "rhyme.playagain.button"
+        static let doneButton = "rhyme.done.button"
+        static let gameComplete = "rhyme.game.complete"
+    }
+
     // MARK: - Lessons
     enum Lessons {
         static let listView = "lessons.list"
