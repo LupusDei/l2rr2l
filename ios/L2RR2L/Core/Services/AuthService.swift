@@ -11,7 +11,6 @@ final class AuthService: ObservableObject {
 
     private let apiClient: APIClient
     private let keychain: KeychainService
-    private let tokenKey = "auth_token"
 
     private init(apiClient: APIClient = .shared, keychain: KeychainService = .shared) {
         self.apiClient = apiClient
@@ -28,7 +27,7 @@ final class AuthService: ObservableObject {
         let request = RegisterRequest(email: email, password: password, name: name)
         let response: AuthResponse = try await apiClient.post("/auth/register", body: request)
 
-        try saveToken(response.token)
+        try await saveToken(response.token)
         currentUser = response.user
         isAuthenticated = true
 
@@ -43,16 +42,16 @@ final class AuthService: ObservableObject {
         let request = LoginRequest(email: email, password: password)
         let response: AuthResponse = try await apiClient.post("/auth/login", body: request)
 
-        try saveToken(response.token)
+        try await saveToken(response.token)
         currentUser = response.user
         isAuthenticated = true
 
         return response.user
     }
 
-    func logout() {
+    func logout() async {
         do {
-            try keychain.delete(for: tokenKey)
+            try await keychain.deleteAll()
         } catch {
             // Ignore keychain errors on logout
         }
@@ -66,7 +65,7 @@ final class AuthService: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
-        guard let token = try? keychain.loadString(for: tokenKey) else {
+        guard let token = try? await keychain.loadString(for: .authToken) else {
             isAuthenticated = false
             currentUser = nil
             return
@@ -80,7 +79,7 @@ final class AuthService: ObservableObject {
             isAuthenticated = true
         } catch {
             // Token is invalid, clear it
-            logout()
+            await logout()
         }
     }
 
@@ -95,8 +94,8 @@ final class AuthService: ObservableObject {
 
     // MARK: - Private Methods
 
-    private func saveToken(_ token: String) throws {
-        try keychain.save(token, for: tokenKey)
+    private func saveToken(_ token: String) async throws {
+        try await keychain.save(token, for: .authToken)
         apiClient.authToken = token
     }
 }
