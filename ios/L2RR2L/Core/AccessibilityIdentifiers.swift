@@ -22,6 +22,19 @@ enum AccessibilityIdentifiers {
         static let logo = "auth.logo"
     }
 
+    // MARK: - Registration
+    enum Register {
+        static let nameTextField = "register.name.textfield"
+        static let emailTextField = "register.email.textfield"
+        static let passwordTextField = "register.password.textfield"
+        static let confirmPasswordTextField = "register.confirmpassword.textfield"
+        static let termsCheckbox = "register.terms.checkbox"
+        static let termsLink = "register.terms.link"
+        static let registerButton = "register.button"
+        static let loginLink = "register.login.link"
+        static let errorMessage = "register.error.message"
+    }
+
     // MARK: - Onboarding
     enum Onboarding {
         static let nameTextField = "onboarding.name.textfield"
