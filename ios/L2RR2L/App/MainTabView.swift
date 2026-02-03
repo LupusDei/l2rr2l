@@ -158,6 +158,19 @@ struct GameDetailView: View {
     let gameType: GameDestination
 
     var body: some View {
+        switch gameType {
+        case .spelling:
+            SpellingGameView()
+                .navigationBarHidden(true)
+        case .rhyme:
+            RhymeGameView()
+                .navigationBarHidden(true)
+        default:
+            placeholderView
+        }
+    }
+
+    private var placeholderView: some View {
         VStack(spacing: L2RTheme.Spacing.lg) {
             Image(systemName: "gamecontroller.fill")
                 .font(.system(size: 80))
