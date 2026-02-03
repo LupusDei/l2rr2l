@@ -54,18 +54,52 @@ extension View {
 // MARK: - Font Helpers
 
 extension View {
-    /// Apply playful font styling based on theme settings
+    /// Apply playful font styling based on theme settings (fixed size)
     @ViewBuilder
     public func playfulFont(size: CGFloat, weight: Font.Weight = .regular) -> some View {
         self.font(L2RTheme.Typography.playful(size: size, weight: weight))
     }
 
-    /// Apply child-friendly text styling
+    /// Apply playful font that scales with Dynamic Type
+    /// - Parameters:
+    ///   - style: The text style to scale relative to
+    ///   - weight: Font weight
+    @ViewBuilder
+    public func scaledPlayfulFont(
+        _ style: Font.TextStyle = .body,
+        weight: Font.Weight = .regular
+    ) -> some View {
+        self.font(L2RTheme.Typography.Scaled.playful(relativeTo: style, weight: weight))
+    }
+
+    /// Apply child-friendly text styling with Dynamic Type support
     @ViewBuilder
     public func childFriendlyText() -> some View {
         self
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+            .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
             .foregroundStyle(L2RTheme.textPrimary)
+    }
+
+    /// Apply scaled headline text for titles and headers
+    @ViewBuilder
+    public func scaledHeadline(weight: Font.Weight = .bold) -> some View {
+        self
+            .font(L2RTheme.Typography.Scaled.system(.headline, weight: weight))
+    }
+
+    /// Apply scaled title text
+    @ViewBuilder
+    public func scaledTitle(_ style: Font.TextStyle = .title2, weight: Font.Weight = .bold) -> some View {
+        self
+            .font(L2RTheme.Typography.Scaled.system(style, weight: weight))
+    }
+
+    /// Apply scaled caption text for secondary information
+    @ViewBuilder
+    public func scaledCaption(weight: Font.Weight = .regular) -> some View {
+        self
+            .font(L2RTheme.Typography.Scaled.system(.caption, weight: weight))
+            .foregroundStyle(L2RTheme.textSecondary)
     }
 }
 
