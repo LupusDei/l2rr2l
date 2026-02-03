@@ -5,6 +5,7 @@ struct SettingsView: View {
     @ObservedObject var onboardingService = OnboardingService.shared
     @State private var showVoiceSettings = false
     @State private var showLogoutConfirmation = false
+    @State private var hapticsEnabled = HapticService.shared.isEnabled
 
     var body: some View {
         List {
@@ -27,6 +28,16 @@ struct SettingsView: View {
 
                 Toggle(isOn: .constant(true)) {
                     Label("Background Music", systemImage: "music.note")
+                }
+
+                Toggle(isOn: $hapticsEnabled) {
+                    Label("Haptic Feedback", systemImage: "hand.tap.fill")
+                }
+                .onChange(of: hapticsEnabled) { _, newValue in
+                    HapticService.shared.isEnabled = newValue
+                    if newValue {
+                        HapticService.shared.selection()
+                    }
                 }
             }
 
