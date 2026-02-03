@@ -1,0 +1,33 @@
+# Matchfile - Code signing configuration for L2RR2L
+#
+# Match is used to sync code signing identities across team members and CI.
+# For more information, see: https://docs.fastlane.tools/actions/match/
+
+# Git repo for storing encrypted certificates and profiles
+# IMPORTANT: Create a private repo for this!
+git_url(ENV["MATCH_GIT_URL"] || "git@github.com:your-org/l2rr2l-certificates.git")
+
+# Storage mode (git or google_cloud)
+storage_mode("git")
+
+# App identifier(s) to manage
+app_identifier(["com.l2rr2l.app"])
+
+# Your Apple Developer account username
+username(ENV["FASTLANE_USER"])
+
+# Team ID for the Developer Portal
+team_id(ENV["APPLE_TEAM_ID"])
+
+# Type of provisioning profile to create/manage
+# Options: development, adhoc, appstore, enterprise
+type("appstore")
+
+# Clone the repo with full depth for proper git history
+clone_branch_directly(true)
+
+# For CI environments, don't prompt for passwords
+readonly(ENV["CI"] == "true")
+
+# Platform to generate profiles for
+platform("ios")
