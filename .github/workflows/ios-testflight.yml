@@ -1,0 +1,129 @@
+name: iOS TestFlight
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ios/**'
+      - '.github/workflows/ios-testflight.yml'
+  workflow_dispatch:
+    inputs:
+      changelog:
+        description: 'Changelog for this build'
+        required: false
+        default: 'Bug fixes and improvements'
+      distribute_external:
+        description: 'Distribute to external testers'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: ios-testflight-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.0.app
+
+      - name: Run Tests
+        working-directory: ios
+        run: |
+          xcodebuild test \
+            -scheme L2RR2L \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: ios/TestResults.xcresult
+
+  build-and-upload:
+    name: Build and Upload to TestFlight
+    needs: test
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.0.app
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: ios
+
+      - name: Install Fastlane
+        working-directory: ios
+        run: bundle install
+
+      - name: Setup App Store Connect API Key
+        env:
+          APP_STORE_CONNECT_API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+        run: |
+          mkdir -p ~/private_keys
+          echo "$APP_STORE_CONNECT_API_KEY_P8" | base64 --decode > ~/private_keys/AuthKey.p8
+
+      - name: Configure Code Signing
+        env:
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        working-directory: ios
+        run: bundle exec fastlane sync_appstore_certs
+
+      - name: Build and Upload to TestFlight
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_KEY_FILEPATH: ~/private_keys/AuthKey.p8
+          CI_BUILD_NUMBER: ${{ github.run_number }}
+          CHANGELOG: ${{ github.event.inputs.changelog || 'Bug fixes and improvements' }}
+        working-directory: ios
+        run: |
+          if [ "${{ github.event.inputs.distribute_external }}" == "true" ]; then
+            bundle exec fastlane beta changelog:"$CHANGELOG"
+          else
+            bundle exec fastlane upload_testflight changelog:"$CHANGELOG"
+          fi
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            ios/build/*.ipa
+            ios/build/*.dSYM.zip
+
+  notify:
+    name: Notify on Completion
+    needs: build-and-upload
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Build Status
+        run: |
+          if [ "${{ needs.build-and-upload.result }}" == "success" ]; then
+            echo "TestFlight build uploaded successfully!"
+          else
+            echo "TestFlight build failed. Check the logs for details."
+            exit 1
+          fi

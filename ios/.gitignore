@@ -51,6 +51,9 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/screenshots
 fastlane/test_output
+fastlane/README.md
+fastlane/.env*
+Gemfile.lock
 
 # Code Injection
 iOSInjectionProject/

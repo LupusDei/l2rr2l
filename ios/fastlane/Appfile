@@ -1,0 +1,25 @@
+# Appfile - App Store Connect configuration for L2RR2L
+#
+# For more information about the Appfile, see:
+# https://docs.fastlane.tools/advanced/#appfile
+
+# App Store Connect App Identifier
+app_identifier("com.l2rr2l.app")
+
+# Apple Developer Portal Team ID
+# Set via environment variable or update with your team ID
+team_id(ENV["APPLE_TEAM_ID"])
+
+# Apple ID for App Store Connect
+# Use App Store Connect API key in CI (recommended)
+# For local development, set FASTLANE_USER environment variable
+apple_id(ENV["FASTLANE_USER"])
+
+# App Store Connect Team ID (if different from Developer Portal)
+itc_team_id(ENV["ITC_TEAM_ID"])
+
+# For App Store Connect API Key authentication (recommended for CI)
+# Set these environment variables:
+# - APP_STORE_CONNECT_API_KEY_ID
+# - APP_STORE_CONNECT_API_KEY_ISSUER_ID
+# - APP_STORE_CONNECT_API_KEY_KEY (base64 encoded .p8 file content)

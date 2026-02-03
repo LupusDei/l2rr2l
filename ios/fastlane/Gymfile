@@ -1,0 +1,32 @@
+# Gymfile - Build configuration for L2RR2L
+#
+# Gym is the fastlane tool for building iOS apps.
+# For more information, see: https://docs.fastlane.tools/actions/gym/
+
+# Xcode scheme to build
+scheme("L2RR2L")
+
+# Build configuration
+configuration("Release")
+
+# Output directory for the .ipa file
+output_directory("./build")
+
+# Name for the output .ipa file
+output_name("L2RR2L")
+
+# Export method for the archive
+# Options: app-store, validation, ad-hoc, package, enterprise, development, developer-id
+export_method("app-store")
+
+# Clean before building
+clean(true)
+
+# Include bitcode (deprecated in Xcode 14+, but included for compatibility)
+include_bitcode(false)
+
+# Include symbols for crash reporting
+include_symbols(true)
+
+# Build for simulator testing (when skip_archive is true)
+# destination("generic/platform=iOS")

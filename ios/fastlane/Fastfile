@@ -1,0 +1,156 @@
+# Fastfile - Fastlane configuration for L2RR2L iOS app
+#
+# This file contains the fastlane lanes for building and distributing the app.
+# For more information about Fastlane, see: https://docs.fastlane.tools
+
+default_platform(:ios)
+
+platform :ios do
+  # ============================================
+  # Setup & Configuration
+  # ============================================
+
+  before_all do
+    # Ensure we're in the ios directory
+    ensure_xcode_version(version: "16.0")
+  end
+
+  # ============================================
+  # Testing
+  # ============================================
+
+  desc "Run all unit and UI tests"
+  lane :test do
+    run_tests(
+      scheme: "L2RR2L",
+      devices: ["iPhone 16"],
+      code_coverage: true,
+      result_bundle: true
+    )
+  end
+
+  # ============================================
+  # Code Signing
+  # ============================================
+
+  desc "Sync development certificates and profiles"
+  lane :sync_dev_certs do
+    match(type: "development", readonly: true)
+  end
+
+  desc "Sync App Store certificates and profiles"
+  lane :sync_appstore_certs do
+    match(type: "appstore", readonly: true)
+  end
+
+  # ============================================
+  # Building
+  # ============================================
+
+  desc "Build the app for testing"
+  lane :build_for_testing do
+    build_app(
+      scheme: "L2RR2L",
+      configuration: "Debug",
+      skip_archive: true,
+      skip_codesigning: true
+    )
+  end
+
+  desc "Build the app for App Store / TestFlight"
+  lane :build_release do
+    # Increment build number using CI build number or timestamp
+    build_number = ENV["CI_BUILD_NUMBER"] || Time.now.strftime("%Y%m%d%H%M")
+    increment_build_number(build_number: build_number)
+
+    # Sync certificates
+    sync_appstore_certs
+
+    # Build the app
+    build_app(
+      scheme: "L2RR2L",
+      configuration: "Release",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "com.l2rr2l.app" => "match AppStore com.l2rr2l.app"
+        }
+      }
+    )
+  end
+
+  # ============================================
+  # Distribution
+  # ============================================
+
+  desc "Upload to TestFlight for internal testing"
+  lane :upload_testflight do |options|
+    # Build if not already built
+    unless options[:skip_build]
+      build_release
+    end
+
+    # Upload to TestFlight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      distribute_external: false,
+      changelog: options[:changelog] || "Bug fixes and improvements"
+    )
+  end
+
+  desc "Upload to TestFlight and distribute to external testers"
+  lane :beta do |options|
+    # Build if not already built
+    unless options[:skip_build]
+      build_release
+    end
+
+    # Upload to TestFlight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: false,
+      distribute_external: true,
+      groups: options[:groups] || ["Beta Testers"],
+      changelog: options[:changelog] || "Bug fixes and improvements",
+      beta_app_feedback_email: ENV["BETA_FEEDBACK_EMAIL"],
+      beta_app_description: "L2RR2L - Learn to Read, Read to Learn. A fun reading app for kids!"
+    )
+  end
+
+  desc "Full CI pipeline: test, build, upload to TestFlight"
+  lane :ci_testflight do
+    # Run tests first
+    test
+
+    # Build and upload
+    upload_testflight(
+      changelog: ENV["CHANGELOG"] || last_git_commit[:message]
+    )
+  end
+
+  # ============================================
+  # Utilities
+  # ============================================
+
+  desc "Increment version number"
+  lane :bump_version do |options|
+    increment_version_number(
+      bump_type: options[:type] || "patch"
+    )
+    commit_version_bump(message: "chore: bump version")
+  end
+
+  desc "Register new devices for development"
+  lane :register_devices do
+    register_devices(devices_file: "./fastlane/devices.txt")
+    match(type: "development", force_for_new_devices: true)
+  end
+
+  # ============================================
+  # Error Handling
+  # ============================================
+
+  error do |lane, exception|
+    # Notify on error (can integrate with Slack, etc.)
+    UI.error("Lane #{lane} failed with error: #{exception.message}")
+  end
+end
