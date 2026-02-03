@@ -49,8 +49,12 @@ Carthage/Build/
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
-fastlane/screenshots
 fastlane/test_output
+
+# Ruby
+Gemfile.lock
+vendor/
+.bundle/
 
 # Code Injection
 iOSInjectionProject/

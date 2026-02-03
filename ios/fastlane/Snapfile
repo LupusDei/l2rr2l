@@ -1,0 +1,50 @@
+# Snapfile - Screenshot configuration for App Store
+
+# App Store requires these device sizes:
+# iPhone 6.7" (1290 x 2796) - iPhone 15 Pro Max, 16 Pro Max
+# iPhone 6.5" (1242 x 2688) - iPhone 11 Pro Max, XS Max
+# iPhone 5.5" (1242 x 2208) - iPhone 8 Plus, 7 Plus
+# iPad 12.9" (2048 x 2732) - iPad Pro 12.9"
+# iPad 11" (1668 x 2388) - iPad Pro 11"
+
+devices([
+  "iPhone 16 Pro Max",   # 6.7" display
+  "iPhone 11 Pro Max",   # 6.5" display
+  "iPhone 8 Plus",       # 5.5" display
+  "iPad Pro 13-inch (M4)", # 12.9" display
+  "iPad Pro 11-inch (M4)"  # 11" display
+])
+
+languages([
+  "en-US"
+])
+
+# Scheme to build and test
+scheme("L2RR2L")
+
+# Output directory
+output_directory("./fastlane/screenshots")
+
+# Clear previous screenshots
+clear_previous_screenshots(true)
+
+# UI Test target for screenshots
+launch_arguments(["-SCREENSHOT_MODE YES"])
+
+# Don't stop on first error
+stop_after_first_error(false)
+
+# Override status bar for clean screenshots
+override_status_bar(true)
+
+# Localize simulators
+localize_simulator(true)
+
+# Dark mode support
+dark_mode(false)
+
+# Clean results
+clean(true)
+
+# Concurrent simulators for speed
+concurrent_simulators(true)
