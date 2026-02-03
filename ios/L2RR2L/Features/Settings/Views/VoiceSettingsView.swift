@@ -4,6 +4,7 @@ import SwiftUI
 struct VoiceSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = VoiceSettingsViewModel()
+    @State private var showVoiceSelector = false
 
     var body: some View {
         NavigationStack {
@@ -89,6 +90,13 @@ struct VoiceSettingsView: View {
                     Text(error)
                 }
             }
+            .sheet(isPresented: $showVoiceSelector) {
+                VoiceSelectorView(
+                    selectedVoiceId: $viewModel.selectedVoiceId,
+                    voices: viewModel.voices,
+                    isLoading: viewModel.isLoadingVoices
+                )
+            }
         }
     }
 
@@ -100,15 +108,28 @@ struct VoiceSettingsView: View {
                 .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
-            if viewModel.isLoadingVoices {
+            Button {
+                showVoiceSelector = true
+            } label: {
                 HStack {
-                    ProgressView()
-                        .scaleEffect(0.8)
-                    Text("Loading voices...")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                    if viewModel.isLoadingVoices {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                        Text("Loading voices...")
+                            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                            .foregroundStyle(L2RTheme.textSecondary)
+                    } else {
+                        Text(viewModel.selectedVoice?.name ?? "Select Voice")
+                            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                            .foregroundStyle(L2RTheme.textPrimary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(L2RTheme.textSecondary)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(L2RTheme.Spacing.md)
                 .background(Color.white)
                 .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
@@ -116,41 +137,8 @@ struct VoiceSettingsView: View {
                     RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
                         .stroke(L2RTheme.inputBorder, lineWidth: 1)
                 )
-            } else {
-                Menu {
-                    ForEach(viewModel.voices) { voice in
-                        Button {
-                            viewModel.selectedVoiceId = voice.id
-                        } label: {
-                            HStack {
-                                Text(voice.name)
-                                if voice.id == viewModel.selectedVoiceId {
-                                    Image(systemName: "checkmark")
-                                }
-                            }
-                        }
-                    }
-                } label: {
-                    HStack {
-                        Text(viewModel.selectedVoice?.name ?? "Select Voice")
-                            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
-                            .foregroundStyle(L2RTheme.textPrimary)
-
-                        Spacer()
-
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(L2RTheme.textSecondary)
-                    }
-                    .padding(L2RTheme.Spacing.md)
-                    .background(Color.white)
-                    .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
-                            .stroke(L2RTheme.inputBorder, lineWidth: 1)
-                    )
-                }
             }
+            .buttonStyle(.plain)
 
             if let description = viewModel.selectedVoice?.description {
                 Text(description)
