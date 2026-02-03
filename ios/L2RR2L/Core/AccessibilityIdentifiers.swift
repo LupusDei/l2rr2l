@@ -108,6 +108,24 @@ enum AccessibilityIdentifiers {
         static let gameComplete = "wordbuilder.game.complete"
     }
 
+    // MARK: - Phonics Game
+    enum PhonicsGame {
+        static let startButton = "phonics.start.button"
+        static let closeButton = "phonics.close.button"
+        static let scoreLabel = "phonics.score.label"
+        static let streakLabel = "phonics.streak.label"
+        static let roundLabel = "phonics.round.label"
+        static let listenButton = "phonics.listen.button"
+        static let targetWord = "phonics.target.word"
+        static let optionsGrid = "phonics.options.grid"
+        static func optionCard(id: String) -> String {
+            "phonics.option.\(id)"
+        }
+        static let playAgainButton = "phonics.playagain.button"
+        static let doneButton = "phonics.done.button"
+        static let gameComplete = "phonics.game.complete"
+    }
+
     // MARK: - Lessons
     enum Lessons {
         static let listView = "lessons.list"
