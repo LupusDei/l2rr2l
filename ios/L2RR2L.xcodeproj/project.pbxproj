@@ -13,6 +13,15 @@
 		A1B2C3D40000000000000004 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000004 /* Assets.xcassets */; };
 		A1B2C3D40000000000000005 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000005 /* Preview Assets.xcassets */; };
 		A1B2C3D40000000000000010 /* L2RR2LTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000010 /* L2RR2LTests.swift */; };
+		A1B2C3D40000000000001001 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001001 /* TestHelpers.swift */; };
+		A1B2C3D40000000000001002 /* MockAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001002 /* MockAPIClient.swift */; };
+		A1B2C3D40000000000001003 /* MockVoiceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001003 /* MockVoiceService.swift */; };
+		A1B2C3D40000000000001004 /* MockKeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001004 /* MockKeychainService.swift */; };
+		A1B2C3D40000000000001005 /* ModelDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001005 /* ModelDecodingTests.swift */; };
+		A1B2C3D40000000000001006 /* APIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001006 /* APIClientTests.swift */; };
+		A1B2C3D40000000000001007 /* SpeechRecognitionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001007 /* SpeechRecognitionServiceTests.swift */; };
+		A1B2C3D40000000000001008 /* SpellingGameViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001008 /* SpellingGameViewModelTests.swift */; };
+		A1B2C3D40000000000001009 /* PhonicsGameViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001009 /* PhonicsGameViewModelTests.swift */; };
 		A1B2C3D40000000000000020 /* L2RR2LUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000020 /* L2RR2LUITests.swift */; };
 		A1B2C3D40000000000000021 /* L2RR2LUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */; };
 		A1B2C3D40000000000000100 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000100 /* HomeView.swift */; };
@@ -57,6 +66,15 @@
 		A1B2C3D50000000000000005 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A1B2C3D50000000000000006 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1B2C3D50000000000000010 /* L2RR2LTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LTests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000001001 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000001002 /* MockAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIClient.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000001003 /* MockVoiceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockVoiceService.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000001004 /* MockKeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockKeychainService.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000001005 /* ModelDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDecodingTests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000001006 /* APIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000001007 /* SpeechRecognitionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionServiceTests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000001008 /* SpellingGameViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpellingGameViewModelTests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000001009 /* PhonicsGameViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhonicsGameViewModelTests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000020 /* L2RR2LUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LUITests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000100 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -282,8 +300,57 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D50000000000000010 /* L2RR2LTests.swift */,
+				A1B2C3DB0000000000001010 /* Helpers */,
+				A1B2C3DB0000000000001011 /* Mocks */,
+				A1B2C3DB0000000000001012 /* Models */,
+				A1B2C3DB0000000000001013 /* Services */,
+				A1B2C3DB0000000000001014 /* ViewModels */,
 			);
 			path = L2RR2LTests;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000001010 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000001001 /* TestHelpers.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000001011 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000001002 /* MockAPIClient.swift */,
+				A1B2C3D50000000000001003 /* MockVoiceService.swift */,
+				A1B2C3D50000000000001004 /* MockKeychainService.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000001012 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000001005 /* ModelDecodingTests.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000001013 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000001006 /* APIClientTests.swift */,
+				A1B2C3D50000000000001007 /* SpeechRecognitionServiceTests.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000001014 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000001008 /* SpellingGameViewModelTests.swift */,
+				A1B2C3D50000000000001009 /* PhonicsGameViewModelTests.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		A1B2C3DB0000000000000020 /* L2RR2LUITests */ = {
@@ -461,6 +528,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1B2C3D40000000000000010 /* L2RR2LTests.swift in Sources */,
+				A1B2C3D40000000000001001 /* TestHelpers.swift in Sources */,
+				A1B2C3D40000000000001002 /* MockAPIClient.swift in Sources */,
+				A1B2C3D40000000000001003 /* MockVoiceService.swift in Sources */,
+				A1B2C3D40000000000001004 /* MockKeychainService.swift in Sources */,
+				A1B2C3D40000000000001005 /* ModelDecodingTests.swift in Sources */,
+				A1B2C3D40000000000001006 /* APIClientTests.swift in Sources */,
+				A1B2C3D40000000000001007 /* SpeechRecognitionServiceTests.swift in Sources */,
+				A1B2C3D40000000000001008 /* SpellingGameViewModelTests.swift in Sources */,
+				A1B2C3D40000000000001009 /* PhonicsGameViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
