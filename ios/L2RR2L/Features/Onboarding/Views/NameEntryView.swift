@@ -90,6 +90,7 @@ struct NameEntryView: View {
             .textInputAutocapitalization(.words)
             .autocorrectionDisabled()
             .submitLabel(.done)
+            .accessibilityIdentifier(AccessibilityIdentifiers.Onboarding.nameTextField)
             .onSubmit {
                 if isNameValid {
                     handleContinue()
@@ -155,6 +156,7 @@ struct NameEntryView: View {
             )
         }
         .disabled(!isNameValid)
+        .accessibilityIdentifier(AccessibilityIdentifiers.Onboarding.continueButton)
         .animation(.easeInOut(duration: L2RTheme.Animation.fast), value: isNameValid)
     }
 

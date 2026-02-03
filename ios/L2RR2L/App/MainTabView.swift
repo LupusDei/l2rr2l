@@ -10,24 +10,28 @@ struct MainTabView: View {
                     Label(Tab.home.title, systemImage: Tab.home.icon)
                 }
                 .tag(Tab.home)
+                .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.homeTab)
 
             LessonsTabView()
                 .tabItem {
                     Label(Tab.lessons.title, systemImage: Tab.lessons.icon)
                 }
                 .tag(Tab.lessons)
+                .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.lessonsTab)
 
             GamesTabView()
                 .tabItem {
                     Label(Tab.games.title, systemImage: Tab.games.icon)
                 }
                 .tag(Tab.games)
+                .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.gamesTab)
 
             SettingsTabView()
                 .tabItem {
                     Label(Tab.settings.title, systemImage: Tab.settings.icon)
                 }
                 .tag(Tab.settings)
+                .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.settingsTab)
         }
         .tint(L2RTheme.primary)
     }

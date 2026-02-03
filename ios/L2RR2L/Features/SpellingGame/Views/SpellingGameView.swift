@@ -71,6 +71,7 @@ struct SpellingGameView: View {
                     .foregroundStyle(.white.opacity(0.8))
             }
             .accessibilityLabel("Close game")
+            .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.closeButton)
 
             Spacer()
 
@@ -135,6 +136,7 @@ struct SpellingGameView: View {
             }
             .accessibilityLabel("Start Game")
             .accessibilityHint("Begin the spelling game")
+            .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.startButton)
         }
     }
 
@@ -221,6 +223,7 @@ struct SpellingGameView: View {
             .disabled(viewModel.gameState != .playing)
             .accessibilityLabel("Shuffle letters")
             .accessibilityHint("Rearrange the available letters randomly")
+            .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.shuffleButton)
 
             Spacer()
 
@@ -245,6 +248,7 @@ struct SpellingGameView: View {
                 }
                 .accessibilityLabel("Next word")
                 .accessibilityHint("Move to the next word")
+                .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.nextButton)
             } else {
                 Button {
                     let correct = viewModel.checkAnswer()
@@ -269,6 +273,7 @@ struct SpellingGameView: View {
                 .disabled(!viewModel.allLettersPlaced)
                 .accessibilityLabel("Check answer")
                 .accessibilityHint(viewModel.allLettersPlaced ? "Verify your spelling" : "Place all letters first")
+                .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.checkButton)
             }
 
             Spacer()
@@ -293,6 +298,7 @@ struct SpellingGameView: View {
             .disabled(viewModel.gameState != .playing)
             .accessibilityLabel("Clear all")
             .accessibilityHint("Remove all placed letters")
+            .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.clearButton)
         }
         .padding(.horizontal, L2RTheme.Spacing.md)
         .padding(.bottom, L2RTheme.Spacing.md)
@@ -338,6 +344,7 @@ struct SpellingGameView: View {
                 }
                 .accessibilityLabel("Play Again")
                 .accessibilityHint("Start a new game")
+                .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.playAgainButton)
 
                 Button {
                     dismiss()
@@ -354,8 +361,10 @@ struct SpellingGameView: View {
                 }
                 .accessibilityLabel("Done")
                 .accessibilityHint("Return to games menu")
+                .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.doneButton)
             }
         }
+        .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.gameComplete)
     }
 
     // MARK: - Celebration Overlay

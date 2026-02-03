@@ -59,6 +59,7 @@ struct HomeView: View {
                     .contentShape(Rectangle())
             }
             .accessibilityLabel("Settings")
+            .accessibilityIdentifier(AccessibilityIdentifiers.Home.settingsButton)
         }
         .padding(.top, L2RTheme.Spacing.sm)
     }
@@ -102,6 +103,7 @@ struct HomeView: View {
         }
         .accessibilityLabel("Continue Learning")
         .accessibilityHint("Resume your current lesson")
+        .accessibilityIdentifier(AccessibilityIdentifiers.Home.continueLearningButton)
         .pulsing()
         .padding(.horizontal, L2RTheme.Spacing.lg)
     }

@@ -84,6 +84,18 @@ struct GamesView: View {
         .accessibilityLabel(title)
         .accessibilityHint("Double tap to play")
         .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier(gameAccessibilityIdentifier(for: destination))
+    }
+
+    private func gameAccessibilityIdentifier(for destination: GameDestination) -> String {
+        switch destination {
+        case .phonics: return AccessibilityIdentifiers.Games.phonicsCard
+        case .spelling: return AccessibilityIdentifiers.Games.spellingCard
+        case .memory: return AccessibilityIdentifiers.Games.memoryCard
+        case .rhyme: return AccessibilityIdentifiers.Games.rhymeCard
+        case .wordBuilder: return AccessibilityIdentifiers.Games.wordBuilderCard
+        case .readAloud: return AccessibilityIdentifiers.Games.readAloudCard
+        }
     }
 }
 

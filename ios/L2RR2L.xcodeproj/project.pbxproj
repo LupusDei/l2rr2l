@@ -24,6 +24,11 @@
 		A1B2C3D40000000000001009 /* PhonicsGameViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001009 /* PhonicsGameViewModelTests.swift */; };
 		A1B2C3D40000000000000020 /* L2RR2LUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000020 /* L2RR2LUITests.swift */; };
 		A1B2C3D40000000000000021 /* L2RR2LUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */; };
+		A1B2C3D40000000000000022 /* AuthUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000022 /* AuthUITests.swift */; };
+		A1B2C3D40000000000000023 /* GameUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000023 /* GameUITests.swift */; };
+		A1B2C3D40000000000000024 /* OnboardingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000024 /* OnboardingUITests.swift */; };
+		A1B2C3D40000000000000025 /* UITestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000025 /* UITestHelpers.swift */; };
+		A1B2C3D40000000000000300 /* AccessibilityIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000300 /* AccessibilityIdentifiers.swift */; };
 		A1B2C3D40000000000000100 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000100 /* HomeView.swift */; };
 		A1B2C3D40000000000000101 /* AnimatedBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000101 /* AnimatedBackgroundView.swift */; };
 		A1B2C3D40000000000000102 /* L2RLogoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000102 /* L2RLogoView.swift */; };
@@ -77,6 +82,11 @@
 		A1B2C3D50000000000001009 /* PhonicsGameViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhonicsGameViewModelTests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000020 /* L2RR2LUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LUITests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000022 /* AuthUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUITests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000023 /* GameUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameUITests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000024 /* OnboardingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingUITests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000025 /* UITestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestHelpers.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000300 /* AccessibilityIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityIdentifiers.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000100 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000101 /* AnimatedBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedBackgroundView.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000102 /* L2RLogoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RLogoView.swift; sourceTree = "<group>"; };
@@ -238,6 +248,7 @@
 		A1B2C3DB0000000000000005 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D50000000000000300 /* AccessibilityIdentifiers.swift */,
 				A1B2C3DB0000000000000054 /* Architecture */,
 				A1B2C3DB0000000000000055 /* DI */,
 				A1B2C3DB0000000000000056 /* Protocols */,
@@ -356,10 +367,22 @@
 		A1B2C3DB0000000000000020 /* L2RR2LUITests */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3DB0000000000000026 /* Helpers */,
+				A1B2C3D50000000000000022 /* AuthUITests.swift */,
+				A1B2C3D50000000000000023 /* GameUITests.swift */,
 				A1B2C3D50000000000000020 /* L2RR2LUITests.swift */,
 				A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */,
+				A1B2C3D50000000000000024 /* OnboardingUITests.swift */,
 			);
 			path = L2RR2LUITests;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000000026 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000000025 /* UITestHelpers.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		A1B2C3DB0000000000000099 /* Products */ = {
@@ -520,6 +543,7 @@
 				A1B2C3D40000000000000208 /* ViewModelProtocol.swift in Sources */,
 				A1B2C3D40000000000000209 /* LoginViewModel.swift in Sources */,
 				A1B2C3D40000000000000210 /* LoginView.swift in Sources */,
+				A1B2C3D40000000000000300 /* AccessibilityIdentifiers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,6 +570,10 @@
 			files = (
 				A1B2C3D40000000000000020 /* L2RR2LUITests.swift in Sources */,
 				A1B2C3D40000000000000021 /* L2RR2LUITestsLaunchTests.swift in Sources */,
+				A1B2C3D40000000000000022 /* AuthUITests.swift in Sources */,
+				A1B2C3D40000000000000023 /* GameUITests.swift in Sources */,
+				A1B2C3D40000000000000024 /* OnboardingUITests.swift in Sources */,
+				A1B2C3D40000000000000025 /* UITestHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

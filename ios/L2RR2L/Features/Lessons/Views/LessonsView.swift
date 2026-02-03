@@ -75,6 +75,7 @@ struct LessonsView: View {
         .accessibilityLabel("Lesson \(index + 1), Learn new sounds and words")
         .accessibilityHint("Double tap to view lesson details")
         .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier(AccessibilityIdentifiers.Lessons.lessonCard(index: index))
     }
 }
 

@@ -77,6 +77,7 @@ struct LoginView: View {
                     .autocorrectionDisabled()
                     .focused($focusedField, equals: .email)
                     .submitLabel(.next)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Auth.emailTextField)
                     .onChange(of: viewModel.email) { _, _ in
                         viewModel.validateEmail()
                     }
@@ -97,6 +98,7 @@ struct LoginView: View {
                     .textContentType(.password)
                     .focused($focusedField, equals: .password)
                     .submitLabel(.go)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Auth.passwordTextField)
                     .onChange(of: viewModel.password) { _, _ in
                         viewModel.validatePassword()
                     }
@@ -155,6 +157,7 @@ struct LoginView: View {
             )
         }
         .disabled(!viewModel.canSubmit)
+        .accessibilityIdentifier(AccessibilityIdentifiers.Auth.loginButton)
         .padding(.top, L2RTheme.Spacing.sm)
     }
 
