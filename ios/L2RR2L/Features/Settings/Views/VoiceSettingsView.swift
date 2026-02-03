@@ -179,6 +179,9 @@ struct VoiceSettingsView: View {
             Toggle("", isOn: $viewModel.useSpeakerBoost)
                 .labelsHidden()
                 .tint(L2RTheme.primary)
+                .accessibilityLabel("Speaker Boost")
+                .accessibilityValue(viewModel.useSpeakerBoost ? "On" : "Off")
+                .accessibilityHint("Enhances voice clarity")
         }
         .padding(.vertical, L2RTheme.Spacing.xs)
     }
@@ -262,6 +265,8 @@ struct ParameterSlider: View {
 
             Slider(value: $value, in: range)
                 .tint(L2RTheme.primary)
+                .accessibilityLabel(title)
+                .accessibilityValue(formattedValue)
 
             Text(description)
                 .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))

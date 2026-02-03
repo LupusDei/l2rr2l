@@ -44,6 +44,9 @@ struct LetterTile: View {
                     }
             )
             .disabled(tile.isPlaced)
+            .accessibilityLabel("Letter \(String(tile.letter).uppercased())")
+            .accessibilityHint(tile.isPlaced ? "Already placed" : "Double tap to place in word")
+            .accessibilityAddTraits(.isButton)
     }
 }
 

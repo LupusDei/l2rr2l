@@ -50,6 +50,28 @@ struct DropZone: View {
         .onDrop(of: [.text], isTargeted: nil) { providers in
             handleDrop(providers: providers)
         }
+        .accessibilityLabel(accessibilityLabelText)
+        .accessibilityHint(accessibilityHintText)
+        .accessibilityValue(accessibilityValueText)
+    }
+
+    // MARK: - Accessibility
+
+    private var accessibilityLabelText: String {
+        "Position \(index + 1)"
+    }
+
+    private var accessibilityValueText: String {
+        if let letter = placedLetter {
+            return isLocked ? "Locked with letter \(String(letter).uppercased())" : "Filled with letter \(String(letter).uppercased())"
+        }
+        return "Empty"
+    }
+
+    private var accessibilityHintText: String {
+        if isLocked { return "Correctly placed" }
+        if placedLetter != nil { return "Double tap to remove letter" }
+        return "Drop a letter here"
     }
 
     // MARK: - Background

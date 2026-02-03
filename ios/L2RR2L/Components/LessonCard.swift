@@ -23,6 +23,29 @@ struct LessonCard: View {
                     .foregroundStyle(L2RTheme.textSecondary)
             }
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabelText)
+        .accessibilityHint("Double tap to view lesson details")
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private var accessibilityLabelText: String {
+        var parts: [String] = [lesson.title]
+        parts.append("\(lesson.subject.rawValue.capitalized) lesson")
+        parts.append("\(lesson.durationMinutes) minutes")
+        parts.append("\(difficultyLabel) difficulty")
+        if let ageRange = lesson.ageRange {
+            parts.append("Ages \(ageRange.min) to \(ageRange.max)")
+        }
+        return parts.joined(separator: ", ")
+    }
+
+    private var difficultyLabel: String {
+        switch lesson.difficulty {
+        case .beginner: return "Beginner"
+        case .intermediate: return "Intermediate"
+        case .advanced: return "Advanced"
+        }
     }
 
     private var subjectIcon: some View {

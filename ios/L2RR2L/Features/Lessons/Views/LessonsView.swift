@@ -71,6 +71,10 @@ struct LessonsView: View {
             .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Lesson \(index + 1), Learn new sounds and words")
+        .accessibilityHint("Double tap to view lesson details")
+        .accessibilityAddTraits(.isButton)
     }
 }
 
