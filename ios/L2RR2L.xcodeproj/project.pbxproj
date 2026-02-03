@@ -13,6 +13,8 @@
 		A1B2C3D40000000000000004 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000004 /* Assets.xcassets */; };
 		A1B2C3D40000000000000005 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000005 /* Preview Assets.xcassets */; };
 		A1B2C3D40000000000000010 /* L2RR2LTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000010 /* L2RR2LTests.swift */; };
+		A1B2C3D40000000000000011 /* SpellingGameViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000011 /* SpellingGameViewModelTests.swift */; };
+		A1B2C3D40000000000000012 /* PhonicsGameViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000012 /* PhonicsGameViewModelTests.swift */; };
 		A1B2C3D40000000000000020 /* L2RR2LUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000020 /* L2RR2LUITests.swift */; };
 		A1B2C3D40000000000000021 /* L2RR2LUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */; };
 		A1B2C3D40000000000000100 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000100 /* HomeView.swift */; };
@@ -57,6 +59,8 @@
 		A1B2C3D50000000000000005 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A1B2C3D50000000000000006 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1B2C3D50000000000000010 /* L2RR2LTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LTests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000011 /* SpellingGameViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpellingGameViewModelTests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000000012 /* PhonicsGameViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhonicsGameViewModelTests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000020 /* L2RR2LUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LUITests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000100 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -282,6 +286,8 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D50000000000000010 /* L2RR2LTests.swift */,
+				A1B2C3D50000000000000011 /* SpellingGameViewModelTests.swift */,
+				A1B2C3D50000000000000012 /* PhonicsGameViewModelTests.swift */,
 			);
 			path = L2RR2LTests;
 			sourceTree = "<group>";
@@ -461,6 +467,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1B2C3D40000000000000010 /* L2RR2LTests.swift in Sources */,
+				A1B2C3D40000000000000011 /* SpellingGameViewModelTests.swift in Sources */,
+				A1B2C3D40000000000000012 /* PhonicsGameViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
