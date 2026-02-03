@@ -142,17 +142,17 @@ public enum L2RTheme {
         /// Fallback font
         public static let fallbackFont = "Chalkboard"
 
-        /// Get playful font with size
+        /// Get playful font with size (fixed, non-scaling)
         public static func playful(size: CGFloat, weight: Font.Weight = .regular) -> Font {
             .custom(playfulFont, size: size).weight(weight)
         }
 
-        /// System font for regular text
+        /// System font for regular text (fixed, non-scaling)
         public static func system(size: CGFloat, weight: Font.Weight = .regular) -> Font {
             .system(size: size, weight: weight)
         }
 
-        /// Child-friendly larger sizes
+        /// Child-friendly larger sizes (fixed values for reference)
         public enum Size {
             public static let small: CGFloat = 14
             public static let body: CGFloat = 16
@@ -163,6 +163,100 @@ public enum L2RTheme {
             public static let largeTitle: CGFloat = 34
             public static let logo: CGFloat = 56
         }
+
+        // MARK: - Dynamic Type Scaled Fonts
+
+        /// Fonts that automatically scale with Dynamic Type settings.
+        /// Use these for accessibility support.
+        public enum Scaled {
+            /// Caption text - scales with .caption
+            public static var caption: Font { .caption }
+
+            /// Footnote text - scales with .footnote
+            public static var footnote: Font { .footnote }
+
+            /// Subheadline text - scales with .subheadline
+            public static var subheadline: Font { .subheadline }
+
+            /// Body text - scales with .body (default for most content)
+            public static var body: Font { .body }
+
+            /// Callout text - scales with .callout
+            public static var callout: Font { .callout }
+
+            /// Headline text - scales with .headline
+            public static var headline: Font { .headline }
+
+            /// Title 3 - scales with .title3
+            public static var title3: Font { .title3 }
+
+            /// Title 2 - scales with .title2
+            public static var title2: Font { .title2 }
+
+            /// Title 1 - scales with .title
+            public static var title1: Font { .title }
+
+            /// Large title - scales with .largeTitle
+            public static var largeTitle: Font { .largeTitle }
+
+            /// Custom scaled font using a text style for relative sizing
+            /// - Parameters:
+            ///   - name: The font name
+            ///   - style: The text style to use for scaling
+            ///   - weight: Optional font weight
+            public static func custom(
+                _ name: String,
+                relativeTo style: Font.TextStyle,
+                weight: Font.Weight = .regular
+            ) -> Font {
+                .custom(name, size: style.defaultSize, relativeTo: style).weight(weight)
+            }
+
+            /// Playful font that scales with Dynamic Type
+            /// - Parameters:
+            ///   - style: The text style to use for scaling
+            ///   - weight: Font weight
+            public static func playful(
+                relativeTo style: Font.TextStyle,
+                weight: Font.Weight = .regular
+            ) -> Font {
+                custom(Typography.playfulFont, relativeTo: style, weight: weight)
+            }
+
+            /// System font that scales with Dynamic Type
+            /// - Parameters:
+            ///   - style: The text style
+            ///   - weight: Font weight
+            ///   - design: Font design
+            public static func system(
+                _ style: Font.TextStyle,
+                weight: Font.Weight = .regular,
+                design: Font.Design = .default
+            ) -> Font {
+                .system(style, design: design, weight: weight)
+            }
+        }
+    }
+
+    // MARK: - Dynamic Type Size Range
+
+    /// Maximum dynamic type size for different UI contexts.
+    /// Use these to limit scaling for elements with space constraints.
+    public enum DynamicTypeSizeLimit {
+        /// Allow full accessibility sizes (up to accessibility5)
+        public static let full: DynamicTypeSize = .accessibility5
+
+        /// Large accessibility sizes (up to accessibility3)
+        public static let large: DynamicTypeSize = .accessibility3
+
+        /// Medium accessibility sizes (up to accessibility1)
+        public static let medium: DynamicTypeSize = .accessibility1
+
+        /// Standard sizes only (up to xxxLarge, no accessibility sizes)
+        public static let standard: DynamicTypeSize = .xxxLarge
+
+        /// Compact - limit to xLarge for tight layouts
+        public static let compact: DynamicTypeSize = .xLarge
     }
 
     // MARK: - Spacing (8-point grid)
@@ -384,5 +478,54 @@ extension View {
     /// Enable or disable playful fonts
     public func usePlayfulFont(_ enabled: Bool) -> some View {
         environment(\.l2rTheme.usePlayfulFont, enabled)
+    }
+
+    // MARK: - Dynamic Type Modifiers
+
+    /// Limit dynamic type size to a maximum value.
+    /// Use this for UI elements with space constraints.
+    /// - Parameter max: Maximum dynamic type size to allow
+    public func dynamicTypeSizeLimit(_ max: DynamicTypeSize) -> some View {
+        self.dynamicTypeSize(...max)
+    }
+
+    /// Allow full accessibility sizes up to the specified limit.
+    /// - Parameter limit: The limit from `L2RTheme.DynamicTypeSizeLimit`
+    public func accessibleTypeSizeLimit(_ limit: DynamicTypeSize = L2RTheme.DynamicTypeSizeLimit.large) -> some View {
+        self.dynamicTypeSize(...limit)
+    }
+
+    /// Apply a dynamic type size range for fine-grained control.
+    /// - Parameters:
+    ///   - min: Minimum dynamic type size
+    ///   - max: Maximum dynamic type size
+    public func dynamicTypeSizeRange(
+        min: DynamicTypeSize = .xSmall,
+        max: DynamicTypeSize = L2RTheme.DynamicTypeSizeLimit.large
+    ) -> some View {
+        self.dynamicTypeSize(min...max)
+    }
+}
+
+// MARK: - Font.TextStyle Default Sizes
+
+extension Font.TextStyle {
+    /// Default point size for the text style at standard dynamic type size.
+    /// These are reference values for custom font sizing.
+    var defaultSize: CGFloat {
+        switch self {
+        case .largeTitle: return 34
+        case .title: return 28
+        case .title2: return 22
+        case .title3: return 20
+        case .headline: return 17
+        case .body: return 17
+        case .callout: return 16
+        case .subheadline: return 15
+        case .footnote: return 13
+        case .caption: return 12
+        case .caption2: return 11
+        @unknown default: return 17
+        }
     }
 }
