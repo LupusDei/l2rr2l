@@ -22,6 +22,7 @@
 		A1B2C3D40000000000001007 /* SpeechRecognitionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001007 /* SpeechRecognitionServiceTests.swift */; };
 		A1B2C3D40000000000001008 /* SpellingGameViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001008 /* SpellingGameViewModelTests.swift */; };
 		A1B2C3D40000000000001009 /* PhonicsGameViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001009 /* PhonicsGameViewModelTests.swift */; };
+		A1B2C3D40000000000001010 /* MemoryGameViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000001010 /* MemoryGameViewModelTests.swift */; };
 		A1B2C3D40000000000000020 /* L2RR2LUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000020 /* L2RR2LUITests.swift */; };
 		A1B2C3D40000000000000021 /* L2RR2LUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */; };
 		A1B2C3D40000000000000022 /* AuthUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000022 /* AuthUITests.swift */; };
@@ -46,6 +47,9 @@
 		A1B2C3D40000000000000208 /* ViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000208 /* ViewModelProtocol.swift */; };
 		A1B2C3D40000000000000209 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000209 /* LoginViewModel.swift */; };
 		A1B2C3D40000000000000210 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000000210 /* LoginView.swift */; };
+		A1B2C3D40000000000002001 /* MemoryGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000002001 /* MemoryGameViewModel.swift */; };
+		A1B2C3D40000000000002002 /* SightWordData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000002002 /* SightWordData.swift */; };
+		A1B2C3D40000000000002003 /* FlipCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50000000000002003 /* FlipCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +86,7 @@
 		A1B2C3D50000000000001007 /* SpeechRecognitionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionServiceTests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000001008 /* SpellingGameViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpellingGameViewModelTests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000001009 /* PhonicsGameViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhonicsGameViewModelTests.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000001010 /* MemoryGameViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryGameViewModelTests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000020 /* L2RR2LUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LUITests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000021 /* L2RR2LUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000022 /* AuthUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUITests.swift; sourceTree = "<group>"; };
@@ -106,6 +111,9 @@
 		A1B2C3D50000000000000208 /* ViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelProtocol.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000209 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		A1B2C3D50000000000000210 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000002001 /* MemoryGameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryGameViewModel.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000002002 /* SightWordData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SightWordData.swift; sourceTree = "<group>"; };
+		A1B2C3D50000000000002003 /* FlipCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipCard.swift; sourceTree = "<group>"; };
 		A1B2C3D90000000000000001 /* L2RR2L.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = L2RR2L.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D90000000000000010 /* L2RR2LTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = L2RR2LTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D90000000000000020 /* L2RR2LUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = L2RR2LUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -193,8 +201,51 @@
 			children = (
 				A1B2C3DB0000000000000107 /* Auth */,
 				A1B2C3DB0000000000000104 /* Home */,
+				A1B2C3DB0000000000002000 /* MemoryGame */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000002000 /* MemoryGame */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3DB0000000000002001 /* Models */,
+				A1B2C3DB0000000000002002 /* ViewModels */,
+				A1B2C3DB0000000000002003 /* Views */,
+			);
+			path = MemoryGame;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000002001 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000002002 /* SightWordData.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000002002 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000002001 /* MemoryGameViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000002003 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3DB0000000000002004 /* Components */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A1B2C3DB0000000000002004 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D50000000000002003 /* FlipCard.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		A1B2C3DB0000000000000107 /* Auth */ = {
@@ -364,6 +415,7 @@
 			children = (
 				A1B2C3D50000000000001008 /* SpellingGameViewModelTests.swift */,
 				A1B2C3D50000000000001009 /* PhonicsGameViewModelTests.swift */,
+				A1B2C3D50000000000001010 /* MemoryGameViewModelTests.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -550,6 +602,9 @@
 				A1B2C3D40000000000000209 /* LoginViewModel.swift in Sources */,
 				A1B2C3D40000000000000210 /* LoginView.swift in Sources */,
 				A1B2C3D40000000000000300 /* AccessibilityIdentifiers.swift in Sources */,
+				A1B2C3D40000000000002001 /* MemoryGameViewModel.swift in Sources */,
+				A1B2C3D40000000000002002 /* SightWordData.swift in Sources */,
+				A1B2C3D40000000000002003 /* FlipCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -567,6 +622,7 @@
 				A1B2C3D40000000000001007 /* SpeechRecognitionServiceTests.swift in Sources */,
 				A1B2C3D40000000000001008 /* SpellingGameViewModelTests.swift in Sources */,
 				A1B2C3D40000000000001009 /* PhonicsGameViewModelTests.swift in Sources */,
+				A1B2C3D40000000000001010 /* MemoryGameViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
