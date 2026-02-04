@@ -127,7 +127,9 @@ struct SettingsView: View {
             titleVisibility: .visible
         ) {
             Button("Log Out", role: .destructive) {
-                authService.logout()
+                Task {
+                    await authService.logout()
+                }
             }
             Button("Cancel", role: .cancel) {}
         }

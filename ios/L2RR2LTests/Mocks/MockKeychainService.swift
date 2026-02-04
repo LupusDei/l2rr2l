@@ -1,8 +1,24 @@
 import Foundation
-@testable import L2RR2L
 
-/// A mock keychain service for testing without touching actual keychain
-final class MockKeychainService {
+/// A mock keychain service for testing without touching actual keychain.
+/// This mock is standalone and doesn't depend on the main module's types.
+actor MockKeychainService {
+    // MARK: - Types
+
+    enum MockKeychainKey: String {
+        case authToken
+        case refreshToken
+        case userId
+    }
+
+    enum MockKeychainError: Error {
+        case saveFailed
+        case loadFailed
+        case deleteFailed
+        case notFound
+        case invalidData
+    }
+
     // MARK: - Storage
 
     private var storage: [String: Data] = [:]
@@ -19,43 +35,64 @@ final class MockKeychainService {
 
     // MARK: - Methods
 
-    func save(_ data: Data, for key: String) throws {
+    func save(_ data: Data, for key: MockKeychainKey, requireBiometric: Bool = false) throws {
         if shouldThrowOnSave {
-            throw KeychainError.saveFailed
+            throw MockKeychainError.saveFailed
         }
-        storage[key] = data
+        storage[key.rawValue] = data
     }
 
-    func save(_ string: String, for key: String) throws {
+    func save(_ string: String, for key: MockKeychainKey, requireBiometric: Bool = false) throws {
         guard let data = string.data(using: .utf8) else {
-            throw KeychainError.encodingFailed
+            throw MockKeychainError.invalidData
         }
-        try save(data, for: key)
+        try save(data, for: key, requireBiometric: requireBiometric)
     }
 
-    func load(for key: String) throws -> Data {
+    func load(for key: MockKeychainKey) throws -> Data {
         if shouldThrowOnLoad {
-            throw KeychainError.loadFailed
+            throw MockKeychainError.loadFailed
         }
-        guard let data = storage[key] else {
-            throw KeychainError.notFound
+        guard let data = storage[key.rawValue] else {
+            throw MockKeychainError.notFound
         }
         return data
     }
 
-    func loadString(for key: String) throws -> String {
+    func loadString(for key: MockKeychainKey) throws -> String {
         let data = try load(for: key)
         guard let string = String(data: data, encoding: .utf8) else {
-            throw KeychainError.decodingFailed
+            throw MockKeychainError.invalidData
         }
         return string
     }
 
-    func delete(for key: String) throws {
+    func delete(for key: MockKeychainKey) throws {
         if shouldThrowOnDelete {
-            throw KeychainError.deleteFailed
+            throw MockKeychainError.deleteFailed
         }
-        storage.removeValue(forKey: key)
+        storage.removeValue(forKey: key.rawValue)
+    }
+
+    func deleteAll() throws {
+        if shouldThrowOnDelete {
+            throw MockKeychainError.deleteFailed
+        }
+        storage.removeAll()
+    }
+
+    // MARK: - Biometric Support
+
+    nonisolated func isBiometricAvailable() -> Bool {
+        return false
+    }
+
+    func loadWithBiometric(for key: MockKeychainKey, reason: String) async throws -> Data {
+        return try load(for: key)
+    }
+
+    func loadStringWithBiometric(for key: MockKeychainKey, reason: String) async throws -> String {
+        return try loadString(for: key)
     }
 
     // MARK: - Test Helpers
@@ -64,35 +101,7 @@ final class MockKeychainService {
         storage.removeAll()
     }
 
-    func hasKey(_ key: String) -> Bool {
-        storage[key] != nil
-    }
-}
-
-// MARK: - Keychain Errors
-
-enum KeychainError: Error, LocalizedError {
-    case saveFailed
-    case loadFailed
-    case deleteFailed
-    case notFound
-    case encodingFailed
-    case decodingFailed
-
-    var errorDescription: String? {
-        switch self {
-        case .saveFailed:
-            return "Failed to save to keychain"
-        case .loadFailed:
-            return "Failed to load from keychain"
-        case .deleteFailed:
-            return "Failed to delete from keychain"
-        case .notFound:
-            return "Key not found in keychain"
-        case .encodingFailed:
-            return "Failed to encode data"
-        case .decodingFailed:
-            return "Failed to decode data"
-        }
+    func hasKey(_ key: MockKeychainKey) -> Bool {
+        storage[key.rawValue] != nil
     }
 }
