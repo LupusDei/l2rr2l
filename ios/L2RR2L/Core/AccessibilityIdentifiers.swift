@@ -110,6 +110,22 @@ enum AccessibilityIdentifiers {
         static let gameComplete = "phonics.game.complete"
     }
 
+    // MARK: - Word Builder Game
+    enum WordBuilder {
+        static let startButton = "wordbuilder.start.button"
+        static let closeButton = "wordbuilder.close.button"
+        static let hintEmoji = "wordbuilder.hint.emoji"
+        static let builtWord = "wordbuilder.built.word"
+        static let letterBank = "wordbuilder.letter.bank"
+        static let deleteButton = "wordbuilder.delete.button"
+        static let clearButton = "wordbuilder.clear.button"
+        static let checkButton = "wordbuilder.check.button"
+        static let nextButton = "wordbuilder.next.button"
+        static let playAgainButton = "wordbuilder.playagain.button"
+        static let doneButton = "wordbuilder.done.button"
+        static let gameComplete = "wordbuilder.game.complete"
+    }
+
     // MARK: - Lessons
     enum Lessons {
         static let listView = "lessons.list"
