@@ -18,10 +18,8 @@ struct OnboardingCompletionView: View {
             AnimatedBackgroundView()
 
             // Confetti overlay
-            if showConfetti {
-                ConfettiView()
-                    .ignoresSafeArea()
-            }
+            ConfettiView(isActive: $showConfetti)
+                .ignoresSafeArea()
 
             // Content
             VStack(spacing: 0) {
@@ -228,103 +226,7 @@ private struct ProfileSummaryRow: View {
     }
 }
 
-// MARK: - Confetti View
-
-struct ConfettiView: View {
-    @State private var confettiPieces: [ConfettiPiece] = []
-
-    private let colors: [Color] = L2RTheme.Logo.all
-
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                ForEach(confettiPieces) { piece in
-                    ConfettiPieceView(piece: piece)
-                }
-            }
-            .onAppear {
-                generateConfetti(in: geometry.size)
-            }
-        }
-    }
-
-    private func generateConfetti(in size: CGSize) {
-        // Generate burst of confetti
-        for i in 0..<50 {
-            let delay = Double(i) * 0.02
-            let piece = ConfettiPiece(
-                id: i,
-                color: colors[i % colors.count],
-                startX: size.width / 2,
-                startY: size.height * 0.3,
-                endX: CGFloat.random(in: 0...size.width),
-                endY: CGFloat.random(in: size.height * 0.5...size.height + 100),
-                rotation: Double.random(in: 0...720),
-                delay: delay,
-                shape: ConfettiShape.allCases.randomElement() ?? .rectangle
-            )
-            confettiPieces.append(piece)
-        }
-    }
-}
-
-// MARK: - Confetti Piece
-
-private struct ConfettiPiece: Identifiable {
-    let id: Int
-    let color: Color
-    let startX: CGFloat
-    let startY: CGFloat
-    let endX: CGFloat
-    let endY: CGFloat
-    let rotation: Double
-    let delay: Double
-    let shape: ConfettiShape
-}
-
-private enum ConfettiShape: CaseIterable {
-    case rectangle
-    case circle
-    case star
-}
-
-private struct ConfettiPieceView: View {
-    let piece: ConfettiPiece
-
-    @State private var animate = false
-
-    var body: some View {
-        confettiShape
-            .fill(piece.color)
-            .frame(width: 10, height: 10)
-            .position(
-                x: animate ? piece.endX : piece.startX,
-                y: animate ? piece.endY : piece.startY
-            )
-            .rotationEffect(.degrees(animate ? piece.rotation : 0))
-            .opacity(animate ? 0 : 1)
-            .onAppear {
-                withAnimation(
-                    .easeOut(duration: 2.0)
-                    .delay(piece.delay)
-                ) {
-                    animate = true
-                }
-            }
-    }
-
-    @ViewBuilder
-    private var confettiShape: some Shape {
-        switch piece.shape {
-        case .rectangle:
-            Rectangle()
-        case .circle:
-            Circle()
-        case .star:
-            Rectangle() // Simplified star as rotated square
-        }
-    }
-}
+// ConfettiView is defined in Features/Shared/Components/ConfettiView.swift
 
 #Preview {
     OnboardingCompletionView(

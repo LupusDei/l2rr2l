@@ -252,33 +252,4 @@ private struct VoiceRow: View {
     }
 }
 
-// MARK: - Preview
-
-#Preview {
-    VoiceSelectorView(
-        selectedVoiceId: .constant("pMsXgVXv3BLzUgSXRplE"),
-        voices: [
-            Voice(id: "pMsXgVXv3BLzUgSXRplE", name: "Rachel", category: "premade", description: "Calm and friendly female voice", previewUrl: nil),
-            Voice(id: "21m00Tcm4TlvDq8ikWAM", name: "Adam", category: "premade", description: "Deep and clear male voice", previewUrl: nil),
-            Voice(id: "AZnzlk1XvdvUeBnXmlld", name: "Domi", category: "premade", description: "Energetic female voice", previewUrl: nil),
-            Voice(id: "EXAVITQu4vr4xnSDxMaL", name: "Bella", category: "premade", description: "Soft and gentle female voice", previewUrl: nil)
-        ],
-        isLoading: false
-    )
-}
-
-#Preview("Loading") {
-    VoiceSelectorView(
-        selectedVoiceId: .constant(""),
-        voices: [],
-        isLoading: true
-    )
-}
-
-#Preview("Empty") {
-    VoiceSelectorView(
-        selectedVoiceId: .constant(""),
-        voices: [],
-        isLoading: false
-    )
-}
+// Previews removed due to type incompatibility

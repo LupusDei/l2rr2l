@@ -105,12 +105,4 @@ final class ChildProfileService: ObservableObject {
     }
 }
 
-// MARK: - Response Types
-
-private struct ChildrenResponse: Decodable {
-    let children: [Child]
-}
-
-private struct ChildResponse: Decodable {
-    let child: Child
-}
+// Response types are defined in APIModels.swift

@@ -18,6 +18,30 @@ public struct User: Decodable, Identifiable {
     public let createdAt: String?
 }
 
+// MARK: - Auth Request Models
+
+public struct LoginRequest: Codable {
+    public let email: String
+    public let password: String
+
+    public init(email: String, password: String) {
+        self.email = email
+        self.password = password
+    }
+}
+
+public struct RegisterRequest: Codable {
+    public let email: String
+    public let password: String
+    public let name: String
+
+    public init(email: String, password: String, name: String) {
+        self.email = email
+        self.password = password
+        self.name = name
+    }
+}
+
 // MARK: - Children Response Models
 
 public struct ChildrenResponse: Decodable {
@@ -40,6 +64,64 @@ public struct Child: Decodable, Identifiable {
     public let interests: [String]?
     public let createdAt: String?
     public let updatedAt: String?
+}
+
+// MARK: - Children Request Models
+
+public struct CreateChildRequest: Codable {
+    public let name: String
+    public var age: Int?
+    public var sex: String?
+    public var avatar: String?
+    public var gradeLevel: String?
+    public var learningStyle: String?
+    public var interests: [String]?
+
+    public init(
+        name: String,
+        age: Int? = nil,
+        sex: String? = nil,
+        avatar: String? = nil,
+        gradeLevel: String? = nil,
+        learningStyle: String? = nil,
+        interests: [String]? = nil
+    ) {
+        self.name = name
+        self.age = age
+        self.sex = sex
+        self.avatar = avatar
+        self.gradeLevel = gradeLevel
+        self.learningStyle = learningStyle
+        self.interests = interests
+    }
+}
+
+public struct UpdateChildRequest: Codable {
+    public var name: String?
+    public var age: Int?
+    public var sex: String?
+    public var avatar: String?
+    public var gradeLevel: String?
+    public var learningStyle: String?
+    public var interests: [String]?
+
+    public init(
+        name: String? = nil,
+        age: Int? = nil,
+        sex: String? = nil,
+        avatar: String? = nil,
+        gradeLevel: String? = nil,
+        learningStyle: String? = nil,
+        interests: [String]? = nil
+    ) {
+        self.name = name
+        self.age = age
+        self.sex = sex
+        self.avatar = avatar
+        self.gradeLevel = gradeLevel
+        self.learningStyle = learningStyle
+        self.interests = interests
+    }
 }
 
 // MARK: - Lessons Response Models
@@ -73,7 +155,7 @@ public struct AgeRange: Decodable {
     public let max: Int
 }
 
-public struct Lesson: Decodable, Identifiable {
+public struct Lesson: Codable, Identifiable {
     public let id: String
     public let title: String
     public let subject: String
@@ -99,12 +181,12 @@ public struct Lesson: Decodable, Identifiable {
     public let updatedAt: String?
 }
 
-public struct LessonObjective: Decodable {
+public struct LessonObjective: Codable {
     public let text: String?
     public let description: String?
 }
 
-public struct LessonActivity: Decodable {
+public struct LessonActivity: Codable {
     public let id: String?
     public let type: String?
     public let title: String?
@@ -113,13 +195,13 @@ public struct LessonActivity: Decodable {
     public let durationMinutes: Int?
 }
 
-public struct ActivityContent: Decodable {
+public struct ActivityContent: Codable {
     public let text: String?
     public let words: [String]?
     public let questions: [String]?
 }
 
-public struct AssessmentCriterion: Decodable {
+public struct AssessmentCriterion: Codable {
     public let name: String?
     public let description: String?
 }
@@ -180,7 +262,7 @@ public struct StatsResponse: Decodable {
 public struct DetailedStats: Decodable {
     public let overall: OverallStats
     public let bySubject: [SubjectStats]
-    public let badges: [Badge]
+    public let badges: [ApiBadge]
 }
 
 public struct OverallStats: Decodable {
@@ -198,7 +280,7 @@ public struct SubjectStats: Decodable {
     public let averageScore: Double?
 }
 
-public struct Badge: Decodable, Identifiable {
+public struct ApiBadge: Decodable, Identifiable {
     public let id: String
     public let name: String
     public let description: String
@@ -212,7 +294,7 @@ public struct ActivitiesProgressResponse: Decodable {
     public let activities: [ActivityProgress]
 }
 
-public struct ActivityProgress: Decodable, Identifiable {
+public struct ActivityProgress: Codable, Identifiable, Equatable {
     public let id: String
     public let childId: String
     public let lessonId: String
@@ -241,7 +323,7 @@ public struct Voice: Decodable, Identifiable {
     public var id: String { voiceId }
 }
 
-public struct VoiceSettingsResponse: Decodable {
+public struct ApiVoiceSettingsResponse: Decodable {
     public let settings: ChildVoiceSettings
 }
 

@@ -313,7 +313,7 @@ struct TextButton: View {
 
     private func performAction() {
         guard !isDisabled else { return }
-        HapticService.shared.selection()
+        HapticService.shared.selectionFeedback()
         action()
     }
 }
@@ -350,7 +350,7 @@ struct IconButton: View {
 
     private func performAction() {
         guard !isDisabled else { return }
-        HapticService.shared.selection()
+        HapticService.shared.selectionFeedback()
         action()
     }
 }

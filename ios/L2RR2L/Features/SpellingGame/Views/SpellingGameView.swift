@@ -178,16 +178,14 @@ struct SpellingGameView: View {
             activeIndex: viewModel.placedLetters.firstIndex(where: { $0 == nil }),
             onDrop: { index, char in
                 viewModel.placeLetter(char, at: index)
-            }
-        )
-        .modifier(ShakeModifier(shake: shakeAnswer))
-        .padding(.vertical, L2RTheme.Spacing.lg)
-        .onTapGesture { index in
-            // Tapping a placed letter removes it
-            if index < viewModel.placedLetters.count {
+            },
+            onTap: { index in
+                // Tapping a placed letter removes it
                 viewModel.removeLetter(at: index)
             }
-        }
+        )
+        .modifier(SpellingShakeModifier(shake: shakeAnswer))
+        .padding(.vertical, L2RTheme.Spacing.lg)
     }
 
     // MARK: - Letter Bank Area
@@ -419,7 +417,7 @@ struct SpellingGameView: View {
 
 // MARK: - Shake Modifier
 
-struct ShakeModifier: ViewModifier {
+private struct SpellingShakeModifier: ViewModifier {
     var shake: Bool
 
     func body(content: Content) -> some View {

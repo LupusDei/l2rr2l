@@ -37,6 +37,9 @@ class RhymeGameViewModel: ObservableObject {
     /// Current difficulty level
     @Published var difficulty: RhymeDifficulty = .easy
 
+    /// Whether to show celebration overlay (streak milestones)
+    @Published private(set) var showCelebration = false
+
     // MARK: - Configuration
 
     /// Total number of rounds per game session
@@ -141,9 +144,53 @@ class RhymeGameViewModel: ObservableObject {
         gameState = .notStarted
     }
 
+    /// Plays audio for the target word (placeholder for TTS integration)
+    func playTargetWordAudio() {
+        guard let word = currentWord else { return }
+        // Play sound effect as feedback
+        SoundEffectService.shared.play(.buttonTap)
+        // TODO: Integrate with VoiceService for TTS
+        print("Playing audio for: \(word.word)")
+    }
+
+    /// Selects an option (alias for selectAnswer)
+    func selectOption(_ option: RhymeOptionItem) {
+        let wasCorrect = selectAnswer(option)
+        // Trigger celebration for streak milestones
+        if wasCorrect && streak > 0 && streak % 3 == 0 {
+            showCelebration = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                self?.showCelebration = false
+            }
+        }
+    }
+
+    /// Advances to next question (alias for nextRound)
+    func nextQuestion() {
+        nextRound()
+    }
+
     /// Progress through the game (0.0 to 1.0)
     var progress: Double {
         Double(round - 1) / Double(totalRounds)
+    }
+
+    /// Alias for round (used by view)
+    var currentRound: Int {
+        round
+    }
+
+    /// Current question combining target, correct answer, and options
+    var currentQuestion: RhymeQuestion? {
+        guard let target = currentWord, let correct = correctAnswer else {
+            return nil
+        }
+        return RhymeQuestion(
+            targetWord: target,
+            correctAnswer: correct,
+            distractors: options.filter { $0.id != correct.id },
+            allOptions: options
+        )
     }
 
     /// Whether the game is complete

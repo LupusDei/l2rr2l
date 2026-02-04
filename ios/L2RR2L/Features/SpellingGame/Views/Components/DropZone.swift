@@ -18,6 +18,7 @@ struct DropZone: View {
     let isActive: Bool
     let isLocked: Bool
     let onDrop: (Character) -> Bool
+    var onTap: (() -> Void)? = nil
 
     @State private var animateAccept = false
     @State private var animateReject = false
@@ -49,6 +50,11 @@ struct DropZone: View {
         .animation(.default, value: animateReject)
         .onDrop(of: [.text], isTargeted: nil) { providers in
             handleDrop(providers: providers)
+        }
+        .onTapGesture {
+            if placedLetter != nil && !isLocked {
+                onTap?()
+            }
         }
         .accessibilityLabel(accessibilityLabelText)
         .accessibilityHint(accessibilityHintText)
@@ -214,6 +220,7 @@ struct DropZoneRow: View {
     let lockedIndices: Set<Int>
     let activeIndex: Int?
     let onDrop: (Int, Character) -> Bool
+    var onTap: ((Int) -> Void)? = nil
 
     var body: some View {
         HStack(spacing: L2RTheme.Spacing.xs) {
@@ -225,6 +232,9 @@ struct DropZoneRow: View {
                     isLocked: lockedIndices.contains(index),
                     onDrop: { char in
                         onDrop(index, char)
+                    },
+                    onTap: {
+                        onTap?(index)
                     }
                 )
             }

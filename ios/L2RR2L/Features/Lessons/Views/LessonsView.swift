@@ -85,11 +85,11 @@ struct LessonsView: View {
 
             ForEach(LessonSubject.allCases, id: \.self) { subject in
                 Button {
-                    viewModel.setSubject(subject)
+                    viewModel.setSubject(subject.rawValue)
                 } label: {
                     HStack {
-                        Text(subjectDisplayName(subject))
-                        if viewModel.selectedSubject == subject {
+                        Text(subjectDisplayName(subject.rawValue))
+                        if viewModel.selectedSubject == subject.rawValue {
                             Image(systemName: "checkmark")
                         }
                     }
@@ -112,11 +112,11 @@ struct LessonsView: View {
 
             ForEach(DifficultyLevel.allCases, id: \.self) { level in
                 Button {
-                    viewModel.setDifficulty(level)
+                    viewModel.setDifficulty(level.rawValue)
                 } label: {
                     HStack {
-                        Text(difficultyDisplayName(level))
-                        if viewModel.selectedDifficulty == level {
+                        Text(difficultyDisplayName(level.rawValue))
+                        if viewModel.selectedDifficulty == level.rawValue {
                             Image(systemName: "checkmark")
                         }
                     }
@@ -332,23 +332,25 @@ struct LessonsView: View {
 
     // MARK: - Helper Methods
 
-    private func subjectDisplayName(_ subject: LessonSubject) -> String {
-        switch subject {
-        case .phonics: return "Phonics"
-        case .spelling: return "Spelling"
-        case .sightWords: return "Sight Words"
-        case .reading: return "Reading"
-        case .wordFamilies: return "Word Families"
-        case .vocabulary: return "Vocabulary"
-        case .comprehension: return "Comprehension"
+    private func subjectDisplayName(_ subject: String) -> String {
+        switch subject.lowercased() {
+        case "phonics": return "Phonics"
+        case "spelling": return "Spelling"
+        case "sight-words", "sightwords": return "Sight Words"
+        case "reading": return "Reading"
+        case "word-families", "wordfamilies": return "Word Families"
+        case "vocabulary": return "Vocabulary"
+        case "comprehension": return "Comprehension"
+        default: return subject.capitalized
         }
     }
 
-    private func difficultyDisplayName(_ level: DifficultyLevel) -> String {
-        switch level {
-        case .beginner: return "Beginner"
-        case .intermediate: return "Intermediate"
-        case .advanced: return "Advanced"
+    private func difficultyDisplayName(_ level: String) -> String {
+        switch level.lowercased() {
+        case "beginner": return "Beginner"
+        case "intermediate": return "Intermediate"
+        case "advanced": return "Advanced"
+        default: return level.capitalized
         }
     }
 }

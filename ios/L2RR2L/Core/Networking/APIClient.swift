@@ -46,6 +46,32 @@ public actor APIClient {
         return try await executeWithRetry(request, retries: maxRetries)
     }
 
+    // MARK: - Convenience Methods
+
+    /// GET request with path
+    public func get<T: Decodable>(_ path: String, requiresAuth: Bool = false) async throws -> T {
+        let endpoint = Endpoint(path: path, method: .get)
+        return try await request(endpoint)
+    }
+
+    /// POST request with path and body
+    public func post<T: Decodable, B: Encodable>(_ path: String, body: B, requiresAuth: Bool = false) async throws -> T {
+        let endpoint = Endpoint(path: path, method: .post, body: body)
+        return try await request(endpoint)
+    }
+
+    /// PUT request with path and body
+    public func put<T: Decodable, B: Encodable>(_ path: String, body: B, requiresAuth: Bool = false) async throws -> T {
+        let endpoint = Endpoint(path: path, method: .put, body: body)
+        return try await request(endpoint)
+    }
+
+    /// DELETE request with path
+    public func delete(_ path: String, requiresAuth: Bool = false) async throws {
+        let endpoint = Endpoint(path: path, method: .delete)
+        try await requestVoid(endpoint)
+    }
+
     /// Execute a request without expecting a response body
     public func requestVoid(_ endpoint: Endpoint) async throws {
         let request = try buildRequest(for: endpoint)

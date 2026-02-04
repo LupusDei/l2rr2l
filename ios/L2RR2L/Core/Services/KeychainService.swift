@@ -10,7 +10,7 @@ public enum KeychainError: Error, LocalizedError {
     case biometricNotAvailable
     case biometricFailed
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .duplicateEntry:
             return "Item already exists in keychain"

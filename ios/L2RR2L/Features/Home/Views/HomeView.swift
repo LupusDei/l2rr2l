@@ -2,8 +2,8 @@ import SwiftUI
 
 /// Main home screen with animated background, logo, welcome message, and game grid.
 struct HomeView: View {
+    @ObservedObject private var router = NavigationRouter.shared
     @State private var childName: String = "Friend"
-    @State private var showSettings = false
 
     var body: some View {
         ZStack {
@@ -39,9 +39,6 @@ struct HomeView: View {
             }
             .padding(.horizontal, L2RTheme.Spacing.xl)
         }
-        .sheet(isPresented: $showSettings) {
-            SettingsPlaceholderView()
-        }
     }
 
     // MARK: - Settings Button
@@ -50,7 +47,7 @@ struct HomeView: View {
         HStack {
             Spacer()
             Button {
-                showSettings = true
+                router.navigateToSettings()
             } label: {
                 Image(systemName: "gearshape.fill")
                     .font(.system(size: 24))
@@ -111,37 +108,24 @@ struct HomeView: View {
     // MARK: - Actions
 
     private func handleContinueLearning() {
-        // TODO: Navigate to current lesson or progress
+        // Navigate to Lessons tab
+        router.selectedTab = .lessons
     }
 
     private func handleGameSelection(_ game: GameType) {
-        // TODO: Navigate to selected game
-    }
-}
-
-/// Placeholder for settings screen
-struct SettingsPlaceholderView: View {
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            VStack {
-                Text("Settings")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title1, weight: .bold))
-                Text("Coming soon...")
-                    .foregroundStyle(L2RTheme.textSecondary)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(L2RTheme.background)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
+        // Map GameType to GameDestination and navigate
+        let destination: GameDestination
+        switch game {
+        case .spelling: destination = .spelling
+        case .memory: destination = .memory
+        case .rhyme: destination = .rhyme
+        case .wordBuilder: destination = .wordBuilder
+        case .phonics: destination = .phonics
+        case .readAloud: destination = .readAloud
         }
+
+        router.selectedTab = .games
+        router.gamesPath.append(destination)
     }
 }
 

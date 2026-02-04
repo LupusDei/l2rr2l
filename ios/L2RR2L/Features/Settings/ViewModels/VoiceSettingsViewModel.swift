@@ -50,10 +50,9 @@ class VoiceSettingsViewModel: ObservableObject {
         voices.first { $0.id == selectedVoiceId }
     }
 
-    /// Current settings as a VoiceSettings object
+    /// Current settings as a VoiceSettings object (for API requests)
     var currentSettings: VoiceSettings {
         VoiceSettings(
-            voiceId: selectedVoiceId,
             stability: stability,
             similarityBoost: similarityBoost,
             style: style,
@@ -78,14 +77,7 @@ class VoiceSettingsViewModel: ObservableObject {
         // Simulated API response for now
         // In production, this would call the API
         await MainActor.run {
-            voices = [
-                Voice(id: "pMsXgVXv3BLzUgSXRplE", name: "Rachel", category: "premade", description: "Calm and friendly female voice", previewUrl: nil),
-                Voice(id: "21m00Tcm4TlvDq8ikWAM", name: "Adam", category: "premade", description: "Deep and clear male voice", previewUrl: nil),
-                Voice(id: "AZnzlk1XvdvUeBnXmlld", name: "Domi", category: "premade", description: "Energetic female voice", previewUrl: nil),
-                Voice(id: "EXAVITQu4vr4xnSDxMaL", name: "Bella", category: "premade", description: "Soft and gentle female voice", previewUrl: nil),
-                Voice(id: "ErXwobaYiN019PkySvjV", name: "Antoni", category: "premade", description: "Warm male voice with slight accent", previewUrl: nil),
-                Voice(id: "MF3mGyEYCl7XYWbV9V6O", name: "Elli", category: "premade", description: "Young female voice", previewUrl: nil)
-            ]
+            voices = Self.mockVoices
             isLoadingVoices = false
         }
     }
@@ -125,14 +117,21 @@ class VoiceSettingsViewModel: ObservableObject {
 
     private func setupAutoSave() {
         // Debounce changes and auto-save after 1 second of no changes
-        Publishers.MergeMany(
-            $selectedVoiceId.map { _ in () },
-            $stability.map { _ in () },
-            $similarityBoost.map { _ in () },
-            $style.map { _ in () },
-            $speed.map { _ in () },
-            $useSpeakerBoost.map { _ in () }
-        )
+        let voiceIdPublisher = $selectedVoiceId.map { _ in () }.eraseToAnyPublisher()
+        let stabilityPublisher = $stability.map { _ in () }.eraseToAnyPublisher()
+        let similarityPublisher = $similarityBoost.map { _ in () }.eraseToAnyPublisher()
+        let stylePublisher = $style.map { _ in () }.eraseToAnyPublisher()
+        let speedPublisher = $speed.map { _ in () }.eraseToAnyPublisher()
+        let boostPublisher = $useSpeakerBoost.map { _ in () }.eraseToAnyPublisher()
+
+        Publishers.MergeMany([
+            voiceIdPublisher,
+            stabilityPublisher,
+            similarityPublisher,
+            stylePublisher,
+            speedPublisher,
+            boostPublisher
+        ])
         .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
         .sink { [weak self] _ in
             self?.autoSaveTask?.cancel()
@@ -142,6 +141,34 @@ class VoiceSettingsViewModel: ObservableObject {
         }
         .store(in: &cancellables)
     }
+
+    // MARK: - Mock Data
+
+    private static let mockVoices: [Voice] = {
+        // Create mock Voice data using a simple struct that matches the expected shape
+        // Voice from APIModels requires decoding, so we'll use a workaround
+        let voiceData: [(voiceId: String, name: String, category: String, description: String)] = [
+            ("pMsXgVXv3BLzUgSXRplE", "Rachel", "premade", "Calm and friendly female voice"),
+            ("21m00Tcm4TlvDq8ikWAM", "Adam", "premade", "Deep and clear male voice"),
+            ("AZnzlk1XvdvUeBnXmlld", "Domi", "premade", "Energetic female voice"),
+            ("EXAVITQu4vr4xnSDxMaL", "Bella", "premade", "Soft and gentle female voice"),
+            ("ErXwobaYiN019PkySvjV", "Antoni", "premade", "Warm male voice with slight accent"),
+            ("MF3mGyEYCl7XYWbV9V6O", "Elli", "premade", "Young female voice")
+        ]
+
+        return voiceData.compactMap { data -> Voice? in
+            let json = """
+            {
+                "voiceId": "\(data.voiceId)",
+                "name": "\(data.name)",
+                "category": "\(data.category)",
+                "description": "\(data.description)"
+            }
+            """
+            guard let jsonData = json.data(using: .utf8) else { return nil }
+            return try? JSONDecoder().decode(Voice.self, from: jsonData)
+        }
+    }()
 }
 
 // MARK: - Default Values

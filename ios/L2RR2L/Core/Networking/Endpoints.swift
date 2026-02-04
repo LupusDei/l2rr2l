@@ -281,73 +281,7 @@ public enum OnboardingEndpoints {
 }
 
 // MARK: - Request Types
-
-public struct RegisterRequest: Encodable {
-    public let email: String
-    public let password: String
-    public let name: String
-}
-
-public struct LoginRequest: Encodable {
-    public let email: String
-    public let password: String
-}
-
-public struct CreateChildRequest: Encodable {
-    public let name: String
-    public let age: Int?
-    public let sex: String?
-    public let avatar: String?
-    public let gradeLevel: String?
-    public let learningStyle: String?
-    public let interests: [String]?
-
-    public init(
-        name: String,
-        age: Int? = nil,
-        sex: String? = nil,
-        avatar: String? = nil,
-        gradeLevel: String? = nil,
-        learningStyle: String? = nil,
-        interests: [String]? = nil
-    ) {
-        self.name = name
-        self.age = age
-        self.sex = sex
-        self.avatar = avatar
-        self.gradeLevel = gradeLevel
-        self.learningStyle = learningStyle
-        self.interests = interests
-    }
-}
-
-public struct UpdateChildRequest: Encodable {
-    public let name: String?
-    public let age: Int?
-    public let sex: String?
-    public let avatar: String?
-    public let gradeLevel: String?
-    public let learningStyle: String?
-    public let interests: [String]?
-
-    public init(
-        name: String? = nil,
-        age: Int? = nil,
-        sex: String? = nil,
-        avatar: String? = nil,
-        gradeLevel: String? = nil,
-        learningStyle: String? = nil,
-        interests: [String]? = nil
-    ) {
-        self.name = name
-        self.age = age
-        self.sex = sex
-        self.avatar = avatar
-        self.gradeLevel = gradeLevel
-        self.learningStyle = learningStyle
-        self.interests = interests
-    }
-}
+// Note: RegisterRequest, LoginRequest, CreateChildRequest, UpdateChildRequest are defined in APIModels.swift
 
 public struct RateLessonRequest: Encodable {
     public let rating: Int

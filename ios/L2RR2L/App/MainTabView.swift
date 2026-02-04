@@ -165,28 +165,37 @@ struct GameDetailView: View {
         case .rhyme:
             RhymeGameView()
                 .navigationBarHidden(true)
-        default:
-            placeholderView
+        case .phonics:
+            PhonicsGameView()
+                .navigationBarHidden(true)
+        case .memory:
+            MemoryGameView()
+                .navigationBarHidden(true)
+        case .wordBuilder:
+            WordBuilderView()
+                .navigationBarHidden(true)
+        case .readAloud:
+            readAloudPlaceholder
         }
     }
 
-    private var placeholderView: some View {
+    private var readAloudPlaceholder: some View {
         VStack(spacing: L2RTheme.Spacing.lg) {
-            Image(systemName: "gamecontroller.fill")
+            Image(systemName: "speaker.wave.3.fill")
                 .font(.system(size: 80))
                 .foregroundStyle(L2RTheme.primary)
 
-            Text(gameType.rawValue.capitalized)
+            Text("Read Aloud")
                 .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title1, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
-            Text("Game coming soon!")
+            Text("Coming soon!")
                 .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(L2RTheme.background)
-        .navigationTitle(gameType.rawValue.capitalized)
+        .navigationTitle("Read Aloud")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

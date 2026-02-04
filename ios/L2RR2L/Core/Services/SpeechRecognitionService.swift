@@ -95,7 +95,7 @@ final class SpeechRecognitionService: ObservableObject {
     /// Starts recording and transcribing speech.
     /// - Throws: `SpeechRecognitionError` if recording cannot be started
     func startRecording() async throws {
-        guard isAuthorized else {
+        if !isAuthorized {
             let authorized = await requestAuthorization()
             guard authorized else {
                 throw error ?? .speechRecognitionNotAuthorized

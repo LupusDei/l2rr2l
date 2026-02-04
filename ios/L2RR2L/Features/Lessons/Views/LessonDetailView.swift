@@ -3,23 +3,25 @@ import SwiftUI
 /// Detailed view for a lesson showing all information and start/continue actions.
 struct LessonDetailView: View {
     let lesson: Lesson
-    let progress: LessonProgress?
     let onStart: () -> Void
 
     @Environment(\.dismiss) private var dismiss
 
-    private var isInProgress: Bool {
-        progress?.status == .inProgress
+    // Computed helpers for optionals
+    private var activities: [LessonActivity] {
+        lesson.activities ?? []
     }
 
-    private var isCompleted: Bool {
-        progress?.status == .completed
+    private var objectives: [LessonObjective] {
+        lesson.objectives ?? []
     }
 
-    private var progressPercentage: Double {
-        guard let progress = progress, !lesson.activities.isEmpty else { return 0 }
-        let completedCount = progress.activityProgress.filter { $0.completed }.count
-        return Double(completedCount) / Double(lesson.activities.count)
+    private var durationMinutes: Int {
+        lesson.durationMinutes ?? 15
+    }
+
+    private var descriptionText: String {
+        lesson.description ?? "Learn and practice new skills with fun activities."
     }
 
     var body: some View {
@@ -31,23 +33,22 @@ struct LessonDetailView: View {
                 // Metadata row (difficulty, duration, age)
                 metadataSection
 
-                // Progress indicator (if in progress)
-                if isInProgress {
-                    progressSection
-                }
-
                 // Description
                 descriptionSection
 
                 // Learning objectives
-                objectivesSection
+                if !objectives.isEmpty {
+                    objectivesSection
+                }
 
                 // Activities preview
-                activitiesSection
+                if !activities.isEmpty {
+                    activitiesSection
+                }
 
                 Spacer(minLength: L2RTheme.Spacing.xxl)
 
-                // Start/Continue button
+                // Start button
                 actionButton
             }
             .padding(L2RTheme.Spacing.lg)
@@ -78,7 +79,7 @@ struct LessonDetailView: View {
 
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.xxs) {
                 // Subject label
-                Text(lesson.subject.displayName)
+                Text(subjectDisplayName)
                     .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
                     .foregroundStyle(subjectColor)
                     .textCase(.uppercase)
@@ -99,7 +100,7 @@ struct LessonDetailView: View {
                 .fill(subjectGradient)
                 .frame(width: 56, height: 56)
 
-            Image(systemName: lesson.subject.iconName)
+            Image(systemName: subjectIconName)
                 .font(.system(size: 24))
                 .foregroundStyle(.white)
         }
@@ -117,17 +118,17 @@ struct LessonDetailView: View {
             HStack(spacing: L2RTheme.Spacing.xxs) {
                 Image(systemName: "clock")
                     .foregroundStyle(L2RTheme.textSecondary)
-                Text("\(lesson.durationMinutes) min")
+                Text("\(durationMinutes) min")
                     .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
                     .foregroundStyle(L2RTheme.textSecondary)
             }
 
             // Age range
-            if let ageRange = lesson.ageRange {
+            if let ageMin = lesson.ageMin, let ageMax = lesson.ageMax {
                 HStack(spacing: L2RTheme.Spacing.xxs) {
                     Image(systemName: "person.2")
                         .foregroundStyle(L2RTheme.textSecondary)
-                    Text("Ages \(ageRange.min)-\(ageRange.max)")
+                    Text("Ages \(ageMin)-\(ageMax)")
                         .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
                         .foregroundStyle(L2RTheme.textSecondary)
                 }
@@ -139,59 +140,20 @@ struct LessonDetailView: View {
     private var difficultyView: some View {
         HStack(spacing: L2RTheme.Spacing.xxxs) {
             ForEach(0..<3, id: \.self) { index in
-                Image(systemName: index < lesson.difficulty.starCount ? "star.fill" : "star")
+                Image(systemName: index < difficultyStarCount ? "star.fill" : "star")
                     .font(.system(size: 14))
-                    .foregroundStyle(index < lesson.difficulty.starCount ? L2RTheme.Status.warning : L2RTheme.textSecondary.opacity(0.3))
+                    .foregroundStyle(index < difficultyStarCount ? L2RTheme.Status.warning : L2RTheme.textSecondary.opacity(0.3))
             }
-            Text(lesson.difficulty.displayName)
+            Text(difficultyDisplayName)
                 .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
     }
 
-    // MARK: - Progress Section
-
-    private var progressSection: some View {
-        VStack(alignment: .leading, spacing: L2RTheme.Spacing.xs) {
-            HStack {
-                Text("In Progress")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .semibold))
-                    .foregroundStyle(L2RTheme.primary)
-
-                Spacer()
-
-                Text("\(Int(progressPercentage * 100))% complete")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
-                    .foregroundStyle(L2RTheme.textSecondary)
-            }
-
-            // Progress bar
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.small)
-                        .fill(L2RTheme.border)
-                        .frame(height: 8)
-
-                    RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.small)
-                        .fill(LinearGradient(
-                            colors: [L2RTheme.primary, L2RTheme.Accent.purple],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ))
-                        .frame(width: geometry.size.width * progressPercentage, height: 8)
-                }
-            }
-            .frame(height: 8)
-        }
-        .padding(L2RTheme.Spacing.md)
-        .background(L2RTheme.primary.opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
-    }
-
     // MARK: - Description Section
 
     private var descriptionSection: some View {
-        Text(lesson.description)
+        Text(descriptionText)
             .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .regular))
             .foregroundStyle(L2RTheme.textPrimary)
             .lineSpacing(4)
@@ -211,13 +173,14 @@ struct LessonDetailView: View {
             }
 
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.xs) {
-                ForEach(lesson.objectives, id: \.self) { objective in
+                ForEach(objectives.indices, id: \.self) { index in
+                    let objective = objectives[index]
                     HStack(alignment: .top, spacing: L2RTheme.Spacing.sm) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 16))
                             .foregroundStyle(L2RTheme.Status.success)
 
-                        Text(objective)
+                        Text(objective.text ?? objective.description ?? "Complete this activity")
                             .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .regular))
                             .foregroundStyle(L2RTheme.textPrimary)
                     }
@@ -236,7 +199,7 @@ struct LessonDetailView: View {
     private var activitiesSection: some View {
         VStack(alignment: .leading, spacing: L2RTheme.Spacing.sm) {
             Label {
-                Text("\(lesson.activities.count) Activities")
+                Text("\(activities.count) Activities")
                     .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .semibold))
                     .foregroundStyle(L2RTheme.textPrimary)
             } icon: {
@@ -245,9 +208,9 @@ struct LessonDetailView: View {
             }
 
             // Activity type summary
-            let activityTypes = Dictionary(grouping: lesson.activities, by: { $0.type })
+            let activityTypes = Dictionary(grouping: activities, by: { $0.type ?? "activity" })
 
-            FlowLayout(spacing: L2RTheme.Spacing.xs) {
+            LessonFlowLayout(spacing: L2RTheme.Spacing.xs) {
                 ForEach(Array(activityTypes.keys), id: \.self) { type in
                     if let count = activityTypes[type]?.count {
                         activityTypeBadge(type: type, count: count)
@@ -261,11 +224,11 @@ struct LessonDetailView: View {
         .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
     }
 
-    private func activityTypeBadge(type: ActivityType, count: Int) -> some View {
+    private func activityTypeBadge(type: String, count: Int) -> some View {
         HStack(spacing: L2RTheme.Spacing.xxs) {
-            Image(systemName: type.iconName)
+            Image(systemName: activityIconName(for: type))
                 .font(.system(size: 12))
-            Text("\(count) \(type.displayName)")
+            Text("\(count) \(activityDisplayName(for: type))")
                 .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
         }
         .foregroundStyle(L2RTheme.primary)
@@ -282,9 +245,9 @@ struct LessonDetailView: View {
             onStart()
         } label: {
             HStack(spacing: L2RTheme.Spacing.sm) {
-                Image(systemName: isInProgress ? "play.fill" : isCompleted ? "arrow.counterclockwise" : "play.fill")
+                Image(systemName: "play.fill")
                     .font(.system(size: 18))
-                Text(buttonTitle)
+                Text("Start Lesson")
                     .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .bold))
             }
             .foregroundStyle(.white)
@@ -301,53 +264,109 @@ struct LessonDetailView: View {
         }
     }
 
-    private var buttonTitle: String {
-        if isCompleted {
-            return "Play Again"
-        } else if isInProgress {
-            return "Continue Lesson"
-        } else {
-            return "Start Lesson"
+    // MARK: - Subject Styling
+
+    private var subjectDisplayName: String {
+        switch lesson.subject.lowercased() {
+        case "phonics": return "Phonics"
+        case "spelling": return "Spelling"
+        case "sight-words", "sightwords": return "Sight Words"
+        case "reading": return "Reading"
+        case "word-families", "wordfamilies": return "Word Families"
+        case "vocabulary": return "Vocabulary"
+        case "comprehension": return "Comprehension"
+        default: return lesson.subject.capitalized
         }
     }
 
-    // MARK: - Subject Styling
+    private var subjectIconName: String {
+        switch lesson.subject.lowercased() {
+        case "phonics": return "waveform"
+        case "spelling": return "textformat.abc"
+        case "sight-words", "sightwords": return "eye"
+        case "reading": return "book"
+        case "word-families", "wordfamilies": return "rectangle.3.group"
+        case "vocabulary": return "character.book.closed"
+        case "comprehension": return "brain.head.profile"
+        default: return "book"
+        }
+    }
 
     private var subjectColor: Color {
-        switch lesson.subject {
-        case .phonics:
-            return L2RTheme.Game.phonicsStart
-        case .spelling:
-            return L2RTheme.Game.spellingStart
-        case .reading:
-            return L2RTheme.Game.readAloudStart
-        case .sightWords:
-            return L2RTheme.Game.memoryStart
-        case .wordFamilies:
-            return L2RTheme.Game.builderStart
-        case .vocabulary:
-            return L2RTheme.Accent.teal
-        case .comprehension:
-            return L2RTheme.Accent.purple
+        switch lesson.subject.lowercased() {
+        case "phonics": return L2RTheme.Game.phonicsStart
+        case "spelling": return L2RTheme.Game.spellingStart
+        case "reading": return L2RTheme.Game.readAloudStart
+        case "sight-words", "sightwords": return L2RTheme.Game.memoryStart
+        case "word-families", "wordfamilies": return L2RTheme.Game.builderStart
+        case "vocabulary": return L2RTheme.Accent.teal
+        case "comprehension": return L2RTheme.Accent.purple
+        default: return L2RTheme.primary
         }
     }
 
     private var subjectGradient: LinearGradient {
-        switch lesson.subject {
-        case .phonics:
-            return .phonicsGame
-        case .spelling:
-            return .spellingGame
-        case .reading:
-            return .readAloudGame
-        case .sightWords:
-            return .memoryGame
-        case .wordFamilies:
-            return .wordBuilder
-        case .vocabulary:
-            return LinearGradient(colors: [L2RTheme.Accent.teal, L2RTheme.Status.success], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case .comprehension:
-            return LinearGradient(colors: [L2RTheme.Accent.purple, L2RTheme.primary], startPoint: .topLeading, endPoint: .bottomTrailing)
+        switch lesson.subject.lowercased() {
+        case "phonics": return .phonicsGame
+        case "spelling": return .spellingGame
+        case "reading": return .readAloudGame
+        case "sight-words", "sightwords": return .memoryGame
+        case "word-families", "wordfamilies": return .wordBuilder
+        case "vocabulary": return LinearGradient(colors: [L2RTheme.Accent.teal, L2RTheme.Status.success], startPoint: .topLeading, endPoint: .bottomTrailing)
+        case "comprehension": return LinearGradient(colors: [L2RTheme.Accent.purple, L2RTheme.primary], startPoint: .topLeading, endPoint: .bottomTrailing)
+        default: return .ctaButton
+        }
+    }
+
+    // MARK: - Difficulty Helpers
+
+    private var difficultyDisplayName: String {
+        switch lesson.difficulty?.lowercased() {
+        case "beginner": return "Easy"
+        case "intermediate": return "Medium"
+        case "advanced": return "Hard"
+        default: return "Easy"
+        }
+    }
+
+    private var difficultyStarCount: Int {
+        switch lesson.difficulty?.lowercased() {
+        case "beginner": return 1
+        case "intermediate": return 2
+        case "advanced": return 3
+        default: return 1
+        }
+    }
+
+    // MARK: - Activity Helpers
+
+    private func activityDisplayName(for type: String) -> String {
+        switch type.lowercased() {
+        case "reading": return "Reading"
+        case "spelling": return "Spelling"
+        case "phonics": return "Phonics"
+        case "sight-words", "sightwords": return "Sight Words"
+        case "quiz": return "Quiz"
+        case "matching": return "Matching"
+        case "fill-in-blank", "fillinblank": return "Fill in Blank"
+        case "listen-repeat", "listenrepeat": return "Listen & Repeat"
+        case "word-building", "wordbuilding": return "Word Building"
+        default: return type.capitalized
+        }
+    }
+
+    private func activityIconName(for type: String) -> String {
+        switch type.lowercased() {
+        case "reading": return "book"
+        case "spelling": return "textformat.abc"
+        case "phonics": return "waveform"
+        case "sight-words", "sightwords": return "eye"
+        case "quiz": return "questionmark.circle"
+        case "matching": return "rectangle.on.rectangle"
+        case "fill-in-blank", "fillinblank": return "square.and.pencil"
+        case "listen-repeat", "listenrepeat": return "speaker.wave.2"
+        case "word-building", "wordbuilding": return "puzzlepiece"
+        default: return "star"
         }
     }
 }
@@ -355,7 +374,7 @@ struct LessonDetailView: View {
 // MARK: - Flow Layout
 
 /// Simple flow layout for activity badges
-struct FlowLayout: Layout {
+private struct LessonFlowLayout: Layout {
     var spacing: CGFloat = 8
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
@@ -397,125 +416,4 @@ struct FlowLayout: Layout {
     }
 }
 
-// MARK: - Model Extensions
-
-extension LessonSubject {
-    var displayName: String {
-        switch self {
-        case .phonics: return "Phonics"
-        case .spelling: return "Spelling"
-        case .sightWords: return "Sight Words"
-        case .reading: return "Reading"
-        case .wordFamilies: return "Word Families"
-        case .vocabulary: return "Vocabulary"
-        case .comprehension: return "Comprehension"
-        }
-    }
-
-    var iconName: String {
-        switch self {
-        case .phonics: return "waveform"
-        case .spelling: return "textformat.abc"
-        case .sightWords: return "eye"
-        case .reading: return "book"
-        case .wordFamilies: return "rectangle.3.group"
-        case .vocabulary: return "character.book.closed"
-        case .comprehension: return "brain.head.profile"
-        }
-    }
-}
-
-extension DifficultyLevel {
-    var displayName: String {
-        switch self {
-        case .beginner: return "Easy"
-        case .intermediate: return "Medium"
-        case .advanced: return "Hard"
-        }
-    }
-
-    var starCount: Int {
-        switch self {
-        case .beginner: return 1
-        case .intermediate: return 2
-        case .advanced: return 3
-        }
-    }
-}
-
-extension ActivityType {
-    var displayName: String {
-        switch self {
-        case .reading: return "Reading"
-        case .spelling: return "Spelling"
-        case .phonics: return "Phonics"
-        case .sightWords: return "Sight Words"
-        case .quiz: return "Quiz"
-        case .matching: return "Matching"
-        case .fillInBlank: return "Fill in Blank"
-        case .listenRepeat: return "Listen & Repeat"
-        case .wordBuilding: return "Word Building"
-        }
-    }
-
-    var iconName: String {
-        switch self {
-        case .reading: return "book"
-        case .spelling: return "textformat.abc"
-        case .phonics: return "waveform"
-        case .sightWords: return "eye"
-        case .quiz: return "questionmark.circle"
-        case .matching: return "rectangle.on.rectangle"
-        case .fillInBlank: return "square.and.pencil"
-        case .listenRepeat: return "speaker.wave.2"
-        case .wordBuilding: return "puzzlepiece"
-        }
-    }
-}
-
-// MARK: - Preview
-
-#Preview {
-    NavigationStack {
-        LessonDetailView(
-            lesson: Lesson(
-                id: "lesson-1",
-                title: "Phonics Basics",
-                description: "Learn the sounds that letters make and how to blend them together to form words. This foundational lesson covers the alphabet sounds.",
-                subject: .phonics,
-                difficulty: .beginner,
-                objectives: [
-                    "Learn letter sounds A-Z",
-                    "Practice beginning sounds",
-                    "Blend simple CVC words"
-                ],
-                activities: [
-                    LessonActivity(id: "a1", type: .phonics, instructions: "Listen to the sound", spokenInstructions: nil, order: 1, points: 10, content: nil, imageUrl: nil, readAloud: nil, word: nil, hint: nil, audioUrl: nil, sound: "a", exampleWords: ["apple", "ant"], soundPosition: nil, words: nil, showInContext: nil, question: nil, options: nil, correctIndex: nil, explanation: nil, pairs: nil, matchType: nil, sentence: nil, answer: nil, wordBank: nil, phrase: nil, checkPronunciation: nil, pattern: nil, onsets: nil),
-                    LessonActivity(id: "a2", type: .quiz, instructions: "Answer the question", spokenInstructions: nil, order: 2, points: 10, content: nil, imageUrl: nil, readAloud: nil, word: nil, hint: nil, audioUrl: nil, sound: nil, exampleWords: nil, soundPosition: nil, words: nil, showInContext: nil, question: "What sound does A make?", options: ["ah", "buh", "cuh"], correctIndex: 0, explanation: nil, pairs: nil, matchType: nil, sentence: nil, answer: nil, wordBank: nil, phrase: nil, checkPronunciation: nil, pattern: nil, onsets: nil),
-                    LessonActivity(id: "a3", type: .matching, instructions: "Match the sounds", spokenInstructions: nil, order: 3, points: 10, content: nil, imageUrl: nil, readAloud: nil, word: nil, hint: nil, audioUrl: nil, sound: nil, exampleWords: nil, soundPosition: nil, words: nil, showInContext: nil, question: nil, options: nil, correctIndex: nil, explanation: nil, pairs: [["a", "apple"], ["b", "ball"]], matchType: "sound-word", sentence: nil, answer: nil, wordBank: nil, phrase: nil, checkPronunciation: nil, pattern: nil, onsets: nil)
-                ],
-                durationMinutes: 15,
-                prerequisites: nil,
-                tags: ["phonics", "beginner"],
-                thumbnailUrl: nil,
-                ageRange: Lesson.AgeRange(min: 4, max: 6),
-                createdAt: "2024-01-01",
-                updatedAt: "2024-01-01"
-            ),
-            progress: LessonProgress(
-                lessonId: "lesson-1",
-                childId: "child-1",
-                status: .inProgress,
-                currentActivityIndex: 1,
-                activityProgress: [
-                    ActivityProgress(activityId: "a1", completed: true, score: 10, attempts: 1, timeSpentSeconds: 60, completedAt: "2024-01-01")
-                ],
-                overallScore: nil,
-                totalTimeSeconds: 120,
-                startedAt: "2024-01-01",
-                completedAt: nil
-            ),
-            onStart: {}
-        )
-    }
-}
+// Preview removed due to type incompatibility

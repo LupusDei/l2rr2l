@@ -48,7 +48,7 @@ final class HapticService {
     // MARK: - Selection Feedback
 
     /// Light tap feedback for button presses and selections
-    func selection() {
+    func selectionFeedback() {
         guard isEnabled else { return }
         selection.selectionChanged()
     }
@@ -120,7 +120,7 @@ final class HapticService {
 extension HapticService {
     /// Feedback for tapping a button
     func buttonTap() {
-        selection()
+        selectionFeedback()
     }
 
     /// Feedback for flipping a card

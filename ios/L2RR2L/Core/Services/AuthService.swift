@@ -56,7 +56,7 @@ final class AuthService: ObservableObject {
             // Ignore keychain errors on logout
         }
 
-        apiClient.authToken = nil
+        await apiClient.setAuthToken(nil)
         currentUser = nil
         isAuthenticated = false
     }
@@ -71,7 +71,7 @@ final class AuthService: ObservableObject {
             return
         }
 
-        apiClient.authToken = token
+        await apiClient.setAuthToken(token)
 
         do {
             let response: UserResponse = try await apiClient.get("/auth/me", requiresAuth: true)
@@ -96,7 +96,7 @@ final class AuthService: ObservableObject {
 
     private func saveToken(_ token: String) async throws {
         try await keychain.save(token, for: .authToken)
-        apiClient.authToken = token
+        await apiClient.setAuthToken(token)
     }
 }
 
@@ -119,6 +119,4 @@ enum AuthError: Error, LocalizedError {
     }
 }
 
-private struct UserResponse: Decodable {
-    let user: User
-}
+// UserResponse is defined in APIModels.swift

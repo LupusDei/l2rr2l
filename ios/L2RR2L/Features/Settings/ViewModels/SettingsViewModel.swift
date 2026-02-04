@@ -24,7 +24,7 @@ class SettingsViewModel: ObservableObject {
         didSet {
             HapticService.shared.isEnabled = hapticsEnabled
             if hapticsEnabled {
-                HapticService.shared.selection()
+                HapticService.shared.selectionFeedback()
             }
         }
     }
@@ -94,12 +94,7 @@ class SettingsViewModel: ObservableObject {
             selectedVoice = voices.first { $0.id == voiceService.settings.voiceId }
         } catch {
             // Use default voices if API fails
-            voices = [
-                Voice(id: "pMsXgVXv3BLzUgSXRplE", name: "Rachel", category: "premade", description: "Calm and friendly female voice", previewUrl: nil),
-                Voice(id: "21m00Tcm4TlvDq8ikWAM", name: "Adam", category: "premade", description: "Deep and clear male voice", previewUrl: nil),
-                Voice(id: "AZnzlk1XvdvUeBnXmlld", name: "Domi", category: "premade", description: "Energetic female voice", previewUrl: nil),
-                Voice(id: "EXAVITQu4vr4xnSDxMaL", name: "Bella", category: "premade", description: "Soft and gentle female voice", previewUrl: nil)
-            ]
+            voices = Self.defaultVoices
             selectedVoice = voices.first { $0.id == voiceService.settings.voiceId }
         }
 
@@ -125,6 +120,32 @@ class SettingsViewModel: ObservableObject {
 
     /// Logout the current user
     func logout() {
-        authService.logout()
+        Task {
+            await authService.logout()
+        }
     }
+
+    // MARK: - Private Helpers
+
+    private static let defaultVoices: [Voice] = {
+        let voiceData: [(voiceId: String, name: String, category: String, description: String)] = [
+            ("pMsXgVXv3BLzUgSXRplE", "Rachel", "premade", "Calm and friendly female voice"),
+            ("21m00Tcm4TlvDq8ikWAM", "Adam", "premade", "Deep and clear male voice"),
+            ("AZnzlk1XvdvUeBnXmlld", "Domi", "premade", "Energetic female voice"),
+            ("EXAVITQu4vr4xnSDxMaL", "Bella", "premade", "Soft and gentle female voice")
+        ]
+
+        return voiceData.compactMap { data -> Voice? in
+            let json = """
+            {
+                "voiceId": "\(data.voiceId)",
+                "name": "\(data.name)",
+                "category": "\(data.category)",
+                "description": "\(data.description)"
+            }
+            """
+            guard let jsonData = json.data(using: .utf8) else { return nil }
+            return try? JSONDecoder().decode(Voice.self, from: jsonData)
+        }
+    }()
 }

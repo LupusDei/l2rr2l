@@ -26,7 +26,7 @@ final class ProgressService: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let response: ProgressResponse = try await apiClient.request(
+            let response: LocalProgressResponse = try await apiClient.request(
                 ProgressEndpoints.startLesson(childId: childId, lessonId: lessonId)
             )
             let progress = response.progress
@@ -51,7 +51,7 @@ final class ProgressService: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let response: ProgressResponse = try await apiClient.request(
+            let response: LocalProgressResponse = try await apiClient.request(
                 ProgressEndpoints.update(
                     childId: childId,
                     lessonId: lessonId,
@@ -93,7 +93,7 @@ final class ProgressService: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let response: ProgressResponse = try await apiClient.request(
+            let response: LocalProgressResponse = try await apiClient.request(
                 ProgressEndpoints.completeLesson(childId: childId, lessonId: lessonId, score: score, timeSpent: timeSpent)
             )
             updateCache(response.progress)
@@ -123,7 +123,7 @@ final class ProgressService: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let response: ProgressResponse = try await apiClient.request(
+            let response: LocalProgressResponse = try await apiClient.request(
                 ProgressEndpoints.forLesson(childId: childId, lessonId: lessonId)
             )
             updateCache(response.progress)
@@ -145,7 +145,7 @@ final class ProgressService: ObservableObject {
         error = nil
         defer { isLoading = false }
 
-        let response: StatsResponse = try await apiClient.request(
+        let response: LocalStatsResponse = try await apiClient.request(
             ProgressEndpoints.stats(childId: childId)
         )
         self.stats = response.stats
@@ -157,7 +157,7 @@ final class ProgressService: ObservableObject {
         error = nil
         defer { isLoading = false }
 
-        let response: ProgressListResponse = try await apiClient.request(
+        let response: LocalProgressListResponse = try await apiClient.request(
             ProgressEndpoints.forChild(childId: childId)
         )
 
@@ -184,7 +184,7 @@ final class ProgressService: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let response: ProgressResponse = try await apiClient.request(
+            let response: LocalProgressResponse = try await apiClient.request(
                 ProgressEndpoints.saveActivity(
                     childId: childId,
                     lessonId: lessonId,
@@ -228,7 +228,7 @@ final class ProgressService: ObservableObject {
                 case .start(let childId, let lessonId):
                     _ = try await apiClient.request(
                         ProgressEndpoints.startLesson(childId: childId, lessonId: lessonId)
-                    ) as ProgressResponse
+                    ) as LocalProgressResponse
 
                 case .update(let childId, let lessonId, let status, let score, let timeSpent):
                     _ = try await apiClient.request(
@@ -239,12 +239,12 @@ final class ProgressService: ObservableObject {
                             score: score,
                             timeSpent: timeSpent
                         )
-                    ) as ProgressResponse
+                    ) as LocalProgressResponse
 
                 case .complete(let childId, let lessonId, let score, let timeSpent):
                     _ = try await apiClient.request(
                         ProgressEndpoints.completeLesson(childId: childId, lessonId: lessonId, score: score, timeSpent: timeSpent)
-                    ) as ProgressResponse
+                    ) as LocalProgressResponse
 
                 case .activity(let childId, let lessonId, let activityId, let completed, let score, let attempts, let timeSpentSeconds, let currentActivityIndex):
                     _ = try await apiClient.request(
@@ -258,7 +258,7 @@ final class ProgressService: ObservableObject {
                             timeSpentSeconds: timeSpentSeconds,
                             currentActivityIndex: currentActivityIndex
                         )
-                    ) as ProgressResponse
+                    ) as LocalProgressResponse
                 }
             } catch {
                 if isNetworkError(error) {
@@ -369,16 +369,19 @@ final class ProgressService: ObservableObject {
 }
 
 // MARK: - Response Types
+// Using types from APIModels.swift
 
-private struct ProgressResponse: Decodable {
+// MARK: - Local Response Wrappers
+
+private struct LocalProgressResponse: Decodable {
     let progress: LessonProgress
 }
 
-private struct ProgressListResponse: Decodable {
+private struct LocalProgressListResponse: Decodable {
     let progress: [LessonProgress]
 }
 
-private struct StatsResponse: Decodable {
+private struct LocalStatsResponse: Decodable {
     let stats: LearningStats
 }
 

@@ -7,7 +7,6 @@ struct LessonDetailContainerView: View {
 
     @ObservedObject var router = NavigationRouter.shared
     @State private var lesson: Lesson?
-    @State private var progress: LessonProgress?
     @State private var isLoading = true
     @State private var errorMessage: String?
 
@@ -18,7 +17,6 @@ struct LessonDetailContainerView: View {
             } else if let lesson = lesson {
                 LessonDetailView(
                     lesson: lesson,
-                    progress: progress,
                     onStart: {
                         startLesson()
                     }
@@ -87,45 +85,23 @@ struct LessonDetailContainerView: View {
         isLoading = true
         errorMessage = nil
 
-        // First try to load from cache
+        // Try to load from cache
         if let cachedLesson = await LessonCacheService.shared.getCachedLesson(id: lessonId) {
             lesson = cachedLesson
-            progress = SampleLessons.progress(for: lessonId)
             isLoading = false
             return
         }
 
-        // Fall back to sample data for development
-        if let sampleLesson = SampleLessons.lesson(for: lessonId) {
-            lesson = sampleLesson
-            progress = SampleLessons.progress(for: lessonId)
+        // Try to fetch from API
+        do {
+            let endpoint = LessonsEndpoints.get(id: lessonId)
+            let response: LessonResponse = try await APIClient.shared.request(endpoint)
+            lesson = response.lesson
             isLoading = false
-            return
-        }
-
-        // Try to parse lesson ID as index (e.g., "lesson-3" -> index 3)
-        if let index = extractLessonIndex(from: lessonId),
-           let sampleLesson = SampleLessons.lesson(at: index) {
-            lesson = sampleLesson
-            progress = SampleLessons.progress(for: sampleLesson.id)
+        } catch {
+            errorMessage = "Could not find lesson with ID: \(lessonId)"
             isLoading = false
-            return
         }
-
-        // Lesson not found
-        errorMessage = "Could not find lesson with ID: \(lessonId)"
-        isLoading = false
-    }
-
-    private func extractLessonIndex(from id: String) -> Int? {
-        // Handle formats like "lesson-1", "lesson-2", etc.
-        let components = id.split(separator: "-")
-        if components.count >= 2,
-           let lastComponent = components.last,
-           let index = Int(lastComponent) {
-            return index
-        }
-        return nil
     }
 
     // MARK: - Actions
@@ -139,18 +115,6 @@ struct LessonDetailContainerView: View {
 #Preview("Loading") {
     NavigationStack {
         LessonDetailContainerView(lessonId: "loading-test")
-    }
-}
-
-#Preview("Lesson Found") {
-    NavigationStack {
-        LessonDetailContainerView(lessonId: "lesson-1")
-    }
-}
-
-#Preview("In Progress") {
-    NavigationStack {
-        LessonDetailContainerView(lessonId: "lesson-1")
     }
 }
 

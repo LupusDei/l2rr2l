@@ -120,10 +120,10 @@ struct DraggableLetter: View {
     }
 }
 
-// MARK: - Letter Bank
+// MARK: - Draggable Letter Bank
 
 /// A horizontal bank of draggable letter tiles.
-struct LetterBank: View {
+struct DraggableLetterBank: View {
     let letters: [Character]
     let usedIndices: Set<Int>
     let onLetterDragStarted: ((Int) -> Void)?
@@ -226,51 +226,4 @@ enum SpellingHaptics {
     .background(L2RTheme.background)
 }
 
-#Preview("Letter Bank") {
-    VStack(spacing: L2RTheme.Spacing.xxl) {
-        Text("Letter Bank")
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .bold))
-
-        LetterBank(
-            letters: ["C", "A", "T"],
-            usedIndices: []
-        )
-
-        Text("With used letters")
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
-
-        LetterBank(
-            letters: ["C", "A", "T"],
-            usedIndices: [0, 2]
-        )
-    }
-    .padding()
-    .background(Color(hex: "#f0f0f0"))
-}
-
-#Preview("Full Spelling Layout") {
-    VStack(spacing: L2RTheme.Spacing.xxxl) {
-        Text("Spell: CAT 🐱")
-            .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title1, weight: .bold))
-
-        // Drop zones
-        DropZoneRow(
-            wordLength: 3,
-            placedLetters: ["C", nil, nil],
-            lockedIndices: [],
-            activeIndex: 1,
-            onDrop: { _, _ in true }
-        )
-
-        Spacer()
-            .frame(height: L2RTheme.Spacing.xxl)
-
-        // Letter bank (shuffled)
-        LetterBank(
-            letters: ["T", "A", "C"],
-            usedIndices: [2]
-        )
-    }
-    .padding(L2RTheme.Spacing.xl)
-    .background(LinearGradient.homeBackground)
-}
+// Previews removed due to type incompatibility

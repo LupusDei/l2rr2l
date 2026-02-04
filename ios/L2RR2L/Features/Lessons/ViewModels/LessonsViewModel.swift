@@ -10,8 +10,8 @@ final class LessonsViewModel: BaseViewModel {
     @Published private(set) var isLoadingMore = false
     @Published private(set) var hasMorePages = true
 
-    @Published var selectedSubject: LessonSubject?
-    @Published var selectedDifficulty: DifficultyLevel?
+    @Published var selectedSubject: String?
+    @Published var selectedDifficulty: String?
     @Published var searchQuery = ""
 
     // MARK: - Private Properties
@@ -142,7 +142,7 @@ final class LessonsViewModel: BaseViewModel {
 
         await performAsyncAction { [weak self] in
             guard let self else { return }
-            let response: LessonListResponse = try await self.apiClient.request(
+            let response: LessonsResponse = try await self.apiClient.request(
                 LessonsEndpoints.search(query: query, limit: self.pageSize, offset: 0)
             )
             self.lessons = response.lessons
@@ -172,10 +172,10 @@ final class LessonsViewModel: BaseViewModel {
 
     // MARK: - Private Methods
 
-    private func fetchLessonsFromAPI(offset: Int) async throws -> LessonListResponse {
+    private func fetchLessonsFromAPI(offset: Int) async throws -> LessonsResponse {
         let endpoint = LessonsEndpoints.list(
-            subject: selectedSubject?.rawValue,
-            difficulty: selectedDifficulty?.rawValue,
+            subject: selectedSubject,
+            difficulty: selectedDifficulty,
             limit: pageSize,
             offset: offset
         )

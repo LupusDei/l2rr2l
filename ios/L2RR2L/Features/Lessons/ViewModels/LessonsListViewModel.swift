@@ -8,8 +8,8 @@ final class LessonsListViewModel: BaseViewModel {
 
     @Published var lessons: [Lesson] = []
     @Published var searchText: String = ""
-    @Published var selectedSubject: LessonSubject?
-    @Published var selectedDifficulty: DifficultyLevel?
+    @Published var selectedSubject: String?
+    @Published var selectedDifficulty: String?
     @Published var isRefreshing: Bool = false
 
     // MARK: - Computed Properties
@@ -22,8 +22,7 @@ final class LessonsListViewModel: BaseViewModel {
             let lowercasedSearch = searchText.lowercased()
             result = result.filter { lesson in
                 lesson.title.lowercased().contains(lowercasedSearch) ||
-                lesson.description.lowercased().contains(lowercasedSearch) ||
-                lesson.objectives.contains { $0.lowercased().contains(lowercasedSearch) } ||
+                (lesson.description?.lowercased().contains(lowercasedSearch) ?? false) ||
                 (lesson.tags?.contains { $0.lowercased().contains(lowercasedSearch) } ?? false)
             }
         }
@@ -75,13 +74,13 @@ final class LessonsListViewModel: BaseViewModel {
     func fetchLessons() async {
         await performAsyncAction {
             let endpoint = LessonsEndpoints.list(
-                subject: self.selectedSubject?.rawValue,
-                difficulty: self.selectedDifficulty?.rawValue,
+                subject: self.selectedSubject,
+                difficulty: self.selectedDifficulty,
                 limit: 50,
                 offset: 0
             )
 
-            let response: LessonListResponse = try await APIClient.shared.get(endpoint.path)
+            let response: LessonsResponse = try await APIClient.shared.request(endpoint)
             self.lessons = response.lessons
         }
     }
@@ -100,11 +99,11 @@ final class LessonsListViewModel: BaseViewModel {
         selectedDifficulty = nil
     }
 
-    func setSubject(_ subject: LessonSubject?) {
+    func setSubject(_ subject: String?) {
         selectedSubject = subject
     }
 
-    func setDifficulty(_ difficulty: DifficultyLevel?) {
+    func setDifficulty(_ difficulty: String?) {
         selectedDifficulty = difficulty
     }
 
