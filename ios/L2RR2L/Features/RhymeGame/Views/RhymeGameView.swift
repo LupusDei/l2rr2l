@@ -6,6 +6,8 @@ struct RhymeGameView: View {
     @StateObject private var viewModel = RhymeGameViewModel()
     @Environment(\.dismiss) private var dismiss
 
+    private let voiceService = VoiceService.shared
+
     @State private var showConfetti = false
     @State private var showGameCompleteConfetti = false
 
@@ -47,6 +49,11 @@ struct RhymeGameView: View {
         .onChange(of: viewModel.gameState) { _, state in
             if state == .gameComplete {
                 showGameCompleteConfetti = true
+            }
+        }
+        .onChange(of: viewModel.currentWord?.word) { _, newWord in
+            if let word = newWord {
+                Task { await voiceService.speak(word) }
             }
         }
         .confetti(isActive: $showGameCompleteConfetti, configuration: .gameComplete)
@@ -169,7 +176,9 @@ struct RhymeGameView: View {
 
     private var listenButton: some View {
         Button {
-            viewModel.playTargetWordAudio()
+            if let word = viewModel.currentWord?.word {
+                Task { await voiceService.speak(word) }
+            }
         } label: {
             HStack(spacing: L2RTheme.Spacing.sm) {
                 Image(systemName: "speaker.wave.2.fill")

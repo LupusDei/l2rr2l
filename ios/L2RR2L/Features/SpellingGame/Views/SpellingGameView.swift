@@ -6,6 +6,8 @@ struct SpellingGameView: View {
     @StateObject private var viewModel = SpellingGameViewModel()
     @Environment(\.dismiss) private var dismiss
 
+    private let voiceService = VoiceService.shared
+
     @State private var showConfetti = false
     @State private var showGameCompleteConfetti = false
     @State private var shakeAnswer = false
@@ -53,6 +55,11 @@ struct SpellingGameView: View {
         .onChange(of: viewModel.gameState) { _, state in
             if state == .gameComplete {
                 showGameCompleteConfetti = true
+            }
+        }
+        .onChange(of: viewModel.currentWord?.word) { _, newWord in
+            if let word = newWord {
+                Task { await voiceService.speak(word) }
             }
         }
         .confetti(isActive: $showGameCompleteConfetti, configuration: .gameComplete)

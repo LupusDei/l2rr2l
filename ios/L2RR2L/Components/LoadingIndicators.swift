@@ -219,7 +219,7 @@ struct FullScreenLoader: View {
                 if let message = message {
                     Text(message)
                         .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(L2RTheme.textPrimary)
                         .multilineTextAlignment(.center)
                 }
             }

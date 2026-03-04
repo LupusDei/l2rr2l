@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA0LP10100000000000A0001 /* LessonPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0LP10100000000000F0001 /* LessonPlayerView.swift */; };
+		AA0LP10100000000000A0002 /* LessonPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0LP10100000000000F0002 /* LessonPlayerViewModel.swift */; };
+		AA0LP10100000000000A0003 /* LessonPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0LP10100000000000F0001 /* LessonPlayerView.swift */; };
+		AA0LP10100000000000A0004 /* LessonPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0LP10100000000000F0002 /* LessonPlayerViewModel.swift */; };
 		01768292358AD29F8C4B7E2D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A4D651C4871B78D0207DCB3 /* SettingsView.swift */; };
 		02D3F48BD5EC7B1C19A6E296 /* VoiceSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9471AAFABC9425799DB0A96B /* VoiceSelectorView.swift */; };
 		03D25CA2D4D70931EB3175F7 /* ViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2EC819079B388C982FE2921 /* ViewModelProtocol.swift */; };
@@ -242,6 +246,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AA0LP10100000000000F0001 /* LessonPlayerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LessonPlayerView.swift; sourceTree = "<group>"; };
+		AA0LP10100000000000F0002 /* LessonPlayerViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LessonPlayerViewModel.swift; sourceTree = "<group>"; };
 		01B5263CCC558C944850FC12 /* AuthFlowView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthFlowView.swift; sourceTree = "<group>"; };
 		01C1D8AA6B3DEB79B262644C /* OnboardingCompletionView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnboardingCompletionView.swift; sourceTree = "<group>"; };
 		03C6835E3D24478882AD21F7 /* GamesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GamesView.swift; sourceTree = "<group>"; };
@@ -913,11 +919,22 @@
 			path = MemoryGame;
 			sourceTree = "<group>";
 		};
+		AA0LP10100000000000G0001 /* LessonPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				AA0LP10100000000000F0001 /* LessonPlayerView.swift */,
+				AA0LP10100000000000F0002 /* LessonPlayerViewModel.swift */,
+			);
+			name = LessonPlayer;
+			path = LessonPlayer;
+			sourceTree = "<group>";
+		};
 		76161ED6AD1CB7F239EA528A /* Features */ = {
 			isa = PBXGroup;
 			children = (
 				0CD3BBBE7DD5C17A460E043F /* Auth */,
 				E8D3563CAA86301488A687B2 /* Games */,
+				AA0LP10100000000000G0001 /* LessonPlayer */,
 				0BCF342CC7B80DCEBA10D136 /* Lessons */,
 				4009624B2BC07C2FFD7B1769 /* MemoryGame */,
 				A5B78BBC9C9BC0660975FCF4 /* Onboarding */,
@@ -1075,6 +1092,7 @@
 				A1B2C3DB0000000000000107 /* Auth */,
 				A1B2C3DB0000000000000104 /* Home */,
 				BB4CB1CE2A18DCCE1704B656 /* Games */,
+				AA0LP10100000000000G0001 /* LessonPlayer */,
 				F95929FFB593927D2B589584 /* Lessons */,
 				6F2851F8F15C3B7278FCF674 /* MemoryGame */,
 				B5F33995135C1D73D826E455 /* Onboarding */,
@@ -1958,6 +1976,8 @@
 				647F533AAA85A195A2C64A77 /* LessonDetailContainerView.swift in Sources */,
 				26A783276A2070EA318D2C59 /* LessonDetailView.swift in Sources */,
 				B6D6BC4D2C84B27FC034B370 /* LessonsView.swift in Sources */,
+				AA0LP10100000000000A0001 /* LessonPlayerView.swift in Sources */,
+				AA0LP10100000000000A0002 /* LessonPlayerViewModel.swift in Sources */,
 				354E0C1001093367ED2FEF3A /* SightWordData.swift in Sources */,
 				43E057ED601E7AD7ADBC9AA6 /* MemoryGameViewModel.swift in Sources */,
 				58BDE91AF59F57346BD52AC8 /* FlipCard.swift in Sources */,
@@ -2046,6 +2066,8 @@
 				066F439139953E3CCDC6579E /* LessonDetailContainerView.swift in Sources */,
 				E2A1EE21A770339088368791 /* LessonDetailView.swift in Sources */,
 				63B8163F57B6711130FC2965 /* LessonsView.swift in Sources */,
+				AA0LP10100000000000A0003 /* LessonPlayerView.swift in Sources */,
+				AA0LP10100000000000A0004 /* LessonPlayerViewModel.swift in Sources */,
 				F0431F76B73D1CF615590019 /* SightWordData.swift in Sources */,
 				C1115CF7B65441EBFD08F1A3 /* MemoryGameViewModel.swift in Sources */,
 				DA6EC79A7E3CF590EAAAEC2A /* FlipCard.swift in Sources */,

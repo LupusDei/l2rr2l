@@ -6,6 +6,8 @@ struct WordBuilderView: View {
     @StateObject private var viewModel = WordBuilderViewModel()
     @Environment(\.dismiss) private var dismiss
 
+    private let voiceService = VoiceService.shared
+
     @State private var showConfetti = false
     @State private var showGameCompleteConfetti = false
     @State private var shakeAnswer = false
@@ -53,6 +55,9 @@ struct WordBuilderView: View {
         .onChange(of: viewModel.gameState) { _, state in
             if state == .gameComplete {
                 showGameCompleteConfetti = true
+            }
+            if state == .correct, let word = viewModel.currentPuzzle?.word {
+                Task { await voiceService.speak(word) }
             }
         }
         .confetti(isActive: $showGameCompleteConfetti, configuration: .gameComplete)

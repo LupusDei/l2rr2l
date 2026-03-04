@@ -6,6 +6,8 @@ struct MemoryGameView: View {
     @StateObject private var viewModel = MemoryGameViewModel()
     @Environment(\.dismiss) private var dismiss
 
+    private let voiceService = VoiceService.shared
+
     @State private var showConfetti = false
 
     var body: some View {
@@ -162,6 +164,9 @@ struct MemoryGameView: View {
                     isMatched: card.isMatched,
                     onFlip: {
                         viewModel.flipCard(at: index)
+                        if !card.isFlipped && !card.isMatched {
+                            Task { await voiceService.speak(card.word) }
+                        }
                     }
                 )
                 .frame(height: cardHeight)

@@ -137,14 +137,19 @@ public enum L2RTheme {
 
     public enum Typography {
         /// Primary font for playful elements
-        public static let playfulFont = "Comic Sans MS"
+        public static let playfulFont = "ChalkboardSE-Regular"
+
+        /// Bold variant of playful font
+        public static let playfulFontBold = "ChalkboardSE-Bold"
 
         /// Fallback font
-        public static let fallbackFont = "Chalkboard"
+        public static let fallbackFont = "ChalkboardSE-Regular"
 
         /// Get playful font with size (fixed, non-scaling)
         public static func playful(size: CGFloat, weight: Font.Weight = .regular) -> Font {
-            .custom(playfulFont, size: size).weight(weight)
+            let fontName = weight == .bold || weight == .heavy || weight == .black || weight == .semibold
+                ? playfulFontBold : playfulFont
+            return .custom(fontName, size: size)
         }
 
         /// System font for regular text (fixed, non-scaling)
@@ -220,7 +225,9 @@ public enum L2RTheme {
                 relativeTo style: Font.TextStyle,
                 weight: Font.Weight = .regular
             ) -> Font {
-                custom(Typography.playfulFont, relativeTo: style, weight: weight)
+                let fontName = weight == .bold || weight == .heavy || weight == .black || weight == .semibold
+                    ? Typography.playfulFontBold : Typography.playfulFont
+                return .custom(fontName, size: style.defaultSize, relativeTo: style)
             }
 
             /// System font that scales with Dynamic Type

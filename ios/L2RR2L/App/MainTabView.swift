@@ -50,7 +50,7 @@ struct HomeTabView: View {
                     case .detail(let id):
                         LessonDetailContainerView(lessonId: id)
                     case .player(let id):
-                        LessonPlayerPlaceholderView(lessonId: id)
+                        LessonPlayerView(lessonId: id)
                     }
                 }
         }
@@ -70,7 +70,7 @@ struct LessonsTabView: View {
                     case .detail(let id):
                         LessonDetailContainerView(lessonId: id)
                     case .player(let id):
-                        LessonPlayerPlaceholderView(lessonId: id)
+                        LessonPlayerView(lessonId: id)
                     }
                 }
         }
