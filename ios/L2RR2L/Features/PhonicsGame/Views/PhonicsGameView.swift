@@ -117,7 +117,7 @@ struct PhonicsGameView: View {
             }
         }
         .padding(.horizontal, L2RTheme.Spacing.md)
-        .padding(.vertical, L2RTheme.Spacing.sm)
+        .padding(.vertical, L2RTheme.Spacing.md)
     }
 
     // MARK: - Start Prompt
@@ -264,9 +264,15 @@ struct PhonicsGameView: View {
                     .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                     .foregroundStyle(.white)
 
-                Text("/\(option.sound.lowercased())/")
-                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.8))
+                if showResult && isSelected && !isCorrectAnswer {
+                    Text("Try again next time!")
+                        .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.9))
+                } else {
+                    Text("/\(option.sound.lowercased())/")
+                        .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.8))
+                }
             }
             .frame(maxWidth: .infinity)
             .frame(height: 120)

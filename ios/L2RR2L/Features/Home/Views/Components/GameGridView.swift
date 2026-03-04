@@ -45,7 +45,7 @@ struct GameTile: View {
                     .minimumScaleFactor(0.8)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 90)
+            .frame(minHeight: 100, idealHeight: 110)
             .background(game.gradient)
             .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.large))
             .shadow(

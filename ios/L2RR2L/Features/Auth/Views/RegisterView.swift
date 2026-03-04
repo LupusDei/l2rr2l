@@ -162,7 +162,7 @@ struct RegisterView: View {
             // Form-level error
             if let error = viewModel.errorMessage {
                 HStack {
-                    Image(systemName: "exclamationmark.triangle.fill")
+                    Image(systemName: "info.circle.fill")
                         .foregroundStyle(L2RTheme.Status.error)
                     Text(error)
                         .font(L2RTheme.Typography.Scaled.system(.footnote))

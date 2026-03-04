@@ -197,12 +197,12 @@ struct LessonsView: View {
         VStack(spacing: L2RTheme.Spacing.lg) {
             Spacer()
 
-            Image(systemName: "exclamationmark.triangle.fill")
+            Image(systemName: "cloud.bolt.rain.fill")
                 .font(.system(size: 48))
-                .foregroundStyle(L2RTheme.Status.error)
+                .foregroundStyle(L2RTheme.primary.opacity(0.6))
 
             VStack(spacing: L2RTheme.Spacing.xs) {
-                Text("Something went wrong")
+                Text("Oops! Something went wrong")
                     .font(L2RTheme.Typography.Scaled.system(.body, weight: .semibold))
                     .foregroundStyle(L2RTheme.textPrimary)
 

@@ -53,8 +53,14 @@ public actor LessonCacheService {
     // MARK: - Public API
 
     /// Returns cached lessons if available and valid, nil otherwise.
+    /// When offline, returns stale cached data regardless of TTL.
     public func getCachedLessons() async -> [Lesson]? {
         await initializeIfNeeded()
+
+        // When offline, serve stale cache rather than returning nil
+        if !_isOnline && !cachedLessons.isEmpty {
+            return cachedLessons
+        }
 
         guard isCacheValid() else {
             return nil

@@ -50,11 +50,11 @@ struct LessonDetailContainerView: View {
 
     private var errorView: some View {
         VStack(spacing: L2RTheme.Spacing.lg) {
-            Image(systemName: "exclamationmark.triangle.fill")
+            Image(systemName: "cloud.bolt.rain.fill")
                 .font(.system(size: 60))
                 .foregroundStyle(L2RTheme.Status.warning)
 
-            Text("Lesson Not Found")
+            Text("Oops!")
                 .font(L2RTheme.Typography.Scaled.system(.title2, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
@@ -85,9 +85,17 @@ struct LessonDetailContainerView: View {
         isLoading = true
         errorMessage = nil
 
-        // Try to load from cache
+        // Try to load from cache first
         if let cachedLesson = await LessonCacheService.shared.getCachedLesson(id: lessonId) {
             lesson = cachedLesson
+            isLoading = false
+            return
+        }
+
+        // Check network before making API call
+        let isOnline = await LessonCacheService.shared.isOnline()
+        guard isOnline else {
+            errorMessage = "You're offline right now. Connect to the internet and try again!"
             isLoading = false
             return
         }
@@ -97,9 +105,11 @@ struct LessonDetailContainerView: View {
             let endpoint = LessonsEndpoints.get(id: lessonId)
             let response: LessonResponse = try await APIClient.shared.request(endpoint)
             lesson = response.lesson
+            // Cache the fetched lesson
+            await LessonCacheService.shared.cacheLesson(response.lesson)
             isLoading = false
         } catch {
-            errorMessage = "Could not find lesson with ID: \(lessonId)"
+            errorMessage = "Hmm, we couldn't find that lesson. Let's go back and try again!"
             isLoading = false
         }
     }

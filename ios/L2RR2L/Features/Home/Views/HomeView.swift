@@ -86,7 +86,7 @@ struct HomeView: View {
         } label: {
             HStack(spacing: L2RTheme.Spacing.sm) {
                 Image(systemName: "play.fill")
-                    .font(.system(size: 18))
+                    .font(.system(size: 24))
                 Text("Continue Learning")
                     .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
             }

@@ -80,7 +80,7 @@ struct MemoryGameView: View {
             }
         }
         .padding(.horizontal, L2RTheme.Spacing.md)
-        .padding(.vertical, L2RTheme.Spacing.sm)
+        .padding(.vertical, L2RTheme.Spacing.md)
     }
 
     // MARK: - Start Prompt

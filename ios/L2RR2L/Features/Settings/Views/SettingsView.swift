@@ -144,8 +144,7 @@ struct SettingsView: View {
 
     private var notificationsLink: some View {
         NavigationLink {
-            Text("Notifications")
-                .navigationTitle("Notifications")
+            ComingSoonView(title: "Notifications", icon: "bell.fill")
         } label: {
             Label("Notifications", systemImage: "bell.fill")
         }
@@ -193,8 +192,7 @@ struct SettingsView: View {
 
     private var editProfileLink: some View {
         NavigationLink {
-            Text("Edit Profile")
-                .navigationTitle("Edit Profile")
+            ComingSoonView(title: "Edit Profile", icon: "pencil")
         } label: {
             Label("Edit Profile", systemImage: "pencil")
         }
@@ -204,8 +202,7 @@ struct SettingsView: View {
 
     private var editAccountLink: some View {
         NavigationLink {
-            Text("Edit Account")
-                .navigationTitle("Edit Account")
+            ComingSoonView(title: "Edit Account", icon: "person.crop.circle")
         } label: {
             Label("Edit Account", systemImage: "person.crop.circle")
         }
@@ -213,8 +210,7 @@ struct SettingsView: View {
 
     private var changePasswordLink: some View {
         NavigationLink {
-            Text("Change Password")
-                .navigationTitle("Change Password")
+            ComingSoonView(title: "Change Password", icon: "lock.fill")
         } label: {
             Label("Change Password", systemImage: "lock.fill")
         }
@@ -326,6 +322,39 @@ private struct ProfileSwitcherSheet: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Coming Soon Placeholder
+
+private struct ComingSoonView: View {
+    let title: String
+    let icon: String
+
+    var body: some View {
+        VStack(spacing: L2RTheme.Spacing.lg) {
+            Spacer()
+
+            Image(systemName: icon)
+                .font(.system(size: 60))
+                .foregroundStyle(L2RTheme.primary.opacity(0.4))
+
+            Text("Coming Soon!")
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
+                .foregroundStyle(L2RTheme.textPrimary)
+
+            Text("We're still working on this. Check back later!")
+                .font(L2RTheme.Typography.Scaled.system(.callout))
+                .foregroundStyle(L2RTheme.textSecondary)
+                .multilineTextAlignment(.center)
+
+            Spacer()
+        }
+        .padding(L2RTheme.Spacing.xl)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(L2RTheme.background)
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.large)
     }
 }
 
