@@ -27,6 +27,7 @@ final class ReadAloudGameViewModel: ObservableObject {
     @Published private(set) var pronunciationScore: Double = 0
     @Published var selectedLevel: ReadAloudLevel = .prePrimer
     @Published var showCelebration = false
+    @Published var permissionDenied = false
 
     // MARK: - Configuration
 
@@ -107,6 +108,14 @@ final class ReadAloudGameViewModel: ObservableObject {
         }
     }
 
+    /// Speaks the current word aloud for the child to hear again.
+    func hearWord() {
+        guard let word = currentWord else { return }
+        Task {
+            await voiceService.speak(word)
+        }
+    }
+
     /// Starts recording the user's pronunciation.
     func startRecording() async {
         guard gameState == .listening else { return }
@@ -117,6 +126,7 @@ final class ReadAloudGameViewModel: ObservableObject {
         do {
             try await speechService.startRecording()
         } catch {
+            permissionDenied = true
             gameState = .listening
         }
     }

@@ -7,6 +7,7 @@ struct ReadAloudGameView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var showGameCompleteConfetti = false
+    @State private var showStreakConfetti = false
     @State private var micPulse = false
 
     var body: some View {
@@ -42,7 +43,21 @@ struct ReadAloudGameView: View {
                 Task { await VoiceService.shared.speak("Great job!") }
             }
         }
+        .onChange(of: viewModel.showCelebration) { _, show in
+            if show {
+                showStreakConfetti = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    showStreakConfetti = false
+                }
+            }
+        }
         .confetti(isActive: $showGameCompleteConfetti, configuration: .gameComplete)
+        .confetti(isActive: $showStreakConfetti, configuration: .streakMilestone)
+        .alert("Microphone Needed", isPresented: $viewModel.permissionDenied) {
+            Button("OK") {}
+        } message: {
+            Text("Ask a grown-up to turn on the microphone in Settings so you can play!")
+        }
         .onDisappear {
             viewModel.resetGame()
         }
@@ -205,17 +220,34 @@ struct ReadAloudGameView: View {
                 .foregroundStyle(.white.opacity(0.9))
 
             if let word = viewModel.currentWord {
-                Text(word.uppercased())
-                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, L2RTheme.Spacing.xxl)
-                    .padding(.vertical, L2RTheme.Spacing.lg)
-                    .background(
-                        RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.large)
-                            .fill(.white.opacity(0.15))
-                    )
-                    .accessibilityLabel("Word: \(word)")
-                    .accessibilityIdentifier(AccessibilityIdentifiers.ReadAloud.targetWord)
+                HStack(spacing: L2RTheme.Spacing.md) {
+                    Text(word.uppercased())
+                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
+                        .foregroundStyle(.white)
+                        .accessibilityLabel("Word: \(word)")
+                        .accessibilityIdentifier(AccessibilityIdentifiers.ReadAloud.targetWord)
+
+                    Button {
+                        viewModel.hearWord()
+                    } label: {
+                        Image(systemName: "speaker.wave.2.fill")
+                            .font(.system(size: 24))
+                            .foregroundStyle(.white)
+                            .frame(width: L2RTheme.TouchTarget.comfortable, height: L2RTheme.TouchTarget.comfortable)
+                            .background(
+                                Circle()
+                                    .fill(.white.opacity(0.2))
+                            )
+                    }
+                    .accessibilityLabel("Hear the word")
+                    .accessibilityHint("Tap to hear the word spoken aloud")
+                }
+                .padding(.horizontal, L2RTheme.Spacing.xxl)
+                .padding(.vertical, L2RTheme.Spacing.lg)
+                .background(
+                    RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.large)
+                        .fill(.white.opacity(0.15))
+                )
             }
         }
     }
@@ -241,13 +273,13 @@ struct ReadAloudGameView: View {
                     Button {
                         viewModel.stopRecording()
                     } label: {
-                        Image(systemName: "stop.fill")
+                        Image(systemName: "stop.circle.fill")
                             .font(.system(size: 36))
                             .foregroundStyle(.white)
                             .frame(width: 80, height: 80)
                             .background(
                                 Circle()
-                                    .fill(L2RTheme.Status.error)
+                                    .fill(.orange)
                             )
                     }
                     .accessibilityLabel("Stop recording")
@@ -336,17 +368,22 @@ struct ReadAloudGameView: View {
                 Button {
                     viewModel.nextWord()
                 } label: {
-                    Text(viewModel.round >= viewModel.totalRounds ? "See Results" : "Next Word")
-                        .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, L2RTheme.Spacing.xl)
-                        .padding(.vertical, L2RTheme.Spacing.sm)
-                        .background(
-                            Capsule()
-                                .fill(.white.opacity(0.2))
-                        )
+                    HStack(spacing: L2RTheme.Spacing.sm) {
+                        Text(viewModel.round >= viewModel.totalRounds ? "See Results" : "Next Word")
+                            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
+                        Image(systemName: "arrow.right.circle.fill")
+                            .font(.system(size: 24))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, L2RTheme.Spacing.xxl)
+                    .padding(.vertical, L2RTheme.Spacing.md)
+                    .background(
+                        Capsule()
+                            .fill(LinearGradient.ctaButton)
+                            .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
+                    )
                 }
-                .frame(minHeight: L2RTheme.TouchTarget.minimum)
+                .frame(minHeight: L2RTheme.TouchTarget.comfortable)
                 .accessibilityLabel(viewModel.round >= viewModel.totalRounds ? "See Results" : "Next Word")
             }
             .transition(.scale.combined(with: .opacity))
@@ -366,15 +403,30 @@ struct ReadAloudGameView: View {
                 .foregroundStyle(.white)
 
             VStack(spacing: L2RTheme.Spacing.sm) {
-                Text("Score: \(viewModel.score)")
-                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
-                    .foregroundStyle(.white)
-                    .accessibilityLabel("Final score: \(viewModel.score) points")
+                // Star rating based on score percentage
+                HStack(spacing: L2RTheme.Spacing.xs) {
+                    let starCount = starRating(score: viewModel.score, total: viewModel.totalRounds)
+                    ForEach(0..<3, id: \.self) { index in
+                        Image(systemName: index < starCount ? "star.fill" : "star")
+                            .font(.system(size: 40))
+                            .foregroundStyle(.yellow)
+                    }
+                }
+                .accessibilityLabel("\(starRating(score: viewModel.score, total: viewModel.totalRounds)) out of 3 stars")
 
-                Text("Best Streak: \(viewModel.bestStreak)")
+                Text("\(viewModel.score) points")
                     .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
                     .foregroundStyle(.white.opacity(0.9))
+
+                if viewModel.bestStreak > 1 {
+                    HStack(spacing: L2RTheme.Spacing.xxs) {
+                        Text("\u{1F525}")
+                        Text("Best Streak: \(viewModel.bestStreak)")
+                            .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.9))
+                    }
                     .accessibilityLabel("Best streak: \(viewModel.bestStreak) correct in a row")
+                }
             }
 
             HStack(spacing: L2RTheme.Spacing.lg) {
@@ -415,6 +467,17 @@ struct ReadAloudGameView: View {
             }
         }
         .accessibilityIdentifier(AccessibilityIdentifiers.ReadAloud.gameComplete)
+    }
+
+    // MARK: - Helpers
+
+    /// Converts score to a 1-3 star rating.
+    private func starRating(score: Int, total: Int) -> Int {
+        let maxScore = total * 10 * 3 // generous estimate
+        let percentage = Double(score) / Double(max(maxScore, 1))
+        if percentage >= 0.7 { return 3 }
+        if percentage >= 0.4 { return 2 }
+        return 1
     }
 }
 
