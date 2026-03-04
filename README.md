@@ -1,5 +1,7 @@
 # L2RR2L - Learn to Read, Read to Learn
 
+[![iOS TestFlight](https://github.com/LupusDei/l2rr2l/actions/workflows/ios-testflight.yml/badge.svg)](https://github.com/LupusDei/l2rr2l/actions/workflows/ios-testflight.yml)
+
 A web application to teach young kids how to read through engaging, personalized learning experiences.
 
 ## Vision

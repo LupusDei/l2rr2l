@@ -33,4 +33,82 @@ platform :ios do
     screenshots
     frame_screenshots
   end
+
+  # ---------------------------------------------------------------------------
+  # CI/CD Lanes
+  # ---------------------------------------------------------------------------
+
+  desc "Sync App Store certificates and provisioning profiles via Match"
+  lane :sync_appstore_certs do
+    match(
+      type: "appstore",
+      app_identifier: "com.jmm.l2rr2l",
+      readonly: ENV["CI"] == "true"
+    )
+  end
+
+  desc "Build and upload to TestFlight (internal testers)"
+  lane :upload_testflight do |options|
+    setup_ci if ENV["CI"]
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
+      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"]
+    )
+
+    increment_build_number(
+      build_number: ENV["CI_BUILD_NUMBER"]
+    ) if ENV["CI_BUILD_NUMBER"]
+
+    sync_appstore_certs
+
+    gym(
+      scheme: "L2RR2L",
+      export_method: "app-store",
+      output_directory: "./build",
+      clean: true
+    )
+
+    pilot(
+      api_key: api_key,
+      app_identifier: "com.jmm.l2rr2l",
+      skip_waiting_for_build_processing: true,
+      changelog: options[:changelog] || ENV["CHANGELOG"] || "Bug fixes and improvements",
+      distribute_external: false
+    )
+  end
+
+  desc "Build and upload to TestFlight with external tester distribution"
+  lane :beta do |options|
+    setup_ci if ENV["CI"]
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
+      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"]
+    )
+
+    increment_build_number(
+      build_number: ENV["CI_BUILD_NUMBER"]
+    ) if ENV["CI_BUILD_NUMBER"]
+
+    sync_appstore_certs
+
+    gym(
+      scheme: "L2RR2L",
+      export_method: "app-store",
+      output_directory: "./build",
+      clean: true
+    )
+
+    pilot(
+      api_key: api_key,
+      app_identifier: "com.jmm.l2rr2l",
+      skip_waiting_for_build_processing: true,
+      changelog: options[:changelog] || ENV["CHANGELOG"] || "Bug fixes and improvements",
+      distribute_external: true,
+      groups: ["External Testers"]
+    )
+  end
 end

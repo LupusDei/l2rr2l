@@ -11,7 +11,7 @@ git_url(ENV["MATCH_GIT_URL"] || "git@github.com:your-org/l2rr2l-certificates.git
 storage_mode("git")
 
 # App identifier(s) to manage
-app_identifier(["com.l2rr2l.app"])
+app_identifier(["com.jmm.l2rr2l"])
 
 # Your Apple Developer account username
 username(ENV["FASTLANE_USER"])
