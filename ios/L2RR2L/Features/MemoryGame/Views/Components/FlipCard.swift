@@ -109,7 +109,7 @@ private struct CardFront: View {
                     .foregroundStyle(.white.opacity(0.9))
 
                 Text("L2R")
-                    .font(L2RTheme.Typography.playful(size: 14, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .footnote, weight: .bold))
                     .foregroundStyle(.white.opacity(0.8))
             }
 
@@ -142,7 +142,7 @@ private struct CardBack: View {
 
             // Word text
             Text(word)
-                .font(L2RTheme.Typography.playful(size: 28, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
                 .foregroundStyle(isMatched ? L2RTheme.Status.success : L2RTheme.textPrimary)
                 .multilineTextAlignment(.center)
                 .minimumScaleFactor(0.5)

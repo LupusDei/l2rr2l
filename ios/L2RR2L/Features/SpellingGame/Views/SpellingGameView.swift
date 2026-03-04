@@ -76,6 +76,7 @@ struct SpellingGameView: View {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 28))
                     .foregroundStyle(.white.opacity(0.8))
+                    .frame(minWidth: L2RTheme.TouchTarget.minimum, minHeight: L2RTheme.TouchTarget.minimum)
             }
             .accessibilityLabel("Close game")
             .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.closeButton)
@@ -87,7 +88,7 @@ struct SpellingGameView: View {
                 Image(systemName: "star.fill")
                     .foregroundStyle(.yellow)
                 Text("\(viewModel.score)")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                     .foregroundStyle(.white)
             }
             .accessibilityElement(children: .combine)
@@ -100,7 +101,7 @@ struct SpellingGameView: View {
                 HStack(spacing: L2RTheme.Spacing.xxs) {
                     Text("\u{1F525}")
                     Text("\(viewModel.streak)")
-                        .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                         .foregroundStyle(.white)
                 }
                 .accessibilityElement(children: .combine)
@@ -119,11 +120,11 @@ struct SpellingGameView: View {
                 .font(.system(size: 80))
 
             Text("Spelling Game")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.largeTitle, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
 
             Text("Arrange the letters to spell the word!")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .medium))
+                .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
                 .foregroundStyle(.white.opacity(0.9))
                 .multilineTextAlignment(.center)
 
@@ -131,7 +132,7 @@ struct SpellingGameView: View {
                 viewModel.startGame()
             } label: {
                 Text("Start Game")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, L2RTheme.Spacing.xxl)
                     .padding(.vertical, L2RTheme.Spacing.md)
@@ -160,7 +161,7 @@ struct SpellingGameView: View {
                 // Word (shown when correct, hidden otherwise)
                 if viewModel.gameState == .correct {
                     Text(word.word.uppercased())
-                        .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title1, weight: .bold))
+                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
                         .foregroundStyle(.white)
                         .transition(.scale.combined(with: .opacity))
                 }
@@ -216,7 +217,7 @@ struct SpellingGameView: View {
                     Image(systemName: "shuffle")
                     Text("Shuffle")
                 }
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                 .foregroundStyle(.white)
                 .padding(.horizontal, L2RTheme.Spacing.lg)
                 .padding(.vertical, L2RTheme.Spacing.sm)
@@ -241,7 +242,7 @@ struct SpellingGameView: View {
                         Text("Next")
                         Image(systemName: "arrow.right")
                     }
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.body, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .callout, weight: .bold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, L2RTheme.Spacing.xl)
                     .padding(.vertical, L2RTheme.Spacing.sm)
@@ -265,7 +266,7 @@ struct SpellingGameView: View {
                         Image(systemName: "checkmark")
                         Text("Check")
                     }
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.body, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .callout, weight: .bold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, L2RTheme.Spacing.xl)
                     .padding(.vertical, L2RTheme.Spacing.sm)
@@ -291,7 +292,7 @@ struct SpellingGameView: View {
                     Image(systemName: "arrow.uturn.backward")
                     Text("Clear")
                 }
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                 .foregroundStyle(.white)
                 .padding(.horizontal, L2RTheme.Spacing.lg)
                 .padding(.vertical, L2RTheme.Spacing.sm)
@@ -317,17 +318,17 @@ struct SpellingGameView: View {
                 .font(.system(size: 80))
 
             Text("Great Job!")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.largeTitle, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
 
             VStack(spacing: L2RTheme.Spacing.sm) {
                 Text("Score: \(viewModel.score) / \(viewModel.totalRounds)")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                     .foregroundStyle(.white)
                     .accessibilityLabel("Final score: \(viewModel.score) out of \(viewModel.totalRounds)")
 
                 Text("Best Streak: \(viewModel.bestStreak)")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
                     .foregroundStyle(.white.opacity(0.9))
                     .accessibilityLabel("Best streak: \(viewModel.bestStreak) correct answers in a row")
             }
@@ -337,7 +338,7 @@ struct SpellingGameView: View {
                     viewModel.startGame()
                 } label: {
                     Text("Play Again")
-                        .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, L2RTheme.Spacing.xl)
                         .padding(.vertical, L2RTheme.Spacing.md)
@@ -355,7 +356,7 @@ struct SpellingGameView: View {
                     dismiss()
                 } label: {
                     Text("Done")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .semibold))
+                        .font(L2RTheme.Typography.Scaled.system(.title3, weight: .semibold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, L2RTheme.Spacing.xl)
                         .padding(.vertical, L2RTheme.Spacing.md)
@@ -384,11 +385,11 @@ struct SpellingGameView: View {
                     .font(.system(size: 60))
 
                 Text("Amazing!")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.largeTitle, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                     .foregroundStyle(.white)
 
                 Text("\(viewModel.streak) in a row!")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title2, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.title2, weight: .medium))
                     .foregroundStyle(.white.opacity(0.9))
             }
             .scaleEffect(showConfetti ? 1.0 : 0.5)

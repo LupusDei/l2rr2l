@@ -306,7 +306,7 @@ public struct AvatarSelectionGrid: View {
         }
 
         Text("Small · Medium · Large · XLarge")
-            .font(L2RTheme.Typography.system(size: 14))
+            .font(L2RTheme.Typography.Scaled.system(.footnote))
             .foregroundStyle(L2RTheme.textSecondary)
     }
     .padding()
@@ -323,7 +323,7 @@ public struct AvatarSelectionGrid: View {
                 VStack(spacing: L2RTheme.Spacing.xs) {
                     AvatarView(emoji: emoji, size: .large)
                     Text(emoji.displayName)
-                        .font(L2RTheme.Typography.system(size: 12))
+                        .font(L2RTheme.Typography.Scaled.system(.caption))
                         .foregroundStyle(L2RTheme.textSecondary)
                 }
             }
@@ -354,7 +354,7 @@ public struct AvatarSelectionGrid: View {
 
     VStack(spacing: L2RTheme.Spacing.lg) {
         Text("Choose Your Avatar")
-            .font(L2RTheme.Typography.playful(size: 24, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
             .foregroundStyle(L2RTheme.textPrimary)
 
         AvatarSelectionGrid(selectedEmoji: $selected, columns: 4)
@@ -362,7 +362,7 @@ public struct AvatarSelectionGrid: View {
 
         if let emoji = selected {
             Text("Selected: \(emoji.displayName)")
-                .font(L2RTheme.Typography.system(size: 16))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
     }

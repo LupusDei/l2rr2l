@@ -39,7 +39,7 @@ struct LessonDetailContainerView: View {
                 .tint(L2RTheme.primary)
 
             Text("Loading lesson...")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -55,12 +55,12 @@ struct LessonDetailContainerView: View {
                 .foregroundStyle(L2RTheme.Status.warning)
 
             Text("Lesson Not Found")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title2, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.system(.title2, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
             if let errorMessage = errorMessage {
                 Text(errorMessage)
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                    .font(L2RTheme.Typography.Scaled.system(.callout))
                     .foregroundStyle(L2RTheme.textSecondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -70,7 +70,7 @@ struct LessonDetailContainerView: View {
                 router.popToRoot(tab: .lessons)
             } label: {
                 Text("Back to Lessons")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                     .foregroundStyle(L2RTheme.primary)
             }
             .padding(.top)

@@ -115,7 +115,7 @@ struct FloatingLetter: View {
 
     var body: some View {
         Text(letter)
-            .font(L2RTheme.Typography.playful(size: 32, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
             .foregroundStyle(color)
             .playfulTextShadow(offset: 2)
     }
@@ -128,7 +128,7 @@ struct FloatingNumber: View {
 
     var body: some View {
         Text(number)
-            .font(L2RTheme.Typography.playful(size: 28, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
             .foregroundStyle(color)
             .playfulTextShadow(offset: 2)
     }

@@ -61,7 +61,7 @@ struct NameEntryView: View {
                 .bouncing()
 
             Text("What's your name?")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title1, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
                 .multilineTextAlignment(.center)
         }
@@ -71,7 +71,7 @@ struct NameEntryView: View {
 
     private var nameInputField: some View {
         TextField("Type your name here...", text: $name)
-            .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .medium))
+            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .medium))
             .foregroundStyle(L2RTheme.textPrimary)
             .multilineTextAlignment(.center)
             .padding(.horizontal, L2RTheme.Spacing.lg)
@@ -115,7 +115,7 @@ struct NameEntryView: View {
     private var greetingMessage: some View {
         HStack(spacing: L2RTheme.Spacing.xs) {
             Text("Nice to meet you, \(name.trimmingCharacters(in: .whitespacesAndNewlines))!")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.large, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .body, weight: .semibold))
                 .foregroundStyle(L2RTheme.Status.success)
 
             Text("🎉")
@@ -131,7 +131,7 @@ struct NameEntryView: View {
         } label: {
             HStack(spacing: L2RTheme.Spacing.sm) {
                 Text("Continue")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
                 Image(systemName: "arrow.right")
                     .font(.system(size: 18, weight: .bold))
             }

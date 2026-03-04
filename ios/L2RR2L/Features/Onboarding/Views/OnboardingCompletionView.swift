@@ -68,7 +68,7 @@ struct OnboardingCompletionView: View {
                 .bouncing()
 
             Text("All set, \(childName)!")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title1, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
                 .multilineTextAlignment(.center)
         }
@@ -137,7 +137,7 @@ struct OnboardingCompletionView: View {
 
             // Ready message
             Text("You're ready to start your learning adventure!")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.large, weight: .medium))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .body, weight: .medium))
                 .foregroundStyle(L2RTheme.Status.success)
                 .multilineTextAlignment(.center)
         }
@@ -151,7 +151,7 @@ struct OnboardingCompletionView: View {
         } label: {
             HStack(spacing: L2RTheme.Spacing.sm) {
                 Text("Let's Start Learning!")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
                 Image(systemName: "sparkles")
                     .font(.system(size: 18, weight: .bold))
             }
@@ -214,13 +214,13 @@ private struct ProfileSummaryRow: View {
                 .frame(width: 28)
 
             Text(label)
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                 .foregroundStyle(L2RTheme.textSecondary)
 
             Spacer()
 
             Text(value)
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .callout, weight: .semibold))
                 .foregroundStyle(L2RTheme.textPrimary)
         }
     }

@@ -53,7 +53,7 @@ struct LoginView: View {
             .bouncing()
 
             Text("Welcome Back!")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title2, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.system(.title2, weight: .semibold))
                 .foregroundStyle(L2RTheme.textPrimary)
         }
         .padding(.bottom, L2RTheme.Spacing.lg)
@@ -66,7 +66,7 @@ struct LoginView: View {
             // Email field
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.xs) {
                 Text("Email")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 TextField("Enter your email", text: $viewModel.email)
@@ -90,7 +90,7 @@ struct LoginView: View {
             // Password field
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.xs) {
                 Text("Password")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 SecureField("Enter your password", text: $viewModel.password)
@@ -114,7 +114,7 @@ struct LoginView: View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundStyle(L2RTheme.Status.error)
                     Text(error)
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                        .font(L2RTheme.Typography.Scaled.system(.footnote))
                         .foregroundStyle(L2RTheme.Status.error)
                 }
                 .padding(L2RTheme.Spacing.sm)
@@ -139,7 +139,7 @@ struct LoginView: View {
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
                 }
                 Text(viewModel.isLoading ? "Logging in..." : "Log In")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
@@ -170,7 +170,7 @@ struct LoginView: View {
                 // TODO: Navigate to forgot password
             } label: {
                 Text("Forgot your password?")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                    .font(L2RTheme.Typography.Scaled.system(.callout))
                     .foregroundStyle(L2RTheme.primary)
             }
             .touchTarget()
@@ -178,14 +178,14 @@ struct LoginView: View {
             // Register link
             HStack(spacing: L2RTheme.Spacing.xxs) {
                 Text("Don't have an account?")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                    .font(L2RTheme.Typography.Scaled.system(.callout))
                     .foregroundStyle(L2RTheme.textSecondary)
 
                 Button {
                     // TODO: Navigate to registration
                 } label: {
                     Text("Sign Up")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                        .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                         .foregroundStyle(L2RTheme.primary)
                 }
             }
@@ -198,7 +198,7 @@ struct LoginView: View {
 
     private func errorText(_ text: String) -> some View {
         Text(text)
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+            .font(L2RTheme.Typography.Scaled.system(.footnote))
             .foregroundStyle(L2RTheme.Status.error)
     }
 
@@ -228,7 +228,7 @@ struct L2RTextFieldStyle: TextFieldStyle {
 
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+            .font(L2RTheme.Typography.Scaled.system(.callout))
             .padding(L2RTheme.Spacing.md)
             .frame(minHeight: L2RTheme.TouchTarget.comfortable)
             .background(Color.white)

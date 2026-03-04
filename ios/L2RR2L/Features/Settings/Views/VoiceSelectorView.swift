@@ -34,7 +34,7 @@ struct VoiceSelectorView: View {
                         Button("Done") {
                             dismiss()
                         }
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                        .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                         .foregroundStyle(L2RTheme.primary)
                     }
                 }
@@ -58,7 +58,7 @@ struct VoiceSelectorView: View {
             ProgressView()
                 .scaleEffect(1.2)
             Text("Loading voices...")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -70,10 +70,10 @@ struct VoiceSelectorView: View {
                 .font(.system(size: 48))
                 .foregroundStyle(L2RTheme.textSecondary)
             Text("No voices available")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .medium))
+                .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
                 .foregroundStyle(L2RTheme.textPrimary)
             Text("Please try again later")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -110,7 +110,7 @@ struct VoiceSelectorView: View {
                 .font(.system(size: 36))
                 .foregroundStyle(L2RTheme.textSecondary)
             Text("No voices match \"\(searchText)\"")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
         .frame(maxWidth: .infinity)
@@ -196,19 +196,19 @@ private struct VoiceRow: View {
                     // Voice info
                     VStack(alignment: .leading, spacing: L2RTheme.Spacing.xxs) {
                         Text(voice.name)
-                            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                            .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                             .foregroundStyle(L2RTheme.textPrimary)
 
                         if let description = voice.description {
                             Text(description)
-                                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                                .font(L2RTheme.Typography.Scaled.system(.footnote))
                                 .foregroundStyle(L2RTheme.textSecondary)
                                 .lineLimit(2)
                         }
 
                         if let category = voice.category {
                             Text(category.capitalized)
-                                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
+                                .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
                                 .foregroundStyle(L2RTheme.primary)
                                 .padding(.horizontal, L2RTheme.Spacing.xs)
                                 .padding(.vertical, L2RTheme.Spacing.xxxs)

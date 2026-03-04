@@ -52,6 +52,7 @@ struct MemoryGameView: View {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 28))
                     .foregroundStyle(.white.opacity(0.8))
+                    .frame(minWidth: L2RTheme.TouchTarget.minimum, minHeight: L2RTheme.TouchTarget.minimum)
             }
             .accessibilityLabel("Close game")
 
@@ -60,7 +61,7 @@ struct MemoryGameView: View {
             // Level indicator
             if viewModel.gameState != .notStarted {
                 Text("Level \(viewModel.currentLevel)")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                     .foregroundStyle(.white)
             }
 
@@ -70,10 +71,10 @@ struct MemoryGameView: View {
             if viewModel.gameState != .notStarted {
                 HStack(spacing: L2RTheme.Spacing.xs) {
                     Text("Moves:")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                        .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                         .foregroundStyle(.white.opacity(0.8))
                     Text("\(viewModel.moves)")
-                        .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                         .foregroundStyle(.white)
                 }
             }
@@ -90,11 +91,11 @@ struct MemoryGameView: View {
                 .font(.system(size: 80))
 
             Text("Memory Match")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.largeTitle, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
 
             Text("Find matching sight word pairs!")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .medium))
+                .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
                 .foregroundStyle(.white.opacity(0.9))
                 .multilineTextAlignment(.center)
 
@@ -102,7 +103,7 @@ struct MemoryGameView: View {
                 viewModel.startGame()
             } label: {
                 Text("Start Game")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, L2RTheme.Spacing.xxl)
                     .padding(.vertical, L2RTheme.Spacing.md)
@@ -132,7 +133,7 @@ struct MemoryGameView: View {
         VStack(spacing: L2RTheme.Spacing.xs) {
             HStack {
                 Text("Pairs: \(viewModel.matchedPairsCount)/\(viewModel.totalPairs)")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                     .foregroundStyle(.white.opacity(0.9))
                 Spacer()
             }
@@ -156,33 +157,36 @@ struct MemoryGameView: View {
     private var cardGrid: some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: L2RTheme.Spacing.sm), count: viewModel.gridColumns)
 
-        return LazyVGrid(columns: columns, spacing: L2RTheme.Spacing.sm) {
-            ForEach(Array(viewModel.cards.enumerated()), id: \.element.id) { index, card in
-                FlipCard(
-                    word: card.word,
-                    isFlipped: .constant(card.isFlipped || card.isMatched),
-                    isMatched: card.isMatched,
-                    onFlip: {
-                        viewModel.flipCard(at: index)
-                        if !card.isFlipped && !card.isMatched {
-                            Task { await voiceService.speak(card.word) }
+        return GeometryReader { geometry in
+            LazyVGrid(columns: columns, spacing: L2RTheme.Spacing.sm) {
+                ForEach(Array(viewModel.cards.enumerated()), id: \.element.id) { index, card in
+                    FlipCard(
+                        word: card.word,
+                        isFlipped: .constant(card.isFlipped || card.isMatched),
+                        isMatched: card.isMatched,
+                        onFlip: {
+                            viewModel.flipCard(at: index)
+                            if !card.isFlipped && !card.isMatched {
+                                Task { await voiceService.speak(card.word) }
+                            }
                         }
-                    }
-                )
-                .frame(height: cardHeight)
+                    )
+                    .frame(height: cardHeight(in: geometry))
+                }
             }
+            .padding(L2RTheme.Spacing.md)
         }
-        .padding(L2RTheme.Spacing.md)
     }
 
-    private var cardHeight: CGFloat {
-        // Adjust card height based on grid size
-        switch viewModel.gridRows {
-        case 2: return 120
-        case 3: return 100
-        case 4: return 85
-        default: return 80
-        }
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+
+    private func cardHeight(in geometry: GeometryProxy) -> CGFloat {
+        let rows = CGFloat(viewModel.gridRows)
+        let spacing = L2RTheme.Spacing.md * (rows - 1) // spacing between rows
+        let headerHeight: CGFloat = 80 // approximate header + padding
+        let availableHeight = geometry.size.height - headerHeight - spacing
+        let computed = availableHeight / rows
+        return max(computed, 60) // minimum 60pt
     }
 
     // MARK: - Level Complete View
@@ -193,17 +197,17 @@ struct MemoryGameView: View {
                 .font(.system(size: 80))
 
             Text("Level Complete!")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.largeTitle, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
 
             VStack(spacing: L2RTheme.Spacing.sm) {
                 Text("Moves: \(viewModel.moves)")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                     .foregroundStyle(.white)
 
                 if let best = viewModel.bestMoves {
                     Text("Best: \(best)")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .medium))
+                        .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
                         .foregroundStyle(.white.opacity(0.9))
                 }
             }
@@ -214,7 +218,7 @@ struct MemoryGameView: View {
                         viewModel.nextLevel()
                     } label: {
                         Text("Next Level")
-                            .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, L2RTheme.Spacing.xl)
                             .padding(.vertical, L2RTheme.Spacing.md)
@@ -230,7 +234,7 @@ struct MemoryGameView: View {
                     viewModel.restartLevel()
                 } label: {
                     Text("Play Again")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .semibold))
+                        .font(L2RTheme.Typography.Scaled.system(.title3, weight: .semibold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, L2RTheme.Spacing.xl)
                         .padding(.vertical, L2RTheme.Spacing.md)
@@ -244,7 +248,7 @@ struct MemoryGameView: View {
                     dismiss()
                 } label: {
                     Text("Done")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .semibold))
+                        .font(L2RTheme.Typography.Scaled.system(.title3, weight: .semibold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, L2RTheme.Spacing.xl)
                         .padding(.vertical, L2RTheme.Spacing.md)

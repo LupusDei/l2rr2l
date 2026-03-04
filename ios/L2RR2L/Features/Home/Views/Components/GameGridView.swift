@@ -39,7 +39,7 @@ struct GameTile: View {
 
                 // Title
                 Text(game.title)
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .semibold))
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)

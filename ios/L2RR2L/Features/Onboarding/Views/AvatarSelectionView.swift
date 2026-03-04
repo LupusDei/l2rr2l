@@ -82,7 +82,7 @@ struct AvatarSelectionView: View {
                 .bouncing()
 
             Text("Pick your buddy!")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title1, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
                 .multilineTextAlignment(.center)
         }
@@ -158,7 +158,7 @@ struct AvatarSelectionView: View {
                 .font(.system(size: L2RTheme.Typography.Size.title2))
 
             Text("\(avatar.name) is ready to learn with you!")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.large, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .body, weight: .semibold))
                 .foregroundStyle(L2RTheme.Status.success)
         }
     }
@@ -171,7 +171,7 @@ struct AvatarSelectionView: View {
         } label: {
             HStack(spacing: L2RTheme.Spacing.sm) {
                 Text("Continue")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
                 Image(systemName: "arrow.right")
                     .font(.system(size: 18, weight: .bold))
             }

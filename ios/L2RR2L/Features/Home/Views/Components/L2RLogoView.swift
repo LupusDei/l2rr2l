@@ -56,7 +56,7 @@ struct L2RLogoView: View {
             // Tagline
             if showTagline {
                 Text("Learn to Read")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.title3, weight: .medium))
                     .foregroundStyle(L2RTheme.textSecondary)
                     .opacity(lettersVisible.last == true ? 1.0 : 0.0)
                     .animation(reduceMotion ? nil : .easeIn(duration: 0.3).delay(0.7), value: lettersVisible.last)

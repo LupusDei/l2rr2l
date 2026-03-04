@@ -60,7 +60,7 @@ struct RegisterView: View {
             .bouncing()
 
             Text("Create Your Account")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title2, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.system(.title2, weight: .semibold))
                 .foregroundStyle(L2RTheme.textPrimary)
         }
         .padding(.bottom, L2RTheme.Spacing.lg)
@@ -73,7 +73,7 @@ struct RegisterView: View {
             // Name field
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.xs) {
                 Text("Name")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 TextField("Enter your name", text: $viewModel.name)
@@ -96,7 +96,7 @@ struct RegisterView: View {
             // Email field
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.xs) {
                 Text("Email")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 TextField("Enter your email", text: $viewModel.email)
@@ -120,7 +120,7 @@ struct RegisterView: View {
             // Password field
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.xs) {
                 Text("Password")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 SecureField("Create a password", text: $viewModel.password)
@@ -141,7 +141,7 @@ struct RegisterView: View {
             // Confirm password field
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.xs) {
                 Text("Confirm Password")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 SecureField("Confirm your password", text: $viewModel.confirmPassword)
@@ -165,7 +165,7 @@ struct RegisterView: View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundStyle(L2RTheme.Status.error)
                     Text(error)
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                        .font(L2RTheme.Typography.Scaled.system(.footnote))
                         .foregroundStyle(L2RTheme.Status.error)
                 }
                 .padding(L2RTheme.Spacing.sm)
@@ -202,7 +202,7 @@ struct RegisterView: View {
                             .foregroundStyle(L2RTheme.primary)
                             .underline()
                     }
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                    .font(L2RTheme.Typography.Scaled.system(.callout))
                     .multilineTextAlignment(.leading)
                 }
             }
@@ -230,7 +230,7 @@ struct RegisterView: View {
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
                 }
                 Text(viewModel.isLoading ? "Creating Account..." : "Create Account")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
@@ -257,14 +257,14 @@ struct RegisterView: View {
     private var linksSection: some View {
         HStack(spacing: L2RTheme.Spacing.xxs) {
             Text("Already have an account?")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textSecondary)
 
             Button {
                 onLoginTapped?()
             } label: {
                 Text("Log In")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                     .foregroundStyle(L2RTheme.primary)
             }
             .accessibilityIdentifier(AccessibilityIdentifiers.Register.loginLink)
@@ -277,7 +277,7 @@ struct RegisterView: View {
 
     private func errorText(_ text: String) -> some View {
         Text(text)
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+            .font(L2RTheme.Typography.Scaled.system(.footnote))
             .foregroundStyle(L2RTheme.Status.error)
     }
 

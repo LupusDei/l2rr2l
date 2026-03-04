@@ -96,7 +96,7 @@ struct CardButtonStyle: ButtonStyle {
     VStack(spacing: 20) {
         BaseCard {
             Text("Simple Card")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
         }
 
         BaseCard(
@@ -105,7 +105,7 @@ struct CardButtonStyle: ButtonStyle {
         ) {
             Text("Gradient Card")
                 .foregroundStyle(.white)
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
         }
 
         BaseCard(
@@ -113,7 +113,7 @@ struct CardButtonStyle: ButtonStyle {
             action: { print("Tapped!") }
         ) {
             Text("Tappable Card with Border")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
         }
     }
     .padding()

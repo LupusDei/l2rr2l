@@ -65,7 +65,7 @@ struct LessonCard: View {
     private var titleRow: some View {
         HStack(spacing: L2RTheme.Spacing.xs) {
             Text(lesson.title)
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.system(.body, weight: .semibold))
                 .foregroundStyle(L2RTheme.textPrimary)
                 .lineLimit(1)
 
@@ -100,7 +100,7 @@ struct LessonCard: View {
             Image(systemName: "clock")
                 .font(.system(size: 10))
             Text("\(minutes) min")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                .font(L2RTheme.Typography.Scaled.system(.footnote))
         }
         .foregroundStyle(L2RTheme.textSecondary)
     }
@@ -110,7 +110,7 @@ struct LessonCard: View {
             Image(systemName: "person.fill")
                 .font(.system(size: 10))
             Text("Ages \(min)-\(max)")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                .font(L2RTheme.Typography.Scaled.system(.footnote))
         }
         .foregroundStyle(L2RTheme.textSecondary)
     }
@@ -121,7 +121,7 @@ struct LessonCard: View {
             let objectiveTexts = objectives.compactMap { $0.text ?? $0.description }
             if !objectiveTexts.isEmpty {
                 Text(objectiveTexts.prefix(2).joined(separator: " • "))
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                    .font(L2RTheme.Typography.Scaled.system(.footnote))
                     .foregroundStyle(L2RTheme.textMuted)
                     .lineLimit(1)
             }

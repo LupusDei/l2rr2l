@@ -255,14 +255,14 @@ private struct ConfettiDemoView: View {
 
             VStack(spacing: 30) {
                 Text("Tap to Celebrate!")
-                    .font(L2RTheme.Typography.playful(size: 28, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
                     .foregroundStyle(.white)
 
                 Button {
                     showConfetti = true
                 } label: {
                     Text("Trigger Confetti")
-                        .font(L2RTheme.Typography.playful(size: 20, weight: .bold))
+                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 32)
                         .padding(.vertical, 16)

@@ -148,7 +148,7 @@ struct DropZone: View {
 
     private func letterContent(_ letter: Character) -> some View {
         Text(String(letter).uppercased())
-            .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
             .foregroundStyle(letterColor)
     }
 
@@ -165,7 +165,7 @@ struct DropZone: View {
 
     private var indexIndicator: some View {
         Text("\(index + 1)")
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
+            .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
             .foregroundStyle(L2RTheme.textSecondary.opacity(0.5))
     }
 
@@ -247,7 +247,7 @@ struct DropZoneRow: View {
 #Preview("Drop Zone States") {
     VStack(spacing: L2RTheme.Spacing.xl) {
         Text("Drop Zone States")
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.system(.title3, weight: .bold))
 
         HStack(spacing: L2RTheme.Spacing.md) {
             VStack {
@@ -274,7 +274,7 @@ struct DropZoneRow: View {
         Divider()
 
         Text("Word: CAT")
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.system(.title3, weight: .bold))
 
         DropZoneRow(
             wordLength: 3,

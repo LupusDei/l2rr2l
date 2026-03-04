@@ -47,7 +47,7 @@ struct PrimaryButton: View {
             }
 
             Text(title)
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .bold))
         }
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity)
@@ -146,7 +146,7 @@ struct SecondaryButton: View {
             }
 
             Text(title)
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
         }
         .foregroundStyle(effectiveDisabled ? color.opacity(0.5) : color)
         .frame(maxWidth: .infinity)
@@ -253,7 +253,7 @@ struct GameButton: View {
 
     private var titleView: some View {
         Text(title)
-            .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.large, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .body, weight: .bold))
             .foregroundStyle(.white)
             .multilineTextAlignment(.center)
     }
@@ -301,7 +301,7 @@ struct TextButton: View {
     var body: some View {
         Button(action: performAction) {
             Text(title)
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                 .foregroundStyle(isDisabled ? color.opacity(0.5) : color)
                 .frame(minHeight: L2RTheme.TouchTarget.minimum)
         }
@@ -477,25 +477,25 @@ private struct IconButtonStyle: ButtonStyle {
         VStack(spacing: L2RTheme.Spacing.xxl) {
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.md) {
                 Text("Primary")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                 PrimaryButton(title: "Get Started", icon: "arrow.right") {}
             }
 
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.md) {
                 Text("Secondary")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                 SecondaryButton(title: "Learn More") {}
             }
 
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.md) {
                 Text("Game")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                 GameButton(title: "Play Now", emoji: "🎮") {}
             }
 
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.md) {
                 Text("Text & Icon")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                 HStack {
                     TextButton(title: "Cancel") {}
                     Spacer()

@@ -44,11 +44,11 @@ struct GamesView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: L2RTheme.Spacing.sm) {
             Text("Let's Play!")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
             Text("Choose a game to practice your skills")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,7 +70,7 @@ struct GamesView: View {
                     .foregroundStyle(.white)
 
                 Text(title)
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
             }

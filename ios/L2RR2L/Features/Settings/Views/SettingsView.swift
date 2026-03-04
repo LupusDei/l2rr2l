@@ -161,12 +161,12 @@ struct SettingsView: View {
             // Name
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.xxxs) {
                 Text(childProfileService.activeChild?.name ?? "No Profile")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 if let age = childProfileService.activeChild?.age {
                     Text("\(age) years old")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                        .font(L2RTheme.Typography.Scaled.system(.footnote))
                         .foregroundStyle(L2RTheme.textSecondary)
                 }
             }
@@ -251,7 +251,7 @@ struct SettingsView: View {
                     .font(.system(size: 24))
             } else {
                 Text(child?.name.prefix(1).uppercased() ?? "?")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
                     .foregroundStyle(L2RTheme.primary)
             }
         }
@@ -285,7 +285,7 @@ private struct ProfileSwitcherSheet: View {
                                     .font(.system(size: 24))
                             } else {
                                 Text(child.name.prefix(1).uppercased())
-                                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .bold))
+                                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
                                     .foregroundStyle(L2RTheme.primary)
                             }
                         }
@@ -293,12 +293,12 @@ private struct ProfileSwitcherSheet: View {
                         // Info
                         VStack(alignment: .leading, spacing: L2RTheme.Spacing.xxxs) {
                             Text(child.name)
-                                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                                 .foregroundStyle(L2RTheme.textPrimary)
 
                             if let age = child.age {
                                 Text("\(age) years old")
-                                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                                    .font(L2RTheme.Typography.Scaled.system(.footnote))
                                     .foregroundStyle(L2RTheme.textSecondary)
                             }
                         }
@@ -321,7 +321,7 @@ private struct ProfileSwitcherSheet: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                     .foregroundStyle(L2RTheme.primary)
                 }
             }

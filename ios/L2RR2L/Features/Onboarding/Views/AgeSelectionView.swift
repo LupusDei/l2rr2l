@@ -55,7 +55,7 @@ struct AgeSelectionView: View {
                 .bouncing()
 
             Text("How old are you?")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title1, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
                 .multilineTextAlignment(.center)
         }
@@ -91,7 +91,7 @@ struct AgeSelectionView: View {
     private func selectionConfirmation(age: Int) -> some View {
         HStack(spacing: L2RTheme.Spacing.xs) {
             Text("Awesome! You're \(age) years old!")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.large, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .body, weight: .semibold))
                 .foregroundStyle(L2RTheme.Status.success)
 
             Text("🎉")
@@ -107,7 +107,7 @@ struct AgeSelectionView: View {
         } label: {
             HStack(spacing: L2RTheme.Spacing.sm) {
                 Text("Continue")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
                 Image(systemName: "arrow.right")
                     .font(.system(size: 18, weight: .bold))
             }

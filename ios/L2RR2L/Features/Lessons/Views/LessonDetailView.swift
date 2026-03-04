@@ -80,13 +80,13 @@ struct LessonDetailView: View {
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.xxs) {
                 // Subject label
                 Text(subjectDisplayName)
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
                     .foregroundStyle(subjectColor)
                     .textCase(.uppercase)
 
                 // Title
                 Text(lesson.title)
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                     .foregroundStyle(L2RTheme.textPrimary)
             }
 
@@ -119,7 +119,7 @@ struct LessonDetailView: View {
                 Image(systemName: "clock")
                     .foregroundStyle(L2RTheme.textSecondary)
                 Text("\(durationMinutes) min")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                     .foregroundStyle(L2RTheme.textSecondary)
             }
 
@@ -129,7 +129,7 @@ struct LessonDetailView: View {
                     Image(systemName: "person.2")
                         .foregroundStyle(L2RTheme.textSecondary)
                     Text("Ages \(ageMin)-\(ageMax)")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                        .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                         .foregroundStyle(L2RTheme.textSecondary)
                 }
             }
@@ -145,7 +145,7 @@ struct LessonDetailView: View {
                     .foregroundStyle(index < difficultyStarCount ? L2RTheme.Status.warning : L2RTheme.textSecondary.opacity(0.3))
             }
             Text(difficultyDisplayName)
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
+                .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
     }
@@ -154,7 +154,7 @@ struct LessonDetailView: View {
 
     private var descriptionSection: some View {
         Text(descriptionText)
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .regular))
+            .font(L2RTheme.Typography.Scaled.system(.callout, weight: .regular))
             .foregroundStyle(L2RTheme.textPrimary)
             .lineSpacing(4)
     }
@@ -165,7 +165,7 @@ struct LessonDetailView: View {
         VStack(alignment: .leading, spacing: L2RTheme.Spacing.sm) {
             Label {
                 Text("What you'll learn")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .semibold))
                     .foregroundStyle(L2RTheme.textPrimary)
             } icon: {
                 Image(systemName: "checklist")
@@ -181,7 +181,7 @@ struct LessonDetailView: View {
                             .foregroundStyle(L2RTheme.Status.success)
 
                         Text(objective.text ?? objective.description ?? "Complete this activity")
-                            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .regular))
+                            .font(L2RTheme.Typography.Scaled.system(.callout, weight: .regular))
                             .foregroundStyle(L2RTheme.textPrimary)
                     }
                 }
@@ -200,7 +200,7 @@ struct LessonDetailView: View {
         VStack(alignment: .leading, spacing: L2RTheme.Spacing.sm) {
             Label {
                 Text("\(activities.count) Activities")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .semibold))
                     .foregroundStyle(L2RTheme.textPrimary)
             } icon: {
                 Image(systemName: "list.bullet.rectangle")
@@ -229,7 +229,7 @@ struct LessonDetailView: View {
             Image(systemName: activityIconName(for: type))
                 .font(.system(size: 12))
             Text("\(count) \(activityDisplayName(for: type))")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
+                .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
         }
         .foregroundStyle(L2RTheme.primary)
         .padding(.horizontal, L2RTheme.Spacing.sm)
@@ -248,7 +248,7 @@ struct LessonDetailView: View {
                 Image(systemName: "play.fill")
                     .font(.system(size: 18))
                 Text("Start Lesson")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)

@@ -73,7 +73,7 @@ struct VoiceSettingsView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                     .foregroundStyle(L2RTheme.primary)
                 }
             }
@@ -105,7 +105,7 @@ struct VoiceSettingsView: View {
     private var voiceSelector: some View {
         VStack(alignment: .leading, spacing: L2RTheme.Spacing.sm) {
             Text("Voice")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
             Button {
@@ -116,11 +116,11 @@ struct VoiceSettingsView: View {
                         ProgressView()
                             .scaleEffect(0.8)
                         Text("Loading voices...")
-                            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                            .font(L2RTheme.Typography.Scaled.system(.footnote))
                             .foregroundStyle(L2RTheme.textSecondary)
                     } else {
                         Text(viewModel.selectedVoice?.name ?? "Select Voice")
-                            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                            .font(L2RTheme.Typography.Scaled.system(.callout))
                             .foregroundStyle(L2RTheme.textPrimary)
                     }
 
@@ -142,7 +142,7 @@ struct VoiceSettingsView: View {
 
             if let description = viewModel.selectedVoice?.description {
                 Text(description)
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                    .font(L2RTheme.Typography.Scaled.system(.footnote))
                     .foregroundStyle(L2RTheme.textSecondary)
             }
         }
@@ -154,11 +154,11 @@ struct VoiceSettingsView: View {
         HStack {
             VStack(alignment: .leading, spacing: L2RTheme.Spacing.xxs) {
                 Text("Speaker Boost")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 Text("Enhances voice clarity")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                    .font(L2RTheme.Typography.Scaled.system(.footnote))
                     .foregroundStyle(L2RTheme.textSecondary)
             }
 
@@ -193,7 +193,7 @@ struct VoiceSettingsView: View {
                         Image(systemName: "play.fill")
                     }
                     Text(viewModel.isPreviewPlaying ? "Playing..." : "Preview Voice")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                        .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
@@ -210,7 +210,7 @@ struct VoiceSettingsView: View {
                 HStack(spacing: L2RTheme.Spacing.sm) {
                     Image(systemName: "arrow.counterclockwise")
                     Text("Reset to Defaults")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                        .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                 }
                 .foregroundStyle(L2RTheme.textSecondary)
                 .frame(maxWidth: .infinity)
@@ -240,13 +240,13 @@ struct ParameterSlider: View {
         VStack(alignment: .leading, spacing: L2RTheme.Spacing.sm) {
             HStack {
                 Text(title)
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 Spacer()
 
                 Text(formattedValue)
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                     .foregroundStyle(L2RTheme.primary)
                     .monospacedDigit()
             }
@@ -257,7 +257,7 @@ struct ParameterSlider: View {
                 .accessibilityValue(formattedValue)
 
             Text(description)
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+                .font(L2RTheme.Typography.Scaled.system(.footnote))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
         .padding(.vertical, L2RTheme.Spacing.xs)

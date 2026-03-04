@@ -91,7 +91,7 @@ struct ProgressBar: View {
 
             if showLabel {
                 Text("\(Int(clampedProgress * 100))%")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
                     .foregroundStyle(L2RTheme.textSecondary)
             }
         }
@@ -218,7 +218,7 @@ struct FullScreenLoader: View {
 
                 if let message = message {
                     Text(message)
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                        .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                         .foregroundStyle(L2RTheme.textPrimary)
                         .multilineTextAlignment(.center)
                 }

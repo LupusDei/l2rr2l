@@ -15,7 +15,7 @@ struct AuthFlowView: View {
                                 }
                             } label: {
                                 Text("Create Account")
-                                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                                     .foregroundStyle(L2RTheme.primary)
                             }
                         }
@@ -34,7 +34,7 @@ struct AuthFlowView: View {
                             }
                         } label: {
                             Text("Already have an account? Log In")
-                                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                                 .foregroundStyle(L2RTheme.primary)
                         }
                     }

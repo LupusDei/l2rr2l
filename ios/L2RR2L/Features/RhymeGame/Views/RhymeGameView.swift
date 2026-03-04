@@ -70,6 +70,7 @@ struct RhymeGameView: View {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 28))
                     .foregroundStyle(.white.opacity(0.8))
+                    .frame(minWidth: L2RTheme.TouchTarget.minimum, minHeight: L2RTheme.TouchTarget.minimum)
             }
             .accessibilityLabel("Close game")
             .accessibilityIdentifier(AccessibilityIdentifiers.RhymeGame.closeButton)
@@ -81,7 +82,7 @@ struct RhymeGameView: View {
                 Image(systemName: "star.fill")
                     .foregroundStyle(.yellow)
                 Text("\(viewModel.score)")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                     .foregroundStyle(.white)
             }
             .accessibilityElement(children: .combine)
@@ -93,7 +94,7 @@ struct RhymeGameView: View {
             // Round indicator
             if viewModel.gameState != .notStarted && viewModel.gameState != .gameComplete {
                 Text("Round \(viewModel.currentRound)/\(viewModel.totalRounds)")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
                     .foregroundStyle(.white.opacity(0.9))
                     .accessibilityLabel("Round \(viewModel.currentRound) of \(viewModel.totalRounds)")
                     .accessibilityIdentifier(AccessibilityIdentifiers.RhymeGame.roundLabel)
@@ -106,7 +107,7 @@ struct RhymeGameView: View {
                 HStack(spacing: L2RTheme.Spacing.xxs) {
                     Text("\u{1F525}")
                     Text("\(viewModel.streak)")
-                        .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                         .foregroundStyle(.white)
                 }
                 .accessibilityElement(children: .combine)
@@ -126,11 +127,11 @@ struct RhymeGameView: View {
                 .font(.system(size: 80))
 
             Text("Rhyme Time")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.largeTitle, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
 
             Text("Find the word that rhymes!")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .medium))
+                .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
                 .foregroundStyle(.white.opacity(0.9))
                 .multilineTextAlignment(.center)
 
@@ -138,7 +139,7 @@ struct RhymeGameView: View {
                 viewModel.startGame()
             } label: {
                 Text("Start Game")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, L2RTheme.Spacing.xxl)
                     .padding(.vertical, L2RTheme.Spacing.md)
@@ -184,7 +185,7 @@ struct RhymeGameView: View {
                 Image(systemName: "speaker.wave.2.fill")
                     .font(.system(size: 20))
                 Text("Listen again")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
             }
             .foregroundStyle(.white)
             .padding(.horizontal, L2RTheme.Spacing.lg)
@@ -204,11 +205,11 @@ struct RhymeGameView: View {
     private func targetWordSection(_ question: RhymeQuestion) -> some View {
         VStack(spacing: L2RTheme.Spacing.md) {
             Text("What rhymes with")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .medium))
+                .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
                 .foregroundStyle(.white.opacity(0.9))
 
             Text(question.targetWord.word.uppercased())
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.largeTitle, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
                 .accessibilityLabel("Target word: \(question.targetWord.word)")
 
@@ -260,7 +261,7 @@ struct RhymeGameView: View {
         } label: {
             VStack(spacing: L2RTheme.Spacing.sm) {
                 Text(option.displayWord.uppercased())
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                     .foregroundStyle(.white)
 
                 Text(option.emoji)
@@ -320,17 +321,17 @@ struct RhymeGameView: View {
                 .font(.system(size: 80))
 
             Text("Great Job!")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.largeTitle, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
 
             VStack(spacing: L2RTheme.Spacing.sm) {
                 Text("Score: \(viewModel.score) / \(viewModel.totalRounds)")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                     .foregroundStyle(.white)
                     .accessibilityLabel("Final score: \(viewModel.score) out of \(viewModel.totalRounds)")
 
                 Text("Best Streak: \(viewModel.bestStreak)")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
                     .foregroundStyle(.white.opacity(0.9))
                     .accessibilityLabel("Best streak: \(viewModel.bestStreak) correct answers in a row")
             }
@@ -340,7 +341,7 @@ struct RhymeGameView: View {
                     viewModel.startGame()
                 } label: {
                     Text("Play Again")
-                        .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title3, weight: .bold))
+                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, L2RTheme.Spacing.xl)
                         .padding(.vertical, L2RTheme.Spacing.md)
@@ -358,7 +359,7 @@ struct RhymeGameView: View {
                     dismiss()
                 } label: {
                     Text("Done")
-                        .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .semibold))
+                        .font(L2RTheme.Typography.Scaled.system(.title3, weight: .semibold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, L2RTheme.Spacing.xl)
                         .padding(.vertical, L2RTheme.Spacing.md)
@@ -387,11 +388,11 @@ struct RhymeGameView: View {
                     .font(.system(size: 60))
 
                 Text("Amazing!")
-                    .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.largeTitle, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                     .foregroundStyle(.white)
 
                 Text("\(viewModel.streak) in a row!")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title2, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.title2, weight: .medium))
                     .foregroundStyle(.white.opacity(0.9))
             }
             .scaleEffect(showConfetti ? 1.0 : 0.5)

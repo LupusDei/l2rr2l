@@ -10,7 +10,7 @@ struct LetterTile: View {
 
     var body: some View {
         Text(String(tile.letter).uppercased())
-            .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
             .foregroundStyle(L2RTheme.textPrimary)
             .frame(width: 52, height: 60)
             .background(
@@ -72,7 +72,7 @@ struct LetterBank: View {
 #Preview("Letter Tiles") {
     VStack(spacing: L2RTheme.Spacing.xl) {
         Text("Letter Tiles")
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.system(.title3, weight: .bold))
 
         HStack(spacing: L2RTheme.Spacing.md) {
             LetterTile(
@@ -92,7 +92,7 @@ struct LetterBank: View {
         Divider()
 
         Text("Letter Bank")
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.system(.title3, weight: .bold))
 
         LetterBank(
             tiles: [

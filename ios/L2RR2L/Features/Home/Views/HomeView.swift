@@ -3,7 +3,11 @@ import SwiftUI
 /// Main home screen with animated background, logo, welcome message, and game grid.
 struct HomeView: View {
     @ObservedObject private var router = NavigationRouter.shared
-    @State private var childName: String = "Friend"
+    @ObservedObject private var childProfileService = ChildProfileService.shared
+
+    private var childName: String {
+        childProfileService.activeChild?.name ?? "Friend"
+    }
 
     var body: some View {
         ZStack {
@@ -66,7 +70,7 @@ struct HomeView: View {
     private var welcomeMessage: some View {
         HStack(spacing: L2RTheme.Spacing.xs) {
             Text("Hello, \(childName)!")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .semibold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
             Text("\u{1F44B}")
@@ -84,7 +88,7 @@ struct HomeView: View {
                 Image(systemName: "play.fill")
                     .font(.system(size: 18))
                 Text("Continue Learning")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .bold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
@@ -108,8 +112,25 @@ struct HomeView: View {
     // MARK: - Actions
 
     private func handleContinueLearning() {
-        // Navigate to Lessons tab
-        router.selectedTab = .lessons
+        guard let childId = childProfileService.activeChild?.id else {
+            router.selectedTab = .lessons
+            return
+        }
+        Task {
+            // Find the most recent in-progress lesson
+            if let progressList = try? await ProgressService.shared.fetchAllProgress(childId: childId) {
+                let inProgress = progressList
+                    .filter { $0.status == .inProgress }
+                    .sorted { ($0.startedAt ?? "") > ($1.startedAt ?? "") }
+
+                if let mostRecent = inProgress.first {
+                    router.navigateToLesson(id: mostRecent.lessonId)
+                    return
+                }
+            }
+            // Fallback: navigate to lessons tab
+            router.selectedTab = .lessons
+        }
     }
 
     private func handleGameSelection(_ game: GameType) {

@@ -106,15 +106,31 @@ class BaseViewModel: ObservableObject, ViewModelProtocol {
         }
     }
 
-    /// Handles an error by setting the error message.
+    /// Handles an error by setting a child-friendly error message.
     /// Override this method to provide custom error handling.
     /// - Parameter error: The error to handle
     func handleError(_ error: Error) {
-        if let serviceError = error as? ServiceError {
-            errorMessage = serviceError.errorDescription
-        } else {
-            errorMessage = error.localizedDescription
+        errorMessage = childFriendlyMessage(for: error)
+    }
+
+    /// Converts technical errors into child-friendly messages.
+    private func childFriendlyMessage(for error: Error) -> String {
+        if let apiError = error as? APIError {
+            switch apiError {
+            case .networkError, .serviceUnavailable:
+                return "Oops! We can't reach the internet right now. Try again in a moment!"
+            case .notFound:
+                return "Hmm, we couldn't find what you were looking for."
+            case .unauthorized:
+                return "Uh oh! You need to sign in first."
+            default:
+                return "Something went wrong. Let's try that again!"
+            }
         }
+        if error is URLError {
+            return "Oops! We can't reach the internet right now. Try again in a moment!"
+        }
+        return "Something went wrong. Let's try that again!"
     }
 
     /// Clears the current error message.

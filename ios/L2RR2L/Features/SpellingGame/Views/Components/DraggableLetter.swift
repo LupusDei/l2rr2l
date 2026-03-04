@@ -59,7 +59,7 @@ struct DraggableLetter: View {
 
             // Letter
             Text(String(letter).uppercased())
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
         }
         .frame(width: 52, height: 60)
@@ -214,12 +214,12 @@ enum SpellingHaptics {
 #Preview("Draggable Letter") {
     VStack(spacing: L2RTheme.Spacing.xxl) {
         Text("Draggable Letter")
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title3, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.system(.title3, weight: .bold))
 
         DraggableLetter(letter: "A")
 
         Text("Try dragging the letter!")
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+            .font(L2RTheme.Typography.Scaled.system(.callout))
             .foregroundStyle(L2RTheme.textSecondary)
     }
     .padding()

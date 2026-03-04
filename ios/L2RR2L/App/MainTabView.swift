@@ -2,38 +2,57 @@ import SwiftUI
 
 struct MainTabView: View {
     @ObservedObject var router = NavigationRouter.shared
+    @ObservedObject var appState = AppState.shared
 
     var body: some View {
-        TabView(selection: $router.selectedTab) {
-            HomeTabView()
-                .tabItem {
-                    Label(Tab.home.title, systemImage: Tab.home.icon)
-                }
-                .tag(Tab.home)
-                .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.homeTab)
+        ZStack(alignment: .top) {
+            TabView(selection: $router.selectedTab) {
+                HomeTabView()
+                    .tabItem {
+                        Label(Tab.home.title, systemImage: Tab.home.icon)
+                    }
+                    .tag(Tab.home)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.homeTab)
 
-            LessonsTabView()
-                .tabItem {
-                    Label(Tab.lessons.title, systemImage: Tab.lessons.icon)
-                }
-                .tag(Tab.lessons)
-                .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.lessonsTab)
+                LessonsTabView()
+                    .tabItem {
+                        Label(Tab.lessons.title, systemImage: Tab.lessons.icon)
+                    }
+                    .tag(Tab.lessons)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.lessonsTab)
 
-            GamesTabView()
-                .tabItem {
-                    Label(Tab.games.title, systemImage: Tab.games.icon)
-                }
-                .tag(Tab.games)
-                .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.gamesTab)
+                GamesTabView()
+                    .tabItem {
+                        Label(Tab.games.title, systemImage: Tab.games.icon)
+                    }
+                    .tag(Tab.games)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.gamesTab)
 
-            SettingsTabView()
-                .tabItem {
-                    Label(Tab.settings.title, systemImage: Tab.settings.icon)
+                SettingsTabView()
+                    .tabItem {
+                        Label(Tab.settings.title, systemImage: Tab.settings.icon)
+                    }
+                    .tag(Tab.settings)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.settingsTab)
+            }
+            .tint(L2RTheme.primary)
+
+            // Offline indicator banner
+            if !appState.isNetworkAvailable {
+                HStack(spacing: L2RTheme.Spacing.xs) {
+                    Image(systemName: "wifi.slash")
+                        .font(.system(size: 14, weight: .semibold))
+                    Text("You're offline — some things may not work")
+                        .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
                 }
-                .tag(Tab.settings)
-                .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.settingsTab)
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, L2RTheme.Spacing.xs)
+                .background(L2RTheme.Status.warning.opacity(0.9))
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .animation(.easeInOut(duration: L2RTheme.Animation.normal), value: appState.isNetworkAvailable)
+            }
         }
-        .tint(L2RTheme.primary)
     }
 }
 
@@ -116,11 +135,11 @@ struct LessonDetailPlaceholderView: View {
                 .foregroundStyle(L2RTheme.primary)
 
             Text("Lesson Details")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title1, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.system(.title, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
             Text("Lesson ID: \(lessonId)")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -140,11 +159,11 @@ struct LessonPlayerPlaceholderView: View {
                 .foregroundStyle(L2RTheme.primary)
 
             Text("Lesson Player")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title1, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.system(.title, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
             Text("Playing: \(lessonId)")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -186,11 +205,11 @@ struct GameDetailView: View {
                 .foregroundStyle(L2RTheme.primary)
 
             Text("Read Aloud")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.title1, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.system(.title, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
             Text("Coming soon!")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -42,7 +42,7 @@ struct LessonsView: View {
                 .foregroundStyle(L2RTheme.textSecondary)
 
             TextField("Search lessons...", text: $viewModel.searchText)
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textPrimary)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
@@ -139,11 +139,11 @@ struct LessonsView: View {
                 Image(systemName: "xmark")
                     .font(.system(size: 10, weight: .semibold))
                 Text("Clear")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
+                    .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
             }
             .foregroundStyle(L2RTheme.Status.error)
-            .padding(.horizontal, L2RTheme.Spacing.sm)
-            .padding(.vertical, L2RTheme.Spacing.xs)
+            .padding(.horizontal, L2RTheme.Spacing.md)
+            .frame(minHeight: L2RTheme.TouchTarget.minimum)
             .background(L2RTheme.Status.error.opacity(0.1))
             .clipShape(Capsule())
         }
@@ -153,14 +153,14 @@ struct LessonsView: View {
     private func filterChip(title: String, isActive: Bool) -> some View {
         HStack(spacing: L2RTheme.Spacing.xxs) {
             Text(title)
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
+                .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
 
             Image(systemName: "chevron.down")
                 .font(.system(size: 10, weight: .semibold))
         }
         .foregroundStyle(isActive ? .white : L2RTheme.textPrimary)
-        .padding(.horizontal, L2RTheme.Spacing.sm)
-        .padding(.vertical, L2RTheme.Spacing.xs)
+        .padding(.horizontal, L2RTheme.Spacing.md)
+        .frame(minHeight: L2RTheme.TouchTarget.minimum)
         .background(isActive ? L2RTheme.primary : L2RTheme.background)
         .clipShape(Capsule())
     }
@@ -203,11 +203,11 @@ struct LessonsView: View {
 
             VStack(spacing: L2RTheme.Spacing.xs) {
                 Text("Something went wrong")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .semibold))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 Text(error)
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                    .font(L2RTheme.Typography.Scaled.system(.callout))
                     .foregroundStyle(L2RTheme.textSecondary)
                     .multilineTextAlignment(.center)
             }
@@ -218,7 +218,7 @@ struct LessonsView: View {
                 }
             } label: {
                 Text("Try Again")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, L2RTheme.Spacing.xl)
                     .padding(.vertical, L2RTheme.Spacing.sm)
@@ -242,11 +242,11 @@ struct LessonsView: View {
 
             VStack(spacing: L2RTheme.Spacing.xs) {
                 Text("No Lessons Available")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .semibold))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 Text("Check back later for new lessons!")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                    .font(L2RTheme.Typography.Scaled.system(.callout))
                     .foregroundStyle(L2RTheme.textSecondary)
             }
 
@@ -266,11 +266,11 @@ struct LessonsView: View {
 
             VStack(spacing: L2RTheme.Spacing.xs) {
                 Text("No Lessons Found")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.large, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .semibold))
                     .foregroundStyle(L2RTheme.textPrimary)
 
                 Text("Try adjusting your filters or search terms")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                    .font(L2RTheme.Typography.Scaled.system(.callout))
                     .foregroundStyle(L2RTheme.textSecondary)
             }
 
@@ -278,7 +278,7 @@ struct LessonsView: View {
                 viewModel.clearFilters()
             } label: {
                 Text("Clear Filters")
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                     .foregroundStyle(L2RTheme.primary)
             }
 
@@ -310,11 +310,11 @@ struct LessonsView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: L2RTheme.Spacing.sm) {
             Text("Your Learning Journey")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
             Text(headerSubtitle)
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body))
+                .font(L2RTheme.Typography.Scaled.system(.callout))
                 .foregroundStyle(L2RTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

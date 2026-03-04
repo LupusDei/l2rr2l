@@ -35,7 +35,7 @@ struct Badge: View {
 
     var body: some View {
         Text(text)
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .semibold))
+            .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .semibold))
             .foregroundStyle(style.foregroundColor)
             .padding(.horizontal, L2RTheme.Spacing.xs)
             .padding(.vertical, L2RTheme.Spacing.xxs)
@@ -59,7 +59,7 @@ struct CountBadge: View {
 
     var body: some View {
         Text(displayText)
-            .font(L2RTheme.Typography.system(size: 12, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.system(.caption, weight: .bold))
             .foregroundStyle(.white)
             .frame(minWidth: 20, minHeight: 20)
             .padding(.horizontal, count > 9 ? 4 : 0)
@@ -102,7 +102,7 @@ struct Tag: View {
 
     var body: some View {
         Text(text)
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .medium))
+            .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
             .foregroundStyle(resolvedTextColor)
             .padding(.horizontal, L2RTheme.Spacing.sm)
             .padding(.vertical, L2RTheme.Spacing.xxs)

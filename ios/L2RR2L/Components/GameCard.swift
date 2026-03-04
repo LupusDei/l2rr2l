@@ -112,14 +112,14 @@ struct GameCard: View {
 
     private var gameName: some View {
         Text(game.name)
-            .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.large, weight: .bold))
+            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .body, weight: .bold))
             .foregroundStyle(.white)
             .multilineTextAlignment(.center)
     }
 
     private var gameDescription: some View {
         Text(game.description)
-            .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small))
+            .font(L2RTheme.Typography.Scaled.system(.footnote))
             .foregroundStyle(.white.opacity(0.9))
             .multilineTextAlignment(.center)
     }
@@ -129,7 +129,7 @@ struct GameCard: View {
             Image(systemName: "play.fill")
                 .font(.system(size: 12))
             Text("Play")
-                .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.small, weight: .semibold))
+                .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .semibold))
         }
         .foregroundStyle(game.shadowColor)
         .padding(.horizontal, L2RTheme.Spacing.md)
@@ -159,7 +159,7 @@ struct CompactGameCard: View {
                     .foregroundStyle(.white)
 
                 Text(game.name)
-                    .font(L2RTheme.Typography.system(size: L2RTheme.Typography.Size.body, weight: .semibold))
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
             }
@@ -176,7 +176,7 @@ struct CompactGameCard: View {
     ScrollView {
         VStack(spacing: L2RTheme.Spacing.lg) {
             Text("Full Game Cards")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             ForEach(GameInfo.all.prefix(3)) { game in
@@ -186,7 +186,7 @@ struct CompactGameCard: View {
             }
 
             Text("Compact Grid Cards")
-                .font(L2RTheme.Typography.playful(size: L2RTheme.Typography.Size.title2, weight: .bold))
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top)
 
