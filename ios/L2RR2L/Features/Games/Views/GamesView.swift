@@ -3,7 +3,7 @@ import SwiftUI
 struct GamesView: View {
     @ObservedObject var router = NavigationRouter.shared
 
-    private let games: [(GameDestination, String, String, LinearGradient, Color)] = [
+    private let games: [(GameType, String, String, LinearGradient, Color)] = [
         (.phonics, "Phonics Fun", "ear.fill", .phonicsGame, L2RTheme.Game.phonicsShadow),
         (.spelling, "Spelling Bee", "textformat.abc", .spellingGame, L2RTheme.Game.spellingShadow),
         (.memory, "Memory Match", "square.grid.2x2.fill", .memoryGame, L2RTheme.Game.memoryShadow),
@@ -55,7 +55,7 @@ struct GamesView: View {
     }
 
     private func gameCard(
-        destination: GameDestination,
+        destination: GameType,
         title: String,
         icon: String,
         gradient: LinearGradient,
@@ -87,7 +87,7 @@ struct GamesView: View {
         .accessibilityIdentifier(gameAccessibilityIdentifier(for: destination))
     }
 
-    private func gameAccessibilityIdentifier(for destination: GameDestination) -> String {
+    private func gameAccessibilityIdentifier(for destination: GameType) -> String {
         switch destination {
         case .phonics: return AccessibilityIdentifiers.Games.phonicsCard
         case .spelling: return AccessibilityIdentifiers.Games.spellingCard

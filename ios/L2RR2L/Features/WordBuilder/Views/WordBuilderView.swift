@@ -53,8 +53,11 @@ struct WordBuilderView: View {
             }
         }
         .onChange(of: viewModel.gameState) { _, state in
-            if state == .gameComplete {
+            if state == .playing {
+                Task { await voiceService.speak("Build the word!") }
+            } else if state == .gameComplete {
                 showGameCompleteConfetti = true
+                Task { await voiceService.speak("Great job!") }
             }
             if state == .correct, let word = viewModel.currentPuzzle?.word {
                 Task { await voiceService.speak(word) }

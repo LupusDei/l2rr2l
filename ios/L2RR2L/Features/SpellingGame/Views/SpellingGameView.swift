@@ -53,8 +53,11 @@ struct SpellingGameView: View {
             }
         }
         .onChange(of: viewModel.gameState) { _, state in
-            if state == .gameComplete {
+            if state == .playing {
+                Task { await voiceService.speak("Spell the word!") }
+            } else if state == .gameComplete {
                 showGameCompleteConfetti = true
+                Task { await voiceService.speak("Great job!") }
             }
         }
         .onChange(of: viewModel.currentWord?.word) { _, newWord in
@@ -209,22 +212,18 @@ struct SpellingGameView: View {
 
     private var bottomControls: some View {
         HStack(spacing: L2RTheme.Spacing.lg) {
-            // Shuffle button
+            // Shuffle button — icon-primary for pre-readers
             Button {
                 viewModel.scrambleLetters()
             } label: {
-                HStack {
-                    Image(systemName: "shuffle")
-                    Text("Shuffle")
-                }
-                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
-                .foregroundStyle(.white)
-                .padding(.horizontal, L2RTheme.Spacing.lg)
-                .padding(.vertical, L2RTheme.Spacing.sm)
-                .background(
-                    Capsule()
-                        .fill(.white.opacity(0.2))
-                )
+                Image(systemName: "shuffle")
+                    .font(.system(size: 24))
+                    .foregroundStyle(.white)
+                    .frame(width: L2RTheme.TouchTarget.comfortable, height: L2RTheme.TouchTarget.comfortable)
+                    .background(
+                        Circle()
+                            .fill(.white.opacity(0.2))
+                    )
             }
             .disabled(viewModel.gameState != .playing)
             .accessibilityLabel("Shuffle letters")
@@ -233,24 +232,20 @@ struct SpellingGameView: View {
 
             Spacer()
 
-            // Check / Next button
+            // Check / Next button — icon-primary for pre-readers
             if viewModel.gameState == .correct || viewModel.gameState == .incorrect {
                 Button {
                     viewModel.nextWord()
                 } label: {
-                    HStack {
-                        Text("Next")
-                        Image(systemName: "arrow.right")
-                    }
-                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .callout, weight: .bold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, L2RTheme.Spacing.xl)
-                    .padding(.vertical, L2RTheme.Spacing.sm)
-                    .background(
-                        Capsule()
-                            .fill(LinearGradient.ctaButton)
-                            .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
-                    )
+                    Image(systemName: "arrow.right.circle.fill")
+                        .font(.system(size: 36))
+                        .foregroundStyle(.white)
+                        .frame(width: L2RTheme.TouchTarget.comfortable, height: L2RTheme.TouchTarget.comfortable)
+                        .background(
+                            Circle()
+                                .fill(LinearGradient.ctaButton)
+                                .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
+                        )
                 }
                 .accessibilityLabel("Next word")
                 .accessibilityHint("Move to the next word")
@@ -262,19 +257,15 @@ struct SpellingGameView: View {
                         triggerShake()
                     }
                 } label: {
-                    HStack {
-                        Image(systemName: "checkmark")
-                        Text("Check")
-                    }
-                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .callout, weight: .bold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, L2RTheme.Spacing.xl)
-                    .padding(.vertical, L2RTheme.Spacing.sm)
-                    .background(
-                        Capsule()
-                            .fill(viewModel.allLettersPlaced ? LinearGradient.ctaButton : LinearGradient(colors: [.gray], startPoint: .leading, endPoint: .trailing))
-                            .shadow(color: viewModel.allLettersPlaced ? L2RTheme.CTA.shadow.opacity(0.5) : .clear, radius: 4, y: 4)
-                    )
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 36))
+                        .foregroundStyle(.white)
+                        .frame(width: L2RTheme.TouchTarget.comfortable, height: L2RTheme.TouchTarget.comfortable)
+                        .background(
+                            Circle()
+                                .fill(viewModel.allLettersPlaced ? LinearGradient.ctaButton : LinearGradient(colors: [.gray], startPoint: .leading, endPoint: .trailing))
+                                .shadow(color: viewModel.allLettersPlaced ? L2RTheme.CTA.shadow.opacity(0.5) : .clear, radius: 4, y: 4)
+                        )
                 }
                 .disabled(!viewModel.allLettersPlaced)
                 .accessibilityLabel("Check answer")
@@ -284,22 +275,18 @@ struct SpellingGameView: View {
 
             Spacer()
 
-            // Clear button
+            // Clear button — icon-primary for pre-readers
             Button {
                 viewModel.clearPlacedLetters()
             } label: {
-                HStack {
-                    Image(systemName: "arrow.uturn.backward")
-                    Text("Clear")
-                }
-                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
-                .foregroundStyle(.white)
-                .padding(.horizontal, L2RTheme.Spacing.lg)
-                .padding(.vertical, L2RTheme.Spacing.sm)
-                .background(
-                    Capsule()
-                        .fill(.white.opacity(0.2))
-                )
+                Image(systemName: "arrow.uturn.backward")
+                    .font(.system(size: 24))
+                    .foregroundStyle(.white)
+                    .frame(width: L2RTheme.TouchTarget.comfortable, height: L2RTheme.TouchTarget.comfortable)
+                    .background(
+                        Circle()
+                            .fill(.white.opacity(0.2))
+                    )
             }
             .disabled(viewModel.gameState != .playing)
             .accessibilityLabel("Clear all")

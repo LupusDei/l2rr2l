@@ -48,8 +48,11 @@ struct PhonicsGameView: View {
             }
         }
         .onChange(of: viewModel.gameState) { _, state in
-            if state == .gameComplete {
+            if state == .playing {
+                Task { await voiceService.speak("Find the sound!") }
+            } else if state == .gameComplete {
                 showGameCompleteConfetti = true
+                Task { await voiceService.speak("Great job!") }
             }
         }
         .onChange(of: viewModel.currentWord?.word) { _, newWord in

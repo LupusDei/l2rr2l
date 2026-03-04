@@ -35,6 +35,13 @@ struct MemoryGameView: View {
             }
             .padding()
         }
+        .onChange(of: viewModel.gameState) { _, state in
+            if state == .playing {
+                Task { await voiceService.speak("Find the match!") }
+            } else if state == .levelComplete {
+                Task { await voiceService.speak("Great job!") }
+            }
+        }
         .onChange(of: viewModel.showCelebration) { _, show in
             showConfetti = show
         }

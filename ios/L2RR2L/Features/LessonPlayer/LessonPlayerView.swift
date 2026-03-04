@@ -206,11 +206,6 @@ struct LessonPlayerView: View {
 
                 Spacer()
 
-                // Progress label
-                Text("Activity \(viewModel.currentActivityIndex + 1) of \(viewModel.totalActivities)")
-                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
-                    .foregroundStyle(L2RTheme.textSecondary)
-
                 Spacer()
 
                 // Spacer for symmetry
@@ -218,11 +213,25 @@ struct LessonPlayerView: View {
             }
             .padding(.horizontal, L2RTheme.Spacing.md)
 
+            // Progress stepping stones
+            HStack(spacing: L2RTheme.Spacing.xs) {
+                ForEach(0..<viewModel.totalActivities, id: \.self) { index in
+                    Circle()
+                        .fill(index < viewModel.currentActivityIndex ? L2RTheme.primary :
+                              index == viewModel.currentActivityIndex ? L2RTheme.primary.opacity(0.5) :
+                              L2RTheme.textMuted.opacity(0.3))
+                        .frame(width: index == viewModel.currentActivityIndex ? 12 : 10,
+                               height: index == viewModel.currentActivityIndex ? 12 : 10)
+                        .animation(.easeInOut, value: viewModel.currentActivityIndex)
+                }
+            }
+            .padding(.horizontal, L2RTheme.Spacing.md)
+
             // Progress bar
             ProgressBar(
                 progress: viewModel.progress,
                 color: L2RTheme.primary,
-                height: 6
+                height: 8
             )
             .padding(.horizontal, L2RTheme.Spacing.md)
         }
@@ -232,17 +241,17 @@ struct LessonPlayerView: View {
 
     private func activityContent(_ activity: LessonActivity) -> some View {
         VStack(alignment: .leading, spacing: L2RTheme.Spacing.lg) {
-            // Activity type badge
+            // Activity type badge — icon-primary for pre-readers
             if let type = activity.type {
-                HStack(spacing: L2RTheme.Spacing.xs) {
+                HStack(spacing: L2RTheme.Spacing.sm) {
                     Image(systemName: activityIconName(for: type))
-                        .font(.system(size: 14))
+                        .font(.system(size: 24))
                     Text(activityDisplayName(for: type))
-                        .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .semibold))
+                        .font(L2RTheme.Typography.Scaled.system(.footnote, weight: .medium))
                 }
                 .foregroundStyle(L2RTheme.primary)
-                .padding(.horizontal, L2RTheme.Spacing.sm)
-                .padding(.vertical, L2RTheme.Spacing.xxs)
+                .padding(.horizontal, L2RTheme.Spacing.md)
+                .padding(.vertical, L2RTheme.Spacing.sm)
                 .background(L2RTheme.primary.opacity(0.1))
                 .clipShape(Capsule())
             }

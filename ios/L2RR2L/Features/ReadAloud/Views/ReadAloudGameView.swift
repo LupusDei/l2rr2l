@@ -35,8 +35,11 @@ struct ReadAloudGameView: View {
             .padding()
         }
         .onChange(of: viewModel.gameState) { _, state in
-            if state == .gameComplete {
+            if state == .listening {
+                Task { await VoiceService.shared.speak("Read the word!") }
+            } else if state == .gameComplete {
                 showGameCompleteConfetti = true
+                Task { await VoiceService.shared.speak("Great job!") }
             }
         }
         .confetti(isActive: $showGameCompleteConfetti, configuration: .gameComplete)

@@ -4,6 +4,7 @@ import SwiftUI
 struct HomeView: View {
     @ObservedObject private var router = NavigationRouter.shared
     @ObservedObject private var childProfileService = ChildProfileService.shared
+    private let voiceService = VoiceService.shared
 
     private var childName: String {
         childProfileService.activeChild?.name ?? "Friend"
@@ -42,6 +43,9 @@ struct HomeView: View {
                 Spacer()
             }
             .padding(.horizontal, L2RTheme.Spacing.xl)
+        }
+        .onAppear {
+            Task { await voiceService.speak("Hello, \(childName)!") }
         }
     }
 
@@ -134,19 +138,8 @@ struct HomeView: View {
     }
 
     private func handleGameSelection(_ game: GameType) {
-        // Map GameType to GameDestination and navigate
-        let destination: GameDestination
-        switch game {
-        case .spelling: destination = .spelling
-        case .memory: destination = .memory
-        case .rhyme: destination = .rhyme
-        case .wordBuilder: destination = .wordBuilder
-        case .phonics: destination = .phonics
-        case .readAloud: destination = .readAloud
-        }
-
         router.selectedTab = .games
-        router.gamesPath.append(destination)
+        router.gamesPath.append(game)
     }
 }
 

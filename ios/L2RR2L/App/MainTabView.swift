@@ -104,7 +104,7 @@ struct GamesTabView: View {
     var body: some View {
         NavigationStack(path: $router.gamesPath) {
             GamesView()
-                .navigationDestination(for: GameDestination.self) { destination in
+                .navigationDestination(for: GameType.self) { destination in
                     GameDetailView(gameType: destination)
                 }
         }
@@ -174,7 +174,7 @@ struct LessonPlayerPlaceholderView: View {
 }
 
 struct GameDetailView: View {
-    let gameType: GameDestination
+    let gameType: GameType
 
     var body: some View {
         switch gameType {

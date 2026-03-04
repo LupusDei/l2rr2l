@@ -74,7 +74,7 @@ struct GameTile: View {
 }
 
 /// Available game types
-enum GameType: String, CaseIterable, Identifiable {
+enum GameType: String, CaseIterable, Identifiable, Hashable {
     case spelling
     case memory
     case rhyme
@@ -83,6 +83,26 @@ enum GameType: String, CaseIterable, Identifiable {
     case readAloud
 
     var id: String { rawValue }
+
+    /// Value used for deep link URL matching.
+    var deepLinkValue: String {
+        switch self {
+        case .wordBuilder: return "word-builder"
+        case .readAloud: return "read-aloud"
+        default: return rawValue
+        }
+    }
+
+    /// Initialize from a deep link string value.
+    init?(deepLinkValue: String) {
+        if let match = GameType.allCases.first(where: { $0.deepLinkValue == deepLinkValue }) {
+            self = match
+        } else if let match = GameType(rawValue: deepLinkValue) {
+            self = match
+        } else {
+            return nil
+        }
+    }
 
     var title: String {
         switch self {

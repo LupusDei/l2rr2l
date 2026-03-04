@@ -34,7 +34,7 @@ final class NavigationRouter: ObservableObject {
         case "home":
             navigateToHome()
         default:
-            break
+            navigateToHome()
         }
     }
 
@@ -54,7 +54,7 @@ final class NavigationRouter: ObservableObject {
     func navigateToGame(type: String) {
         selectedTab = .games
         gamesPath = NavigationPath()
-        if let gameType = GameDestination(rawValue: type) {
+        if let gameType = GameType(deepLinkValue: type) {
             gamesPath.append(gameType)
         }
     }
@@ -115,11 +115,4 @@ enum LessonDestination: Hashable {
     case player(id: String)
 }
 
-enum GameDestination: String, Hashable {
-    case phonics
-    case spelling
-    case memory
-    case rhyme
-    case wordBuilder = "word-builder"
-    case readAloud = "read-aloud"
-}
+// GameType is defined in GameGridView.swift and used for both UI and navigation.
