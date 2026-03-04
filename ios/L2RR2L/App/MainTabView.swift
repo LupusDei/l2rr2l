@@ -5,14 +5,11 @@ struct MainTabView: View {
     @ObservedObject var appState = AppState.shared
 
     init() {
-        // Make tab bar icons larger for young children
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
         UITabBar.appearance().unselectedItemTintColor = UIColor.secondaryLabel
         UITabBarItem.appearance().setTitleTextAttributes(
             [.font: UIFont.systemFont(ofSize: 11, weight: .medium)],
             for: .normal
         )
-        // Apply larger symbol rendering
         let appearance = UITabBarAppearance()
         appearance.stackedLayoutAppearance.normal.iconColor = UIColor.secondaryLabel
         appearance.stackedLayoutAppearance.selected.iconColor = UIColor(L2RTheme.primary)
@@ -20,7 +17,6 @@ struct MainTabView: View {
         if #available(iOS 15.0, *) {
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
-        _ = symbolConfig // used to configure
     }
 
     var body: some View {

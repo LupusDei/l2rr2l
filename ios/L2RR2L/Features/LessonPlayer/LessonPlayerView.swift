@@ -381,7 +381,7 @@ struct LessonPlayerView: View {
         }
         .padding(.horizontal, L2RTheme.Spacing.md)
         .padding(.vertical, L2RTheme.Spacing.md)
-        .background(Color.white.shadow(color: Color.black.opacity(0.05), radius: 4, y: -2))
+        .background(L2RTheme.surface.shadow(color: Color.black.opacity(0.05), radius: 4, y: -2))
     }
 
     // MARK: - Completion View
