@@ -425,10 +425,16 @@ struct WordBuilderView: View {
 
     private var gameCompleteView: some View {
         VStack(spacing: L2RTheme.Spacing.xl) {
-            Text("\u{1F389}")
-                .font(.system(size: 80))
+            HStack(spacing: L2RTheme.Spacing.xxs) {
+                Text("\u{1F9F1}")
+                    .font(.system(size: 36))
+                Text("\u{1F3D7}")
+                    .font(.system(size: 80))
+                Text("\u{1F9F1}")
+                    .font(.system(size: 36))
+            }
 
-            Text("Amazing!")
+            Text("Master Builder!")
                 .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
 

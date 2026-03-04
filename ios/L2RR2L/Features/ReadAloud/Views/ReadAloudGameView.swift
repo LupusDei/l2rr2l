@@ -395,10 +395,16 @@ struct ReadAloudGameView: View {
 
     private var gameCompleteView: some View {
         VStack(spacing: L2RTheme.Spacing.xl) {
-            Text("\u{1F389}")
-                .font(.system(size: 80))
+            HStack(spacing: L2RTheme.Spacing.xxs) {
+                Text("\u{2B50}")
+                    .font(.system(size: 36))
+                Text("\u{1F3A4}")
+                    .font(.system(size: 80))
+                Text("\u{2B50}")
+                    .font(.system(size: 36))
+            }
 
-            Text("Great Job!")
+            Text("Reading Star!")
                 .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
 

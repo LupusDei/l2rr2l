@@ -3,6 +3,9 @@ import SwiftUI
 struct LessonsView: View {
     @StateObject private var viewModel = LessonsListViewModel()
     @ObservedObject var router = NavigationRouter.shared
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    @State private var showBrowseMode = true
 
     var body: some View {
         VStack(spacing: 0) {
@@ -13,6 +16,20 @@ struct LessonsView: View {
         .background(L2RTheme.background)
         .navigationTitle("Lessons")
         .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    withAnimation(.easeInOut(duration: L2RTheme.Animation.normal)) {
+                        showBrowseMode.toggle()
+                    }
+                } label: {
+                    Image(systemName: showBrowseMode ? "list.bullet" : "square.grid.2x2.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(L2RTheme.primary)
+                }
+                .accessibilityLabel(showBrowseMode ? "Switch to list view" : "Switch to browse view")
+            }
+        }
         .onAppear {
             viewModel.onAppear()
         }
@@ -32,7 +49,7 @@ struct LessonsView: View {
         }
         .padding(.horizontal, L2RTheme.Spacing.lg)
         .padding(.vertical, L2RTheme.Spacing.sm)
-        .background(Color.white)
+        .background(L2RTheme.surface)
     }
 
     private var searchBar: some View {
@@ -290,17 +307,33 @@ struct LessonsView: View {
 
     private var lessonsList: some View {
         ScrollView {
-            LazyVStack(spacing: L2RTheme.Spacing.md) {
+            VStack(spacing: L2RTheme.Spacing.md) {
                 headerSection
 
-                ForEach(Array(viewModel.filteredLessons.enumerated()), id: \.element.id) { index, lesson in
-                    LessonCard(lesson: lesson) {
-                        router.lessonsPath.append(LessonDestination.detail(id: lesson.id))
+                if showBrowseMode {
+                    // Child-friendly visual browse grid
+                    LazyVGrid(columns: AdaptiveGridColumns.gameColumns(sizeClass: horizontalSizeClass), spacing: L2RTheme.Spacing.md) {
+                        ForEach(Array(viewModel.filteredLessons.enumerated()), id: \.element.id) { index, lesson in
+                            LessonBrowseCard(lesson: lesson) {
+                                router.lessonsPath.append(LessonDestination.detail(id: lesson.id))
+                            }
+                            .accessibilityIdentifier(AccessibilityIdentifiers.Lessons.lessonCard(index: index))
+                        }
                     }
-                    .accessibilityIdentifier(AccessibilityIdentifiers.Lessons.lessonCard(index: index))
+                } else {
+                    // Adult-friendly list view
+                    LazyVStack(spacing: L2RTheme.Spacing.md) {
+                        ForEach(Array(viewModel.filteredLessons.enumerated()), id: \.element.id) { index, lesson in
+                            LessonCard(lesson: lesson) {
+                                router.lessonsPath.append(LessonDestination.detail(id: lesson.id))
+                            }
+                            .accessibilityIdentifier(AccessibilityIdentifiers.Lessons.lessonCard(index: index))
+                        }
+                    }
                 }
             }
             .padding(L2RTheme.Spacing.lg)
+            .adaptiveContainer()
         }
         .refreshable {
             await viewModel.refreshLessons()

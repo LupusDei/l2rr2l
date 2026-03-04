@@ -2,6 +2,7 @@ import SwiftUI
 
 struct GamesView: View {
     @ObservedObject var router = NavigationRouter.shared
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     private let games: [(GameType, String, String, LinearGradient, Color)] = [
         (.phonics, "Phonics Fun", "ear.fill", .phonicsGame, L2RTheme.Game.phonicsShadow),
@@ -12,17 +13,12 @@ struct GamesView: View {
         (.readAloud, "Read Aloud", "speaker.wave.3.fill", .readAloudGame, L2RTheme.Game.readAloudShadow)
     ]
 
-    let columns = [
-        GridItem(.flexible(), spacing: L2RTheme.Spacing.md),
-        GridItem(.flexible(), spacing: L2RTheme.Spacing.md)
-    ]
-
     var body: some View {
         ScrollView {
             VStack(spacing: L2RTheme.Spacing.lg) {
                 headerSection
 
-                LazyVGrid(columns: columns, spacing: L2RTheme.Spacing.md) {
+                LazyVGrid(columns: AdaptiveGridColumns.gameColumns(sizeClass: horizontalSizeClass), spacing: L2RTheme.Spacing.md) {
                     ForEach(games, id: \.0) { game in
                         gameCard(
                             destination: game.0,
@@ -35,6 +31,7 @@ struct GamesView: View {
                 }
             }
             .padding(L2RTheme.Spacing.lg)
+            .adaptiveContainer()
         }
         .background(L2RTheme.background)
         .navigationTitle("Games")

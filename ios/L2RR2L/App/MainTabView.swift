@@ -4,6 +4,25 @@ struct MainTabView: View {
     @ObservedObject var router = NavigationRouter.shared
     @ObservedObject var appState = AppState.shared
 
+    init() {
+        // Make tab bar icons larger for young children
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
+        UITabBar.appearance().unselectedItemTintColor = UIColor.secondaryLabel
+        UITabBarItem.appearance().setTitleTextAttributes(
+            [.font: UIFont.systemFont(ofSize: 11, weight: .medium)],
+            for: .normal
+        )
+        // Apply larger symbol rendering
+        let appearance = UITabBarAppearance()
+        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.secondaryLabel
+        appearance.stackedLayoutAppearance.selected.iconColor = UIColor(L2RTheme.primary)
+        UITabBar.appearance().standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = appearance
+        }
+        _ = symbolConfig // used to configure
+    }
+
     var body: some View {
         ZStack(alignment: .top) {
             TabView(selection: $router.selectedTab) {
@@ -115,10 +134,113 @@ struct GamesTabView: View {
 
 struct SettingsTabView: View {
     @ObservedObject var router = NavigationRouter.shared
+    @State private var isParentalGateUnlocked = false
+    @State private var showParentalGate = false
 
     var body: some View {
         NavigationStack(path: $router.settingsPath) {
-            SettingsView()
+            if isParentalGateUnlocked {
+                SettingsView()
+            } else {
+                ParentalGateView {
+                    withAnimation(.easeInOut(duration: L2RTheme.Animation.normal)) {
+                        isParentalGateUnlocked = true
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Parental Gate
+
+/// Simple math problem gate to prevent accidental child access to Settings.
+private struct ParentalGateView: View {
+    var onUnlock: () -> Void
+
+    @State private var num1 = Int.random(in: 10...30)
+    @State private var num2 = Int.random(in: 10...30)
+    @State private var answer = ""
+    @State private var showError = false
+    @FocusState private var isFocused: Bool
+
+    private var correctAnswer: Int { num1 + num2 }
+
+    var body: some View {
+        VStack(spacing: L2RTheme.Spacing.xxl) {
+            Spacer()
+
+            Image(systemName: "lock.shield.fill")
+                .font(.system(size: 60))
+                .foregroundStyle(L2RTheme.primary.opacity(0.6))
+
+            Text("Grown-Up Check")
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
+                .foregroundStyle(L2RTheme.textPrimary)
+
+            Text("Please solve this to continue:")
+                .font(L2RTheme.Typography.Scaled.system(.callout))
+                .foregroundStyle(L2RTheme.textSecondary)
+
+            // Math problem
+            Text("\(num1) + \(num2) = ?")
+                .font(L2RTheme.Typography.Scaled.system(.title, weight: .bold))
+                .foregroundStyle(L2RTheme.textPrimary)
+
+            TextField("Answer", text: $answer)
+                .keyboardType(.numberPad)
+                .font(L2RTheme.Typography.Scaled.system(.title2, weight: .medium))
+                .multilineTextAlignment(.center)
+                .frame(width: 120, height: L2RTheme.TouchTarget.xlarge)
+                .background(
+                    RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
+                        .fill(L2RTheme.surface)
+                        .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
+                        .stroke(showError ? L2RTheme.Status.error : L2RTheme.inputBorder, lineWidth: 2)
+                )
+                .focused($isFocused)
+                .submitLabel(.done)
+                .onSubmit { checkAnswer() }
+
+            if showError {
+                Text("That's not right. Try again!")
+                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
+                    .foregroundStyle(L2RTheme.Status.error)
+            }
+
+            Button {
+                checkAnswer()
+            } label: {
+                Text("Unlock")
+                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 160, height: L2RTheme.TouchTarget.comfortable)
+                    .background(L2RTheme.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
+            }
+
+            Spacer()
+        }
+        .padding(L2RTheme.Spacing.xl)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(L2RTheme.background)
+        .navigationTitle("Settings")
+        .navigationBarTitleDisplayMode(.large)
+    }
+
+    private func checkAnswer() {
+        if Int(answer) == correctAnswer {
+            showError = false
+            onUnlock()
+        } else {
+            showError = true
+            answer = ""
+            // Generate a new problem
+            num1 = Int.random(in: 10...30)
+            num2 = Int.random(in: 10...30)
         }
     }
 }

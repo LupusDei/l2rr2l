@@ -76,13 +76,14 @@ struct MemoryGameView: View {
 
             // Moves counter
             if viewModel.gameState != .notStarted {
-                HStack(spacing: L2RTheme.Spacing.xs) {
-                    Text("Moves:")
-                        .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.8))
+                HStack(spacing: L2RTheme.Spacing.xxs) {
+                    Text("\u{1F463}")
+                        .font(.system(size: 18))
                     Text("\(viewModel.moves)")
                         .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                         .foregroundStyle(.white)
+                        .contentTransition(.numericText())
+                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: viewModel.moves)
                 }
             }
         }
@@ -200,8 +201,14 @@ struct MemoryGameView: View {
 
     private var levelCompleteView: some View {
         VStack(spacing: L2RTheme.Spacing.xl) {
-            Text("🎉")
-                .font(.system(size: 80))
+            HStack(spacing: L2RTheme.Spacing.xxs) {
+                Text("\u{2728}")
+                    .font(.system(size: 36))
+                Text("\u{1F9E0}")
+                    .font(.system(size: 80))
+                Text("\u{2728}")
+                    .font(.system(size: 36))
+            }
 
             Text("Level Complete!")
                 .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))

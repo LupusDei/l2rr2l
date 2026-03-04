@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 // MARK: - L2R Theme
 
@@ -6,32 +7,46 @@ import SwiftUI
 /// Ported from the web CSS to create consistent styling across platforms.
 public enum L2RTheme {
 
+    // MARK: - Adaptive Color Helper
+
+    /// Creates a Color that adapts between light and dark mode.
+    static func adaptive(light: String, dark: String) -> Color {
+        Color(uiColor: UIColor { traits in
+            traits.userInterfaceStyle == .dark
+                ? UIColor(Color(hex: dark))
+                : UIColor(Color(hex: light))
+        })
+    }
+
     // MARK: - Primary Colors
 
-    /// Primary brand color (Indigo)
-    public static let primary = Color(hex: "#4f46e5")
+    /// Primary brand color (Indigo) - slightly brighter in dark mode
+    public static let primary = adaptive(light: "#4f46e5", dark: "#6366f1")
 
     // MARK: - Text Colors
 
-    /// Primary text color
-    public static let textPrimary = Color(hex: "#333333")
+    /// Primary text color - adapts for dark backgrounds
+    public static let textPrimary = adaptive(light: "#333333", dark: "#f0f0f0")
 
     /// Secondary text color
-    public static let textSecondary = Color(hex: "#666666")
+    public static let textSecondary = adaptive(light: "#666666", dark: "#a0a0a0")
 
     /// Muted text color
-    public static let textMuted = Color(hex: "#495057")
+    public static let textMuted = adaptive(light: "#495057", dark: "#8e8e93")
 
     // MARK: - Background Colors
 
     /// Main background color
-    public static let background = Color(hex: "#f8f9fa")
+    public static let background = adaptive(light: "#f8f9fa", dark: "#1c1c1e")
+
+    /// Card / surface background
+    public static let surface = adaptive(light: "#ffffff", dark: "#2c2c2e")
 
     /// Border color
-    public static let border = Color(hex: "#e9ecef")
+    public static let border = adaptive(light: "#e9ecef", dark: "#38383a")
 
     /// Input border color
-    public static let inputBorder = Color(hex: "#d1d5db")
+    public static let inputBorder = adaptive(light: "#d1d5db", dark: "#48484a")
 
     // MARK: - Status Colors
 
@@ -303,12 +318,6 @@ public enum L2RTheme {
     // MARK: - Layout Constants
 
     public enum Layout {
-        // Corner radii (matching CornerRadius for convenience)
-        public static let cornerRadiusSmall: CGFloat = 8
-        public static let cornerRadiusMedium: CGFloat = 12
-        public static let cornerRadiusLarge: CGFloat = 16
-        public static let cornerRadiusXL: CGFloat = 24
-
         // Interactive elements
         public static let minTouchTarget: CGFloat = 44
         public static let buttonHeight: CGFloat = 52
@@ -373,16 +382,18 @@ public enum L2RTheme {
 // MARK: - Gradients
 
 extension LinearGradient {
-    /// Home screen background gradient
-    public static let homeBackground = LinearGradient(
-        colors: [
-            Color(hex: "#fff9e6"),
-            Color(hex: "#ffe6f0"),
-            Color(hex: "#e6f3ff")
-        ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    /// Home screen background gradient - adaptive for dark mode
+    public static var homeBackground: LinearGradient {
+        LinearGradient(
+            colors: [
+                L2RTheme.adaptive(light: "#fff9e6", dark: "#1a1a2e"),
+                L2RTheme.adaptive(light: "#ffe6f0", dark: "#16213e"),
+                L2RTheme.adaptive(light: "#e6f3ff", dark: "#0f3460")
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
 
     /// Memory game gradient
     public static let memoryGame = LinearGradient(

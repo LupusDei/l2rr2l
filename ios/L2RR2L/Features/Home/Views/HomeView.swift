@@ -43,6 +43,7 @@ struct HomeView: View {
                 Spacer()
             }
             .padding(.horizontal, L2RTheme.Spacing.xl)
+            .adaptiveContainer()
         }
         .onAppear {
             Task { await voiceService.speak("Hello, \(childName)!") }
