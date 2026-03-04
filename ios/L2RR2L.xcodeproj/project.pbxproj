@@ -226,6 +226,9 @@
 		FBD5BEF561EFECC6F42176A0 /* PhonicsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6269E64ECF4FBF8303BC06F4 /* PhonicsModels.swift */; };
 		FD2BF03FBD47FB2683CA381E /* PhonicsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845762B5AEE7B9D831C8B44B /* PhonicsModels.swift */; };
 		FE66E9906423F3FE0F0D47D0 /* WordBuilderData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522334FB6D6EEA980E1F4534 /* WordBuilderData.swift */; };
+		59D1FB7B36A64D088B819F01 /* ReadAloudGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A865121D42B4536B3A8EC40 /* ReadAloudGameView.swift */; };
+		DD15FA0CAE354E9480D986B2 /* ReadAloudGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB824DC201A04E73819DFFB9 /* ReadAloudGameViewModel.swift */; };
+		88D4A73A59BC4D84878C0AEF /* SightWordsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBFB29282534570919E1189 /* SightWordsData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -467,6 +470,9 @@
 		FD28D8523001EFEA279C8F75 /* PhonicsData.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PhonicsData.swift; sourceTree = "<group>"; };
 		FFAE49207033788005752730 /* AppState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		FFCA7AAC1305CAD9B2BB49CB /* RegisterView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
+		1A865121D42B4536B3A8EC40 /* ReadAloudGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadAloudGameView.swift; sourceTree = "<group>"; };
+		DB824DC201A04E73819DFFB9 /* ReadAloudGameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadAloudGameViewModel.swift; sourceTree = "<group>"; };
+		0CBFB29282534570919E1189 /* SightWordsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SightWordsData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1101,7 +1107,8 @@
 				38DF7FAC603A9E4F9FE49D44 /* Settings */,
 				5E586839015A3BDF281AF1FD /* Shared */,
 				CD56DF92315ED3294B64EFEE /* SpellingGame */,
-				537C690B49BB0376341408CB /* WordBuilder */,
+				537C690B49BB0376341408CB /* WordBuilder */,				7F3B30109A964C61AD00E0B1 /* ReadAloud */,
+
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -1775,6 +1782,41 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+
+		A206B18AF1074490B74A4248 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				0CBFB29282534570919E1189 /* SightWordsData.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		3980377FC4424F93A154CACC /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				DB824DC201A04E73819DFFB9 /* ReadAloudGameViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		888079C87F2D4382982CC2E1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1A865121D42B4536B3A8EC40 /* ReadAloudGameView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		7F3B30109A964C61AD00E0B1 /* ReadAloud */ = {
+			isa = PBXGroup;
+			children = (
+				A206B18AF1074490B74A4248 /* Data */,
+				3980377FC4424F93A154CACC /* ViewModels */,
+				888079C87F2D4382982CC2E1 /* Views */,
+			);
+			path = ReadAloud;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2104,6 +2146,9 @@
 				1B9EEA890366C5AF49D3E395 /* L2RTheme.swift in Sources */,
 				5EE098EF66C3C7B75EF1E23C /* ThemeManager.swift in Sources */,
 				1366A43BF202FB56C325B08B /* ThemeModifiers.swift in Sources */,
+				59D1FB7B36A64D088B819F01 /* ReadAloudGameView.swift in Sources */,
+				DD15FA0CAE354E9480D986B2 /* ReadAloudGameViewModel.swift in Sources */,
+				88D4A73A59BC4D84878C0AEF /* SightWordsData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

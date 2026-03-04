@@ -194,28 +194,9 @@ struct GameDetailView: View {
             WordBuilderView()
                 .navigationBarHidden(true)
         case .readAloud:
-            readAloudPlaceholder
+            ReadAloudGameView()
+                .navigationBarHidden(true)
         }
-    }
-
-    private var readAloudPlaceholder: some View {
-        VStack(spacing: L2RTheme.Spacing.lg) {
-            Image(systemName: "speaker.wave.3.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(L2RTheme.primary)
-
-            Text("Read Aloud")
-                .font(L2RTheme.Typography.Scaled.system(.title, weight: .bold))
-                .foregroundStyle(L2RTheme.textPrimary)
-
-            Text("Coming soon!")
-                .font(L2RTheme.Typography.Scaled.system(.callout))
-                .foregroundStyle(L2RTheme.textSecondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(L2RTheme.background)
-        .navigationTitle("Read Aloud")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

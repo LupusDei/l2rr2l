@@ -126,6 +126,20 @@ enum AccessibilityIdentifiers {
         static let gameComplete = "phonics.game.complete"
     }
 
+    // MARK: - Read Aloud Game
+    enum ReadAloud {
+        static let startButton = "readaloud.start.button"
+        static let closeButton = "readaloud.close.button"
+        static let scoreLabel = "readaloud.score.label"
+        static let streakLabel = "readaloud.streak.label"
+        static let roundLabel = "readaloud.round.label"
+        static let targetWord = "readaloud.target.word"
+        static let micButton = "readaloud.mic.button"
+        static let playAgainButton = "readaloud.playagain.button"
+        static let doneButton = "readaloud.done.button"
+        static let gameComplete = "readaloud.game.complete"
+    }
+
     // MARK: - Lessons
     enum Lessons {
         static let listView = "lessons.list"
