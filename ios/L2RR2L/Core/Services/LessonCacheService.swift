@@ -8,7 +8,7 @@ public actor LessonCacheService {
 
     // MARK: - Configuration
 
-    private let cacheTTL: TimeInterval = 5 * 60 // 5 minutes
+    private let cacheTTL: TimeInterval = 60 * 60 // 1 hour
     private let cacheDirectory: URL
     private let lessonsFileName = "cached_lessons.json"
     private let metadataKey = "LessonCacheMetadata"

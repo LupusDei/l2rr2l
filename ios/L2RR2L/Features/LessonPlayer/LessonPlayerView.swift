@@ -324,52 +324,51 @@ struct LessonPlayerView: View {
 
     private var activityNavigation: some View {
         HStack(spacing: L2RTheme.Spacing.md) {
-            // Back button
+            // Back button - icon-primary with label
             Button {
                 viewModel.goToPreviousActivity()
             } label: {
-                HStack(spacing: L2RTheme.Spacing.xs) {
-                    Image(systemName: "chevron.left")
-                    Text("Back")
-                }
-                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
-                .foregroundStyle(viewModel.isFirstActivity ? L2RTheme.textSecondary.opacity(0.4) : L2RTheme.primary)
-                .padding(.horizontal, L2RTheme.Spacing.lg)
-                .padding(.vertical, L2RTheme.Spacing.sm)
+                Image(systemName: "arrow.left.circle.fill")
+                    .font(.system(size: 36))
+                    .foregroundStyle(viewModel.isFirstActivity ? L2RTheme.textSecondary.opacity(0.3) : L2RTheme.primary)
+                    .frame(minWidth: L2RTheme.TouchTarget.comfortable, minHeight: L2RTheme.TouchTarget.comfortable)
             }
             .disabled(viewModel.isFirstActivity)
+            .accessibilityLabel("Previous activity")
 
             Spacer()
 
-            // Skip button
+            // Skip button - icon with label
             Button {
                 viewModel.skipCurrentActivity()
             } label: {
-                Text("Skip")
-                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
-                    .foregroundStyle(L2RTheme.textSecondary)
-                    .padding(.horizontal, L2RTheme.Spacing.lg)
-                    .padding(.vertical, L2RTheme.Spacing.sm)
+                Image(systemName: "forward.circle.fill")
+                    .font(.system(size: 36))
+                    .foregroundStyle(L2RTheme.textSecondary.opacity(0.5))
+                    .frame(minWidth: L2RTheme.TouchTarget.comfortable, minHeight: L2RTheme.TouchTarget.comfortable)
             }
+            .accessibilityLabel("Skip activity")
 
-            // Done / Next button
+            // Done / Next button - large and prominent
             Button {
                 viewModel.completeCurrentActivity()
             } label: {
-                HStack(spacing: L2RTheme.Spacing.xs) {
+                HStack(spacing: L2RTheme.Spacing.sm) {
+                    Image(systemName: viewModel.isLastActivity ? "checkmark.circle.fill" : "arrow.right.circle.fill")
+                        .font(.system(size: 24))
                     Text(viewModel.isLastActivity ? "Finish" : "Next")
-                    Image(systemName: viewModel.isLastActivity ? "checkmark" : "chevron.right")
+                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
                 }
-                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .callout, weight: .bold))
                 .foregroundStyle(.white)
                 .padding(.horizontal, L2RTheme.Spacing.xl)
-                .padding(.vertical, L2RTheme.Spacing.sm)
+                .frame(height: L2RTheme.TouchTarget.comfortable)
                 .background(
                     Capsule()
                         .fill(LinearGradient.ctaButton)
                         .shadow(color: L2RTheme.CTA.shadow.opacity(0.4), radius: 4, y: 3)
                 )
             }
+            .accessibilityLabel(viewModel.isLastActivity ? "Finish lesson" : "Next activity")
         }
         .padding(.horizontal, L2RTheme.Spacing.md)
         .padding(.vertical, L2RTheme.Spacing.md)
@@ -377,6 +376,8 @@ struct LessonPlayerView: View {
     }
 
     // MARK: - Completion View
+
+    @State private var showLessonConfetti = false
 
     private var completionView: some View {
         VStack(spacing: L2RTheme.Spacing.xl) {
@@ -397,20 +398,16 @@ struct LessonPlayerView: View {
                     .padding(.horizontal)
             }
 
-            // Score
+            // Star score (1-3 stars based on percentage)
             if viewModel.overallScore > 0 {
-                VStack(spacing: L2RTheme.Spacing.sm) {
-                    Text("Score")
-                        .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
-                        .foregroundStyle(L2RTheme.textSecondary)
-
-                    Text("\(viewModel.overallScore)%")
-                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
-                        .foregroundStyle(L2RTheme.primary)
+                HStack(spacing: L2RTheme.Spacing.sm) {
+                    ForEach(0..<3) { index in
+                        let filled = starsFilled(for: viewModel.overallScore) > index
+                        Image(systemName: filled ? "star.fill" : "star")
+                            .font(.system(size: 40))
+                            .foregroundStyle(filled ? L2RTheme.Status.warning : L2RTheme.textSecondary.opacity(0.3))
+                    }
                 }
-                .padding(L2RTheme.Spacing.lg)
-                .background(L2RTheme.primary.opacity(0.08))
-                .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
             }
 
             // Activities completed
@@ -439,33 +436,50 @@ struct LessonPlayerView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(L2RTheme.background)
+        .confetti(isActive: $showLessonConfetti, configuration: .gameComplete)
+        .onAppear { showLessonConfetti = true }
+    }
+
+    private func starsFilled(for score: Int) -> Int {
+        if score >= 80 { return 3 }
+        if score >= 50 { return 2 }
+        return 1
     }
 
     // MARK: - Error View
 
     private var errorView: some View {
         VStack(spacing: L2RTheme.Spacing.lg) {
-            Image(systemName: "exclamationmark.triangle.fill")
+            Image(systemName: "cloud.bolt.rain.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(L2RTheme.Status.warning)
+                .foregroundStyle(L2RTheme.primary.opacity(0.6))
 
-            Text("Could Not Load Lesson")
-                .font(L2RTheme.Typography.Scaled.system(.title2, weight: .bold))
+            Text("Oops!")
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
                 .foregroundStyle(L2RTheme.textPrimary)
 
-            if let error = viewModel.errorMessage {
-                Text(error)
-                    .font(L2RTheme.Typography.Scaled.system(.callout))
-                    .foregroundStyle(L2RTheme.textSecondary)
-                    .multilineTextAlignment(.center)
-            }
+            Text(viewModel.errorMessage ?? "Something went wrong. Let's try again!")
+                .font(L2RTheme.Typography.Scaled.system(.callout))
+                .foregroundStyle(L2RTheme.textSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
 
             Button {
                 Task { await viewModel.loadLesson() }
             } label: {
-                Text("Try Again")
-                    .font(L2RTheme.Typography.Scaled.system(.callout, weight: .semibold))
-                    .foregroundStyle(L2RTheme.primary)
+                HStack(spacing: L2RTheme.Spacing.xs) {
+                    Image(systemName: "arrow.clockwise")
+                    Text("Try Again")
+                }
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .callout, weight: .bold))
+                .foregroundStyle(.white)
+                .padding(.horizontal, L2RTheme.Spacing.xl)
+                .frame(height: L2RTheme.TouchTarget.comfortable)
+                .background(
+                    Capsule()
+                        .fill(LinearGradient.ctaButton)
+                        .shadow(color: L2RTheme.CTA.shadow.opacity(0.4), radius: 4, y: 3)
+                )
             }
 
             Button {
@@ -474,6 +488,7 @@ struct LessonPlayerView: View {
                 Text("Go Back")
                     .font(L2RTheme.Typography.Scaled.system(.callout))
                     .foregroundStyle(L2RTheme.textSecondary)
+                    .frame(minHeight: L2RTheme.TouchTarget.minimum)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -523,20 +538,24 @@ private struct WordsFlowView: View {
 
     var body: some View {
         LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: 80, maximum: 140), spacing: L2RTheme.Spacing.sm)],
+            columns: [GridItem(.adaptive(minimum: 100, maximum: 160), spacing: L2RTheme.Spacing.sm)],
             spacing: L2RTheme.Spacing.sm
         ) {
             ForEach(words, id: \.self) { word in
                 Button {
                     Task { await voiceService.speak(word) }
                 } label: {
-                    Text(word)
-                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .callout, weight: .bold))
-                        .foregroundStyle(L2RTheme.primary)
-                        .padding(.horizontal, L2RTheme.Spacing.sm)
-                        .padding(.vertical, L2RTheme.Spacing.xs)
-                        .background(L2RTheme.primary.opacity(0.1))
-                        .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.small))
+                    HStack(spacing: L2RTheme.Spacing.xxs) {
+                        Image(systemName: "speaker.wave.2.fill")
+                            .font(.system(size: 12))
+                        Text(word)
+                            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
+                    }
+                    .foregroundStyle(L2RTheme.primary)
+                    .padding(.horizontal, L2RTheme.Spacing.md)
+                    .frame(minHeight: L2RTheme.TouchTarget.minimum)
+                    .background(L2RTheme.primary.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
                 }
                 .accessibilityLabel("Word: \(word). Tap to hear.")
             }

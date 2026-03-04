@@ -223,7 +223,7 @@ struct WordBuilderView: View {
     private var emptySlot: some View {
         RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
             .fill(Color.white.opacity(0.2))
-            .frame(width: 52, height: 60)
+            .frame(minWidth: 52, idealWidth: 60, minHeight: 60)
             .overlay(
                 RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
                     .stroke(Color.white.opacity(0.4), style: StrokeStyle(lineWidth: 2, dash: [5]))
@@ -237,7 +237,7 @@ struct WordBuilderView: View {
         return Text(String(letter).uppercased())
             .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
             .foregroundStyle(.white)
-            .frame(width: 52, height: 60)
+            .frame(minWidth: 52, idealWidth: 60, minHeight: 60)
             .background(
                 RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
                     .fill(
@@ -308,7 +308,7 @@ struct WordBuilderView: View {
     private var letterBankArea: some View {
         VStack(spacing: L2RTheme.Spacing.sm) {
             let columns = [
-                GridItem(.adaptive(minimum: 56, maximum: 70), spacing: L2RTheme.Spacing.sm)
+                GridItem(.adaptive(minimum: 64, maximum: 80), spacing: L2RTheme.Spacing.sm)
             ]
 
             LazyVGrid(columns: columns, spacing: L2RTheme.Spacing.sm) {
@@ -332,7 +332,7 @@ struct WordBuilderView: View {
             Text(String(tile.letter).uppercased())
                 .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
                 .foregroundStyle(.white)
-                .frame(width: 56, height: 56)
+                .frame(minWidth: 56, idealWidth: 64, minHeight: 56, idealHeight: 64)
                 .background(
                     RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
                         .fill(
