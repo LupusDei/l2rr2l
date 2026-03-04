@@ -118,6 +118,8 @@ class MemoryGameViewModel: ObservableObject {
 
         // Flip the card
         cards[index].isFlipped = true
+        HapticService.shared.cardFlip()
+        SoundEffectService.shared.play(.flip)
         flippedIndices.append(index)
 
         // Check for match if two cards are flipped
@@ -142,6 +144,8 @@ class MemoryGameViewModel: ObservableObject {
             // Match found
             cards[firstIndex].isMatched = true
             cards[secondIndex].isMatched = true
+            HapticService.shared.correctAnswer()
+            SoundEffectService.shared.play(.match)
             flippedIndices = []
             gameState = .playing
 
@@ -151,6 +155,8 @@ class MemoryGameViewModel: ObservableObject {
             }
         } else {
             // No match - flip back after delay
+            HapticService.shared.incorrectAnswer()
+            SoundEffectService.shared.play(.incorrect)
             flipBackTask = Task {
                 try? await Task.sleep(nanoseconds: UInt64(flipBackDelay * 1_000_000_000))
 
@@ -203,6 +209,8 @@ class MemoryGameViewModel: ObservableObject {
     /// Handles level completion
     private func handleLevelComplete() {
         gameState = .levelComplete
+        HapticService.shared.levelComplete()
+        SoundEffectService.shared.play(.levelComplete)
 
         // Update best moves
         if let best = bestMoves {

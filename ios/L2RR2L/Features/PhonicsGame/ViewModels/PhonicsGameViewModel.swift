@@ -83,6 +83,8 @@ class PhonicsGameViewModel: ObservableObject {
     func nextRound() {
         guard round < totalRounds else {
             gameState = .gameComplete
+            HapticService.shared.levelComplete()
+            SoundEffectService.shared.play(.levelComplete)
             return
         }
 
@@ -109,8 +111,12 @@ class PhonicsGameViewModel: ObservableObject {
             score += 1
             streak += 1
             bestStreak = max(bestStreak, streak)
+            HapticService.shared.correctAnswer()
+            SoundEffectService.shared.play(.correct)
         } else {
             streak = 0
+            HapticService.shared.incorrectAnswer()
+            SoundEffectService.shared.play(.incorrect)
         }
 
         gameState = .roundComplete(correct: option.isCorrect)

@@ -69,6 +69,8 @@ class WordBuilderViewModel: ObservableObject {
     func nextPuzzle() {
         guard round < totalRounds else {
             gameState = .gameComplete
+            HapticService.shared.levelComplete()
+            SoundEffectService.shared.play(.levelComplete)
             return
         }
 
@@ -130,6 +132,8 @@ class WordBuilderViewModel: ObservableObject {
             streak += 1
             bestStreak = max(bestStreak, streak)
             gameState = .correct
+            HapticService.shared.correctAnswer()
+            SoundEffectService.shared.play(.correct)
 
             // Trigger celebration for streaks
             if streak >= 3 && streak % 3 == 0 {
@@ -138,6 +142,8 @@ class WordBuilderViewModel: ObservableObject {
         } else {
             streak = 0
             gameState = .incorrect
+            HapticService.shared.incorrectAnswer()
+            SoundEffectService.shared.play(.incorrect)
         }
 
         return correct
