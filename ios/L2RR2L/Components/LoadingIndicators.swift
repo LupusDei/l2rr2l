@@ -170,7 +170,7 @@ struct SkeletonCard: View {
             .padding(.horizontal, L2RTheme.Spacing.sm)
             .padding(.bottom, L2RTheme.Spacing.sm)
         }
-        .background(Color.white)
+        .background(L2RTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
     }
@@ -196,7 +196,7 @@ struct SkeletonListItem: View {
             Spacer()
         }
         .padding(L2RTheme.Spacing.md)
-        .background(Color.white)
+        .background(L2RTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
     }
 }
@@ -226,7 +226,7 @@ struct FullScreenLoader: View {
             .padding(L2RTheme.Spacing.xxl)
             .background(
                 RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.large)
-                    .fill(Color.white)
+                    .fill(L2RTheme.surface)
                     .shadow(color: Color.black.opacity(0.2), radius: 20, x: 0, y: 10)
             )
         }

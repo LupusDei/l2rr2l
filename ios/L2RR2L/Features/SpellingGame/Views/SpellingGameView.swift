@@ -302,11 +302,11 @@ struct SpellingGameView: View {
     private var gameCompleteView: some View {
         VStack(spacing: L2RTheme.Spacing.xl) {
             HStack(spacing: L2RTheme.Spacing.xxs) {
-                Text("\u{1F1E6}")
+                Text("\u{2728}")
                     .font(.system(size: 36))
                 Text("\u{1F3C6}")
                     .font(.system(size: 80))
-                Text("\u{1F1FF}")
+                Text("\u{2728}")
                     .font(.system(size: 36))
             }
 

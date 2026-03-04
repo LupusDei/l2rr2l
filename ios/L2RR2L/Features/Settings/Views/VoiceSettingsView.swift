@@ -131,7 +131,7 @@ struct VoiceSettingsView: View {
                         .foregroundStyle(L2RTheme.textSecondary)
                 }
                 .padding(L2RTheme.Spacing.md)
-                .background(Color.white)
+                .background(L2RTheme.surface)
                 .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
                 .overlay(
                     RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
@@ -215,7 +215,7 @@ struct VoiceSettingsView: View {
                 .foregroundStyle(L2RTheme.textSecondary)
                 .frame(maxWidth: .infinity)
                 .frame(height: L2RTheme.TouchTarget.large)
-                .background(Color.white)
+                .background(L2RTheme.surface)
                 .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
                 .overlay(
                     RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)

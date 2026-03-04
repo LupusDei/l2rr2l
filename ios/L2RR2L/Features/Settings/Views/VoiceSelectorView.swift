@@ -243,7 +243,7 @@ private struct VoiceRow: View {
             .buttonStyle(.plain)
         }
         .padding(L2RTheme.Spacing.md)
-        .background(isSelected ? L2RTheme.primary.opacity(0.05) : Color.white)
+        .background(isSelected ? L2RTheme.primary.opacity(0.05) : L2RTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
         .overlay(
             RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)

@@ -16,6 +16,16 @@ struct OnboardingFlow: View {
         case age
         case avatar
         case completion
+
+        /// Map from persisted OnboardingStep to flow step for force-quit recovery.
+        init(from serviceStep: OnboardingStep) {
+            switch serviceStep {
+            case .welcome:   self = .name
+            case .nameEntry: self = .age
+            case .voiceSetup: self = .avatar
+            case .tutorial:  self = .completion
+            }
+        }
     }
 
     var body: some View {
@@ -24,6 +34,7 @@ struct OnboardingFlow: View {
             case .name:
                 NameEntryView { name in
                     childName = name
+                    onboardingService.completeStep(.welcome)
                     withAnimation(.easeInOut(duration: L2RTheme.Animation.slow)) {
                         currentStep = .age
                     }
@@ -36,6 +47,7 @@ struct OnboardingFlow: View {
             case .age:
                 AgeSelectionView { age in
                     childAge = age
+                    onboardingService.completeStep(.nameEntry)
                     withAnimation(.easeInOut(duration: L2RTheme.Animation.slow)) {
                         currentStep = .avatar
                     }
@@ -48,6 +60,7 @@ struct OnboardingFlow: View {
             case .avatar:
                 AvatarSelectionView { avatar in
                     childAvatar = avatar
+                    onboardingService.completeStep(.voiceSetup)
                     withAnimation(.easeInOut(duration: L2RTheme.Animation.slow)) {
                         currentStep = .completion
                     }
@@ -77,6 +90,10 @@ struct OnboardingFlow: View {
             }
         }
         .animation(.easeInOut(duration: L2RTheme.Animation.slow), value: currentStep)
+        .onAppear {
+            // Resume from persisted step on force-quit recovery
+            currentStep = OnboardingFlowStep(from: onboardingService.currentStep)
+        }
     }
 }
 

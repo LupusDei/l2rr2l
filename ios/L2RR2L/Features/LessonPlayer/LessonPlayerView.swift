@@ -236,7 +236,7 @@ struct LessonPlayerView: View {
             .padding(.horizontal, L2RTheme.Spacing.md)
         }
         .padding(.vertical, L2RTheme.Spacing.sm)
-        .background(Color.white)
+        .background(L2RTheme.surface)
     }
 
     private func activityContent(_ activity: LessonActivity) -> some View {
@@ -289,7 +289,7 @@ struct LessonPlayerView: View {
                     .lineSpacing(6)
                     .padding(L2RTheme.Spacing.lg)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white)
+                    .background(L2RTheme.surface)
                     .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
                     .shadow(color: Color.black.opacity(0.05), radius: 4, y: 2)
             }

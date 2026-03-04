@@ -231,7 +231,7 @@ struct L2RTextFieldStyle: TextFieldStyle {
             .font(L2RTheme.Typography.Scaled.system(.callout))
             .padding(L2RTheme.Spacing.md)
             .frame(minHeight: L2RTheme.TouchTarget.comfortable)
-            .background(Color.white)
+            .background(L2RTheme.surface)
             .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
             .overlay(
                 RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)

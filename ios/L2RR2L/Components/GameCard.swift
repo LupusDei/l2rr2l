@@ -134,7 +134,7 @@ struct GameCard: View {
         .foregroundStyle(game.shadowColor)
         .padding(.horizontal, L2RTheme.Spacing.md)
         .padding(.vertical, L2RTheme.Spacing.xs)
-        .background(.white)
+        .background(L2RTheme.surface)
         .clipShape(Capsule())
     }
 }

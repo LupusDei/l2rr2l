@@ -132,7 +132,7 @@ private struct CardBack: View {
         ZStack {
             // Base
             RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.large)
-                .fill(Color.white)
+                .fill(L2RTheme.surface)
 
             // Match highlight glow
             if isMatched {

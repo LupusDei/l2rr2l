@@ -181,7 +181,7 @@ private struct SecondaryButtonStyle: ButtonStyle {
         configuration.label
             .background(
                 RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
-                    .fill(Color.white)
+                    .fill(L2RTheme.surface)
             )
             .clipShape(RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium))
             .overlay(

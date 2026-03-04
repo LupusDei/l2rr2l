@@ -26,8 +26,6 @@ extension View {
 
 /// Returns an appropriate column count based on horizontal size class.
 struct AdaptiveGridColumns {
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
     /// Returns 2 columns for iPhone, 3 for iPad.
     static func gameColumns(sizeClass: UserInterfaceSizeClass?) -> [GridItem] {
         let count = sizeClass == .regular ? 3 : 2
