@@ -28,26 +28,16 @@ public struct FlipCard: View {
         ZStack {
             // Front face (card back - shown when not flipped)
             CardFront()
-                .rotation3DEffect(
-                    .degrees(isFlipped ? 180 : 0),
-                    axis: (x: 0, y: 1, z: 0),
-                    perspective: 0.5
-                )
                 .opacity(isFlipped ? 0 : 1)
 
             // Back face (word - shown when flipped)
             CardBack(word: word, isMatched: isMatched)
-                .rotation3DEffect(
-                    .degrees(isFlipped ? 0 : -180),
-                    axis: (x: 0, y: 1, z: 0),
-                    perspective: 0.5
-                )
                 .opacity(isFlipped ? 1 : 0)
         }
-        .animation(reduceMotion ? nil : .easeInOut(duration: flipDuration), value: isFlipped)
+        .juicyFlip(isFlipped: $isFlipped)
         .scaleEffect(isMatched ? 1.05 : 1.0)
         .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6), value: isMatched)
-        .onTapGesture {
+        .juicyTap {
             guard !isMatched else { return }
             onFlip()
         }

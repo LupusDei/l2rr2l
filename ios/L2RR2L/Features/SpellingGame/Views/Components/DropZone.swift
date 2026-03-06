@@ -22,6 +22,7 @@ struct DropZone: View {
 
     @State private var animateAccept = false
     @State private var animateReject = false
+    @State private var snapTrigger = false
 
     private var state: DropZoneState {
         if isLocked { return .locked }
@@ -43,10 +44,9 @@ struct DropZone: View {
             }
         }
         .frame(width: 52, height: 60)
-        .scaleEffect(animateAccept ? 1.1 : 1.0)
+        .juicySnap(trigger: $snapTrigger)
         .scaleEffect(animateReject ? 0.9 : 1.0)
         .offset(x: animateReject ? -4 : 0)
-        .animation(L2RTheme.Animation.bounce, value: animateAccept)
         .animation(.default, value: animateReject)
         .onDrop(of: [.text], isTargeted: nil) { providers in
             handleDrop(providers: providers)
@@ -195,10 +195,7 @@ struct DropZone: View {
     }
 
     private func triggerAcceptAnimation() {
-        animateAccept = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            animateAccept = false
-        }
+        snapTrigger = true
     }
 
     private func triggerRejectAnimation() {

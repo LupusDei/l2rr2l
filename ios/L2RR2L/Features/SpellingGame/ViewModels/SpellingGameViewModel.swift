@@ -34,6 +34,9 @@ class SpellingGameViewModel: ObservableObject {
     /// Current round number (1-based)
     @Published private(set) var round = 1
 
+    /// Index of the letter tile in scrambledLetters that should glow as a hint
+    @Published private(set) var hintLetterIndex: Int? = nil
+
     // MARK: - Configuration
 
     /// Total number of rounds per game session
@@ -50,9 +53,26 @@ class SpellingGameViewModel: ObservableObject {
     /// Best streak achieved in this session
     private(set) var bestStreak = 0
 
+    /// Timer for the inactivity hint system
+    private var hintTimer: Task<Void, Never>?
+
+    /// Sticker earned on game completion (for view animation).
+    @Published private(set) var earnedSticker: Sticker?
+
+    /// Sticker book for awarding stickers.
+    var stickerBook: StickerBook?
+
+    /// Personal best tracker for recording new records.
+    var personalBestTracker: PersonalBestTracker?
+
+    /// Result of personal best check on game completion.
+    @Published private(set) var personalBestResult: PersonalBestResult?
+
     // MARK: - Initialization
 
-    init() {}
+    init(stickerBook: StickerBook? = nil) {
+        self.stickerBook = stickerBook
+    }
 
     // MARK: - Public Methods
 
@@ -65,6 +85,10 @@ class SpellingGameViewModel: ObservableObject {
         usedWords.removeAll()
         isCorrect = nil
         showCelebration = false
+        earnedSticker = nil
+        personalBestResult = nil
+        hintLetterIndex = nil
+        hintTimer?.cancel()
 
         // Build word pool
         wordPool = SpellingData.words
@@ -79,6 +103,16 @@ class SpellingGameViewModel: ObservableObject {
             gameState = .gameComplete
             HapticService.shared.levelComplete()
             SoundEffectService.shared.play(.levelComplete)
+            earnedSticker = stickerBook?.awardGameSticker(
+                gameType: .spelling,
+                isPerfectScore: score == totalRounds,
+                streakCount: bestStreak
+            )
+            personalBestResult = personalBestTracker?.checkAndUpdate(
+                gameType: .spelling,
+                score: score,
+                streak: bestStreak
+            )
             return
         }
 
@@ -104,6 +138,7 @@ class SpellingGameViewModel: ObservableObject {
         if let tileIndex = scrambledLetters.firstIndex(where: { $0.letter == letter && !$0.isPlaced }) {
             scrambledLetters[tileIndex].isPlaced = true
             placedLetters[index] = letter
+            resetHintTimer()
             return true
         }
         return false
@@ -132,6 +167,7 @@ class SpellingGameViewModel: ObservableObject {
             scrambledLetters[tileIndex].isPlaced = false
         }
         placedLetters[index] = nil
+        resetHintTimer()
     }
 
     /// Checks if the current answer is correct
@@ -143,6 +179,8 @@ class SpellingGameViewModel: ObservableObject {
         guard !placedLetters.contains(nil) else { return false }
 
         gameState = .checking
+        hintTimer?.cancel()
+        hintLetterIndex = nil
 
         let attempt = String(placedLetters.compactMap { $0 })
         let correct = attempt.lowercased() == word.word.lowercased()
@@ -182,6 +220,7 @@ class SpellingGameViewModel: ObservableObject {
         for (i, originalIndex) in unplacedIndices.enumerated() {
             scrambledLetters[originalIndex] = unplacedLetters[i]
         }
+        resetHintTimer()
     }
 
     /// Resets the game to initial state
@@ -197,6 +236,8 @@ class SpellingGameViewModel: ObservableObject {
         scrambledLetters = []
         placedLetters = []
         gameState = .notStarted
+        hintTimer?.cancel()
+        hintLetterIndex = nil
     }
 
     /// Clears all placed letters back to the letter bank
@@ -207,6 +248,7 @@ class SpellingGameViewModel: ObservableObject {
             scrambledLetters[i].isPlaced = false
         }
         placedLetters = Array(repeating: nil, count: placedLetters.count)
+        resetHintTimer()
     }
 
     /// Progress through the game (0.0 to 1.0)
@@ -273,5 +315,28 @@ class SpellingGameViewModel: ObservableObject {
 
         scrambledLetters = tiles
         placedLetters = Array(repeating: nil, count: word.length)
+        resetHintTimer()
+    }
+
+    /// Resets the hint timer. Called on any user interaction with letters.
+    private func resetHintTimer() {
+        hintLetterIndex = nil
+        hintTimer?.cancel()
+        guard gameState == .playing else { return }
+        hintTimer = Task {
+            try? await Task.sleep(nanoseconds: 10_000_000_000)
+            guard !Task.isCancelled else { return }
+            computeHint()
+        }
+    }
+
+    /// Highlights the next correct letter in the bank after inactivity.
+    private func computeHint() {
+        guard gameState == .playing, let word = currentWord else { return }
+        guard let emptyIndex = placedLetters.firstIndex(where: { $0 == nil }) else { return }
+        let neededLetter = word.letters[emptyIndex]
+        if let tileIndex = scrambledLetters.firstIndex(where: { $0.letter == neededLetter && !$0.isPlaced }) {
+            hintLetterIndex = tileIndex
+        }
     }
 }

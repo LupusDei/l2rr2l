@@ -4,9 +4,11 @@ import SwiftUI
 struct LetterTile: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let tile: LetterTileModel
+    var isHinted: Bool = false
     let onTap: () -> Void
 
     @State private var isDragging = false
+    @State private var hintPulse = false
 
     var body: some View {
         Text(String(tile.letter).uppercased())
@@ -26,11 +28,28 @@ struct LetterTile: View {
                 RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
                     .stroke(isDragging ? L2RTheme.primary : L2RTheme.border, lineWidth: 2)
             )
+            .overlay(
+                RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
+                    .stroke(L2RTheme.Logo.yellow, lineWidth: 3)
+                    .scaleEffect(hintPulse ? 1.08 : 1.0)
+                    .opacity(isHinted ? 1.0 : 0)
+            )
+            .onChange(of: isHinted) { _, hinted in
+                if hinted && !reduceMotion {
+                    withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+                        hintPulse = true
+                    }
+                } else {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        hintPulse = false
+                    }
+                }
+            }
             .scaleEffect(isDragging ? 1.1 : 1.0)
             .opacity(tile.isPlaced ? 0.3 : 1.0)
             .animation(reduceMotion ? nil : L2RTheme.Animation.bounce, value: isDragging)
             .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: tile.isPlaced)
-            .onTapGesture {
+            .juicyTap {
                 guard !tile.isPlaced else { return }
                 onTap()
             }
@@ -54,12 +73,13 @@ struct LetterTile: View {
 /// A row of letter tiles for the letter bank.
 struct LetterBank: View {
     let tiles: [LetterTileModel]
+    var hintedTileId: String? = nil
     let onTileTap: (LetterTileModel) -> Void
 
     var body: some View {
         HStack(spacing: L2RTheme.Spacing.sm) {
             ForEach(tiles) { tile in
-                LetterTile(tile: tile) {
+                LetterTile(tile: tile, isHinted: tile.id == hintedTileId) {
                     onTileTap(tile)
                 }
             }

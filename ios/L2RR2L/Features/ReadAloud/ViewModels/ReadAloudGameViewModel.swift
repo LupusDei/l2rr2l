@@ -28,10 +28,23 @@ final class ReadAloudGameViewModel: ObservableObject {
     @Published var selectedLevel: ReadAloudLevel = .prePrimer
     @Published var showCelebration = false
     @Published var permissionDenied = false
+    @Published var isPracticeMode = false
 
     // MARK: - Configuration
 
     let totalRounds = 10
+
+    /// Sticker earned on game completion (for view animation).
+    @Published private(set) var earnedSticker: Sticker?
+
+    /// Sticker book for awarding stickers.
+    var stickerBook: StickerBook?
+
+    /// Personal best tracker for recording new records.
+    var personalBestTracker: PersonalBestTracker?
+
+    /// Result of personal best check on game completion.
+    @Published private(set) var personalBestResult: PersonalBestResult?
 
     // MARK: - Private Properties
 
@@ -67,6 +80,8 @@ final class ReadAloudGameViewModel: ObservableObject {
         isCorrect = nil
         transcription = ""
         showCelebration = false
+        earnedSticker = nil
+        personalBestResult = nil
 
         words = SightWordsData.randomWords(level: selectedLevel, count: totalRounds)
         nextWord()
@@ -78,6 +93,16 @@ final class ReadAloudGameViewModel: ObservableObject {
             gameState = .gameComplete
             HapticService.shared.levelComplete()
             SoundEffectService.shared.play(.levelComplete)
+            earnedSticker = stickerBook?.awardGameSticker(
+                gameType: .readAloud,
+                isPerfectScore: bestStreak == totalRounds,
+                streakCount: bestStreak
+            )
+            personalBestResult = personalBestTracker?.checkAndUpdate(
+                gameType: .readAloud,
+                score: score,
+                streak: bestStreak
+            )
             return
         }
 
@@ -147,28 +172,36 @@ final class ReadAloudGameViewModel: ObservableObject {
         isCorrect = correct
 
         if correct {
-            score += 10 * (streak + 1)
-            streak += 1
-            bestStreak = max(bestStreak, streak)
+            if !isPracticeMode {
+                score += 10 * (streak + 1)
+                streak += 1
+                bestStreak = max(bestStreak, streak)
+            }
             gameState = .correct
             HapticService.shared.correctAnswer()
             SoundEffectService.shared.play(.correct)
 
             // Celebration at streak milestones
-            if streak >= 3 && streak % 3 == 0 {
+            if !isPracticeMode && streak >= 3 && streak % 3 == 0 {
                 showCelebration = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
                     self?.showCelebration = false
                 }
             }
 
-            // Speak encouragement
+            // Speak encouragement or repeat word in practice mode
             Task {
-                let messages = ["Great job!", "You got it!", "Well done!", "Awesome!"]
-                await voiceService.speak(messages.randomElement()!)
+                if isPracticeMode {
+                    await voiceService.speak(word)
+                } else {
+                    let messages = ["Great job!", "You got it!", "Well done!", "Awesome!"]
+                    await voiceService.speak(messages.randomElement()!)
+                }
             }
         } else {
-            streak = 0
+            if !isPracticeMode {
+                streak = 0
+            }
             gameState = .incorrect
             HapticService.shared.incorrectAnswer()
             SoundEffectService.shared.play(.incorrect)

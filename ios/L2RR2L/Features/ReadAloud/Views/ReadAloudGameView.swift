@@ -5,10 +5,17 @@ import SwiftUI
 struct ReadAloudGameView: View {
     @StateObject private var viewModel = ReadAloudGameViewModel()
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var childProfileService = ChildProfileService.shared
+    private var childName: String { childProfileService.activeChild?.name ?? "Friend" }
 
     @State private var showGameCompleteConfetti = false
     @State private var showStreakConfetti = false
     @State private var micPulse = false
+    @State private var correctTrigger = false
+    @State private var incorrectTrigger = false
+    @State private var previousScore = 0
+    @State private var mascotState = MascotState()
+    @State private var inactivityManager = InactivityHintManager()
 
     var body: some View {
         ZStack {
@@ -29,23 +36,39 @@ struct ReadAloudGameView: View {
                     gameCompleteView
                 } else {
                     gameContent
+                        .roundTransition(round: viewModel.round, label: "Word")
                 }
 
                 Spacer()
             }
             .padding()
         }
+        .overlay(alignment: .bottomLeading) {
+            MascotView(state: mascotState)
+                .padding(L2RTheme.Spacing.md)
+        }
         .onChange(of: viewModel.gameState) { _, state in
             if state == .listening {
                 Task { await VoiceService.shared.speak("Read the word!") }
+            } else if state == .correct {
+                correctTrigger = true
+                mascotState.celebrate()
+            } else if state == .incorrect {
+                incorrectTrigger = true
+                mascotState.encourage()
             } else if state == .gameComplete {
                 showGameCompleteConfetti = true
+                mascotState.proud(message: "You did it, \(childName)!")
                 Task { await VoiceService.shared.speak("Great job!") }
             }
+        }
+        .onChange(of: viewModel.score) { old, new in
+            previousScore = old
         }
         .onChange(of: viewModel.showCelebration) { _, show in
             if show {
                 showStreakConfetti = true
+                mascotState.dance()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                     showStreakConfetti = false
                 }
@@ -60,6 +83,14 @@ struct ReadAloudGameView: View {
         }
         .onDisappear {
             viewModel.resetGame()
+        }
+        .onAppear { inactivityManager.setHintMessage("Tap the mic and say the word!") }
+        .onChange(of: viewModel.gameState) { _, _ in inactivityManager.resetTimer() }
+        .onChange(of: inactivityManager.shouldWave) { _, wave in
+            if wave { mascotState.wave() }
+        }
+        .onChange(of: inactivityManager.shouldHint) { _, hint in
+            if hint { mascotState.hint(message: inactivityManager.hintMessage) }
         }
     }
 
@@ -77,22 +108,36 @@ struct ReadAloudGameView: View {
                     .foregroundStyle(.white.opacity(0.8))
                     .frame(minWidth: L2RTheme.TouchTarget.minimum, minHeight: L2RTheme.TouchTarget.minimum)
             }
+            .juicyButtonPress()
             .accessibilityLabel("Close game")
             .accessibilityIdentifier(AccessibilityIdentifiers.ReadAloud.closeButton)
 
             Spacer()
 
-            // Score
-            HStack(spacing: L2RTheme.Spacing.xs) {
-                Image(systemName: "star.fill")
-                    .foregroundStyle(.yellow)
-                Text("\(viewModel.score)")
-                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
-                    .foregroundStyle(.white)
+            // Score or practice label
+            if viewModel.isPracticeMode {
+                HStack(spacing: L2RTheme.Spacing.xs) {
+                    Image(systemName: "graduationcap.fill")
+                        .foregroundStyle(.white.opacity(0.8))
+                    Text("Practice")
+                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
+                        .foregroundStyle(.white.opacity(0.8))
+                }
+                .accessibilityLabel("Practice mode")
+            } else {
+                HStack(spacing: L2RTheme.Spacing.xs) {
+                    Image(systemName: "star.fill")
+                        .foregroundStyle(.yellow)
+                    Text("\(viewModel.score)")
+                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
+                        .foregroundStyle(.white)
+                        .contentTransition(.numericText())
+                        .animation(.spring(response: 0.4, dampingFraction: 0.5), value: viewModel.score)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Score: \(viewModel.score) points")
+                .accessibilityIdentifier(AccessibilityIdentifiers.ReadAloud.scoreLabel)
             }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel("Score: \(viewModel.score) points")
-            .accessibilityIdentifier(AccessibilityIdentifiers.ReadAloud.scoreLabel)
 
             Spacer()
 
@@ -143,6 +188,20 @@ struct ReadAloudGameView: View {
             // Level selector
             levelSelector
 
+            // Practice mode toggle
+            Toggle(isOn: $viewModel.isPracticeMode) {
+                HStack(spacing: L2RTheme.Spacing.xs) {
+                    Image(systemName: "graduationcap.fill")
+                    Text("Practice Mode")
+                }
+                .font(L2RTheme.Typography.Scaled.system(.callout, weight: .medium))
+                .foregroundStyle(.white)
+            }
+            .tint(L2RTheme.Logo.green)
+            .padding(.horizontal, L2RTheme.Spacing.lg)
+            .accessibilityLabel("Practice mode")
+            .accessibilityHint("No scoring, hear each word after you try")
+
             Button {
                 viewModel.startGame()
             } label: {
@@ -157,6 +216,7 @@ struct ReadAloudGameView: View {
                             .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                     )
             }
+            .juicyButtonPress()
             .accessibilityLabel("Start Game")
             .accessibilityHint("Begin reading words aloud")
             .accessibilityIdentifier(AccessibilityIdentifiers.ReadAloud.startButton)
@@ -239,6 +299,7 @@ struct ReadAloudGameView: View {
                                     .fill(.white.opacity(0.2))
                             )
                     }
+                    .juicyButtonPress()
                     .accessibilityLabel("Hear the word")
                     .accessibilityHint("Tap to hear the word spoken aloud")
                 }
@@ -248,6 +309,8 @@ struct ReadAloudGameView: View {
                     RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.large)
                         .fill(.white.opacity(0.15))
                 )
+                .juicyCorrect(trigger: $correctTrigger)
+                .juicyIncorrect(trigger: $incorrectTrigger)
             }
         }
     }
@@ -257,18 +320,9 @@ struct ReadAloudGameView: View {
     private var microphoneSection: some View {
         VStack(spacing: L2RTheme.Spacing.md) {
             if viewModel.gameState == .recording {
-                // Recording indicator with audio level
-                ZStack {
-                    // Audio level ring
-                    Circle()
-                        .fill(.white.opacity(0.1))
-                        .frame(width: 120, height: 120)
-
-                    Circle()
-                        .stroke(.white.opacity(0.3), lineWidth: 4)
-                        .frame(width: 120, height: 120)
-                        .scaleEffect(1.0 + CGFloat(viewModel.audioLevel) * 0.3)
-                        .animation(.easeOut(duration: 0.1), value: viewModel.audioLevel)
+                // Recording indicator with audio waveform
+                VStack(spacing: L2RTheme.Spacing.md) {
+                    AudioWaveform(audioLevel: viewModel.audioLevel, isActive: true)
 
                     Button {
                         viewModel.stopRecording()
@@ -282,6 +336,7 @@ struct ReadAloudGameView: View {
                                     .fill(.orange)
                             )
                     }
+                    .juicyButtonPress()
                     .accessibilityLabel("Stop recording")
                     .accessibilityIdentifier(AccessibilityIdentifiers.ReadAloud.micButton)
                 }
@@ -308,6 +363,7 @@ struct ReadAloudGameView: View {
                         )
                         .scaleEffect(micPulse ? 1.1 : 1.0)
                 }
+                .juicyTap()
                 .accessibilityLabel("Start recording")
                 .accessibilityHint("Tap to read the word aloud")
                 .accessibilityIdentifier(AccessibilityIdentifiers.ReadAloud.micButton)
@@ -383,6 +439,7 @@ struct ReadAloudGameView: View {
                             .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                     )
                 }
+                .juicyButtonPress()
                 .frame(minHeight: L2RTheme.TouchTarget.comfortable)
                 .accessibilityLabel(viewModel.round >= viewModel.totalRounds ? "See Results" : "Next Word")
             }
@@ -395,31 +452,19 @@ struct ReadAloudGameView: View {
 
     private var gameCompleteView: some View {
         VStack(spacing: L2RTheme.Spacing.xl) {
-            HStack(spacing: L2RTheme.Spacing.xxs) {
-                Text("\u{2B50}")
-                    .font(.system(size: 36))
-                Text("\u{1F3A4}")
-                    .font(.system(size: 80))
-                Text("\u{2B50}")
-                    .font(.system(size: 36))
-            }
+            MascotView(state: mascotState, size: 120)
 
-            Text("Reading Star!")
+            Text("Great job, \(childName)!")
                 .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
 
-            VStack(spacing: L2RTheme.Spacing.sm) {
-                // Star rating based on score percentage
-                HStack(spacing: L2RTheme.Spacing.xs) {
-                    let starCount = starRating(score: viewModel.score, total: viewModel.totalRounds)
-                    ForEach(0..<3, id: \.self) { index in
-                        Image(systemName: index < starCount ? "star.fill" : "star")
-                            .font(.system(size: 40))
-                            .foregroundStyle(.yellow)
-                    }
-                }
-                .accessibilityLabel("\(starRating(score: viewModel.score, total: viewModel.totalRounds)) out of 3 stars")
+            AnimatedStarRating(starCount: starRating(score: viewModel.score, total: viewModel.totalRounds))
 
+            if viewModel.personalBestResult?.isNewRecord == true {
+                PersonalBestBadgeView()
+            }
+
+            VStack(spacing: L2RTheme.Spacing.sm) {
                 Text("\(viewModel.score) points")
                     .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
                     .foregroundStyle(.white.opacity(0.9))
@@ -450,6 +495,7 @@ struct ReadAloudGameView: View {
                                 .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                         )
                 }
+                .juicyButtonPress()
                 .accessibilityLabel("Play Again")
                 .accessibilityHint("Start a new game")
                 .accessibilityIdentifier(AccessibilityIdentifiers.ReadAloud.playAgainButton)
@@ -467,6 +513,7 @@ struct ReadAloudGameView: View {
                                 .fill(.white.opacity(0.2))
                         )
                 }
+                .juicyButtonPress()
                 .accessibilityLabel("Done")
                 .accessibilityHint("Return to games menu")
                 .accessibilityIdentifier(AccessibilityIdentifiers.ReadAloud.doneButton)

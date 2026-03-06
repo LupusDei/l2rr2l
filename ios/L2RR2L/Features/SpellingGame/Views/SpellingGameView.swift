@@ -5,12 +5,19 @@ import SwiftUI
 struct SpellingGameView: View {
     @StateObject private var viewModel = SpellingGameViewModel()
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var childProfileService = ChildProfileService.shared
 
     private let voiceService = VoiceService.shared
+    private var childName: String { childProfileService.activeChild?.name ?? "Friend" }
 
     @State private var showConfetti = false
     @State private var showGameCompleteConfetti = false
     @State private var shakeAnswer = false
+    @State private var correctTrigger = false
+    @State private var incorrectTrigger = false
+    @State private var mascotState = MascotState()
+    @State private var inactivityManager = InactivityHintManager()
+    @State private var emojiBounce = false
 
     var body: some View {
         ZStack {
@@ -31,6 +38,7 @@ struct SpellingGameView: View {
                     gameCompleteView
                 } else {
                     gameContent
+                        .roundTransition(round: viewModel.round, label: "Word")
                 }
 
                 Spacer()
@@ -47,16 +55,30 @@ struct SpellingGameView: View {
                 celebrationOverlay
             }
         }
+        .overlay(alignment: .bottomLeading) {
+            MascotView(state: mascotState)
+                .padding(L2RTheme.Spacing.md)
+        }
         .onChange(of: viewModel.showCelebration) { _, show in
             if show {
                 triggerCelebration()
+                mascotState.dance()
             }
         }
         .onChange(of: viewModel.gameState) { _, state in
             if state == .playing {
                 Task { await voiceService.speak("Spell the word!") }
+            } else if state == .correct {
+                mascotState.celebrate()
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { emojiBounce = true }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { emojiBounce = false }
+                }
+            } else if state == .incorrect {
+                mascotState.encourage()
             } else if state == .gameComplete {
                 showGameCompleteConfetti = true
+                mascotState.proud(message: "You did it, \(childName)!")
                 Task { await voiceService.speak("Great job!") }
             }
         }
@@ -66,6 +88,14 @@ struct SpellingGameView: View {
             }
         }
         .confetti(isActive: $showGameCompleteConfetti, configuration: .gameComplete)
+        .onAppear { inactivityManager.setHintMessage("Try tapping a letter!") }
+        .onChange(of: viewModel.gameState) { _, _ in inactivityManager.resetTimer() }
+        .onChange(of: inactivityManager.shouldWave) { _, wave in
+            if wave { mascotState.wave() }
+        }
+        .onChange(of: inactivityManager.shouldHint) { _, hint in
+            if hint { mascotState.hint(message: inactivityManager.hintMessage) }
+        }
     }
 
     // MARK: - Header
@@ -81,6 +111,7 @@ struct SpellingGameView: View {
                     .foregroundStyle(.white.opacity(0.8))
                     .frame(minWidth: L2RTheme.TouchTarget.minimum, minHeight: L2RTheme.TouchTarget.minimum)
             }
+            .juicyButtonPress()
             .accessibilityLabel("Close game")
             .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.closeButton)
 
@@ -145,6 +176,7 @@ struct SpellingGameView: View {
                             .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                     )
             }
+            .juicyButtonPress()
             .accessibilityLabel("Start Game")
             .accessibilityHint("Begin the spelling game")
             .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.startButton)
@@ -159,13 +191,12 @@ struct SpellingGameView: View {
             if let word = viewModel.currentWord {
                 Text(word.hint)
                     .font(.system(size: 80))
+                    .scaleEffect(emojiBounce ? 1.2 : 1.0)
                     .accessibilityLabel("Hint: \(word.hint)")
 
-                // Word (shown when correct, hidden otherwise)
+                // Word (shown when correct, with rainbow shimmer)
                 if viewModel.gameState == .correct {
-                    Text(word.word.uppercased())
-                        .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
-                        .foregroundStyle(.white)
+                    RainbowShimmerText(text: word.word.uppercased())
                         .transition(.scale.combined(with: .opacity))
                 }
             }
@@ -195,14 +226,18 @@ struct SpellingGameView: View {
                 viewModel.removeLetter(at: index)
             }
         )
-        .modifier(SpellingShakeModifier(shake: shakeAnswer))
+        .juicyCorrect(trigger: $correctTrigger)
+        .juicyIncorrect(trigger: $incorrectTrigger)
         .padding(.vertical, L2RTheme.Spacing.lg)
     }
 
     // MARK: - Letter Bank Area
 
     private var letterBankArea: some View {
-        LetterBank(tiles: viewModel.scrambledLetters) { tile in
+        LetterBank(
+            tiles: viewModel.scrambledLetters,
+            hintedTileId: viewModel.hintLetterIndex.map { viewModel.scrambledLetters[$0].id }
+        ) { tile in
             viewModel.placeLetterInNextSlot(tile.letter)
         }
         .padding(.vertical, L2RTheme.Spacing.md)
@@ -226,6 +261,7 @@ struct SpellingGameView: View {
                     )
             }
             .disabled(viewModel.gameState != .playing)
+            .juicyButtonPress()
             .accessibilityLabel("Shuffle letters")
             .accessibilityHint("Rearrange the available letters randomly")
             .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.shuffleButton)
@@ -247,14 +283,17 @@ struct SpellingGameView: View {
                                 .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                         )
                 }
+                .juicyButtonPress()
                 .accessibilityLabel("Next word")
                 .accessibilityHint("Move to the next word")
                 .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.nextButton)
             } else {
                 Button {
                     let correct = viewModel.checkAnswer()
-                    if !correct {
-                        triggerShake()
+                    if correct {
+                        correctTrigger = true
+                    } else {
+                        incorrectTrigger = true
                     }
                 } label: {
                     Image(systemName: "checkmark.circle.fill")
@@ -268,6 +307,7 @@ struct SpellingGameView: View {
                         )
                 }
                 .disabled(!viewModel.allLettersPlaced)
+                .juicyButtonPress()
                 .accessibilityLabel("Check answer")
                 .accessibilityHint(viewModel.allLettersPlaced ? "Verify your spelling" : "Place all letters first")
                 .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.checkButton)
@@ -289,6 +329,7 @@ struct SpellingGameView: View {
                     )
             }
             .disabled(viewModel.gameState != .playing)
+            .juicyButtonPress()
             .accessibilityLabel("Clear all")
             .accessibilityHint("Remove all placed letters")
             .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.clearButton)
@@ -301,18 +342,17 @@ struct SpellingGameView: View {
 
     private var gameCompleteView: some View {
         VStack(spacing: L2RTheme.Spacing.xl) {
-            HStack(spacing: L2RTheme.Spacing.xxs) {
-                Text("\u{2728}")
-                    .font(.system(size: 36))
-                Text("\u{1F3C6}")
-                    .font(.system(size: 80))
-                Text("\u{2728}")
-                    .font(.system(size: 36))
-            }
+            MascotView(state: mascotState, size: 120)
 
-            Text("Spelling Star!")
+            Text("Great job, \(childName)!")
                 .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
+
+            AnimatedStarRating(starCount: starRating(correct: viewModel.score, total: viewModel.totalRounds))
+
+            if viewModel.personalBestResult?.isNewRecord == true {
+                PersonalBestBadgeView()
+            }
 
             VStack(spacing: L2RTheme.Spacing.sm) {
                 Text("Score: \(viewModel.score) / \(viewModel.totalRounds)")
@@ -320,10 +360,15 @@ struct SpellingGameView: View {
                     .foregroundStyle(.white)
                     .accessibilityLabel("Final score: \(viewModel.score) out of \(viewModel.totalRounds)")
 
-                Text("Best Streak: \(viewModel.bestStreak)")
-                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.9))
+                if viewModel.bestStreak > 1 {
+                    HStack(spacing: L2RTheme.Spacing.xxs) {
+                        Text("\u{1F525}")
+                        Text("Best Streak: \(viewModel.bestStreak)")
+                            .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.9))
+                    }
                     .accessibilityLabel("Best streak: \(viewModel.bestStreak) correct answers in a row")
+                }
             }
 
             HStack(spacing: L2RTheme.Spacing.lg) {
@@ -341,6 +386,7 @@ struct SpellingGameView: View {
                                 .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                         )
                 }
+                .juicyButtonPress()
                 .accessibilityLabel("Play Again")
                 .accessibilityHint("Start a new game")
                 .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.playAgainButton)
@@ -358,6 +404,7 @@ struct SpellingGameView: View {
                                 .fill(.white.opacity(0.2))
                         )
                 }
+                .juicyButtonPress()
                 .accessibilityLabel("Done")
                 .accessibilityHint("Return to games menu")
                 .accessibilityIdentifier(AccessibilityIdentifiers.SpellingGame.doneButton)
@@ -399,31 +446,58 @@ struct SpellingGameView: View {
 
     // MARK: - Animations
 
-    private func triggerShake() {
-        withAnimation(.default.speed(4).repeatCount(3, autoreverses: true)) {
-            shakeAnswer = true
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            shakeAnswer = false
-        }
-    }
-
     private func triggerCelebration() {
         showConfetti = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             showConfetti = false
         }
     }
+
+    /// Converts correct/total into a 1-3 star rating.
+    private func starRating(correct: Int, total: Int) -> Int {
+        guard total > 0 else { return 1 }
+        let pct = Double(correct) / Double(total)
+        if pct >= 0.8 { return 3 }
+        if pct >= 0.5 { return 2 }
+        return 1
+    }
 }
 
-// MARK: - Shake Modifier
+// MARK: - Rainbow Shimmer Text
 
-private struct SpellingShakeModifier: ViewModifier {
-    var shake: Bool
+/// Text with a sweeping rainbow gradient animation using L2R logo colors.
+private struct RainbowShimmerText: View {
+    let text: String
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var phase: CGFloat = -1.0
 
-    func body(content: Content) -> some View {
-        content
-            .offset(x: shake ? -5 : 0)
+    private let colors: [Color] = L2RTheme.Logo.all + [L2RTheme.Logo.all[0]]
+
+    var body: some View {
+        if reduceMotion {
+            Text(text)
+                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
+                .foregroundStyle(L2RTheme.Logo.all[0])
+        } else {
+            animatedText
+        }
+    }
+
+    private var animatedText: some View {
+        Text(text)
+            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
+            .foregroundStyle(
+                LinearGradient(
+                    colors: colors,
+                    startPoint: UnitPoint(x: phase, y: 0.5),
+                    endPoint: UnitPoint(x: phase + 1.0, y: 0.5)
+                )
+            )
+            .onAppear {
+                withAnimation(.linear(duration: 1.5).repeatForever(autoreverses: false)) {
+                    phase = 1.0
+                }
+            }
     }
 }
 

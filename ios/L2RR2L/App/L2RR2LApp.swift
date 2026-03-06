@@ -22,7 +22,9 @@ enum L2RR2LModelSchema {
             CachedLesson.self,
             LocalProgress.self,
             LocalVoiceSettings.self,
-            LocalOnboardingState.self
+            LocalOnboardingState.self,
+            Sticker.self,
+            PersonalBest.self
         ]
     }
 }

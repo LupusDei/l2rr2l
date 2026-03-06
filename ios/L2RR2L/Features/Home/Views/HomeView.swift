@@ -1,10 +1,15 @@
 import SwiftUI
+import SwiftData
 
 /// Main home screen with animated background, logo, welcome message, and game grid.
 struct HomeView: View {
     @ObservedObject private var router = NavigationRouter.shared
     @ObservedObject private var childProfileService = ChildProfileService.shared
+    @Environment(\.modelContext) private var modelContext
     private let voiceService = VoiceService.shared
+
+    @State private var showTrophyRoom = false
+    @State private var stickerCount = 0
 
     private var childName: String {
         childProfileService.activeChild?.name ?? "Friend"
@@ -46,15 +51,22 @@ struct HomeView: View {
             .adaptiveContainer()
         }
         .onAppear {
+            stickerCount = StickerBook(modelContext: modelContext).totalCount()
             Task { await voiceService.speak("Hello, \(childName)!") }
+        }
+        .fullScreenCover(isPresented: $showTrophyRoom) {
+            TrophyRoomView()
         }
     }
 
-    // MARK: - Settings Button
+    // MARK: - Header Buttons
 
     private var settingsButton: some View {
         HStack {
+            trophyRoomButton
+
             Spacer()
+
             Button {
                 router.navigateToSettings()
             } label: {
@@ -68,6 +80,36 @@ struct HomeView: View {
             .accessibilityIdentifier(AccessibilityIdentifiers.Home.settingsButton)
         }
         .padding(.top, L2RTheme.Spacing.sm)
+    }
+
+    // MARK: - Trophy Room Button
+
+    private var trophyRoomButton: some View {
+        Button {
+            showTrophyRoom = true
+        } label: {
+            ZStack(alignment: .topTrailing) {
+                Image(systemName: "trophy.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(L2RTheme.Logo.yellow)
+                    .frame(width: L2RTheme.TouchTarget.comfortable, height: L2RTheme.TouchTarget.comfortable)
+                    .contentShape(Rectangle())
+
+                if stickerCount > 0 {
+                    Text("\(stickerCount)")
+                        .font(L2RTheme.Typography.Scaled.system(.caption2, weight: .bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, L2RTheme.Spacing.xxs)
+                        .frame(minWidth: 18, minHeight: 18)
+                        .background(
+                            Capsule()
+                                .fill(L2RTheme.Logo.purple)
+                        )
+                        .offset(x: 4, y: 4)
+                }
+            }
+        }
+        .accessibilityLabel("Trophy Room, \(stickerCount) stickers earned")
     }
 
     // MARK: - Welcome Message

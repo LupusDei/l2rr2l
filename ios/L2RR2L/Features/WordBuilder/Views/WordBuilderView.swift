@@ -5,12 +5,20 @@ import SwiftUI
 struct WordBuilderView: View {
     @StateObject private var viewModel = WordBuilderViewModel()
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var childProfileService = ChildProfileService.shared
 
     private let voiceService = VoiceService.shared
+    private var childName: String { childProfileService.activeChild?.name ?? "Friend" }
 
     @State private var showConfetti = false
     @State private var showGameCompleteConfetti = false
-    @State private var shakeAnswer = false
+    @State private var correctTrigger = false
+    @State private var incorrectTrigger = false
+    @State private var snapTrigger = false
+    @State private var mascotState = MascotState()
+    @State private var inactivityManager = InactivityHintManager()
+    @State private var emojiAlive = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
@@ -31,6 +39,7 @@ struct WordBuilderView: View {
                     gameCompleteView
                 } else {
                     gameContent
+                        .roundTransition(round: viewModel.round, label: "Puzzle")
                 }
 
                 Spacer()
@@ -47,23 +56,52 @@ struct WordBuilderView: View {
                 celebrationOverlay
             }
         }
+        .overlay(alignment: .bottomLeading) {
+            MascotView(state: mascotState)
+                .padding(L2RTheme.Spacing.md)
+        }
         .onChange(of: viewModel.showCelebration) { _, show in
             if show {
                 triggerCelebration()
+                mascotState.dance()
             }
         }
         .onChange(of: viewModel.gameState) { _, state in
             if state == .playing {
+                emojiAlive = false
                 Task { await voiceService.speak("Build the word!") }
+            } else if state == .correct {
+                mascotState.celebrate()
+                if !reduceMotion {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.4)) {
+                        emojiAlive = true
+                    }
+                }
+            } else if state == .incorrect {
+                mascotState.encourage()
             } else if state == .gameComplete {
                 showGameCompleteConfetti = true
+                mascotState.proud(message: "You did it, \(childName)!")
                 Task { await voiceService.speak("Great job!") }
             }
             if state == .correct, let word = viewModel.currentPuzzle?.word {
                 Task { await voiceService.speak(word) }
             }
         }
+        .onChange(of: viewModel.builtWord.count) { oldCount, newCount in
+            if newCount > oldCount {
+                snapTrigger = true
+            }
+        }
         .confetti(isActive: $showGameCompleteConfetti, configuration: .gameComplete)
+        .onAppear { inactivityManager.setHintMessage("Tap letters to build!") }
+        .onChange(of: viewModel.gameState) { _, _ in inactivityManager.resetTimer() }
+        .onChange(of: inactivityManager.shouldWave) { _, wave in
+            if wave { mascotState.wave() }
+        }
+        .onChange(of: inactivityManager.shouldHint) { _, hint in
+            if hint { mascotState.hint(message: inactivityManager.hintMessage) }
+        }
     }
 
     // MARK: - Header
@@ -79,6 +117,7 @@ struct WordBuilderView: View {
                     .foregroundStyle(.white.opacity(0.8))
                     .frame(minWidth: L2RTheme.TouchTarget.minimum, minHeight: L2RTheme.TouchTarget.minimum)
             }
+            .juicyButtonPress()
             .accessibilityLabel("Close game")
             .accessibilityIdentifier(AccessibilityIdentifiers.WordBuilder.closeButton)
 
@@ -150,6 +189,7 @@ struct WordBuilderView: View {
                             .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                     )
             }
+            .juicyButtonPress()
             .accessibilityLabel("Start Game")
             .accessibilityHint("Begin the word builder game")
             .accessibilityIdentifier(AccessibilityIdentifiers.WordBuilder.startButton)
@@ -165,6 +205,13 @@ struct WordBuilderView: View {
                 VStack(spacing: L2RTheme.Spacing.sm) {
                     Text(puzzle.emoji)
                         .font(.system(size: 80))
+                        .scaleEffect(emojiAlive ? 1.3 : 1.0)
+                        .rotationEffect(.degrees(emojiAlive ? 8 : 0))
+                        .overlay {
+                            if emojiAlive && !reduceMotion {
+                                EmojiSparkles()
+                            }
+                        }
                         .accessibilityLabel("Hint: \(puzzle.emoji)")
                         .accessibilityIdentifier(AccessibilityIdentifiers.WordBuilder.hintEmoji)
 
@@ -208,6 +255,12 @@ struct WordBuilderView: View {
                 } else {
                     ForEach(Array(viewModel.builtWord.enumerated()), id: \.offset) { _, letter in
                         builtLetterTile(letter)
+                            .transition(
+                                .asymmetric(
+                                    insertion: .offset(y: -30).combined(with: .opacity),
+                                    removal: .scale(scale: 0.8).combined(with: .opacity)
+                                )
+                            )
                     }
                     // Add empty slots for remaining letters
                     if let puzzle = viewModel.currentPuzzle {
@@ -217,7 +270,10 @@ struct WordBuilderView: View {
                     }
                 }
             }
-            .modifier(ShakeModifier(shake: shakeAnswer))
+            .juicySnap(trigger: $snapTrigger)
+            .juicyCorrect(trigger: $correctTrigger)
+            .juicyIncorrect(trigger: $incorrectTrigger)
+            .animation(reduceMotion ? .none : .spring(response: 0.35, dampingFraction: 0.65), value: viewModel.builtWord.count)
             .padding(.vertical, L2RTheme.Spacing.md)
             .accessibilityIdentifier(AccessibilityIdentifiers.WordBuilder.builtWord)
         }
@@ -279,6 +335,7 @@ struct WordBuilderView: View {
             }
             .disabled(!viewModel.hasBuiltLetters || viewModel.gameState != .playing)
             .opacity(viewModel.hasBuiltLetters && viewModel.gameState == .playing ? 1.0 : 0.5)
+            .juicyButtonPress()
             .accessibilityLabel("Delete last letter")
             .accessibilityIdentifier(AccessibilityIdentifiers.WordBuilder.deleteButton)
 
@@ -301,6 +358,7 @@ struct WordBuilderView: View {
             }
             .disabled(!viewModel.hasBuiltLetters || viewModel.gameState != .playing)
             .opacity(viewModel.hasBuiltLetters && viewModel.gameState == .playing ? 1.0 : 0.5)
+            .juicyButtonPress()
             .accessibilityLabel("Clear all letters")
             .accessibilityIdentifier(AccessibilityIdentifiers.WordBuilder.clearButton)
         }
@@ -329,38 +387,39 @@ struct WordBuilderView: View {
     private func letterBankTile(tile: WordBuilderTile, index: Int) -> some View {
         let tileColors = L2RTheme.Logo.all
 
-        return Button {
-            viewModel.selectLetter(at: index)
-        } label: {
-            Text(String(tile.letter).uppercased())
-                .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(minWidth: 56, idealWidth: 64, minHeight: 56, idealHeight: 64)
-                .background(
-                    RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    tileColors[index % tileColors.count].opacity(0.9),
-                                    tileColors[index % tileColors.count]
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
+        return Text(String(tile.letter).uppercased())
+            .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title, weight: .bold))
+            .foregroundStyle(.white)
+            .frame(minWidth: 56, idealWidth: 64, minHeight: 56, idealHeight: 64)
+            .background(
+                RoundedRectangle(cornerRadius: L2RTheme.CornerRadius.medium)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                tileColors[index % tileColors.count].opacity(0.9),
+                                tileColors[index % tileColors.count]
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
                         )
-                )
-                .shadow(
-                    color: tileColors[index % tileColors.count].opacity(0.4),
-                    radius: tile.isUsed ? 0 : 4,
-                    y: tile.isUsed ? 0 : 4
-                )
-                .opacity(tile.isUsed ? 0.3 : 1.0)
-                .scaleEffect(tile.isUsed ? 0.9 : 1.0)
-        }
-        .disabled(tile.isUsed || viewModel.gameState != .playing)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: tile.isUsed)
-        .accessibilityLabel("Letter \(String(tile.letter).uppercased())")
-        .accessibilityHint(tile.isUsed ? "Already used" : "Tap to add to word")
+                    )
+            )
+            .shadow(
+                color: tileColors[index % tileColors.count].opacity(0.4),
+                radius: tile.isUsed ? 0 : 4,
+                y: tile.isUsed ? 0 : 4
+            )
+            .opacity(tile.isUsed ? 0.3 : 1.0)
+            .scaleEffect(tile.isUsed ? 0.9 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: tile.isUsed)
+            .juicyTap {
+                guard !tile.isUsed, viewModel.gameState == .playing else { return }
+                viewModel.selectLetter(at: index)
+            }
+            .allowsHitTesting(!tile.isUsed && viewModel.gameState == .playing)
+            .accessibilityLabel("Letter \(String(tile.letter).uppercased())")
+            .accessibilityHint(tile.isUsed ? "Already used" : "Tap to add to word")
+            .accessibilityAddTraits(.isButton)
     }
 
     // MARK: - Bottom Controls
@@ -387,13 +446,16 @@ struct WordBuilderView: View {
                             .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                     )
                 }
+                .juicyButtonPress()
                 .accessibilityLabel("Next puzzle")
                 .accessibilityIdentifier(AccessibilityIdentifiers.WordBuilder.nextButton)
             } else {
                 Button {
                     let correct = viewModel.checkAnswer()
-                    if !correct {
-                        triggerShake()
+                    if correct {
+                        correctTrigger = true
+                    } else {
+                        incorrectTrigger = true
                     }
                 } label: {
                     HStack {
@@ -411,6 +473,7 @@ struct WordBuilderView: View {
                     )
                 }
                 .disabled(!viewModel.hasBuiltLetters)
+                .juicyButtonPress()
                 .accessibilityLabel("Check answer")
                 .accessibilityHint(viewModel.hasBuiltLetters ? "Verify your word" : "Build a word first")
                 .accessibilityIdentifier(AccessibilityIdentifiers.WordBuilder.checkButton)
@@ -425,29 +488,33 @@ struct WordBuilderView: View {
 
     private var gameCompleteView: some View {
         VStack(spacing: L2RTheme.Spacing.xl) {
-            HStack(spacing: L2RTheme.Spacing.xxs) {
-                Text("\u{1F9F1}")
-                    .font(.system(size: 36))
-                Text("\u{1F3D7}")
-                    .font(.system(size: 80))
-                Text("\u{1F9F1}")
-                    .font(.system(size: 36))
-            }
+            MascotView(state: mascotState, size: 120)
 
-            Text("Master Builder!")
+            Text("Great job, \(childName)!")
                 .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
 
+            AnimatedStarRating(starCount: starRating(correct: viewModel.score, total: viewModel.totalRounds))
+
+            if viewModel.personalBestResult?.isNewRecord == true {
+                PersonalBestBadgeView()
+            }
+
             VStack(spacing: L2RTheme.Spacing.sm) {
-                Text("Score: \(viewModel.score)")
+                Text("Score: \(viewModel.score) / \(viewModel.totalRounds)")
                     .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
                     .foregroundStyle(.white)
-                    .accessibilityLabel("Final score: \(viewModel.score)")
+                    .accessibilityLabel("Final score: \(viewModel.score) out of \(viewModel.totalRounds)")
 
-                Text("Best Streak: \(viewModel.bestStreak)")
-                    .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.9))
+                if viewModel.bestStreak > 1 {
+                    HStack(spacing: L2RTheme.Spacing.xxs) {
+                        Text("\u{1F525}")
+                        Text("Best Streak: \(viewModel.bestStreak)")
+                            .font(L2RTheme.Typography.Scaled.system(.body, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.9))
+                    }
                     .accessibilityLabel("Best streak: \(viewModel.bestStreak)")
+                }
             }
 
             HStack(spacing: L2RTheme.Spacing.lg) {
@@ -465,6 +532,7 @@ struct WordBuilderView: View {
                                 .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                         )
                 }
+                .juicyButtonPress()
                 .accessibilityLabel("Play Again")
                 .accessibilityIdentifier(AccessibilityIdentifiers.WordBuilder.playAgainButton)
 
@@ -481,6 +549,7 @@ struct WordBuilderView: View {
                                 .fill(.white.opacity(0.2))
                         )
                 }
+                .juicyButtonPress()
                 .accessibilityLabel("Done")
                 .accessibilityIdentifier(AccessibilityIdentifiers.WordBuilder.doneButton)
             }
@@ -520,31 +589,55 @@ struct WordBuilderView: View {
 
     // MARK: - Animations
 
-    private func triggerShake() {
-        withAnimation(.default.speed(4).repeatCount(3, autoreverses: true)) {
-            shakeAnswer = true
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            shakeAnswer = false
-        }
-    }
-
     private func triggerCelebration() {
         showConfetti = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             showConfetti = false
         }
     }
+
+    /// Converts correct/total into a 1-3 star rating.
+    private func starRating(correct: Int, total: Int) -> Int {
+        guard total > 0 else { return 1 }
+        let pct = Double(correct) / Double(total)
+        if pct >= 0.8 { return 3 }
+        if pct >= 0.5 { return 2 }
+        return 1
+    }
 }
 
-// MARK: - Shake Modifier
+// MARK: - Emoji Sparkles
 
-private struct ShakeModifier: ViewModifier {
-    var shake: Bool
+/// Sparkle particles that burst outward when the emoji "comes alive" on correct answer.
+private struct EmojiSparkles: View {
+    @State private var animate = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    func body(content: Content) -> some View {
-        content
-            .offset(x: shake ? -5 : 0)
+    private static let offsets: [(x: CGFloat, y: CGFloat)] = [
+        (-35, -40), (30, -35), (-20, 30),
+        (40, 15), (-40, 10), (15, -45)
+    ]
+
+    var body: some View {
+        ZStack {
+            ForEach(0..<6, id: \.self) { i in
+                Text(i % 2 == 0 ? "\u{2728}" : "\u{2B50}")
+                    .font(.system(size: CGFloat(14 + (i % 3) * 4)))
+                    .offset(
+                        x: animate ? Self.offsets[i].x : 0,
+                        y: animate ? Self.offsets[i].y : 0
+                    )
+                    .opacity(animate ? 0 : 1)
+                    .scaleEffect(animate ? 1.2 : 0.3)
+            }
+        }
+        .allowsHitTesting(false)
+        .onAppear {
+            guard !reduceMotion else { return }
+            withAnimation(.easeOut(duration: 0.8)) {
+                animate = true
+            }
+        }
     }
 }
 

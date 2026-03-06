@@ -56,9 +56,23 @@ class RhymeGameViewModel: ObservableObject {
     /// Best streak achieved in this session
     private(set) var bestStreak = 0
 
+    /// Sticker earned on game completion (for view animation).
+    @Published private(set) var earnedSticker: Sticker?
+
+    /// Sticker book for awarding stickers.
+    var stickerBook: StickerBook?
+
+    /// Personal best tracker for recording new records.
+    var personalBestTracker: PersonalBestTracker?
+
+    /// Result of personal best check on game completion.
+    @Published private(set) var personalBestResult: PersonalBestResult?
+
     // MARK: - Initialization
 
-    init() {}
+    init(stickerBook: StickerBook? = nil) {
+        self.stickerBook = stickerBook
+    }
 
     // MARK: - Public Methods
 
@@ -72,6 +86,8 @@ class RhymeGameViewModel: ObservableObject {
         isCorrect = nil
         selectedOption = nil
         correctAnswer = nil
+        earnedSticker = nil
+        personalBestResult = nil
 
         gameState = .playing
         setupRound()
@@ -83,6 +99,16 @@ class RhymeGameViewModel: ObservableObject {
             gameState = .gameComplete
             HapticService.shared.levelComplete()
             SoundEffectService.shared.play(.levelComplete)
+            earnedSticker = stickerBook?.awardGameSticker(
+                gameType: .rhyme,
+                isPerfectScore: score == totalRounds,
+                streakCount: bestStreak
+            )
+            personalBestResult = personalBestTracker?.checkAndUpdate(
+                gameType: .rhyme,
+                score: score,
+                streak: bestStreak
+            )
             return
         }
 

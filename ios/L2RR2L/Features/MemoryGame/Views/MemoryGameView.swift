@@ -5,10 +5,16 @@ import SwiftUI
 struct MemoryGameView: View {
     @StateObject private var viewModel = MemoryGameViewModel()
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var childProfileService = ChildProfileService.shared
 
     private let voiceService = VoiceService.shared
+    private var childName: String { childProfileService.activeChild?.name ?? "Friend" }
 
     @State private var showConfetti = false
+    @State private var matchCorrectTrigger = false
+    @State private var mascotState = MascotState()
+    @State private var inactivityManager = InactivityHintManager()
+    @State private var showLevelUpCeremony = false
 
     var body: some View {
         ZStack {
@@ -29,23 +35,84 @@ struct MemoryGameView: View {
                     levelCompleteView
                 } else {
                     gameContent
+                        .roundTransition(round: viewModel.currentLevel, label: "Level")
                 }
 
                 Spacer()
             }
             .padding()
         }
+        .overlay(alignment: .bottomLeading) {
+            MascotView(state: mascotState)
+                .padding(L2RTheme.Spacing.md)
+        }
         .onChange(of: viewModel.gameState) { _, state in
             if state == .playing {
                 Task { await voiceService.speak("Find the match!") }
             } else if state == .levelComplete {
+                mascotState.proud(message: "You did it, \(childName)!")
                 Task { await voiceService.speak("Great job!") }
+            }
+        }
+        .onChange(of: viewModel.matchedPairsCount) { oldCount, newCount in
+            if newCount > oldCount {
+                mascotState.celebrate()
             }
         }
         .onChange(of: viewModel.showCelebration) { _, show in
             showConfetti = show
+            if show { mascotState.dance() }
         }
         .confetti(isActive: $showConfetti, configuration: .gameComplete)
+        .overlay {
+            if showLevelUpCeremony {
+                LevelUpCeremonyView(currentLevel: viewModel.currentLevel) {
+                    showLevelUpCeremony = false
+                    viewModel.nextLevel()
+                }
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: showLevelUpCeremony)
+        .overlay {
+            if viewModel.showSpeedMatch {
+                Text("Speed Match!")
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title2, weight: .bold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, L2RTheme.Spacing.xl)
+                    .padding(.vertical, L2RTheme.Spacing.md)
+                    .background(
+                        Capsule()
+                            .fill(LinearGradient(colors: [L2RTheme.Logo.yellow, L2RTheme.Logo.orange], startPoint: .leading, endPoint: .trailing))
+                    )
+                    .transition(.scale.combined(with: .opacity))
+            }
+        }
+        .overlay(alignment: .top) {
+            if viewModel.comboCount >= 2 {
+                Text("\(viewModel.comboCount)x Combo!")
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, L2RTheme.Spacing.lg)
+                    .padding(.vertical, L2RTheme.Spacing.sm)
+                    .background(
+                        Capsule()
+                            .fill(L2RTheme.Logo.purple)
+                    )
+                    .padding(.top, 120)
+                    .transition(.scale.combined(with: .opacity))
+            }
+        }
+        .animation(.spring(response: 0.4, dampingFraction: 0.5), value: viewModel.showSpeedMatch)
+        .animation(.spring(response: 0.3, dampingFraction: 0.5), value: viewModel.comboCount)
+        .onAppear { inactivityManager.setHintMessage("Tap a card to flip it!") }
+        .onChange(of: viewModel.gameState) { _, _ in inactivityManager.resetTimer() }
+        .onChange(of: inactivityManager.shouldWave) { _, wave in
+            if wave { mascotState.wave() }
+        }
+        .onChange(of: inactivityManager.shouldHint) { _, hint in
+            if hint { mascotState.hint(message: inactivityManager.hintMessage) }
+        }
     }
 
     // MARK: - Header
@@ -61,6 +128,7 @@ struct MemoryGameView: View {
                     .foregroundStyle(.white.opacity(0.8))
                     .frame(minWidth: L2RTheme.TouchTarget.minimum, minHeight: L2RTheme.TouchTarget.minimum)
             }
+            .juicyButtonPress()
             .accessibilityLabel("Close game")
 
             Spacer()
@@ -121,6 +189,7 @@ struct MemoryGameView: View {
                             .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                     )
             }
+            .juicyButtonPress()
             .accessibilityLabel("Start Game")
         }
     }
@@ -129,12 +198,24 @@ struct MemoryGameView: View {
 
     private var gameContent: some View {
         VStack(spacing: L2RTheme.Spacing.lg) {
+            // Peek banner
+            if viewModel.isPeeking {
+                Text("Remember the cards!")
+                    .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, L2RTheme.Spacing.xl)
+                    .padding(.vertical, L2RTheme.Spacing.sm)
+                    .background(Capsule().fill(L2RTheme.Logo.blue.opacity(0.8)))
+                    .transition(.opacity)
+            }
+
             // Progress
             progressBar
 
             // Card grid
             cardGrid
         }
+        .animation(.easeInOut, value: viewModel.isPeeking)
     }
 
     private var progressBar: some View {
@@ -182,7 +263,13 @@ struct MemoryGameView: View {
                     .frame(height: cardHeight(in: geometry))
                 }
             }
+            .juicyCorrect(trigger: $matchCorrectTrigger)
             .padding(L2RTheme.Spacing.md)
+        }
+        .onChange(of: viewModel.matchedPairsCount) { _, _ in
+            if viewModel.matchedPairsCount > 0 {
+                matchCorrectTrigger = true
+            }
         }
     }
 
@@ -201,18 +288,17 @@ struct MemoryGameView: View {
 
     private var levelCompleteView: some View {
         VStack(spacing: L2RTheme.Spacing.xl) {
-            HStack(spacing: L2RTheme.Spacing.xxs) {
-                Text("\u{2728}")
-                    .font(.system(size: 36))
-                Text("\u{1F9E0}")
-                    .font(.system(size: 80))
-                Text("\u{2728}")
-                    .font(.system(size: 36))
-            }
+            MascotView(state: mascotState, size: 120)
 
-            Text("Level Complete!")
+            Text("Great job, \(childName)!")
                 .font(L2RTheme.Typography.Scaled.playful(relativeTo: .largeTitle, weight: .bold))
                 .foregroundStyle(.white)
+
+            AnimatedStarRating(starCount: memoryStarRating(moves: viewModel.moves, pairs: viewModel.totalPairs))
+
+            if viewModel.personalBestResult?.isNewRecord == true {
+                PersonalBestBadgeView()
+            }
 
             VStack(spacing: L2RTheme.Spacing.sm) {
                 Text("Moves: \(viewModel.moves)")
@@ -229,7 +315,7 @@ struct MemoryGameView: View {
             HStack(spacing: L2RTheme.Spacing.lg) {
                 if viewModel.hasNextLevel {
                     Button {
-                        viewModel.nextLevel()
+                        showLevelUpCeremony = true
                     } label: {
                         Text("Next Level")
                             .font(L2RTheme.Typography.Scaled.playful(relativeTo: .title3, weight: .bold))
@@ -242,6 +328,7 @@ struct MemoryGameView: View {
                                     .shadow(color: L2RTheme.CTA.shadow.opacity(0.5), radius: 4, y: 4)
                             )
                     }
+                    .juicyButtonPress()
                 }
 
                 Button {
@@ -257,6 +344,7 @@ struct MemoryGameView: View {
                                 .fill(.white.opacity(0.2))
                         )
                 }
+                .juicyButtonPress()
 
                 Button {
                     dismiss()
@@ -271,8 +359,18 @@ struct MemoryGameView: View {
                                 .fill(.white.opacity(0.2))
                         )
                 }
+                .juicyButtonPress()
             }
         }
+    }
+
+    /// Converts moves efficiency into a 1-3 star rating for memory game.
+    private func memoryStarRating(moves: Int, pairs: Int) -> Int {
+        guard pairs > 0 else { return 1 }
+        let ratio = Double(moves) / Double(pairs)
+        if ratio <= 2.0 { return 3 }  // Near perfect memory
+        if ratio <= 3.0 { return 2 }
+        return 1
     }
 }
 

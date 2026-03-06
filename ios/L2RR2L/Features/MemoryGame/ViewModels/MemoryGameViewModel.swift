@@ -22,6 +22,15 @@ class MemoryGameViewModel: ObservableObject {
     /// Whether to show celebration animation
     @Published private(set) var showCelebration = false
 
+    /// Whether cards are being peeked (shown face-up briefly at start)
+    @Published private(set) var isPeeking = false
+
+    /// Show "Speed Match!" popup
+    @Published private(set) var showSpeedMatch = false
+
+    /// Consecutive match combo count (shown when >= 2)
+    @Published private(set) var comboCount = 0
+
     // MARK: - Level Properties
 
     /// Current level (1-based)
@@ -42,6 +51,30 @@ class MemoryGameViewModel: ObservableObject {
 
     /// Best moves achieved (lowest is better)
     private(set) var bestMoves: Int?
+
+    /// Levels already peeked (first play shows cards briefly)
+    private var peekedLevels: Set<Int> = []
+
+    /// Task for the card peek animation
+    private var peekTask: Task<Void, Never>?
+
+    /// Time the first card of a pair was flipped
+    private var firstFlipTime: Date?
+
+    /// Consecutive matches in a row
+    private var consecutiveMatches = 0
+
+    /// Sticker earned on level completion (for view animation).
+    @Published private(set) var earnedSticker: Sticker?
+
+    /// Sticker book for awarding stickers.
+    var stickerBook: StickerBook?
+
+    /// Personal best tracker for recording new records.
+    var personalBestTracker: PersonalBestTracker?
+
+    /// Result of personal best check on level completion.
+    @Published private(set) var personalBestResult: PersonalBestResult?
 
     // MARK: - Computed Properties
 
@@ -83,7 +116,9 @@ class MemoryGameViewModel: ObservableObject {
 
     // MARK: - Initialization
 
-    init() {}
+    init(stickerBook: StickerBook? = nil) {
+        self.stickerBook = stickerBook
+    }
 
     // MARK: - Public Methods
 
@@ -105,7 +140,27 @@ class MemoryGameViewModel: ObservableObject {
         flippedIndices = []
         moves = 0
         showCelebration = false
+        earnedSticker = nil
+        personalBestResult = nil
+        consecutiveMatches = 0
+        comboCount = 0
+        showSpeedMatch = false
         gameState = .playing
+
+        // Card peek: first play of each level shows all cards briefly
+        if !peekedLevels.contains(currentLevel) {
+            peekedLevels.insert(currentLevel)
+            isPeeking = true
+            peekTask = Task {
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                guard !Task.isCancelled else { return }
+                for i in cards.indices { cards[i].isFlipped = true }
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                guard !Task.isCancelled else { return }
+                for i in cards.indices { cards[i].isFlipped = false }
+                isPeeking = false
+            }
+        }
     }
 
     /// Flips a card at the given index
@@ -115,6 +170,12 @@ class MemoryGameViewModel: ObservableObject {
         guard index >= 0 && index < cards.count else { return }
         guard !cards[index].isFlipped && !cards[index].isMatched else { return }
         guard flippedIndices.count < 2 else { return }
+        guard !isPeeking else { return }
+
+        // Track first flip time for speed match detection
+        if flippedIndices.isEmpty {
+            firstFlipTime = Date()
+        }
 
         // Flip the card
         cards[index].isFlipped = true
@@ -149,11 +210,34 @@ class MemoryGameViewModel: ObservableObject {
             flippedIndices = []
             gameState = .playing
 
+            // Combo tracking
+            consecutiveMatches += 1
+            if consecutiveMatches >= 2 {
+                comboCount = consecutiveMatches
+                Task {
+                    try? await Task.sleep(nanoseconds: 1_500_000_000)
+                    guard !Task.isCancelled else { return }
+                    comboCount = 0
+                }
+            }
+
+            // Speed match: matched within 2s of first flip
+            if let flipTime = firstFlipTime, Date().timeIntervalSince(flipTime) < 2.0 {
+                showSpeedMatch = true
+                Task {
+                    try? await Task.sleep(nanoseconds: 1_500_000_000)
+                    guard !Task.isCancelled else { return }
+                    showSpeedMatch = false
+                }
+            }
+
             // Check for level completion
             if cards.allSatisfy({ $0.isMatched }) {
                 handleLevelComplete()
             }
         } else {
+            // No match - reset combo
+            consecutiveMatches = 0
             // No match - flip back after delay
             HapticService.shared.incorrectAnswer()
             SoundEffectService.shared.play(.incorrect)
@@ -188,6 +272,13 @@ class MemoryGameViewModel: ObservableObject {
         showCelebration = false
         gameState = .notStarted
         bestMoves = nil
+        peekTask?.cancel()
+        isPeeking = false
+        peekedLevels.removeAll()
+        consecutiveMatches = 0
+        comboCount = 0
+        showSpeedMatch = false
+        firstFlipTime = nil
     }
 
     /// Restarts the current level
@@ -224,5 +315,20 @@ class MemoryGameViewModel: ObservableObject {
         if moves <= perfectMoves + 2 {
             showCelebration = true
         }
+
+        // Award sticker
+        earnedSticker = stickerBook?.awardGameSticker(
+            gameType: .memory,
+            isPerfectScore: moves == perfectMoves,
+            streakCount: 0
+        )
+
+        // Check personal best (moves — lower is better)
+        personalBestResult = personalBestTracker?.checkAndUpdate(
+            gameType: .memory,
+            score: 0,
+            streak: 0,
+            moves: moves
+        )
     }
 }
