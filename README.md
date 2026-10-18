@@ -20,11 +20,11 @@ Requires Xcode 26+, iOS 18 deployment target. `brew install xcodegen` if you cha
 | `app/L2RR2L/App` | entry point, `AppServices` (shared systems + the "correct / oops / round done / sticker" moments), router |
 | `app/L2RR2L/Design` | theme, living parallax sky, chunky 3D buttons, title lettering |
 | `app/L2RR2L/Feedback` | synthesized sound palette (swap in real files), haptics (iPhone only; iPads have none) |
-| `app/L2RR2L/Speech` | `Speaker` (TTS, IPA pure letter sounds, recordings win) and `StarVoice` narrator |
+| `app/L2RR2L/Speech` | `Speaker` (TTS, IPA pure letter sounds, recordings win), `StarVoice` narrator, `PhonemeEngine` (holdable letter sounds for blending) |
 | `app/L2RR2L/Mascot` | `MascotDirector` reactions and `MascotView` (video clip, still, or animated interim art) |
 | `app/L2RR2L/Celebration` | confetti, fireworks, sticker reveal overlay |
 | `app/L2RR2L/Progress` | saved progress: stages, word mastery over days, spaced review, error patterns, skills with prerequisites/bridges, milestones, stars, treats, egg, sticker book |
-| `app/L2RR2L/Games` | game catalog and the shared game screen; Stretchy Blend, Word Machine and Star Catch are placeholders |
+| `app/L2RR2L/Games` | game catalog, shared game screen, and the three playable games: Stretchy Blend, Word Machine, Star Catch (content in `Games/Content/WordBank.swift`) |
 | `app/L2RR2L/Resources/Media` | drop folder for mascot clips, sounds, phonemes, words (see its README) |
 | `art/cutisie` | mascot art brief and references |
 

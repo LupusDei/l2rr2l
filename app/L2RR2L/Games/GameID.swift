@@ -60,7 +60,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    var isReady: Bool { self != .starCatch }
+    var isReady: Bool { true }
 
     // MARK: Game slots
 
@@ -72,8 +72,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .wordMachine:
             WordMachineView()
         case .starCatch:
-            // TODO: replace with StarCatchView() (Games/StarCatch/)
-            GamePlaceholderView(game: self)
+            StarCatchView()
         }
     }
 }

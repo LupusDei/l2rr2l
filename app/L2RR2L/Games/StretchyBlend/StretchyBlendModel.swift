@@ -208,8 +208,8 @@ final class StretchyBlendModel {
         hintLevel = min(hintLevel + 1, 4)
         switch hintLevel {
         case 1:
-            services.feedback.play(.oops)
-            services.mascot.react(.encourage)
+            if missed { services.feedback.play(.oops) }
+            services.mascot.react(missed ? .encourage : .think)
             await services.voice.say("Touch each sound.")
         case 2:
             services.feedback.play(.pop)
