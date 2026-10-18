@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		096F3EB9D91611809951A55B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7361C1335BE1B407D985273E /* RootView.swift */; };
+		12671514DC5D7B11099A9B7F /* WordMachineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F77C7F844D7037CFDA7D00A /* WordMachineModel.swift */; };
 		2070B40F7C98A1A567B8000F /* SkillGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 748D136A87362AB8D5B0E750 /* SkillGraph.swift */; };
 		27428E6135AA984821DFE32B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8551180C4292B10C86EE5292 /* Router.swift */; };
 		2793FEE0977BCBFEF9418302 /* GameScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88A948EAC3CA5ACF98969A3 /* GameScaffold.swift */; };
@@ -27,6 +28,7 @@
 		75AB3EE8CD00C2F428DA872A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E26BF4E6B9569D405F42A7F /* Assets.xcassets */; };
 		788371DD9EDB535E026A98F3 /* SoundEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE1C309AD75222978828EC5 /* SoundEffects.swift */; };
 		833344EE558DAF43B71AB86C /* StickerBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2487D873357238BB6A56AB /* StickerBookView.swift */; };
+		8BDA3D031E97AC72E50A64CF /* WordMachineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A138DAA595093A94CF8CF4C3 /* WordMachineView.swift */; };
 		8F82232F28FD0A06193C725E /* SkyBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102E3EA4C57FA7264F3F44F2 /* SkyBackground.swift */; };
 		92775D9E27C4A5262A7822EF /* StarVoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CFD07344C3F98AB94A056D2 /* StarVoice.swift */; };
 		B0EBF4DAC4BF5CB4BCA9DB4E /* MascotDirector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB32EFF92D44602CB25C54B /* MascotDirector.swift */; };
@@ -76,6 +78,8 @@
 		99393958B191B8A3F7AF1B0A /* ProgressStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressStoreTests.swift; sourceTree = "<group>"; };
 		9CE1C309AD75222978828EC5 /* SoundEffects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffects.swift; sourceTree = "<group>"; };
 		9D6CD74BB4DE32013C0C4E71 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		9F77C7F844D7037CFDA7D00A /* WordMachineModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordMachineModel.swift; sourceTree = "<group>"; };
+		A138DAA595093A94CF8CF4C3 /* WordMachineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordMachineView.swift; sourceTree = "<group>"; };
 		A7FE6A55D6003776E8028604 /* Feedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feedback.swift; sourceTree = "<group>"; };
 		AA42131C60E5B81B3AA35FB4 /* ProgressStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressStore.swift; sourceTree = "<group>"; };
 		CF2487D873357238BB6A56AB /* StickerBookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBookView.swift; sourceTree = "<group>"; };
@@ -125,6 +129,7 @@
 				E88A948EAC3CA5ACF98969A3 /* GameScaffold.swift */,
 				E981891607F60DEF55F086C1 /* Content */,
 				9C24B32FB6793C8FFB80CD68 /* StretchyBlend */,
+				AEBC4F868038DFF4253320B6 /* WordMachine */,
 			);
 			path = Games;
 			sourceTree = "<group>";
@@ -198,6 +203,15 @@
 				82D797611ED9C94607FB6D78 /* Speech */,
 			);
 			path = L2RR2L;
+			sourceTree = "<group>";
+		};
+		AEBC4F868038DFF4253320B6 /* WordMachine */ = {
+			isa = PBXGroup;
+			children = (
+				9F77C7F844D7037CFDA7D00A /* WordMachineModel.swift */,
+				A138DAA595093A94CF8CF4C3 /* WordMachineView.swift */,
+			);
+			path = WordMachine;
 			sourceTree = "<group>";
 		};
 		D748EC3548FF95A95585FF76 /* Products */ = {
@@ -408,6 +422,8 @@
 				46F173488D817468185CEC44 /* StretchyBlendView.swift in Sources */,
 				619623197F8A42BA670095DF /* Theme.swift in Sources */,
 				D63AD3DBE867C4E7D95D7E5A /* WordBank.swift in Sources */,
+				12671514DC5D7B11099A9B7F /* WordMachineModel.swift in Sources */,
+				8BDA3D031E97AC72E50A64CF /* WordMachineView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

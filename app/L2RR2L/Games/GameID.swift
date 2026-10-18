@@ -60,7 +60,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    var isReady: Bool { self == .stretchyBlend }
+    var isReady: Bool { self != .starCatch }
 
     // MARK: Game slots
 
@@ -70,8 +70,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .stretchyBlend:
             StretchyBlendView()
         case .wordMachine:
-            // TODO: replace with WordMachineView() (Games/WordMachine/)
-            GamePlaceholderView(game: self)
+            WordMachineView()
         case .starCatch:
             // TODO: replace with StarCatchView() (Games/StarCatch/)
             GamePlaceholderView(game: self)

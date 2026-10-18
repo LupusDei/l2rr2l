@@ -44,3 +44,44 @@ enum WordBank {
         BlendItem(word: Word("bus", "🚌"), distractors: [Word("bun", "🍞"), Word("bug", "🐛")]),
     ]
 }
+
+/// A Word Machine chain: each word differs from the one before by one sound.
+struct WordChain: Identifiable, Hashable {
+    let id: String
+    let words: [Word]
+    /// Extra letters in the tray that aren't needed, to make her listen.
+    let distractors: [String]
+
+    /// Every letter the chain needs plus distractors, as single-use stamps.
+    var trayLetters: [String] {
+        let needed = words.flatMap(\.graphemes)
+        var seen: [String] = []
+        for g in needed + distractors where !seen.contains(g) { seen.append(g) }
+        return seen.sorted()
+    }
+}
+
+extension WordBank {
+    static func picture(_ text: String) -> String? {
+        let all = stage1Blends.flatMap { [$0.word] + $0.distractors }
+        if let hit = all.first(where: { $0.text == text }) { return hit.picture }
+        return extraPictures[text]
+    }
+
+    private static let extraPictures: [String: String] = [
+        // words with weak pictures (sat, sit, tip...) stay without one; the
+        // bubble shows a sparkle and the word is still spoken
+        "can": "🥫", "tin": "🥫", "cot": "🛏️", "hot": "🔥", "hop": "🐇",
+    ]
+
+    private static func chain(_ id: String, _ texts: [String], distractors: [String]) -> WordChain {
+        WordChain(id: id, words: texts.map { Word($0, picture($0)) }, distractors: distractors)
+    }
+
+    /// Stage 1-2 chains from spec 3.2: beginning, end, then middle changes.
+    static let chains: [WordChain] = [
+        chain("short-a", ["mat", "sat", "sad", "mad", "man", "can"], distractors: ["p", "i"]),
+        chain("short-i", ["sit", "pit", "pin", "tin", "tip", "lip"], distractors: ["a", "m"]),
+        chain("mixed", ["cat", "cot", "hot", "hop", "hip", "hit"], distractors: ["s", "u"]),
+    ]
+}
