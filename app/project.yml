@@ -1,0 +1,59 @@
+name: L2RR2L
+options:
+  bundleIdPrefix: com.lupusdei
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "2.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  L2RR2L:
+    type: application
+    platform: iOS
+    sources:
+      - path: L2RR2L
+        excludes:
+          - "Resources/Media"
+      # Media is a folder reference: drop mascot videos, sound effects and
+      # letter-sound recordings in and they ship without touching the project.
+      - path: L2RR2L/Resources/Media
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lupusdei.l2rr2l
+        PRODUCT_NAME: L2RR2L
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Cutisie Reads
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UIRequiresFullScreen: NO
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UIStatusBarHidden: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_PREVIEWS: YES
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+  L2RR2LTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [L2RR2LTests]
+    dependencies:
+      - target: L2RR2L
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.lupusdei.l2rr2l.tests
+schemes:
+  L2RR2L:
+    build:
+      targets:
+        L2RR2L: all
+    test:
+      targets: [L2RR2LTests]

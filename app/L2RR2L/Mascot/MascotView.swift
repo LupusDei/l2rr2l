@@ -1,0 +1,274 @@
+import AVFoundation
+import SwiftUI
+
+/// Cutisie on screen. Plays the current clip from `MascotDirector` when the
+/// video exists, otherwise animates her still art with body language for each
+/// reaction (hop, spin, wiggle, nod) so the app is alive before videos land.
+///
+/// `.stage`: big and free-standing on a cloud (home screen).
+/// `.window`: inside a round "magic window" (corner of game screens).
+struct MascotView: View {
+    enum Style { case stage, window }
+
+    var size: CGFloat = 220
+    var style: Style = .window
+
+    @Environment(MascotDirector.self) private var mascot
+
+    var body: some View {
+        switch style {
+        case .stage: stage
+        case .window: window
+        }
+    }
+
+    private var stage: some View {
+        TimelineView(.animation) { timeline in
+            let t = timeline.date.timeIntervalSinceReferenceDate
+            ZStack {
+                // aura
+                Circle()
+                    .fill(RadialGradient(colors: [Theme.aurora3.opacity(0.55), Theme.aurora1.opacity(0.25), .clear],
+                                         center: .center, startRadius: 0, endRadius: size * 0.62))
+                    .scaleEffect(1 + 0.05 * sin(t * 1.4))
+                OrbitingSparkles(t: t, radius: size * 0.48, size: size * 0.05)
+                FluffyCloud()
+                    .frame(width: size * 1.35, height: size * 0.5)
+                    .offset(y: size * 0.42)
+                    .offset(y: 4 * sin(t * 1.1 + 0.5))
+                artwork
+                    .frame(width: size * 0.82, height: size * 0.95)
+                    .offset(y: -size * 0.02 + 7 * sin(t * 1.1))
+                    .scaleEffect(x: 1 + 0.012 * sin(t * 2.2), y: 1 - 0.012 * sin(t * 2.2), anchor: .bottom)
+                    .shadow(color: Theme.aurora2.opacity(0.6), radius: 18)
+            }
+            .frame(width: size, height: size * 1.1)
+        }
+    }
+
+    private var window: some View {
+        ZStack {
+            Circle()
+                .fill(RadialGradient(colors: [Theme.aurora1.opacity(0.9), Theme.skyTop],
+                                     center: .center, startRadius: 0, endRadius: size * 0.6))
+            artwork
+                .padding(size * 0.08)
+                .clipShape(Circle())
+        }
+        .frame(width: size, height: size)
+        .overlay(Circle().stroke(AngularGradient(colors: [Theme.pink, Theme.gold, Theme.mint, Theme.sky, Theme.pink],
+                                                 center: .center),
+                                 lineWidth: max(5, size * 0.045)))
+        .glow(Theme.pink, radius: size * 0.08)
+    }
+
+    @ViewBuilder private var artwork: some View {
+        let clip = mascot.clip
+        if let clip, let url = clip.videoURL {
+            MascotVideoPlayer(url: url, loops: clip.loops, playCount: mascot.playCount)
+        } else {
+            Image(uiImage: MascotStill.image(clip?.stillName ?? "idle") ?? UIImage())
+                .resizable()
+                .scaledToFit()
+                .modifier(MascotMotion(clip: clip, playCount: mascot.playCount))
+        }
+    }
+}
+
+enum MascotStill {
+    /// Real art from `Media/mascot/<name>.png` first, then the interim cut-out.
+    static func image(_ name: String) -> UIImage? {
+        for ext in ["png", "jpg", "heic"] {
+            if let path = Bundle.main.path(forResource: name, ofType: ext, inDirectory: "Media/mascot") {
+                return UIImage(contentsOfFile: path)
+            }
+        }
+        return UIImage(named: "cutisie-placeholder")
+    }
+}
+
+private struct OrbitingSparkles: View {
+    let t: Double
+    let radius: CGFloat
+    let size: CGFloat
+
+    var body: some View {
+        ZStack {
+            ForEach(0..<7, id: \.self) { i in
+                let angle = Double(i) / 7 * 2 * .pi + t * 0.45
+                Image(systemName: i.isMultiple(of: 2) ? "sparkle" : "star.fill")
+                    .font(.system(size: size * (i.isMultiple(of: 3) ? 1.3 : 0.8)))
+                    .foregroundStyle(Theme.confetti[i % Theme.confetti.count])
+                    .glow(Theme.confetti[i % Theme.confetti.count], radius: 4)
+                    .offset(x: cos(angle) * radius, y: sin(angle) * radius * 0.55 - radius * 0.1)
+                    .opacity(0.4 + 0.6 * (0.5 + 0.5 * sin(t * 2.5 + Double(i))))
+                    .scaleEffect(0.7 + 0.3 * sin(angle))
+            }
+        }
+    }
+}
+
+/// A plump cloud with a lit top and pink underglow, for Cutisie to sit on.
+struct FluffyCloud: View {
+    var body: some View {
+        Canvas { ctx, size in
+            let w = size.width, h = size.height
+            var path = Path()
+            let puffs: [(CGFloat, CGFloat, CGFloat)] = [
+                (0.18, 0.62, 0.20), (0.34, 0.42, 0.26), (0.52, 0.34, 0.30),
+                (0.70, 0.44, 0.25), (0.85, 0.62, 0.18), (0.5, 0.7, 0.32),
+            ]
+            for (x, y, r) in puffs {
+                path.addEllipse(in: CGRect(x: x * w - r * w * 0.6, y: y * h - r * h * 1.3,
+                                           width: r * w * 1.2, height: r * h * 2.6))
+            }
+            // puffs overhang the nominal box; shrink into the canvas so nothing clips
+            ctx.translateBy(x: w * 0.12, y: h * 0.08)
+            ctx.scaleBy(x: 0.76, y: 0.72)
+            ctx.drawLayer { layer in
+                layer.addFilter(.shadow(color: Theme.pink.opacity(0.7), radius: 18, y: 10))
+                layer.fill(path, with: .linearGradient(Gradient(colors: [.white, Color(red: 0.86, green: 0.82, blue: 1.0), Theme.pink.opacity(0.85)]),
+                                                       startPoint: CGPoint(x: 0, y: 0), endPoint: CGPoint(x: 0, y: h)))
+            }
+        }
+    }
+}
+
+/// Body language on the still art per reaction, standing in for video.
+private struct MascotMotion: ViewModifier {
+    let clip: MascotClip?
+    let playCount: Int
+    @State private var trigger = 0
+
+    func body(content: Content) -> some View {
+        content
+            .keyframeAnimator(initialValue: Pose(), trigger: trigger) { view, pose in
+                view
+                    .scaleEffect(x: pose.scaleX, y: pose.scaleY, anchor: .bottom)
+                    .rotationEffect(.degrees(pose.angle))
+                    .offset(y: pose.lift)
+            } keyframes: { _ in
+                KeyframeTrack(\.lift) {
+                    switch clip {
+                    case .cheer, .dance:
+                        CubicKeyframe(10, duration: 0.12)
+                        CubicKeyframe(-90, duration: 0.3)
+                        SpringKeyframe(0, duration: 0.5, spring: .bouncy)
+                        CubicKeyframe(-40, duration: 0.25)
+                        SpringKeyframe(0, duration: 0.4, spring: .bouncy)
+                    case .hello:
+                        CubicKeyframe(-25, duration: 0.25)
+                        SpringKeyframe(0, duration: 0.4, spring: .bouncy)
+                    case .encourage:
+                        CubicKeyframe(8, duration: 0.2)
+                        CubicKeyframe(-12, duration: 0.2)
+                        SpringKeyframe(0, duration: 0.4)
+                    default:
+                        CubicKeyframe(-10, duration: 0.2)
+                        SpringKeyframe(0, duration: 0.3)
+                    }
+                }
+                KeyframeTrack(\.angle) {
+                    switch clip {
+                    case .dance:
+                        CubicKeyframe(0, duration: 0.12)
+                        CubicKeyframe(360, duration: 0.6)
+                        CubicKeyframe(350, duration: 0.15)
+                        CubicKeyframe(370, duration: 0.15)
+                        SpringKeyframe(360, duration: 0.3)
+                        MoveKeyframe(0)
+                    case .hello:
+                        CubicKeyframe(-10, duration: 0.2)
+                        CubicKeyframe(10, duration: 0.2)
+                        CubicKeyframe(-8, duration: 0.2)
+                        SpringKeyframe(0, duration: 0.3)
+                    case .encourage:
+                        // the oops gag: a wobble like she nearly tipped off her cloud
+                        CubicKeyframe(-16, duration: 0.18)
+                        CubicKeyframe(12, duration: 0.2)
+                        CubicKeyframe(-6, duration: 0.18)
+                        SpringKeyframe(0, duration: 0.4)
+                    case .think:
+                        CubicKeyframe(12, duration: 0.4)
+                        SpringKeyframe(8, duration: 0.4)
+                    default:
+                        CubicKeyframe(0, duration: 0.1)
+                    }
+                }
+                KeyframeTrack(\.scaleY) {
+                    CubicKeyframe(0.86, duration: 0.12)   // squash before the move
+                    SpringKeyframe(1.08, duration: 0.25, spring: .bouncy)
+                    SpringKeyframe(1.0, duration: 0.5, spring: .bouncy)
+                }
+                KeyframeTrack(\.scaleX) {
+                    CubicKeyframe(1.12, duration: 0.12)
+                    SpringKeyframe(0.95, duration: 0.25, spring: .bouncy)
+                    SpringKeyframe(1.0, duration: 0.5, spring: .bouncy)
+                }
+            }
+            .onChange(of: playCount) { trigger += 1 }
+    }
+
+    struct Pose {
+        var lift: CGFloat = 0
+        var angle: Double = 0
+        var scaleX: CGFloat = 1
+        var scaleY: CGFloat = 1
+    }
+}
+
+/// Bare AVPlayerLayer (no controls), loops when asked. Videos encoded as HEVC
+/// with alpha render with transparent backgrounds.
+struct MascotVideoPlayer: UIViewRepresentable {
+    let url: URL
+    let loops: Bool
+    let playCount: Int
+
+    func makeUIView(context: Context) -> PlayerView { PlayerView() }
+
+    func updateUIView(_ view: PlayerView, context: Context) {
+        view.play(url: url, loops: loops, token: playCount)
+    }
+
+    final class PlayerView: UIView {
+        override class var layerClass: AnyClass { AVPlayerLayer.self }
+        private var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
+        private let player = AVQueuePlayer()
+        private var looper: AVPlayerLooper?
+        private var token = -1
+
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            player.isMuted = false // clip audio is Cutisie's squeaks; the Star Voice is separate
+            playerLayer.player = player
+            playerLayer.videoGravity = .resizeAspect
+            backgroundColor = .clear
+        }
+
+        required init?(coder: NSCoder) { fatalError() }
+
+        func play(url: URL, loops: Bool, token: Int) {
+            guard token != self.token else { return }
+            self.token = token
+            looper = nil
+            player.removeAllItems()
+            let item = AVPlayerItem(url: url)
+            if loops {
+                looper = AVPlayerLooper(player: player, templateItem: item)
+            } else {
+                player.insert(item, after: nil)
+            }
+            player.play()
+        }
+    }
+}
+
+#Preview {
+    let services = AppServices.preview()
+    return ZStack {
+        SkyBackground()
+        MascotView(size: 420, style: .stage)
+    }
+    .withServices(services)
+    .onAppear { services.mascot.react(.dance) }
+}
