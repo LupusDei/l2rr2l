@@ -77,6 +77,9 @@ struct HomeView: View {
                 StarJar()
                     .background { Capsule().fill(.clear).zoomSource("stars", in: zoom) }
                     .position(x: w - m.s(110), y: m.s(70))
+
+                ParentGateButton()
+                    .position(x: w - 40, y: h - 40)
             }
             .animation(.spring(response: 0.9, dampingFraction: 0.7), value: appeared)
         }
@@ -84,6 +87,14 @@ struct HomeView: View {
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
             appeared = true
+            #if DEBUG
+            if Autopilot.enabled && (!progress.data.placementDone || Autopilot.sessionsPlayed == 0) {
+                Autopilot.after(4) {
+                    if progress.data.placementDone { Autopilot.sessionsPlayed += 1 }
+                    play()
+                }
+            }
+            #endif
             guard !greeted else { return }
             greeted = true
             Task {
@@ -113,7 +124,7 @@ struct HomeView: View {
     private func play() {
         services.feedback.play(.whoosh)
         if progress.data.placementDone {
-            services.router.startSession()
+            services.router.startSession(warmUp: progress.nextWarmUp(), newSound: progress.nextNewSound())
         } else {
             services.router.open(.sparkleCheck)
         }

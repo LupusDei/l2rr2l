@@ -49,6 +49,7 @@
       "t"
      ],
      "picture": null,
+     "art": null,
      "stage": 1,
      "distractors": []
     },
@@ -63,6 +64,7 @@
       "n"
      ],
      "picture": null,
+     "art": null,
      "stage": 1,
      "distractors": []
     },
@@ -77,6 +79,7 @@
       "s"
      ],
      "picture": null,
+     "art": null,
      "stage": 1,
      "distractors": []
     },
@@ -91,6 +94,7 @@
       "t"
      ],
      "picture": null,
+     "art": null,
      "stage": 1,
      "distractors": []
     },
@@ -105,6 +109,7 @@
       "n"
      ],
      "picture": null,
+     "art": null,
      "stage": 1,
      "distractors": []
     },
@@ -119,6 +124,7 @@
       "m"
      ],
      "picture": null,
+     "art": null,
      "stage": 1,
      "distractors": []
     },
@@ -135,6 +141,7 @@
       "t"
      ],
      "picture": "🐜",
+     "art": null,
      "stage": 1,
      "distractors": []
     },
@@ -151,6 +158,7 @@
       "t"
      ],
      "picture": null,
+     "art": null,
      "stage": 1,
      "distractors": []
     },
@@ -167,6 +175,7 @@
       "m"
      ],
      "picture": null,
+     "art": null,
      "stage": 1,
      "distractors": []
     },
@@ -183,9 +192,10 @@
       "n"
      ],
      "picture": "👨",
+     "art": "clear",
      "stage": 1,
      "distractors": [
-      "fan",
+      "can",
       "mad"
      ]
     },
@@ -201,9 +211,13 @@
       "a",
       "t"
      ],
-     "picture": null,
+     "picture": "🖼️",
+     "art": "clear",
      "stage": 1,
-     "distractors": []
+     "distractors": [
+      "bat",
+      "mad"
+     ]
     },
     {
      "text": "sip",
@@ -218,10 +232,11 @@
       "p"
      ],
      "picture": "🥤",
+     "art": "clear",
      "stage": 1,
      "distractors": [
-      "hip",
-      "six"
+      "lip",
+      "sap"
      ]
     },
     {
@@ -237,6 +252,7 @@
       "p"
      ],
      "picture": "😴",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "cap",
@@ -256,6 +272,7 @@
       "p"
      ],
      "picture": "🗺️",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "cap",
@@ -275,6 +292,7 @@
       "t"
      ],
      "picture": null,
+     "art": "weak",
      "stage": 1,
      "distractors": []
     },
@@ -291,6 +309,7 @@
       "n"
      ],
      "picture": "📍",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "fin",
@@ -310,6 +329,7 @@
       "n"
      ],
      "picture": "🥫",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "fin",
@@ -329,9 +349,10 @@
       "n"
      ],
      "picture": "🍳",
+     "art": "clear",
      "stage": 1,
      "distractors": [
-      "fan",
+      "can",
       "pen"
      ]
     },
@@ -348,6 +369,7 @@
       "d"
      ],
      "picture": "👨‍👧",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "mad",
@@ -367,6 +389,7 @@
       "d"
      ],
      "picture": "😠",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "dad",
@@ -386,6 +409,7 @@
       "g"
      ],
      "picture": "⛏️",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "fig",
@@ -405,10 +429,11 @@
       "g"
      ],
      "picture": "🐷",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "dig",
-      "pin"
+      "peg"
      ]
     },
     {
@@ -424,6 +449,7 @@
       "g"
      ],
      "picture": "🐶",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "log",
@@ -443,6 +469,7 @@
       "t"
      ],
      "picture": "🐱",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "bat",
@@ -462,6 +489,7 @@
       "t"
      ],
      "picture": "🛏️",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "hot",
@@ -480,9 +508,13 @@
       "o",
       "p"
      ],
-     "picture": null,
+     "picture": "🖼️",
+     "art": "clear",
      "stage": 1,
-     "distractors": []
+     "distractors": [
+      "hop",
+      "toy"
+     ]
     },
     {
      "text": "can",
@@ -496,9 +528,13 @@
       "a",
       "n"
      ],
-     "picture": null,
+     "picture": "🖼️",
+     "art": "clear",
      "stage": 1,
-     "distractors": []
+     "distractors": [
+      "fan",
+      "cap"
+     ]
     },
     {
      "text": "cap",
@@ -513,6 +549,7 @@
       "p"
      ],
      "picture": "🧢",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "map",
@@ -532,6 +569,7 @@
       "d"
      ],
      "picture": "🧒",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "lid",
@@ -551,10 +589,11 @@
       "t"
      ],
      "picture": "🧰",
+     "art": "clear",
      "stage": 1,
      "distractors": [
-      "kid",
-      "king"
+      "hit",
+      "kid"
      ]
     },
     {
@@ -570,10 +609,11 @@
       "t"
      ],
      "picture": "🍲",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "cot",
-      "pan"
+      "pit"
      ]
     },
     {
@@ -589,6 +629,7 @@
       "p"
      ],
      "picture": "🧹",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "hop",
@@ -608,10 +649,11 @@
       "d"
      ],
      "picture": "😢",
+     "art": "clear",
      "stage": 1,
      "distractors": [
       "dad",
-      "sip"
+      "sap"
      ]
     },
     {
@@ -627,6 +669,7 @@
       "g"
      ],
      "picture": "🏷️",
+     "art": null,
      "stage": 1,
      "distractors": [
       "bag",
@@ -646,6 +689,7 @@
       "d"
      ],
      "picture": null,
+     "art": null,
      "stage": 1,
      "distractors": []
     },
@@ -662,6 +706,7 @@
       "t"
      ],
      "picture": null,
+     "art": null,
      "stage": 1,
      "distractors": []
     }
@@ -686,7 +731,8 @@
        "a",
        "t"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      },
      {
       "text": "sat",
@@ -700,7 +746,8 @@
        "a",
        "t"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "sad",
@@ -714,7 +761,8 @@
        "a",
        "d"
       ],
-      "picture": "😢"
+      "picture": "😢",
+      "art": "clear"
      },
      {
       "text": "mad",
@@ -728,7 +776,8 @@
        "a",
        "d"
       ],
-      "picture": "😠"
+      "picture": "😠",
+      "art": "clear"
      },
      {
       "text": "man",
@@ -742,7 +791,8 @@
        "a",
        "n"
       ],
-      "picture": "👨"
+      "picture": "👨",
+      "art": "clear"
      },
      {
       "text": "can",
@@ -756,7 +806,8 @@
        "a",
        "n"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      }
     ],
     [
@@ -772,7 +823,8 @@
        "i",
        "t"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "weak"
      },
      {
       "text": "pit",
@@ -786,7 +838,8 @@
        "i",
        "t"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      },
      {
       "text": "pin",
@@ -800,7 +853,8 @@
        "i",
        "n"
       ],
-      "picture": "📍"
+      "picture": "📍",
+      "art": "clear"
      },
      {
       "text": "tin",
@@ -814,7 +868,8 @@
        "i",
        "n"
       ],
-      "picture": "🥫"
+      "picture": "🥫",
+      "art": "clear"
      },
      {
       "text": "tip",
@@ -828,7 +883,8 @@
        "i",
        "p"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "weak"
      },
      {
       "text": "dip",
@@ -842,7 +898,8 @@
        "i",
        "p"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      }
     ],
     [
@@ -858,7 +915,8 @@
        "a",
        "t"
       ],
-      "picture": "🐱"
+      "picture": "🐱",
+      "art": "clear"
      },
      {
       "text": "cot",
@@ -872,7 +930,8 @@
        "o",
        "t"
       ],
-      "picture": "🛏️"
+      "picture": "🛏️",
+      "art": "clear"
      },
      {
       "text": "cog",
@@ -886,7 +945,8 @@
        "o",
        "g"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "dog",
@@ -900,7 +960,8 @@
        "o",
        "g"
       ],
-      "picture": "🐶"
+      "picture": "🐶",
+      "art": "clear"
      },
      {
       "text": "dig",
@@ -914,7 +975,8 @@
        "i",
        "g"
       ],
-      "picture": "⛏️"
+      "picture": "⛏️",
+      "art": "clear"
      },
      {
       "text": "pig",
@@ -928,7 +990,8 @@
        "i",
        "g"
       ],
-      "picture": "🐷"
+      "picture": "🐷",
+      "art": "clear"
      }
     ],
     [
@@ -944,7 +1007,8 @@
        "a",
        "p"
       ],
-      "picture": "😴"
+      "picture": "😴",
+      "art": "clear"
      },
      {
       "text": "map",
@@ -958,7 +1022,8 @@
        "a",
        "p"
       ],
-      "picture": "🗺️"
+      "picture": "🗺️",
+      "art": "clear"
      },
      {
       "text": "mop",
@@ -972,7 +1037,8 @@
        "o",
        "p"
       ],
-      "picture": "🧹"
+      "picture": "🧹",
+      "art": "clear"
      },
      {
       "text": "top",
@@ -986,7 +1052,8 @@
        "o",
        "p"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      },
      {
       "text": "tip",
@@ -1000,7 +1067,8 @@
        "i",
        "p"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "weak"
      },
      {
       "text": "tin",
@@ -1014,7 +1082,8 @@
        "i",
        "n"
       ],
-      "picture": "🥫"
+      "picture": "🥫",
+      "art": "clear"
      }
     ],
     [
@@ -1030,7 +1099,8 @@
        "a",
        "n"
       ],
-      "picture": "👨"
+      "picture": "👨",
+      "art": "clear"
      },
      {
       "text": "pan",
@@ -1044,7 +1114,8 @@
        "a",
        "n"
       ],
-      "picture": "🍳"
+      "picture": "🍳",
+      "art": "clear"
      },
      {
       "text": "pin",
@@ -1058,7 +1129,8 @@
        "i",
        "n"
       ],
-      "picture": "📍"
+      "picture": "📍",
+      "art": "clear"
      },
      {
       "text": "pit",
@@ -1072,7 +1144,8 @@
        "i",
        "t"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      },
      {
       "text": "pot",
@@ -1086,7 +1159,8 @@
        "o",
        "t"
       ],
-      "picture": "🍲"
+      "picture": "🍲",
+      "art": "clear"
      },
      {
       "text": "dot",
@@ -1100,7 +1174,8 @@
        "o",
        "t"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      }
     ],
     [
@@ -1116,7 +1191,8 @@
        "i",
        "d"
       ],
-      "picture": "🧒"
+      "picture": "🧒",
+      "art": "clear"
      },
      {
       "text": "kit",
@@ -1130,7 +1206,8 @@
        "i",
        "t"
       ],
-      "picture": "🧰"
+      "picture": "🧰",
+      "art": "clear"
      },
      {
       "text": "sit",
@@ -1144,7 +1221,8 @@
        "i",
        "t"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "weak"
      },
      {
       "text": "sat",
@@ -1158,7 +1236,8 @@
        "a",
        "t"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "pat",
@@ -1172,7 +1251,8 @@
        "a",
        "t"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "pan",
@@ -1186,7 +1266,8 @@
        "a",
        "n"
       ],
-      "picture": "🍳"
+      "picture": "🍳",
+      "art": "clear"
      }
     ]
    ],
@@ -1394,6 +1475,7 @@
       "d"
      ],
      "picture": "🛏️",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "red",
@@ -1413,6 +1495,7 @@
       "n"
      ],
      "picture": "🐔",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "pen",
@@ -1432,6 +1515,7 @@
       "n"
      ],
      "picture": "🖊️",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "hen",
@@ -1451,6 +1535,7 @@
       "n"
      ],
      "picture": "🔟",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "hen",
@@ -1470,6 +1555,7 @@
       "t"
      ],
      "picture": "🥅",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "jet",
@@ -1489,6 +1575,7 @@
       "t"
      ],
      "picture": "✈️",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "net",
@@ -1508,11 +1595,9 @@
       "g"
      ],
      "picture": "🦵",
+     "art": "weak",
      "stage": 2,
-     "distractors": [
-      "log",
-      "lid"
-     ]
+     "distractors": []
     },
     {
      "text": "web",
@@ -1527,10 +1612,11 @@
       "b"
      ],
      "picture": "🕸️",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "wet",
-      "wig"
+      "wax"
      ]
     },
     {
@@ -1546,6 +1632,7 @@
       "d"
      ],
      "picture": "🔴",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "bed",
@@ -1565,6 +1652,7 @@
       "t"
      ],
      "picture": "💦",
+     "art": null,
      "stage": 2,
      "distractors": [
       "jet",
@@ -1584,6 +1672,7 @@
       "g"
      ],
      "picture": "🐛",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "hug",
@@ -1603,6 +1692,7 @@
       "g"
      ],
      "picture": "🧶",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "bug",
@@ -1622,6 +1712,7 @@
       "p"
      ],
      "picture": "🥤",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "pup",
@@ -1641,6 +1732,7 @@
       "n"
      ],
      "picture": "☀️",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "bun",
@@ -1660,6 +1752,7 @@
       "s"
      ],
      "picture": "🚌",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "bug",
@@ -1679,10 +1772,11 @@
       "t"
      ],
      "picture": "🥜",
+     "art": "clear",
      "stage": 2,
      "distractors": [
-      "net",
-      "nap"
+      "cut",
+      "net"
      ]
     },
     {
@@ -1698,6 +1792,7 @@
       "g"
      ],
      "picture": "☕️",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "bug",
@@ -1717,10 +1812,11 @@
       "g"
      ],
      "picture": "🤗",
+     "art": null,
      "stage": 2,
      "distractors": [
       "bug",
-      "ham"
+      "hut"
      ]
     },
     {
@@ -1736,6 +1832,7 @@
       "n"
      ],
      "picture": "🏃",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "bun",
@@ -1755,6 +1852,7 @@
       "b"
      ],
      "picture": "🐻",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "sub",
@@ -1774,10 +1872,11 @@
       "t"
      ],
      "picture": "🎩",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "bat",
-      "hot"
+      "hit"
      ]
     },
     {
@@ -1793,6 +1892,7 @@
       "t"
      ],
      "picture": "🦇",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "cat",
@@ -1812,6 +1912,7 @@
       "t"
      ],
      "picture": "🐀",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "bat",
@@ -1831,9 +1932,10 @@
       "n"
      ],
      "picture": "🪭",
+     "art": "clear",
      "stage": 2,
      "distractors": [
-      "man",
+      "can",
       "fin"
      ]
     },
@@ -1850,9 +1952,10 @@
       "n"
      ],
      "picture": "🚐",
+     "art": "clear",
      "stage": 2,
      "distractors": [
-      "fan",
+      "can",
       "vet"
      ]
     },
@@ -1869,10 +1972,11 @@
       "m"
      ],
      "picture": "🍯",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "ham",
-      "jet"
+      "jar"
      ]
     },
     {
@@ -1888,6 +1992,7 @@
       "m"
      ],
      "picture": "🐏",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "ham",
@@ -1907,6 +2012,7 @@
       "m"
      ],
      "picture": "🍖",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "jam",
@@ -1926,6 +2032,7 @@
       "g"
      ],
      "picture": "👜",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "tag",
@@ -1945,6 +2052,7 @@
       "x"
      ],
      "picture": "🦊",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "box",
@@ -1964,6 +2072,7 @@
       "x"
      ],
      "picture": "📦",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "fox",
@@ -1983,10 +2092,11 @@
       "g"
      ],
      "picture": "🪵",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "dog",
-      "leg"
+      "lock"
      ]
     },
     {
@@ -2002,10 +2112,11 @@
       "p"
      ],
      "picture": "🐇",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "mop",
-      "hip"
+      "hot"
      ]
     },
     {
@@ -2021,6 +2132,7 @@
       "t"
      ],
      "picture": "🔥",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "cot",
@@ -2040,9 +2152,10 @@
       "p"
      ],
      "picture": "👄",
+     "art": "clear",
      "stage": 2,
      "distractors": [
-      "hip",
+      "sip",
       "lid"
      ]
     },
@@ -2059,10 +2172,11 @@
       "p"
      ],
      "picture": "🤐",
+     "art": "clear",
      "stage": 2,
      "distractors": [
-      "hip",
-      "lip"
+      "lip",
+      "sip"
      ]
     },
     {
@@ -2078,10 +2192,11 @@
       "g"
      ],
      "picture": "💇",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "dig",
-      "web"
+      "wax"
      ]
     },
     {
@@ -2097,6 +2212,7 @@
       "x"
      ],
      "picture": "6️⃣",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "sip",
@@ -2116,6 +2232,7 @@
       "k"
      ],
      "picture": "🐃",
+     "art": "clear",
      "stage": 2,
      "distractors": []
     },
@@ -2132,6 +2249,7 @@
       "ss"
      ],
      "picture": "💋",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "kid",
@@ -2151,6 +2269,7 @@
       "ll"
      ],
      "picture": "🔔",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "bed",
@@ -2170,9 +2289,10 @@
       "ll"
      ],
      "picture": "⛰️",
+     "art": "clear",
      "stage": 2,
      "distractors": [
-      "hip",
+      "hit",
       "ham"
      ]
     },
@@ -2189,6 +2309,7 @@
       "ll"
      ],
      "picture": "🪆",
+     "art": null,
      "stage": 2,
      "distractors": [
       "dog",
@@ -2208,6 +2329,7 @@
       "ck"
      ],
      "picture": "🦆",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "dad",
@@ -2227,6 +2349,7 @@
       "ck"
      ],
      "picture": "🧦",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "lock",
@@ -2246,6 +2369,7 @@
       "ck"
      ],
      "picture": "🪨",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "lock",
@@ -2265,6 +2389,7 @@
       "ck"
      ],
      "picture": "🔒",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "rock",
@@ -2284,6 +2409,7 @@
       "n"
      ],
      "picture": "🍞",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "run",
@@ -2303,6 +2429,7 @@
       "n"
      ],
      "picture": "🦈",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "pin",
@@ -2322,6 +2449,7 @@
       "b"
      ],
      "picture": "🥪",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "cub",
@@ -2341,6 +2469,7 @@
       "d"
      ],
      "picture": "🫙",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "kid",
@@ -2360,11 +2489,9 @@
       "p"
      ],
      "picture": "🦴",
+     "art": "weak",
      "stage": 2,
-     "distractors": [
-      "lip",
-      "hop"
-     ]
+     "distractors": []
     },
     {
      "text": "pup",
@@ -2379,6 +2506,7 @@
       "p"
      ],
      "picture": "🐶",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "cup",
@@ -2398,10 +2526,11 @@
       "m"
      ],
      "picture": "🍬",
+     "art": "clear",
      "stage": 2,
      "distractors": [
-      "gate",
-      "gift"
+      "gas",
+      "gate"
      ]
     },
     {
@@ -2417,6 +2546,7 @@
       "d"
      ],
      "picture": "🟤",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "mad",
@@ -2436,6 +2566,7 @@
       "t"
      ],
      "picture": "🩺",
+     "art": null,
      "stage": 2,
      "distractors": [
       "jet",
@@ -2455,6 +2586,7 @@
       "b"
      ],
      "picture": "👶",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "bag",
@@ -2474,6 +2606,7 @@
       "b"
      ],
      "picture": "🛁",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "cub",
@@ -2493,6 +2626,7 @@
       "g"
      ],
      "picture": "🏺",
+     "art": "clear",
      "stage": 2,
      "distractors": [
       "bug",
@@ -2512,6 +2646,7 @@
       ""
      ],
      "picture": "🥚",
+     "art": "clear",
      "stage": 2,
      "distractors": []
     }
@@ -2542,7 +2677,8 @@
        "i",
        "n"
       ],
-      "picture": "📍"
+      "picture": "📍",
+      "art": "clear"
      },
      {
       "text": "pan",
@@ -2556,7 +2692,8 @@
        "a",
        "n"
       ],
-      "picture": "🍳"
+      "picture": "🍳",
+      "art": "clear"
      },
      {
       "text": "pen",
@@ -2570,7 +2707,8 @@
        "e",
        "n"
       ],
-      "picture": "🖊️"
+      "picture": "🖊️",
+      "art": "clear"
      },
      {
       "text": "pun",
@@ -2584,7 +2722,8 @@
        "u",
        "n"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "bun",
@@ -2598,7 +2737,8 @@
        "u",
        "n"
       ],
-      "picture": "🍞"
+      "picture": "🍞",
+      "art": "clear"
      },
      {
       "text": "bug",
@@ -2612,7 +2752,8 @@
        "u",
        "g"
       ],
-      "picture": "🐛"
+      "picture": "🐛",
+      "art": "clear"
      }
     ],
     [
@@ -2628,7 +2769,8 @@
        "e",
        "d"
       ],
-      "picture": "🛏️"
+      "picture": "🛏️",
+      "art": "clear"
      },
      {
       "text": "bad",
@@ -2642,7 +2784,8 @@
        "a",
        "d"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "bag",
@@ -2656,7 +2799,8 @@
        "a",
        "g"
       ],
-      "picture": "👜"
+      "picture": "👜",
+      "art": "clear"
      },
      {
       "text": "big",
@@ -2670,7 +2814,8 @@
        "i",
        "g"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "bug",
@@ -2684,7 +2829,8 @@
        "u",
        "g"
       ],
-      "picture": "🐛"
+      "picture": "🐛",
+      "art": "clear"
      },
      {
       "text": "rug",
@@ -2698,7 +2844,8 @@
        "u",
        "g"
       ],
-      "picture": "🧶"
+      "picture": "🧶",
+      "art": "clear"
      }
     ],
     [
@@ -2714,7 +2861,8 @@
        "o",
        "t"
       ],
-      "picture": "🔥"
+      "picture": "🔥",
+      "art": "clear"
      },
      {
       "text": "hop",
@@ -2728,7 +2876,8 @@
        "o",
        "p"
       ],
-      "picture": "🐇"
+      "picture": "🐇",
+      "art": "clear"
      },
      {
       "text": "hip",
@@ -2742,7 +2891,8 @@
        "i",
        "p"
       ],
-      "picture": "🦴"
+      "picture": "🦴",
+      "art": "weak"
      },
      {
       "text": "hit",
@@ -2756,7 +2906,8 @@
        "i",
        "t"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      },
      {
       "text": "hat",
@@ -2770,7 +2921,8 @@
        "a",
        "t"
       ],
-      "picture": "🎩"
+      "picture": "🎩",
+      "art": "clear"
      },
      {
       "text": "hut",
@@ -2784,7 +2936,8 @@
        "u",
        "t"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      }
     ],
     [
@@ -2800,7 +2953,8 @@
        "u",
        "n"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "fan",
@@ -2814,7 +2968,8 @@
        "a",
        "n"
       ],
-      "picture": "🪭"
+      "picture": "🪭",
+      "art": "clear"
      },
      {
       "text": "fin",
@@ -2828,7 +2983,8 @@
        "i",
        "n"
       ],
-      "picture": "🦈"
+      "picture": "🦈",
+      "art": "clear"
      },
      {
       "text": "fit",
@@ -2842,7 +2998,8 @@
        "i",
        "t"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "fat",
@@ -2856,7 +3013,8 @@
        "a",
        "t"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "fox",
@@ -2870,7 +3028,8 @@
        "o",
        "x"
       ],
-      "picture": "🦊"
+      "picture": "🦊",
+      "art": "clear"
      }
     ],
     [
@@ -2886,7 +3045,8 @@
        "e",
        "b"
       ],
-      "picture": "🕸️"
+      "picture": "🕸️",
+      "art": "clear"
      },
      {
       "text": "wet",
@@ -2900,7 +3060,8 @@
        "e",
        "t"
       ],
-      "picture": "💦"
+      "picture": "💦",
+      "art": null
      },
      {
       "text": "jet",
@@ -2914,7 +3075,8 @@
        "e",
        "t"
       ],
-      "picture": "✈️"
+      "picture": "✈️",
+      "art": "clear"
      },
      {
       "text": "jot",
@@ -2928,7 +3090,8 @@
        "o",
        "t"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "hot",
@@ -2942,7 +3105,8 @@
        "o",
        "t"
       ],
-      "picture": "🔥"
+      "picture": "🔥",
+      "art": "clear"
      },
      {
       "text": "hut",
@@ -2956,7 +3120,8 @@
        "u",
        "t"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      }
     ],
     [
@@ -2972,7 +3137,8 @@
        "e",
        "ll"
       ],
-      "picture": "🔔"
+      "picture": "🔔",
+      "art": "clear"
      },
      {
       "text": "bill",
@@ -2986,7 +3152,8 @@
        "i",
        "ll"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "fill",
@@ -3000,7 +3167,8 @@
        "i",
        "ll"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "fell",
@@ -3014,7 +3182,8 @@
        "e",
        "ll"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "well",
@@ -3028,7 +3197,8 @@
        "e",
        "ll"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "yell",
@@ -3042,7 +3212,8 @@
        "e",
        "ll"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "weak"
      }
     ]
    ],
@@ -3238,6 +3409,7 @@
       "p"
      ],
      "picture": "🚢",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "chip",
@@ -3257,6 +3429,7 @@
       "p"
      ],
      "picture": "🏪",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "chop",
@@ -3276,6 +3449,7 @@
       "ll"
      ],
      "picture": "🐚",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "bell",
@@ -3295,6 +3469,7 @@
       "sh"
      ],
      "picture": "🐟",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "dish",
@@ -3314,6 +3489,7 @@
       "sh"
      ],
      "picture": "🍽️",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "fish",
@@ -3333,9 +3509,10 @@
       "p"
      ],
      "picture": "🍟",
+     "art": "clear",
      "stage": 3,
      "distractors": [
-      "hip",
+      "lip",
       "chop"
      ]
     },
@@ -3352,10 +3529,11 @@
       "ck"
      ],
      "picture": "🐤",
+     "art": "clear",
      "stage": 3,
      "distractors": [
-      "chin",
-      "chip"
+      "chip",
+      "chop"
      ]
     },
     {
@@ -3373,10 +3551,11 @@
       "ch"
      ],
      "picture": "🍱",
+     "art": "clear",
      "stage": 3,
      "distractors": [
-      "leg",
-      "lid"
+      "lid",
+      "light"
      ]
     },
     {
@@ -3392,6 +3571,7 @@
       "th"
      ],
      "picture": "🛁",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "path",
@@ -3411,6 +3591,7 @@
       "th"
      ],
      "picture": "🦋",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "mop",
@@ -3430,6 +3611,7 @@
       "ng"
      ],
      "picture": "💍",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "king",
@@ -3449,6 +3631,7 @@
       "ng"
      ],
      "picture": "🤴",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "ring",
@@ -3468,10 +3651,11 @@
       "ng"
      ],
      "picture": "🎤",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "king",
-      "sink"
+      "song"
      ]
     },
     {
@@ -3487,6 +3671,7 @@
       "ng"
      ],
      "picture": "🪽",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "king",
@@ -3506,6 +3691,7 @@
       "nk"
      ],
      "picture": "🚰",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "pink",
@@ -3525,6 +3711,7 @@
       "nk"
      ],
      "picture": "🩷",
+     "art": null,
      "stage": 3,
      "distractors": [
       "sink",
@@ -3544,6 +3731,7 @@
       "nk"
      ],
      "picture": "😉",
+     "art": null,
      "stage": 3,
      "distractors": [
       "pink",
@@ -3563,6 +3751,7 @@
       "nk"
      ],
      "picture": "🏦",
+     "art": null,
      "stage": 3,
      "distractors": [
       "bag",
@@ -3582,6 +3771,7 @@
       "ck"
      ],
      "picture": "🦒",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "net",
@@ -3601,9 +3791,11 @@
       "p"
      ],
      "picture": "🍦",
+     "art": "clear",
      "stage": 3,
      "distractors": [
-      "chip"
+      "chip",
+      "wheel"
      ]
     },
     {
@@ -3619,11 +3811,9 @@
       "n"
      ],
      "picture": "🧔",
+     "art": "weak",
      "stage": 3,
-     "distractors": [
-      "fin",
-      "chick"
-     ]
+     "distractors": []
     },
     {
      "text": "wish",
@@ -3638,6 +3828,7 @@
       "sh"
      ],
      "picture": "🌠",
+     "art": null,
      "stage": 3,
      "distractors": [
       "dish",
@@ -3657,6 +3848,7 @@
       "n"
      ],
      "picture": null,
+     "art": "weak",
      "stage": 3,
      "distractors": []
     },
@@ -3673,6 +3865,7 @@
       "s"
      ],
      "picture": null,
+     "art": null,
      "stage": 3,
      "distractors": []
     },
@@ -3689,6 +3882,7 @@
       "t"
      ],
      "picture": null,
+     "art": null,
      "stage": 3,
      "distractors": []
     },
@@ -3705,6 +3899,7 @@
       "n"
      ],
      "picture": null,
+     "art": null,
      "stage": 3,
      "distractors": []
     },
@@ -3721,6 +3916,7 @@
       "ch"
      ],
      "picture": null,
+     "art": "weak",
      "stage": 3,
      "distractors": []
     },
@@ -3737,6 +3933,7 @@
       "d"
      ],
      "picture": "🛖",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "bed",
@@ -3756,6 +3953,7 @@
       "p"
      ],
      "picture": "🪓",
+     "art": "clear",
      "stage": 3,
      "distractors": [
       "hop",
@@ -3775,6 +3973,7 @@
       "th"
      ],
      "picture": "🛤️",
+     "art": null,
      "stage": 3,
      "distractors": [
       "bath",
@@ -3806,7 +4005,8 @@
        "i",
        "p"
       ],
-      "picture": "🚢"
+      "picture": "🚢",
+      "art": "clear"
      },
      {
       "text": "shop",
@@ -3820,7 +4020,8 @@
        "o",
        "p"
       ],
-      "picture": "🏪"
+      "picture": "🏪",
+      "art": "clear"
      },
      {
       "text": "chop",
@@ -3834,7 +4035,8 @@
        "o",
        "p"
       ],
-      "picture": "🪓"
+      "picture": "🪓",
+      "art": "clear"
      },
      {
       "text": "chip",
@@ -3848,7 +4050,8 @@
        "i",
        "p"
       ],
-      "picture": "🍟"
+      "picture": "🍟",
+      "art": "clear"
      },
      {
       "text": "chin",
@@ -3862,7 +4065,8 @@
        "i",
        "n"
       ],
-      "picture": "🧔"
+      "picture": "🧔",
+      "art": "weak"
      },
      {
       "text": "thin",
@@ -3876,7 +4080,8 @@
        "i",
        "n"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "weak"
      }
     ],
     [
@@ -3892,7 +4097,8 @@
        "i",
        "ng"
       ],
-      "picture": "💍"
+      "picture": "💍",
+      "art": "clear"
      },
      {
       "text": "king",
@@ -3906,7 +4112,8 @@
        "i",
        "ng"
       ],
-      "picture": "🤴"
+      "picture": "🤴",
+      "art": "clear"
      },
      {
       "text": "sing",
@@ -3920,7 +4127,8 @@
        "i",
        "ng"
       ],
-      "picture": "🎤"
+      "picture": "🎤",
+      "art": "clear"
      },
      {
       "text": "sink",
@@ -3934,7 +4142,8 @@
        "i",
        "nk"
       ],
-      "picture": "🚰"
+      "picture": "🚰",
+      "art": "clear"
      },
      {
       "text": "pink",
@@ -3948,7 +4157,8 @@
        "i",
        "nk"
       ],
-      "picture": "🩷"
+      "picture": "🩷",
+      "art": null
      },
      {
       "text": "wink",
@@ -3962,7 +4172,8 @@
        "i",
        "nk"
       ],
-      "picture": "😉"
+      "picture": "😉",
+      "art": null
      }
     ],
     [
@@ -3978,7 +4189,8 @@
        "i",
        "sh"
       ],
-      "picture": "🐟"
+      "picture": "🐟",
+      "art": "clear"
      },
      {
       "text": "dish",
@@ -3992,7 +4204,8 @@
        "i",
        "sh"
       ],
-      "picture": "🍽️"
+      "picture": "🍽️",
+      "art": "clear"
      },
      {
       "text": "wish",
@@ -4006,7 +4219,8 @@
        "i",
        "sh"
       ],
-      "picture": "🌠"
+      "picture": "🌠",
+      "art": null
      },
      {
       "text": "with",
@@ -4020,7 +4234,8 @@
        "i",
        "th_v"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "whip",
@@ -4034,7 +4249,8 @@
        "i",
        "p"
       ],
-      "picture": "🍦"
+      "picture": "🍦",
+      "art": "clear"
      },
      {
       "text": "ship",
@@ -4048,7 +4264,8 @@
        "i",
        "p"
       ],
-      "picture": "🚢"
+      "picture": "🚢",
+      "art": "clear"
      }
     ],
     [
@@ -4064,7 +4281,8 @@
        "i",
        "ck"
       ],
-      "picture": "🐤"
+      "picture": "🐤",
+      "art": "clear"
      },
      {
       "text": "check",
@@ -4078,7 +4296,8 @@
        "e",
        "ck"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "neck",
@@ -4092,7 +4311,8 @@
        "e",
        "ck"
       ],
-      "picture": "🦒"
+      "picture": "🦒",
+      "art": "clear"
      },
      {
       "text": "deck",
@@ -4106,7 +4326,8 @@
        "e",
        "ck"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "duck",
@@ -4120,7 +4341,8 @@
        "u",
        "ck"
       ],
-      "picture": "🦆"
+      "picture": "🦆",
+      "art": "clear"
      },
      {
       "text": "dock",
@@ -4134,7 +4356,8 @@
        "o",
        "ck"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      }
     ]
    ],
@@ -4317,6 +4540,7 @@
       "p"
      ],
      "picture": "💡",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "camp",
@@ -4338,10 +4562,11 @@
       "p"
      ],
      "picture": "🦘",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "jam",
-      "jet"
+      "jar"
      ]
     },
     {
@@ -4359,9 +4584,10 @@
       "d"
      ],
      "picture": "✋",
+     "art": "clear",
      "stage": 4,
      "distractors": [
-      "sand",
+      "band",
       "ham"
      ]
     },
@@ -4380,6 +4606,7 @@
       "k"
      ],
      "picture": "🥛",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "mask",
@@ -4401,6 +4628,7 @@
       "t"
      ],
      "picture": "⛺",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "teeth",
@@ -4422,10 +4650,11 @@
       "t"
      ],
      "picture": "🥋",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "boat",
-      "bag"
+      "bench"
      ]
     },
     {
@@ -4443,10 +4672,11 @@
       "t"
      ],
      "picture": "🪺",
+     "art": "clear",
      "stage": 4,
      "distractors": [
-      "nose",
-      "nap"
+      "nap",
+      "neck"
      ]
     },
     {
@@ -4464,6 +4694,7 @@
       "k"
      ],
      "picture": "🎭",
+     "art": null,
      "stage": 4,
      "distractors": [
       "milk",
@@ -4485,6 +4716,7 @@
       "k"
      ],
      "picture": "🖥️",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "dad",
@@ -4506,6 +4738,7 @@
       "t"
      ],
      "picture": "🎁",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "goat",
@@ -4527,10 +4760,11 @@
       "d"
      ],
      "picture": "🏖️",
+     "art": "clear",
      "stage": 4,
      "distractors": [
-      "hand",
-      "sled"
+      "band",
+      "seed"
      ]
     },
     {
@@ -4548,10 +4782,11 @@
       "p"
      ],
      "picture": "🛑",
+     "art": "clear",
      "stage": 4,
      "distractors": [
-      "snow",
-      "soap"
+      "step",
+      "skip"
      ]
     },
     {
@@ -4569,6 +4804,7 @@
       "g"
      ],
      "picture": "🐸",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "flag",
@@ -4590,6 +4826,7 @@
       "p"
      ],
      "picture": "👏",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "camp",
@@ -4611,10 +4848,11 @@
       "m"
      ],
      "picture": "🏊",
+     "art": "clear",
      "stage": 4,
      "distractors": [
-      "spill",
-      "sad"
+      "skip",
+      "spill"
      ]
     },
     {
@@ -4632,6 +4870,7 @@
       "m"
      ],
      "picture": "🥁",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "dress",
@@ -4653,6 +4892,7 @@
       "g"
      ],
      "picture": "🚩",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "frog",
@@ -4674,6 +4914,7 @@
       "b"
      ],
      "picture": "🦀",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "clap",
@@ -4695,10 +4936,11 @@
       "d"
      ],
      "picture": "🛷",
+     "art": "clear",
      "stage": 4,
      "distractors": [
-      "sand",
-      "smell"
+      "seed",
+      "sand"
      ]
     },
     {
@@ -4716,6 +4958,7 @@
       "m"
      ],
      "picture": "🟣",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "pan",
@@ -4739,6 +4982,7 @@
       "p"
      ],
      "picture": "📮",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "sand",
@@ -4760,6 +5004,7 @@
       "nk"
      ],
      "picture": "🐘",
+     "art": "clear",
      "stage": 4,
      "distractors": [
       "tray",
@@ -4783,6 +5028,7 @@
       "t"
      ],
      "picture": "🪴",
+     "art": null,
      "stage": 4,
      "distractors": [
       "plane",
@@ -4804,10 +5050,11 @@
       "nk"
      ],
      "picture": "🦨",
+     "art": null,
      "stage": 4,
      "distractors": [
-      "sad",
-      "sing"
+      "skip",
+      "sad"
      ]
     },
     {
@@ -4825,6 +5072,7 @@
       "nk"
      ],
      "picture": "🧃",
+     "art": null,
      "stage": 4,
      "distractors": [
       "dress",
@@ -4848,6 +5096,7 @@
       "s"
      ],
      "picture": "👯",
+     "art": null,
      "stage": 4,
      "distractors": [
       "tail",
@@ -4869,6 +5118,7 @@
       "p"
      ],
      "picture": "🏕️",
+     "art": null,
      "stage": 4,
      "distractors": [
       "lamp",
@@ -4890,6 +5140,7 @@
       "sh"
      ],
      "picture": "🪥",
+     "art": null,
      "stage": 4,
      "distractors": [
       "bag",
@@ -4911,10 +5162,11 @@
       "ck"
      ],
      "picture": "⏰",
+     "art": null,
      "stage": 4,
      "distractors": [
       "clap",
-      "cap"
+      "can"
      ]
     },
     {
@@ -4932,6 +5184,7 @@
       "ss"
      ],
      "picture": "👗",
+     "art": null,
      "stage": 4,
      "distractors": [
       "drink",
@@ -4953,6 +5206,7 @@
       "ck"
      ],
      "picture": "⚫",
+     "art": null,
      "stage": 4,
      "distractors": [
       "boat",
@@ -4974,10 +5228,11 @@
       "ck"
      ],
      "picture": "🥨",
+     "art": null,
      "stage": 4,
      "distractors": [
-      "seal",
-      "soap"
+      "snap",
+      "seal"
      ]
     },
     {
@@ -4995,10 +5250,11 @@
       "ll"
      ],
      "picture": "🫗",
+     "art": null,
      "stage": 4,
      "distractors": [
-      "smell",
-      "swim"
+      "skip",
+      "smell"
      ]
     },
     {
@@ -5016,10 +5272,11 @@
       "ll"
      ],
      "picture": "👃",
+     "art": null,
      "stage": 4,
      "distractors": [
-      "sled",
-      "spill"
+      "seed",
+      "sled"
      ]
     }
    ],
@@ -5049,7 +5306,8 @@
        "o",
        "p"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      },
      {
       "text": "stop",
@@ -5065,7 +5323,8 @@
        "o",
        "p"
       ],
-      "picture": "🛑"
+      "picture": "🛑",
+      "art": "clear"
      },
      {
       "text": "step",
@@ -5081,7 +5340,8 @@
        "e",
        "p"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      },
      {
       "text": "stem",
@@ -5097,7 +5357,8 @@
        "e",
        "m"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "stems",
@@ -5115,7 +5376,8 @@
        "m",
        "s"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "steps",
@@ -5133,7 +5395,8 @@
        "p",
        "s"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      }
     ],
     [
@@ -5149,7 +5412,8 @@
        "a",
        "p"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "clap",
@@ -5165,7 +5429,8 @@
        "a",
        "p"
       ],
-      "picture": "👏"
+      "picture": "👏",
+      "art": "clear"
      },
      {
       "text": "clip",
@@ -5181,7 +5446,8 @@
        "i",
        "p"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "slip",
@@ -5197,7 +5463,8 @@
        "i",
        "p"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "slim",
@@ -5213,7 +5480,8 @@
        "i",
        "m"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "swim",
@@ -5229,7 +5497,8 @@
        "i",
        "m"
       ],
-      "picture": "🏊"
+      "picture": "🏊",
+      "art": "clear"
      }
     ],
     [
@@ -5247,7 +5516,8 @@
        "n",
        "d"
       ],
-      "picture": "✋"
+      "picture": "✋",
+      "art": "clear"
      },
      {
       "text": "band",
@@ -5263,7 +5533,8 @@
        "n",
        "d"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      },
      {
       "text": "bend",
@@ -5279,7 +5550,8 @@
        "n",
        "d"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "weak"
      },
      {
       "text": "bent",
@@ -5295,7 +5567,8 @@
        "n",
        "t"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "tent",
@@ -5311,7 +5584,8 @@
        "n",
        "t"
       ],
-      "picture": "⛺"
+      "picture": "⛺",
+      "art": "clear"
      },
      {
       "text": "tend",
@@ -5327,7 +5601,8 @@
        "n",
        "d"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      }
     ],
     [
@@ -5345,7 +5620,8 @@
        "m",
        "p"
       ],
-      "picture": "💡"
+      "picture": "💡",
+      "art": "clear"
      },
      {
       "text": "camp",
@@ -5361,7 +5637,8 @@
        "m",
        "p"
       ],
-      "picture": "🏕️"
+      "picture": "🏕️",
+      "art": null
      },
      {
       "text": "clamp",
@@ -5379,7 +5656,8 @@
        "m",
        "p"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "cramp",
@@ -5397,7 +5675,8 @@
        "m",
        "p"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "crams",
@@ -5415,7 +5694,8 @@
        "m",
        "s"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "clams",
@@ -5433,7 +5713,8 @@
        "m",
        "s"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      }
     ]
    ],
@@ -5648,6 +5929,7 @@
       ""
      ],
      "picture": "🦸",
+     "art": "clear",
      "stage": 5,
      "distractors": [
       "tape",
@@ -5669,9 +5951,10 @@
       ""
      ],
      "picture": "🎂",
+     "art": "clear",
      "stage": 5,
      "distractors": [
-      "lake",
+      "bake",
       "cape"
      ]
     },
@@ -5690,10 +5973,11 @@
       ""
      ],
      "picture": "🚧",
+     "art": "clear",
      "stage": 5,
      "distractors": [
-      "grape",
-      "gum"
+      "gas",
+      "grape"
      ]
     },
     {
@@ -5711,9 +5995,10 @@
       ""
      ],
      "picture": "🏞️",
+     "art": "clear",
      "stage": 5,
      "distractors": [
-      "cake",
+      "bake",
       "lamp"
      ]
     },
@@ -5734,6 +6019,7 @@
       ""
      ],
      "picture": "🐍",
+     "art": "clear",
      "stage": 5,
      "distractors": [
       "snail",
@@ -5755,6 +6041,7 @@
       ""
      ],
      "picture": "🪁",
+     "art": "clear",
      "stage": 5,
      "distractors": [
       "kid",
@@ -5776,10 +6063,11 @@
       ""
      ],
      "picture": "🚲",
+     "art": "clear",
      "stage": 5,
      "distractors": [
-      "bone",
-      "bird"
+      "bake",
+      "bone"
      ]
     },
     {
@@ -5797,10 +6085,11 @@
       ""
      ],
      "picture": "5️⃣",
+     "art": "clear",
      "stage": 5,
      "distractors": [
-      "fan",
-      "fig"
+      "hive",
+      "fist"
      ]
     },
     {
@@ -5818,10 +6107,11 @@
       ""
      ],
      "picture": "🌲",
+     "art": "clear",
      "stage": 5,
      "distractors": [
-      "pan",
-      "path"
+      "pond",
+      "pigs"
      ]
     },
     {
@@ -5839,10 +6129,11 @@
       ""
      ],
      "picture": "🪢",
+     "art": "clear",
      "stage": 5,
      "distractors": [
       "robe",
-      "ram"
+      "road"
      ]
     },
     {
@@ -5860,11 +6151,9 @@
       ""
      ],
      "picture": "👃",
+     "art": "weak",
      "stage": 5,
-     "distractors": [
-      "hose",
-      "nest"
-     ]
+     "distractors": []
     },
     {
      "text": "bone",
@@ -5881,10 +6170,11 @@
       ""
      ],
      "picture": "🦴",
+     "art": "clear",
      "stage": 5,
      "distractors": [
-      "bike",
-      "boat"
+      "cone",
+      "bake"
      ]
     },
     {
@@ -5902,10 +6192,11 @@
       ""
      ],
      "picture": "🏠",
+     "art": "clear",
      "stage": 5,
      "distractors": [
       "hose",
-      "ham"
+      "hive"
      ]
     },
     {
@@ -5923,10 +6214,11 @@
       ""
      ],
      "picture": "🧊",
+     "art": "clear",
      "stage": 5,
      "distractors": [
-      "cake",
-      "cape"
+      "tube",
+      "cake"
      ]
     },
     {
@@ -5946,10 +6238,11 @@
       ""
      ],
      "picture": "🪈",
+     "art": "clear",
      "stage": 5,
      "distractors": [
-      "feet",
-      "five"
+      "farm",
+      "fern"
      ]
     },
     {
@@ -5967,6 +6260,7 @@
       ""
      ],
      "picture": "📼",
+     "art": "clear",
      "stage": 5,
      "distractors": [
       "cape",
@@ -5988,10 +6282,11 @@
       ""
      ],
      "picture": "🥋",
+     "art": null,
      "stage": 5,
      "distractors": [
       "rope",
-      "ram"
+      "road"
      ]
     },
     {
@@ -6009,9 +6304,10 @@
       ""
      ],
      "picture": "🚿",
+     "art": null,
      "stage": 5,
      "distractors": [
-      "nose",
+      "rose",
       "home"
      ]
     },
@@ -6032,6 +6328,7 @@
       ""
      ],
      "picture": "✈️",
+     "art": "clear",
      "stage": 5,
      "distractors": [
       "plant",
@@ -6055,11 +6352,9 @@
       ""
      ],
      "picture": "😊",
+     "art": "weak",
      "stage": 5,
-     "distractors": [
-      "slide",
-      "sand"
-     ]
+     "distractors": []
     },
     {
      "text": "dime",
@@ -6076,6 +6371,7 @@
       ""
      ],
      "picture": "🪙",
+     "art": null,
      "stage": 5,
      "distractors": [
       "dad",
@@ -6097,6 +6393,7 @@
       ""
      ],
      "picture": "🫏",
+     "art": null,
      "stage": 5,
      "distractors": [
       "milk",
@@ -6120,10 +6417,11 @@
       ""
      ],
      "picture": "🛝",
+     "art": "clear",
      "stage": 5,
      "distractors": [
-      "smile",
-      "sand"
+      "sand",
+      "seal"
      ]
     },
     {
@@ -6143,6 +6441,7 @@
       ""
      ],
      "picture": "🍇",
+     "art": null,
      "stage": 5,
      "distractors": [
       "gate",
@@ -6168,10 +6467,11 @@
       "t"
      ],
      "picture": "🌅",
+     "art": "clear",
      "stage": 5,
      "distractors": [
       "slide",
-      "smile"
+      "snail"
      ]
     },
     {
@@ -6195,6 +6495,7 @@
       ""
      ],
      "picture": "🧁",
+     "art": "clear",
      "stage": 5,
      "distractors": []
     }
@@ -6219,7 +6520,8 @@
        "a",
        "p"
       ],
-      "picture": "🧢"
+      "picture": "🧢",
+      "art": "clear"
      },
      {
       "text": "cape",
@@ -6235,7 +6537,8 @@
        "p",
        ""
       ],
-      "picture": "🦸"
+      "picture": "🦸",
+      "art": "clear"
      },
      {
       "text": "tap",
@@ -6249,7 +6552,8 @@
        "a",
        "p"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "tape",
@@ -6265,7 +6569,8 @@
        "p",
        ""
       ],
-      "picture": "📼"
+      "picture": "📼",
+      "art": "clear"
      },
      {
       "text": "tub",
@@ -6279,7 +6584,8 @@
        "u",
        "b"
       ],
-      "picture": "🛁"
+      "picture": "🛁",
+      "art": "clear"
      },
      {
       "text": "tube",
@@ -6295,7 +6601,8 @@
        "b",
        ""
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      }
     ],
     [
@@ -6311,7 +6618,8 @@
        "i",
        "n"
       ],
-      "picture": "📍"
+      "picture": "📍",
+      "art": "clear"
      },
      {
       "text": "pine",
@@ -6327,7 +6635,8 @@
        "n",
        ""
       ],
-      "picture": "🌲"
+      "picture": "🌲",
+      "art": "clear"
      },
      {
       "text": "kit",
@@ -6341,7 +6650,8 @@
        "i",
        "t"
       ],
-      "picture": "🧰"
+      "picture": "🧰",
+      "art": "clear"
      },
      {
       "text": "kite",
@@ -6357,7 +6667,8 @@
        "t",
        ""
       ],
-      "picture": "🪁"
+      "picture": "🪁",
+      "art": "clear"
      },
      {
       "text": "hop",
@@ -6371,7 +6682,8 @@
        "o",
        "p"
       ],
-      "picture": "🐇"
+      "picture": "🐇",
+      "art": "clear"
      },
      {
       "text": "hope",
@@ -6387,7 +6699,8 @@
        "p",
        ""
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "weak"
      }
     ],
     [
@@ -6403,7 +6716,8 @@
        "o",
        "b"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "robe",
@@ -6419,7 +6733,8 @@
        "b",
        ""
       ],
-      "picture": "🥋"
+      "picture": "🥋",
+      "art": null
      },
      {
       "text": "cub",
@@ -6433,7 +6748,8 @@
        "u",
        "b"
       ],
-      "picture": "🐻"
+      "picture": "🐻",
+      "art": "clear"
      },
      {
       "text": "cube",
@@ -6449,7 +6765,8 @@
        "b",
        ""
       ],
-      "picture": "🧊"
+      "picture": "🧊",
+      "art": "clear"
      },
      {
       "text": "not",
@@ -6463,7 +6780,8 @@
        "o",
        "t"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "note",
@@ -6479,7 +6797,8 @@
        "t",
        ""
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      }
     ],
     [
@@ -6495,7 +6814,8 @@
        "a",
        "d"
       ],
-      "picture": "😠"
+      "picture": "😠",
+      "art": "clear"
      },
      {
       "text": "made",
@@ -6511,7 +6831,8 @@
        "d",
        ""
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "hid",
@@ -6525,7 +6846,8 @@
        "i",
        "d"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "hide",
@@ -6541,7 +6863,8 @@
        "d",
        ""
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "rid",
@@ -6555,7 +6878,8 @@
        "i",
        "d"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "ride",
@@ -6571,7 +6895,8 @@
        "d",
        ""
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      }
     ]
    ],
@@ -6781,6 +7106,7 @@
       "ee"
      ],
      "picture": "🌳",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "tray",
@@ -6798,6 +7124,7 @@
       "ee"
      ],
      "picture": "🐝",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "bow",
@@ -6817,11 +7144,9 @@
       "t"
      ],
      "picture": "🦶",
+     "art": "weak",
      "stage": 6,
-     "distractors": [
-      "fan",
-      "fig"
-     ]
+     "distractors": []
     },
     {
      "text": "sheep",
@@ -6836,6 +7161,7 @@
       "p"
      ],
      "picture": "🐑",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "ship",
@@ -6855,10 +7181,11 @@
       "f"
      ],
      "picture": "🍃",
+     "art": "clear",
      "stage": 6,
      "distractors": [
-      "leg",
-      "lid"
+      "lid",
+      "light"
      ]
     },
     {
@@ -6874,10 +7201,11 @@
       "l"
      ],
      "picture": "🦭",
+     "art": null,
      "stage": 6,
      "distractors": [
       "sad",
-      "sing"
+      "sap"
      ]
     },
     {
@@ -6893,6 +7221,7 @@
       "n"
      ],
      "picture": "🌧️",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "run",
@@ -6914,10 +7243,11 @@
       "l"
      ],
      "picture": "🐌",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "snack",
-      "sad"
+      "snap"
      ]
     },
     {
@@ -6935,6 +7265,7 @@
       "n"
      ],
      "picture": "🚆",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "trunk",
@@ -6954,6 +7285,7 @@
       "ay"
      ],
      "picture": "🍽️",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "tree",
@@ -6973,6 +7305,7 @@
       "t"
      ],
      "picture": "⛵",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "coat",
@@ -6992,10 +7325,11 @@
       "t"
      ],
      "picture": "🐐",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "boat",
-      "girl"
+      "gas"
      ]
     },
     {
@@ -7011,6 +7345,7 @@
       "t"
      ],
      "picture": "🧥",
+     "art": null,
      "stage": 6,
      "distractors": [
       "boat",
@@ -7030,10 +7365,11 @@
       "ow"
      ],
      "picture": "❄️",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "sad",
-      "seal"
+      "sap"
      ]
     },
     {
@@ -7047,6 +7383,7 @@
       "ow"
      ],
      "picture": "🎀",
+     "art": null,
      "stage": 6,
      "distractors": [
       "cow",
@@ -7066,6 +7403,7 @@
       "t"
      ],
      "picture": "🌃",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "light",
@@ -7085,6 +7423,7 @@
       "t"
      ],
      "picture": "💡",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "night",
@@ -7104,6 +7443,7 @@
       "n"
      ],
      "picture": "🌙",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "man",
@@ -7125,10 +7465,11 @@
       "n"
      ],
      "picture": "🥄",
+     "art": null,
      "stage": 6,
      "distractors": [
       "spill",
-      "sad"
+      "spot"
      ]
     },
     {
@@ -7144,6 +7485,7 @@
       "k"
      ],
      "picture": "📕",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "bag",
@@ -7163,10 +7505,11 @@
       "t"
      ],
      "picture": "🦶",
+     "art": null,
      "stage": 6,
      "distractors": [
       "fan",
-      "fig"
+      "farm"
      ]
     },
     {
@@ -7184,6 +7527,7 @@
       "d"
      ],
      "picture": "☁️",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "clap",
@@ -7205,10 +7549,11 @@
       "e"
      ],
      "picture": "🏠",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "horse",
-      "ham"
+      "hive"
      ]
     },
     {
@@ -7222,6 +7567,7 @@
       "ow_cow"
      ],
      "picture": "🐄",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "bow",
@@ -7239,6 +7585,7 @@
       "l"
      ],
      "picture": "🦉",
+     "art": "clear",
      "stage": 6,
      "distractors": []
     },
@@ -7255,9 +7602,10 @@
       "n"
      ],
      "picture": "🪙",
+     "art": "clear",
      "stage": 6,
      "distractors": [
-      "corn",
+      "can",
       "cap"
      ]
     },
@@ -7272,6 +7620,7 @@
       "oy"
      ],
      "picture": "👦",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "toy",
@@ -7289,6 +7638,7 @@
       "oy"
      ],
      "picture": "🧸",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "boy",
@@ -7306,10 +7656,11 @@
       "ar"
      ],
      "picture": "🚗",
+     "art": "clear",
      "stage": 6,
      "distractors": [
-      "cow",
-      "cap"
+      "jar",
+      "cow"
      ]
     },
     {
@@ -7325,10 +7676,11 @@
       "ar"
      ],
      "picture": "⭐️",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "sad",
-      "seal"
+      "sap"
      ]
     },
     {
@@ -7344,10 +7696,11 @@
       "k"
      ],
      "picture": "🍴",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "fan",
-      "feet"
+      "farm"
      ]
     },
     {
@@ -7363,9 +7716,10 @@
       "n"
      ],
      "picture": "🌽",
+     "art": "clear",
      "stage": 6,
      "distractors": [
-      "coin",
+      "can",
       "cap"
      ]
     },
@@ -7384,10 +7738,11 @@
       "e"
      ],
      "picture": "🐎",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "hose",
-      "home"
+      "hive"
      ]
     },
     {
@@ -7403,6 +7758,7 @@
       "d"
      ],
      "picture": "🐦",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "bed",
@@ -7422,10 +7778,11 @@
       "l"
      ],
      "picture": "👧",
+     "art": "clear",
      "stage": 6,
      "distractors": [
-      "goat",
-      "gum"
+      "gas",
+      "goat"
      ]
     },
     {
@@ -7443,10 +7800,11 @@
       "e"
      ],
      "picture": "👛",
+     "art": null,
      "stage": 6,
      "distractors": [
-      "pine",
-      "pan"
+      "nurse",
+      "pine"
      ]
     },
     {
@@ -7462,6 +7820,7 @@
       "k"
      ],
      "picture": "🦈",
+     "art": "clear",
      "stage": 6,
      "distractors": [
       "shed",
@@ -7483,10 +7842,11 @@
       "m"
      ],
      "picture": "⛈️",
+     "art": null,
      "stage": 6,
      "distractors": [
       "swim",
-      "stop"
+      "step"
      ]
     },
     {
@@ -7502,6 +7862,7 @@
       "l"
      ],
      "picture": "🐾",
+     "art": null,
      "stage": 6,
      "distractors": [
       "tag",
@@ -7521,6 +7882,7 @@
       "n"
      ],
      "picture": "👸",
+     "art": null,
      "stage": 6,
      "distractors": [
       "quilt"
@@ -7539,6 +7901,7 @@
       "ch"
      ],
      "picture": "🍑",
+     "art": null,
      "stage": 6,
      "distractors": [
       "pan",
@@ -7558,9 +7921,10 @@
       "p"
      ],
      "picture": "🧼",
+     "art": "clear",
      "stage": 6,
      "distractors": [
-      "sip",
+      "sap",
       "sad"
      ]
     }
@@ -7580,7 +7944,8 @@
        "oa",
        "t"
       ],
-      "picture": "⛵"
+      "picture": "⛵",
+      "art": "clear"
      },
      {
       "text": "coat",
@@ -7594,7 +7959,8 @@
        "oa",
        "t"
       ],
-      "picture": "🧥"
+      "picture": "🧥",
+      "art": null
      },
      {
       "text": "goat",
@@ -7608,7 +7974,8 @@
        "oa",
        "t"
       ],
-      "picture": "🐐"
+      "picture": "🐐",
+      "art": "clear"
      },
      {
       "text": "goal",
@@ -7622,7 +7989,8 @@
        "oa",
        "l"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "coal",
@@ -7636,7 +8004,8 @@
        "oa",
        "l"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "coat",
@@ -7650,7 +8019,8 @@
        "oa",
        "t"
       ],
-      "picture": "🧥"
+      "picture": "🧥",
+      "art": null
      }
     ],
     [
@@ -7666,7 +8036,8 @@
        "ai",
        "n"
       ],
-      "picture": "🌧️"
+      "picture": "🌧️",
+      "art": "clear"
      },
      {
       "text": "pain",
@@ -7680,7 +8051,8 @@
        "ai",
        "n"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "paint",
@@ -7696,7 +8068,8 @@
        "n",
        "t"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "faint",
@@ -7712,7 +8085,8 @@
        "n",
        "t"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "fain",
@@ -7726,7 +8100,8 @@
        "ai",
        "n"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "rain",
@@ -7740,7 +8115,8 @@
        "ai",
        "n"
       ],
-      "picture": "🌧️"
+      "picture": "🌧️",
+      "art": "clear"
      }
     ],
     [
@@ -7756,7 +8132,8 @@
        "oo",
        "n"
       ],
-      "picture": "🌙"
+      "picture": "🌙",
+      "art": "clear"
      },
      {
       "text": "soon",
@@ -7770,7 +8147,8 @@
        "oo",
        "n"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "spoon",
@@ -7786,7 +8164,8 @@
        "oo",
        "n"
       ],
-      "picture": "🥄"
+      "picture": "🥄",
+      "art": null
      },
      {
       "text": "spook",
@@ -7802,7 +8181,8 @@
        "oo",
        "k"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "spool",
@@ -7818,7 +8198,8 @@
        "oo",
        "l"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "stool",
@@ -7834,7 +8215,8 @@
        "oo",
        "l"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      }
     ],
     [
@@ -7848,7 +8230,8 @@
        "c",
        "ar"
       ],
-      "picture": "🚗"
+      "picture": "🚗",
+      "art": "clear"
      },
      {
       "text": "card",
@@ -7862,7 +8245,8 @@
        "ar",
        "d"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "hard",
@@ -7876,7 +8260,8 @@
        "ar",
        "d"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "harm",
@@ -7890,7 +8275,8 @@
        "ar",
        "m"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      },
      {
       "text": "farm",
@@ -7904,7 +8290,8 @@
        "ar",
        "m"
       ],
-      "picture": null
+      "picture": "🖼️",
+      "art": "clear"
      },
      {
       "text": "far",
@@ -7916,7 +8303,8 @@
        "f",
        "ar"
       ],
-      "picture": null
+      "picture": null,
+      "art": null
      }
     ]
    ],
@@ -8093,8 +8481,11 @@
       "t"
      ],
      "picture": "🐇",
+     "art": "clear",
      "stage": 7,
-     "distractors": []
+     "distractors": [
+      "rocket"
+     ]
     },
     {
      "text": "picnic",
@@ -8115,6 +8506,7 @@
       "c"
      ],
      "picture": "🧺",
+     "art": "clear",
      "stage": 7,
      "distractors": [
       "plane",
@@ -8140,6 +8532,7 @@
       "n"
      ],
      "picture": "🐱",
+     "art": "clear",
      "stage": 7,
      "distractors": []
     },
@@ -8160,6 +8553,7 @@
       "n"
      ],
      "picture": "🧁",
+     "art": "clear",
      "stage": 7,
      "distractors": [
       "mask",
@@ -8184,7 +8578,8 @@
       "i",
       "n"
      ],
-     "picture": null,
+     "picture": "🖼️",
+     "art": "clear",
      "stage": 7,
      "distractors": []
     },
@@ -8207,10 +8602,11 @@
       "t"
      ],
      "picture": "🌅",
+     "art": "clear",
      "stage": 7,
      "distractors": [
       "slide",
-      "smile"
+      "snake"
      ]
     },
     {
@@ -8232,14 +8628,924 @@
       "ng"
      ],
      "picture": "🦘",
+     "art": "clear",
      "stage": 7,
-     "distractors": []
+     "distractors": [
+      "jumped"
+     ]
     }
    ],
    "heartWords": [],
    "chains": [],
    "sentences": [],
    "unicornWords": []
+  }
+ ],
+ "warmups": {
+  "rhymeSets": [
+   {
+    "words": [
+     {
+      "text": "cat",
+      "picture": "🐱"
+     },
+     {
+      "text": "hat",
+      "picture": "🎩"
+     },
+     {
+      "text": "bat",
+      "picture": "🦇"
+     },
+     {
+      "text": "dog",
+      "picture": "🐶"
+     }
+    ],
+    "odd": "dog"
+   },
+   {
+    "words": [
+     {
+      "text": "pig",
+      "picture": "🐷"
+     },
+     {
+      "text": "wig",
+      "picture": "💇"
+     },
+     {
+      "text": "dig",
+      "picture": "⛏️"
+     },
+     {
+      "text": "sun",
+      "picture": "☀️"
+     }
+    ],
+    "odd": "sun"
+   },
+   {
+    "words": [
+     {
+      "text": "bug",
+      "picture": "🐛"
+     },
+     {
+      "text": "rug",
+      "picture": "🧶"
+     },
+     {
+      "text": "mug",
+      "picture": "☕️"
+     },
+     {
+      "text": "hen",
+      "picture": "🐔"
+     }
+    ],
+    "odd": "hen"
+   },
+   {
+    "words": [
+     {
+      "text": "ten",
+      "picture": "🔟"
+     },
+     {
+      "text": "hen",
+      "picture": "🐔"
+     },
+     {
+      "text": "pen",
+      "picture": "🖊️"
+     },
+     {
+      "text": "box",
+      "picture": "📦"
+     }
+    ],
+    "odd": "box"
+   },
+   {
+    "words": [
+     {
+      "text": "fox",
+      "picture": "🦊"
+     },
+     {
+      "text": "box",
+      "picture": "📦"
+     },
+     {
+      "text": "sock",
+      "picture": "🧦"
+     },
+     {
+      "text": "cup",
+      "picture": "🥤"
+     }
+    ],
+    "odd": "cup"
+   },
+   {
+    "words": [
+     {
+      "text": "cake",
+      "picture": "🎂"
+     },
+     {
+      "text": "snake",
+      "picture": "🐍"
+     },
+     {
+      "text": "lake",
+      "picture": "🏞️"
+     },
+     {
+      "text": "bus",
+      "picture": "🚌"
+     }
+    ],
+    "odd": "bus"
+   },
+   {
+    "words": [
+     {
+      "text": "moon",
+      "picture": "🌙"
+     },
+     {
+      "text": "spoon",
+      "picture": "🥄"
+     },
+     {
+      "text": "balloon",
+      "picture": "🎈"
+     },
+     {
+      "text": "car",
+      "picture": "🚗"
+     }
+    ],
+    "odd": "car"
+   },
+   {
+    "words": [
+     {
+      "text": "bee",
+      "picture": "🐝"
+     },
+     {
+      "text": "tree",
+      "picture": "🌳"
+     },
+     {
+      "text": "key",
+      "picture": "🔑"
+     },
+     {
+      "text": "fish",
+      "picture": "🐟"
+     }
+    ],
+    "odd": "fish"
+   },
+   {
+    "words": [
+     {
+      "text": "star",
+      "picture": "⭐️"
+     },
+     {
+      "text": "car",
+      "picture": "🚗"
+     },
+     {
+      "text": "jar",
+      "picture": "🫙"
+     },
+     {
+      "text": "bed",
+      "picture": "🛏️"
+     }
+    ],
+    "odd": "bed"
+   },
+   {
+    "words": [
+     {
+      "text": "goat",
+      "picture": "🐐"
+     },
+     {
+      "text": "boat",
+      "picture": "⛵"
+     },
+     {
+      "text": "coat",
+      "picture": "🧥"
+     },
+     {
+      "text": "pig",
+      "picture": "🐷"
+     }
+    ],
+    "odd": "pig"
+   },
+   {
+    "words": [
+     {
+      "text": "king",
+      "picture": "🤴"
+     },
+     {
+      "text": "ring",
+      "picture": "💍"
+     },
+     {
+      "text": "wing",
+      "picture": "🪽"
+     },
+     {
+      "text": "map",
+      "picture": "🗺️"
+     }
+    ],
+    "odd": "map"
+   },
+   {
+    "words": [
+     {
+      "text": "bell",
+      "picture": "🔔"
+     },
+     {
+      "text": "shell",
+      "picture": "🐚"
+     },
+     {
+      "text": "well",
+      "picture": "🪣"
+     },
+     {
+      "text": "fan",
+      "picture": "🪭"
+     }
+    ],
+    "odd": "fan"
+   }
+  ],
+  "syllables": [
+   {
+    "text": "cat",
+    "picture": "🐱",
+    "count": 1
+   },
+   {
+    "text": "sun",
+    "picture": "☀️",
+    "count": 1
+   },
+   {
+    "text": "frog",
+    "picture": "🐸",
+    "count": 1
+   },
+   {
+    "text": "fish",
+    "picture": "🐟",
+    "count": 1
+   },
+   {
+    "text": "tree",
+    "picture": "🌳",
+    "count": 1
+   },
+   {
+    "text": "rabbit",
+    "picture": "🐇",
+    "count": 2
+   },
+   {
+    "text": "pizza",
+    "picture": "🍕",
+    "count": 2
+   },
+   {
+    "text": "apple",
+    "picture": "🍎",
+    "count": 2
+   },
+   {
+    "text": "tiger",
+    "picture": "🐯",
+    "count": 2
+   },
+   {
+    "text": "rocket",
+    "picture": "🚀",
+    "count": 2
+   },
+   {
+    "text": "monkey",
+    "picture": "🐒",
+    "count": 2
+   },
+   {
+    "text": "cupcake",
+    "picture": "🧁",
+    "count": 2
+   },
+   {
+    "text": "butterfly",
+    "picture": "🦋",
+    "count": 3
+   },
+   {
+    "text": "banana",
+    "picture": "🍌",
+    "count": 3
+   },
+   {
+    "text": "elephant",
+    "picture": "🐘",
+    "count": 3
+   },
+   {
+    "text": "dinosaur",
+    "picture": "🦕",
+    "count": 3
+   },
+   {
+    "text": "tomato",
+    "picture": "🍅",
+    "count": 3
+   },
+   {
+    "text": "kangaroo",
+    "picture": "🦘",
+    "count": 3
+   }
+  ],
+  "onsets": [
+   {
+    "onset": "c",
+    "rime": "at",
+    "word": "cat",
+    "picture": "🐱",
+    "distractors": [
+     "bat",
+     "cot"
+    ]
+   },
+   {
+    "onset": "p",
+    "rime": "ig",
+    "word": "pig",
+    "picture": "🐷",
+    "distractors": [
+     "dig",
+     "peg"
+    ]
+   },
+   {
+    "onset": "s",
+    "rime": "un",
+    "word": "sun",
+    "picture": "☀️",
+    "distractors": [
+     "bun",
+     "sub"
+    ]
+   },
+   {
+    "onset": "d",
+    "rime": "og",
+    "word": "dog",
+    "picture": "🐶",
+    "distractors": [
+     "log",
+     "dig"
+    ]
+   },
+   {
+    "onset": "h",
+    "rime": "en",
+    "word": "hen",
+    "picture": "🐔",
+    "distractors": [
+     "pen",
+     "ham"
+    ]
+   },
+   {
+    "onset": "b",
+    "rime": "ug",
+    "word": "bug",
+    "picture": "🐛",
+    "distractors": [
+     "hug",
+     "bag"
+    ]
+   },
+   {
+    "onset": "f",
+    "rime": "ox",
+    "word": "fox",
+    "picture": "🦊",
+    "distractors": [
+     "box",
+     "fan"
+    ]
+   },
+   {
+    "onset": "m",
+    "rime": "ap",
+    "word": "map",
+    "picture": "🗺️",
+    "distractors": [
+     "cap",
+     "mop"
+    ]
+   },
+   {
+    "onset": "n",
+    "rime": "et",
+    "word": "net",
+    "picture": "🥅",
+    "distractors": [
+     "jet",
+     "nut"
+    ]
+   },
+   {
+    "onset": "b",
+    "rime": "us",
+    "word": "bus",
+    "picture": "🚌",
+    "distractors": [
+     "bug",
+     "bag"
+    ]
+   }
+  ]
+ },
+ "pictureWords": [
+  {
+   "text": "bake",
+   "graphemes": [
+    "b",
+    "a",
+    "k",
+    "e"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "basket",
+   "graphemes": [
+    "b",
+    "a",
+    "s",
+    "k",
+    "e",
+    "t"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "bench",
+   "graphemes": [
+    "b",
+    "e",
+    "n",
+    "ch"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "bigger",
+   "graphemes": [
+    "b",
+    "i",
+    "g",
+    "g",
+    "er"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "cats",
+   "graphemes": [
+    "c",
+    "a",
+    "t",
+    "s"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "cheese",
+   "graphemes": [
+    "ch",
+    "ee",
+    "s",
+    "e"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "cone",
+   "graphemes": [
+    "c",
+    "o",
+    "n",
+    "e"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "cut",
+   "graphemes": [
+    "c",
+    "u",
+    "t"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "dragon",
+   "graphemes": [
+    "d",
+    "r",
+    "a",
+    "g",
+    "o",
+    "n"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "fern",
+   "graphemes": [
+    "f",
+    "er",
+    "n"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "fig",
+   "graphemes": [
+    "f",
+    "i",
+    "g"
+   ],
+   "picture": "🍈",
+   "art": null
+  },
+  {
+   "text": "fist",
+   "graphemes": [
+    "f",
+    "i",
+    "s",
+    "t"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "fuzz",
+   "graphemes": [
+    "f",
+    "u",
+    "z",
+    "z"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "gas",
+   "graphemes": [
+    "g",
+    "a",
+    "s"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "high",
+   "graphemes": [
+    "h",
+    "igh"
+   ],
+   "picture": "🖼️",
+   "art": "weak"
+  },
+  {
+   "text": "hive",
+   "graphemes": [
+    "h",
+    "i",
+    "v",
+    "e"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "huff",
+   "graphemes": [
+    "h",
+    "u",
+    "ff"
+   ],
+   "picture": "🖼️",
+   "art": "weak"
+  },
+  {
+   "text": "jar",
+   "graphemes": [
+    "j",
+    "ar"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "jumped",
+   "graphemes": [
+    "j",
+    "u",
+    "m",
+    "p",
+    "e",
+    "d"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "list",
+   "graphemes": [
+    "l",
+    "i",
+    "s",
+    "t"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "nurse",
+   "graphemes": [
+    "n",
+    "ur",
+    "s",
+    "e"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "ox",
+   "graphemes": [
+    "o",
+    "x"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "peg",
+   "graphemes": [
+    "p",
+    "e",
+    "g"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "pigs",
+   "graphemes": [
+    "p",
+    "i",
+    "g",
+    "s"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "playing",
+   "graphemes": [
+    "p",
+    "l",
+    "ay",
+    "i",
+    "ng"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "pond",
+   "graphemes": [
+    "p",
+    "o",
+    "n",
+    "d"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "pumpkin",
+   "graphemes": [
+    "p",
+    "u",
+    "m",
+    "p",
+    "k",
+    "i",
+    "n"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "quilt",
+   "graphemes": [
+    "qu",
+    "i",
+    "l",
+    "t"
+   ],
+   "picture": "🛌",
+   "art": null
+  },
+  {
+   "text": "road",
+   "graphemes": [
+    "r",
+    "oa",
+    "d"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "rocket",
+   "graphemes": [
+    "r",
+    "o",
+    "ck",
+    "e",
+    "t"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "rose",
+   "graphemes": [
+    "r",
+    "o",
+    "s",
+    "e"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "sap",
+   "graphemes": [
+    "s",
+    "a",
+    "p"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "seed",
+   "graphemes": [
+    "s",
+    "ee",
+    "d"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "skip",
+   "graphemes": [
+    "s",
+    "k",
+    "i",
+    "p"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "snap",
+   "graphemes": [
+    "s",
+    "n",
+    "a",
+    "p"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "song",
+   "graphemes": [
+    "s",
+    "o",
+    "ng"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "spot",
+   "graphemes": [
+    "s",
+    "p",
+    "o",
+    "t"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "teeth",
+   "graphemes": [
+    "t",
+    "ee",
+    "th"
+   ],
+   "picture": "🦷",
+   "art": "clear"
+  },
+  {
+   "text": "thumb",
+   "graphemes": [
+    "th",
+    "u",
+    "m",
+    "b"
+   ],
+   "picture": "👍",
+   "art": null
+  },
+  {
+   "text": "twig",
+   "graphemes": [
+    "t",
+    "w",
+    "i",
+    "g"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "wax",
+   "graphemes": [
+    "w",
+    "a",
+    "x"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
+  },
+  {
+   "text": "wheel",
+   "graphemes": [
+    "wh",
+    "ee",
+    "l"
+   ],
+   "picture": "🖼️",
+   "art": "clear"
   }
  ]
 }

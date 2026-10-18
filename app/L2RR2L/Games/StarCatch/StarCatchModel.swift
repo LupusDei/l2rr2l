@@ -18,6 +18,8 @@ final class StarCatchModel {
         let display: String
         let isText: Bool
         let correct: Bool
+        /// The id is a word with a picture card (word rounds).
+        var isWordPicture = false
     }
 
     private(set) var items: [CatchItem]
@@ -36,6 +38,8 @@ final class StarCatchModel {
     @ObservationIgnored private var hintLevel = 0
     @ObservationIgnored private var stuckTask: Task<Void, Never>?
     @ObservationIgnored private let services: AppServices
+    /// Set when the game leaves the screen so pending steps don't keep talking.
+    @ObservationIgnored private var stopped = false
 
     var item: CatchItem { items[index] }
     var total: Int { items.count }
@@ -64,6 +68,7 @@ final class StarCatchModel {
     }
 
     private func launch() async {
+        guard !stopped else { return }
         hintLevel = 0
         helpUsed = false
         litLetter = nil
@@ -74,7 +79,7 @@ final class StarCatchModel {
         switch item {
         case .word(let b):
             newChoices = ([b.word] + b.distractors).map {
-                Choice(id: $0.text, display: $0.picture ?? "✨", isText: false, correct: $0 == b.word)
+                Choice(id: $0.text, display: $0.picture ?? "✨", isText: false, correct: $0 == b.word, isWordPicture: true)
             }
         case .heart(let w, let options):
             newChoices = options.map { Choice(id: $0, display: $0, isText: true, correct: $0 == w) }
@@ -93,6 +98,16 @@ final class StarCatchModel {
         }
         starStart = .now
         resetStuckTimer()
+        #if DEBUG
+        Autopilot.after(2.0) { [weak self] in
+            guard let self, !self.stopped, self.phase == .falling else { return }
+            if Autopilot.shouldMissThisOne, let wrong = self.choices.first(where: { !$0.correct }) {
+                self.tap(wrong)
+                try? await Task.sleep(for: .seconds(4))
+            }
+            if self.phase == .falling, let right = self.choices.first(where: \.correct) { self.tap(right) }
+        }
+        #endif
     }
 
     /// Help stretch: the letters light and sound, as in Stretchy Blend.
@@ -150,6 +165,7 @@ final class StarCatchModel {
         } else {
             wiggleChoice = choice
             wiggleCount += 1
+            services.noteStruggle(item: item.text)
             if case .word(let b) = item {
                 services.progress.recordAnswer(game: game, word: b.word.text, correct: false,
                                                errorTags: errorTags(target: b.word, chosen: choice.id))
@@ -215,9 +231,13 @@ final class StarCatchModel {
     }
 
     private func next() async {
+        guard !stopped else { return }
         if index + 1 >= items.count {
             phase = .roundDone
             services.celebrateRoundComplete(game: game, line: "You caught every star! Look at your constellation!")
+            #if DEBUG
+            Autopilot.finishRound(services)
+            #endif
             return
         }
         index += 1
@@ -235,6 +255,7 @@ final class StarCatchModel {
     }
 
     func stop() {
+        stopped = true
         stuckTask?.cancel()
         services.phonemes.release()
     }

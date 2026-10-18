@@ -53,6 +53,10 @@ targets:
           if [ -d "$PACK/alpha" ]; then
             mkdir -p "$DEST/mascot/clips" "$DEST/scenes"
             rsync -a --delete "$PACK/alpha/" "$DEST/mascot/clips/"
+            if [ -d "$PACK/../words/pictures" ]; then
+              mkdir -p "$DEST/pictures"
+              rsync -a --delete "$PACK/../words/pictures/" "$DEST/pictures/"
+            fi
             mkdir -p "$DEST/mascot/posters"
             rsync -a --delete "$PACK/posters/" "$DEST/mascot/posters/"
             rsync -a --delete "$PACK/scenes/" "$DEST/scenes/"

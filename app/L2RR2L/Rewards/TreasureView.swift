@@ -116,6 +116,18 @@ struct TreasureView: View {
             await services.voice.say("Cutisie is hungry. Tap a treat to feed her!")
         }
         if services.progress.data.eggProgress >= ProgressStore.treatsPerEgg { eggWobble += 1 }
+        #if DEBUG
+        if Autopilot.enabled {
+            while services.progress.data.treats > 0 {
+                try? await Task.sleep(for: .seconds(2.5))
+                feed(0)
+            }
+            try? await Task.sleep(for: .seconds(3))
+            hatch()
+            try? await Task.sleep(for: .seconds(4))
+            goodbye()
+        }
+        #endif
     }
 
     private func feed(_ i: Int) {

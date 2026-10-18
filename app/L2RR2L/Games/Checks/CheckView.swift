@@ -11,7 +11,13 @@ struct CheckView: View {
 
     var body: some View {
         ZStack {
-            SkyBackground(tint: Theme.gold, imageName: kind == .sparkleCheck ? "bg-starfield" : "bg-skymap")
+            SkyBackground(tint: Theme.gold, imageName: {
+                switch kind {
+                case .sparkleCheck: "bg-starfield"
+                case .skyTrial: "bg-skymap"
+                case .warmUp: "bg-home"
+                }
+            }())
             TouchSparkles()
             if let model { CheckBoard(model: model) }
             VStack {
@@ -93,7 +99,7 @@ private struct CheckBoard: View {
     @ViewBuilder
     private func promptView(_ q: CheckModel.Question) -> some View {
         switch q {
-        case .soundMatch, .oralBlend, .heart:
+        case .soundMatch, .oralBlend, .heart, .rhyme, .claps, .onset:
             Button { model.replay() } label: {
                 Image(systemName: "ear.and.waveform")
                     .font(.system(size: m.s(80), weight: .bold))
@@ -159,15 +165,16 @@ private struct CheckBoard: View {
 
     @ViewBuilder
     private func choiceLabel(_ q: CheckModel.Question, _ choice: String) -> some View {
-        switch q {
-        case .soundMatch, .heart:
-            Text(choice).font(.reading(m.s(q.part == "heart" ? 56 : 90))).foregroundStyle(Theme.skyTop)
-        case .oralBlend, .readWord:
-            Text(WordBank.picture(choice) ?? "✨").font(.system(size: m.s(96)))
-        case .sentence:
-            Text(choice).font(.system(size: m.s(choice.count > 1 ? 64 : 96)))
-        case .unicorn:
-            EmptyView()
+        let shown = model.choiceDisplay[choice] ?? choice
+        if model.choicesAreText {
+            Text(shown).font(.reading(m.s(q.part == "heart" ? 56 : 90))).foregroundStyle(Theme.skyTop)
+        } else if model.choicesAreWordPictures {
+            WordPicture(word: choice, emoji: shown, size: m.s(140))
+        } else {
+            Text(shown)
+                .font(.system(size: m.s(shown.count > 1 ? 52 : 96)))
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
         }
     }
 

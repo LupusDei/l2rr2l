@@ -30,6 +30,10 @@ struct ProgressData: Codable, Equatable {
     /// One collectible per finished session (sky decorations, accessories, friends).
     var collectibles: [String] = []
     var sessionsCompleted = 0
+    /// Warm-up kind → days it was done without a miss (3 days = drops out of rotation).
+    var warmUpDays: [String: Set<String>] = [:]
+    /// Sounds whose "new thing" story has been shown.
+    var introduced: Set<String> = []
     /// Results of the Sparkle Check and Sky Trials, newest last.
     var assessments: [Assessment] = []
 
@@ -59,6 +63,8 @@ struct ProgressData: Codable, Equatable {
         stickers = try c.decodeIfPresent([Sticker].self, forKey: .stickers) ?? []
         collectibles = try c.decodeIfPresent([String].self, forKey: .collectibles) ?? []
         sessionsCompleted = try c.decodeIfPresent(Int.self, forKey: .sessionsCompleted) ?? 0
+        warmUpDays = try c.decodeIfPresent([String: Set<String>].self, forKey: .warmUpDays) ?? [:]
+        introduced = try c.decodeIfPresent(Set<String>.self, forKey: .introduced) ?? []
         assessments = try c.decodeIfPresent([Assessment].self, forKey: .assessments) ?? []
         games = try c.decodeIfPresent([String: GameStats].self, forKey: .games) ?? [:]
         daysPlayed = try c.decodeIfPresent(Set<String>.self, forKey: .daysPlayed) ?? []

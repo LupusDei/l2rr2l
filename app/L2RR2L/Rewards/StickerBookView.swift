@@ -57,7 +57,7 @@ struct StickerBookView: View {
                                             Task { await services.voice.sayWord(sticker.word) }
                                         } label: {
                                             VStack(spacing: 6) {
-                                                Text(sticker.emoji).font(.system(size: m.s(64)))
+                                                WordPicture(word: sticker.word, emoji: sticker.emoji, size: m.s(90))
                                                 Text(sticker.word)
                                                     .font(.reading(m.s(34)))
                                                     .foregroundStyle(Theme.skyTop)

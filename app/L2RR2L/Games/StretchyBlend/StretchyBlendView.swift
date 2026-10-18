@@ -204,8 +204,7 @@ struct PictureCard: View {
 
     var body: some View {
         Button(action: action) {
-            Text(word.picture ?? "✨")
-                .font(.system(size: size * 0.55))
+            WordPicture(word: word.text, emoji: word.picture, size: size * 0.8)
                 .frame(width: size, height: size * 1.05)
                 .scaleEffect(burst ? 1.25 : 1)
                 .rotationEffect(.degrees(burst ? 8 : 0))

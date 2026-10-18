@@ -63,6 +63,42 @@ final class AppServices {
                           "Wow, you did it!", "Yes! That's it!"]
     private var praiseIndex = 0
 
+    // MARK: Session limits (learning path 5: cut short after 3 struggles in
+    // a row or 15 minutes, but always end at the celebration)
+
+    @ObservationIgnored private var struggleStreak = 0
+    @ObservationIgnored private var lastStruggle: String?
+    static let sessionMinutes: Double = 15
+
+    /// A game reports a miss on an item. Counted once per item.
+    func noteStruggle(item: String) {
+        guard router.inSession, item != lastStruggle else { return }
+        lastStruggle = item
+        struggleStreak += 1
+    }
+
+    /// Called when an item is finished: a clean item resets the streak; after
+    /// three struggled items in a row the session wraps up with the treasure.
+    private func itemFinished(_ item: String?) {
+        guard router.inSession else { struggleStreak = 0; return }
+        if item == nil || item != lastStruggle { struggleStreak = 0 }
+        lastStruggle = nil
+        if struggleStreak >= 3 {
+            struggleStreak = 0
+            Task {
+                try? await Task.sleep(for: .seconds(2.5))
+                await voice.say("You worked so hard today! Let's visit the treasure.")
+                router.endSessionEarly()
+            }
+        }
+    }
+
+    /// True once today's session has run 15 minutes.
+    var sessionTimeUp: Bool {
+        guard let start = router.sessionStarted else { return false }
+        return Date().timeIntervalSince(start) > Self.sessionMinutes * 60
+    }
+
     /// A right answer: chime, star, a small confetti pop, Cutisie cheers and
     /// the Star Voice praises. Report `usedAudioHelp` and `responseTime` so
     /// word mastery is tracked.
@@ -76,6 +112,7 @@ final class AppServices {
         let sticker = progress.recordAnswer(game: game, word: word, correct: true,
                                             usedAudioHelp: usedAudioHelp, responseTime: responseTime)
         progress.awardStars(stars, game: game)
+        itemFinished(word)
         checkMilestones()
         celebration.fire(.sparkle)
         mascot.react(.cheer)
@@ -120,23 +157,31 @@ final class AppServices {
     /// Learning path section 8 milestones that come from reading words alone.
     private func checkMilestones() {
         let readAlone = progress.wordsReadAlone
-        let milestones: [(Int, String, MascotClip, String)] = [
-            (1, "first-word", .levelUp, "Your very first word, all by yourself!"),
-            (10, "ten-words", .bird, "Ten words read alone! Cutisie's wings are sparkling!"),
-            (50, "fifty-words", .levelUp, "Fifty words! A new part of the sky is glowing!"),
-            (100, "hundred-words", .bird, "One hundred words! Party time with the bird friend!"),
+        // (words read alone, id, learning-path milestone number, clip, line)
+        let milestones: [(Int, String, Int, MascotClip, String)] = [
+            (1, "first-word", 2, .levelUp, "Your very first word, all by yourself!"),
+            (10, "ten-words", 3, .bird, "Ten words read alone! Cutisie's wings are sparkling!"),
+            (50, "fifty-words", 6, .levelUp, "Fifty words! A new part of the sky is glowing!"),
+            (100, "hundred-words", 9, .bird, "One hundred words! Party time with the bird friend!"),
         ]
-        for (count, id, clip, line) in milestones where readAlone >= count {
+        for (count, id, number, clip, line) in milestones where readAlone >= count {
             guard progress.reachMilestone(id) else { continue }
             Task {
                 try? await Task.sleep(for: .seconds(2.2))
-                feedback.play(.fanfare)
-                celebration.fire(.fireworks)
-                mascot.react(clip)
-                await voice.say(line)
+                celebrateMilestone(number, clip: clip, line: line)
             }
             break
         }
+    }
+
+    /// A big milestone: the full-screen scene when bundled, else fireworks and a clip.
+    func celebrateMilestone(_ number: Int, clip: MascotClip, line: String) {
+        feedback.play(.fanfare)
+        celebration.fire(.fireworks)
+        if !celebration.playMilestone(number) {
+            mascot.react(clip)
+        }
+        voice.announce(line)
     }
 
     private func nextPraise() -> String {

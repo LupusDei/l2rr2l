@@ -11,7 +11,7 @@ import SwiftUI
 @MainActor
 @Observable
 final class CheckModel {
-    enum Kind: Equatable { case sparkleCheck, skyTrial(stage: Int) }
+    enum Kind: Equatable { case sparkleCheck, skyTrial(stage: Int), warmUp(WarmUpKind) }
 
     enum Question: Equatable {
         /// The Star Voice plays a sound; she taps its letter.
@@ -26,6 +26,12 @@ final class CheckModel {
         case unicorn(Word)
         /// She reads a sentence and picks the scene.
         case sentence(Sentence)
+        /// Rhyme Pop: three words are said; she pops the one that doesn't rhyme.
+        case rhyme(WarmUps.RhymeSet)
+        /// Wing Claps: a word is said with a flap per syllable; she taps how many.
+        case claps(WarmUps.SyllableWord)
+        /// Onset Slide: "/c/ ... at"; she picks the picture.
+        case onset(WarmUps.Onset)
 
         var part: String {
             switch self {
@@ -35,6 +41,9 @@ final class CheckModel {
             case .heart: "heart"
             case .unicorn: "unicorn"
             case .sentence: "sentences"
+            case .rhyme: "rhyme"
+            case .claps: "claps"
+            case .onset: "onset"
             }
         }
     }
@@ -45,6 +54,8 @@ final class CheckModel {
     private(set) var question: Question?
     private(set) var phase: Phase = .intro
     private(set) var choiceOrder: [String] = []
+    /// What each choice shows: a picture/emoji or a word.
+    private(set) var choiceDisplay: [String: String] = [:]
     private(set) var picked: String?
     private(set) var asked = 0
     private(set) var resultLine = ""
@@ -61,7 +72,11 @@ final class CheckModel {
     init(kind: Kind, services: AppServices) {
         self.kind = kind
         self.services = services
-        queue = kind == .sparkleCheck ? Self.sparkleQuestions() : Self.trialQuestions(stage: kind.stage)
+        switch kind {
+        case .sparkleCheck: queue = Self.sparkleQuestions()
+        case .skyTrial(let stage): queue = Self.trialQuestions(stage: stage)
+        case .warmUp(let warmUp): queue = Self.warmUpQuestions(warmUp, count: 4)
+        }
     }
 
     var totalPlanned: Int { asked + queue.count }
@@ -84,7 +99,18 @@ final class CheckModel {
         q += hearts.prefix(18).shuffled().prefix(6).map { w in
             .heart(w, choices: ([w] + hearts.filter { $0 != w }.shuffled().prefix(2)).shuffled())
         }
+        // Part F: rhymes and claps
+        q += warmUpQuestions(.rhymePop, count: 4) + warmUpQuestions(.wingClaps, count: 4)
         return q
+    }
+
+    static func warmUpQuestions(_ kind: WarmUpKind, count: Int) -> [Question] {
+        guard let w = Curriculum.shared.warmups else { return [] }
+        switch kind {
+        case .rhymePop: return w.rhymeSets.shuffled().prefix(count).map { .rhyme($0) }
+        case .wingClaps: return w.syllables.shuffled().prefix(count).map { .claps($0) }
+        case .onsetSlide: return w.onsets.shuffled().prefix(count).map { .onset($0) }
+        }
     }
 
     static func trialQuestions(stage: Int) -> [Question] {
@@ -107,6 +133,7 @@ final class CheckModel {
             case .soundMatch(let key, _, _): [key]
             case .oralBlend(let b), .readWord(let b, _): b.word.soundKeys
             case .unicorn(let w): w.soundKeys
+            case .onset(let o): [o.onset]
             default: nil
             }
         }.flatMap { $0 }
@@ -118,6 +145,12 @@ final class CheckModel {
         case .skyTrial(let stage):
             let name = Curriculum.shared.stage(stage)?.name ?? "this world"
             await services.voice.say("It's a Sky Trial! Help Cutisie fly past \(name)!")
+        case .warmUp(.rhymePop):
+            await services.voice.say("Rhyme Pop! Pop the word that doesn't rhyme.")
+        case .warmUp(.wingClaps):
+            await services.voice.say("Wing Claps! Count Cutisie's flaps.")
+        case .warmUp(.onsetSlide):
+            await services.voice.say("Onset Slide! Put the sounds together.")
         }
         await nextQuestion()
     }
@@ -135,9 +168,38 @@ final class CheckModel {
         case .heart(_, let choices): choiceOrder = choices
         case .sentence(let s): choiceOrder = ([s.picture] + s.distractors).shuffled()
         case .unicorn: choiceOrder = []
+        case .rhyme(let set):
+            let rhymes = set.words.filter { $0.text != set.odd }.shuffled().prefix(2)
+            choiceOrder = (rhymes.map(\.text) + [set.odd]).shuffled()
+        case .claps: choiceOrder = ["1", "2", "3"]
+        case .onset(let o): choiceOrder = ([o.word] + o.distractors).shuffled()
         }
+        choiceDisplay = Dictionary(uniqueKeysWithValues: choiceOrder.map { ($0, display(for: $0, in: q)) })
         await prompt(q)
         shownAt = .now
+        #if DEBUG
+        let asked = self.asked
+        Autopilot.after(0.8) { [weak self] in
+            guard let self, self.phase == .asking, self.asked == asked else { return }
+            if case .unicorn = q { self.grownUp(true); return }
+            let wrong = Autopilot.shouldMissThisOne ? self.choiceOrder.first { $0 != self.correctAnswer } : nil
+            self.answer(wrong ?? self.correctAnswer ?? self.choiceOrder.first ?? "")
+        }
+        #endif
+    }
+
+    /// The right choice for the current question (nil for unicorn words).
+    var correctAnswer: String? {
+        switch question {
+        case .soundMatch(_, let letter, _): letter
+        case .oralBlend(let b), .readWord(let b, _): b.word.text
+        case .heart(let w, _): w
+        case .sentence(let s): s.picture
+        case .rhyme(let set): set.odd
+        case .claps(let w): String(w.count)
+        case .onset(let o): o.word
+        case .unicorn, .none: nil
+        }
     }
 
     /// What the Star Voice says (or plays) for a question. Real-word and
@@ -154,10 +216,52 @@ final class CheckModel {
         case .heart(let w, _):
             await services.voice.sayWord(w)
         case .unicorn:
-            services.mascot.react(.sing)
+            services.mascot.react(.listen)
             await services.voice.say("A unicorn word! Read it out loud.")
         case .readWord, .sentence:
             break
+        case .rhyme:
+            for choice in choiceOrder {
+                await services.voice.sayWord(choice)
+                try? await Task.sleep(for: .milliseconds(250))
+            }
+        case .claps(let word):
+            await services.voice.sayWord(word.text)
+            services.mascot.react(.cheer)
+            for _ in 0..<word.count {
+                services.sounds.playPack("wing_flutter")
+                try? await Task.sleep(for: .milliseconds(550))
+            }
+        case .onset(let o):
+            await services.phonemes.tap(o.onset, holdFor: 0.45)
+            try? await Task.sleep(for: .milliseconds(450))
+            await services.voice.sayWord(o.rime)
+        }
+    }
+
+    private func display(for choice: String, in q: Question) -> String {
+        switch q {
+        case .soundMatch, .heart: return choice
+        case .claps: return String(repeating: "👏", count: Int(choice) ?? 1)
+        case .rhyme(let set): return set.words.first { $0.text == choice }?.picture ?? WordBank.picture(choice) ?? "✨"
+        case .onset(let o): return choice == o.word ? o.picture : (WordBank.picture(choice) ?? "✨")
+        default: return WordBank.picture(choice) ?? choice
+        }
+    }
+
+    /// Choices are words shown by their picture cards.
+    var choicesAreWordPictures: Bool {
+        switch question {
+        case .oralBlend, .readWord, .rhyme, .onset: true
+        default: false
+        }
+    }
+
+    /// Whether choices show words (true) or pictures.
+    var choicesAreText: Bool {
+        switch question {
+        case .soundMatch, .heart: true
+        default: false
         }
     }
 
@@ -175,6 +279,9 @@ final class CheckModel {
         case .heart(let w, _): choice == w
         case .sentence(let s): choice == s.picture
         case .unicorn: false
+        case .rhyme(let set): choice == set.odd
+        case .claps(let w): choice == String(w.count)
+        case .onset(let o): choice == o.word
         }
         record(q, correct: correct)
     }
@@ -218,12 +325,16 @@ final class CheckModel {
         phase = .answered
         services.sounds.playTwinkle()
         services.celebration.fire(.sparkle)
-        if let q = question, case .unicorn = q {
-            services.sounds.playPack("giggle")
-            services.mascot.react(.sing)
+        var pause = 0.9
+        if let q = question, case .unicorn(let w) = q {
+            // Cutisie acts out what the unicorn word "means"
+            let meaning = UnicornMeanings.meaning(for: w.text)
+            services.mascot.play(take: "unicorn_word_\(meaning.clip)")
+            services.voice.announce("In unicorn, \(w.text) means \(meaning.phrase)!")
+            pause = 4.5
         }
         Task {
-            try? await Task.sleep(for: .seconds(0.9))
+            try? await Task.sleep(for: .seconds(pause))
             await nextQuestion()
         }
     }
@@ -247,6 +358,11 @@ final class CheckModel {
     private func finish() async {
         phase = .done
         question = nil
+        #if DEBUG
+        if kind != .warmUp(.rhymePop) && kind != .warmUp(.wingClaps) && kind != .warmUp(.onsetSlide) {
+            Autopilot.after(6) { [services] in services.router.goHome() }
+        }
+        #endif
         switch kind {
         case .sparkleCheck:
             // start at the first level under 80%, never above stage 1's blending practice skipped
@@ -261,6 +377,15 @@ final class CheckModel {
             resultLine = "Cutisie knows just where to start! Let's fly to \(Curriculum.shared.stage(max(1, start))?.name ?? "the sky")!"
             services.celebrateRoundComplete(game: .starCatch, line: resultLine)
             services.mascot.react(.levelUp)
+        case .warmUp(let warmUp):
+            let s = score[warmUpPart(warmUp)] ?? [0, 0]
+            services.progress.recordWarmUp(warmUp, clean: s[0] == s[1] && s[1] > 0)
+            passed = true
+            resultLine = "Warmed up!"
+            services.feedback.play(.star)
+            services.mascot.react(.cheer)
+            await services.voice.say("Great warm-up!")
+            if services.router.inSession { services.router.advance() }
         case .skyTrial(let stage):
             let counted = ["words", "sentences", "heart", "unicorn"].compactMap { score[$0] }
             let right = counted.reduce(0) { $0 + $1[0] }, total = counted.reduce(0) { $0 + $1[1] }
@@ -269,6 +394,10 @@ final class CheckModel {
             if passed {
                 services.progress.passStageTrial(stage)
                 services.progress.reachMilestone("stage-\(stage)")
+                // learning path milestones 5, 8, 10, 11: vowels, digraphs, blends, magic e
+                if let number = [2: 5, 3: 8, 4: 10, 5: 11][stage] {
+                    services.celebration.playMilestone(number)
+                }
                 let next = Curriculum.shared.stage(stage + 1)?.name ?? "a brand new sky"
                 resultLine = "You did it! A rainbow bridge opens to \(next)!"
                 services.celebrateRoundComplete(game: .starCatch, line: resultLine)
@@ -280,6 +409,14 @@ final class CheckModel {
                 services.voice.announce(resultLine)
             }
         }
+    }
+}
+
+private func warmUpPart(_ kind: WarmUpKind) -> String {
+    switch kind {
+    case .rhymePop: "rhyme"
+    case .wingClaps: "claps"
+    case .onsetSlide: "onset"
     }
 }
 

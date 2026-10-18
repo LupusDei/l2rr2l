@@ -132,3 +132,29 @@ final class CurriculumTests: XCTestCase {
         XCTAssertEqual(store.data.collectibles, [])
     }
 }
+
+@MainActor
+final class WarmUpTests: XCTestCase {
+    func testWarmUpContentAndQuestions() {
+        XCTAssertNotNil(Curriculum.shared.warmups)
+        for kind in WarmUpKind.allCases {
+            XCTAssertEqual(CheckModel.warmUpQuestions(kind, count: 4).count, 4, "\(kind)")
+        }
+        let sparkle = CheckModel.sparkleQuestions()
+        XCTAssertTrue(sparkle.contains { if case .rhyme = $0 { true } else { false } })
+        XCTAssertTrue(sparkle.contains { if case .claps = $0 { true } else { false } })
+    }
+
+    func testWarmUpsRotateAndDropOutAfterThreeCleanDays() {
+        let store = ProgressStore(fileURL: nil)
+        XCTAssertNotNil(store.nextWarmUp())
+        let cal = Calendar(identifier: .gregorian)
+        for day in 1...3 {
+            store.recordWarmUp(.rhymePop, clean: true, now: cal.date(from: DateComponents(year: 2026, month: 10, day: day))!)
+        }
+        for _ in 0..<3 {
+            XCTAssertNotEqual(store.nextWarmUp(), .rhymePop)
+            store.completeSession()
+        }
+    }
+}

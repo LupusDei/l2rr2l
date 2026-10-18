@@ -28,6 +28,8 @@ final class WordMachineModel {
     @ObservationIgnored private var wordShownAt = Date()
     @ObservationIgnored private var stuckTask: Task<Void, Never>?
     @ObservationIgnored private let services: AppServices
+    /// Set when the game leaves the screen so pending steps don't keep talking.
+    @ObservationIgnored private var stopped = false
 
     var word: Word { chain.words[index] }
     var target: [String] { word.graphemes }
@@ -48,6 +50,7 @@ final class WordMachineModel {
     }
 
     private func beginWord() async {
+        guard !stopped else { return }
         misses = [:]
         usedHelp = false
         glowLetter = nil
@@ -67,6 +70,19 @@ final class WordMachineModel {
         wordShownAt = .now
         resetStuckTimer()
         checkComplete()
+        #if DEBUG
+        Autopilot.after(1.0) { [weak self] in
+            guard let self, !self.stopped else { return }
+            for i in self.target.indices where self.phase == .build && self.boxes[i] != self.target[i] {
+                if Autopilot.shouldMissThisOne, let wrong = self.chain.trayLetters.first(where: { $0 != self.target[i] }) {
+                    self.drop(wrong, into: i)
+                    try? await Task.sleep(for: .seconds(2.5))
+                }
+                if self.phase == .build && self.boxes[i] != self.target[i] { self.drop(self.target[i], into: i) }
+                try? await Task.sleep(for: .seconds(0.8))
+            }
+        }
+        #endif
     }
 
     /// The machine plays the word stretched, one box at a time.
@@ -127,6 +143,7 @@ final class WordMachineModel {
         } else {
             rejectBox = i
             rejectCount += 1
+            services.noteStruggle(item: word.text)
             services.feedback.play(.oops)
             misses[i, default: 0] += 1
             let position = i == 0 ? "first" : (i == target.count - 1 ? "last" : "middle")
@@ -167,6 +184,9 @@ final class WordMachineModel {
               zip(boxes, target).allSatisfy({ $0 == $1 }) else { return }
         stuckTask?.cancel()
         phase = .ready
+        #if DEBUG
+        Autopilot.after(1.5) { [weak self] in self?.pullLever() }
+        #endif
         services.feedback.play(.star)
         services.voice.announce(index == 0 ? "Pull the lever!" : "Pull it!")
     }
@@ -197,6 +217,7 @@ final class WordMachineModel {
     }
 
     private func next() async {
+        guard !stopped else { return }
         if index + 1 >= chain.words.count {
             phase = .chainDone
             withAnimation { poppedWord = nil }
@@ -207,6 +228,9 @@ final class WordMachineModel {
             }
             readingIndex = nil
             services.celebrateRoundComplete(game: game, line: "You built a whole word chain!")
+            #if DEBUG
+            Autopilot.finishRound(services)
+            #endif
             return
         }
         index += 1
@@ -238,6 +262,7 @@ final class WordMachineModel {
     }
 
     func stop() {
+        stopped = true
         stuckTask?.cancel()
         services.phonemes.release()
     }

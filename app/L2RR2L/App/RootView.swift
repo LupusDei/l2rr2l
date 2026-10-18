@@ -24,12 +24,17 @@ struct RootView: View {
                             .navigationTransition(.zoom(sourceID: "special", in: zoom))
                     case .treasure(let fromSession):
                         TreasureView(fromSession: fromSession)
+                    case .warmUp(let kind):
+                        CheckView(kind: .warmUp(kind))
+                    case .newThing(let grapheme):
+                        NewThingView(grapheme: grapheme)
                     }
                 }
         }
         .environment(\.zoomNamespace, zoom)
         .overlay { CelebrationOverlay().allowsHitTesting(false) }
         .overlay { StarVoiceCaption().allowsHitTesting(false) }
+        .overlay { MilestoneSceneOverlay() }
         .overlay(alignment: .top) {
             StarVoiceBeacon(size: 40).allowsHitTesting(false).offset(y: -10)
         }

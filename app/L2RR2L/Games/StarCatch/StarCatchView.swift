@@ -181,9 +181,15 @@ private struct PictureCloud: View {
         ZStack {
             FluffyCloud()
                 .frame(width: width * 1.25, height: width * 0.75)
-            Text(choice.display)
-                .font(choice.isText ? .reading(width * 0.2) : .system(size: width * (choice.display.count > 1 ? 0.24 : 0.36)))
-                .foregroundStyle(Theme.skyTop)
+            Group {
+                if choice.isWordPicture {
+                    WordPicture(word: choice.id, emoji: choice.display, size: width * 0.5)
+                } else {
+                    Text(choice.display)
+                        .font(choice.isText ? .reading(width * 0.2) : .system(size: width * (choice.display.count > 1 ? 0.24 : 0.36)))
+                        .foregroundStyle(Theme.skyTop)
+                }
+            }
                 .offset(y: -width * 0.04)
                 .scaleEffect(caught ? 1.5 : 1)
                 .rotationEffect(.degrees(caught ? -8 : 0))

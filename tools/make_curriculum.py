@@ -135,6 +135,43 @@ STAGES = [
 ]
 
 
+# Warm-ups (learning path section 5). Picture words only; nothing to read.
+RHYME_SETS = [  # three rhyme, one doesn't (the last word is the odd one)
+    ("cat", "hat", "bat", "dog"), ("pig", "wig", "dig", "sun"), ("bug", "rug", "mug", "hen"),
+    ("ten", "hen", "pen", "box"), ("fox", "box", "sock", "cup"), ("cake", "snake", "lake", "bus"),
+    ("moon", "spoon", "balloon", "car"), ("bee", "tree", "key", "fish"), ("star", "car", "jar", "bed"),
+    ("goat", "boat", "coat", "pig"), ("king", "ring", "wing", "map"), ("bell", "shell", "well", "fan"),
+]
+SYLLABLE_WORDS = [  # word, picture, syllables
+    ("cat", "🐱", 1), ("sun", "☀️", 1), ("frog", "🐸", 1), ("fish", "🐟", 1), ("tree", "🌳", 1),
+    ("rabbit", "🐇", 2), ("pizza", "🍕", 2), ("apple", "🍎", 2), ("tiger", "🐯", 2), ("rocket", "🚀", 2),
+    ("monkey", "🐒", 2), ("cupcake", "🧁", 2), ("butterfly", "🦋", 3), ("banana", "🍌", 3),
+    ("elephant", "🐘", 3), ("dinosaur", "🦕", 3), ("tomato", "🍅", 3), ("kangaroo", "🦘", 3),
+]
+ONSET_ITEMS = [  # onset, rime, word
+    ("c", "at", "cat"), ("p", "ig", "pig"), ("s", "un", "sun"), ("d", "og", "dog"), ("h", "en", "hen"),
+    ("b", "ug", "bug"), ("f", "ox", "fox"), ("m", "ap", "map"), ("n", "et", "net"), ("b", "us", "bus"),
+]
+EXTRA_PICTURES = {"key": "🔑", "jar": "🫙", "well": "🪣", "balloon": "🎈"}
+
+
+# Word picture cards from the art pack (art/cutisie/out/words/manifest.json):
+# word -> "clear" | "weak". Weak cards never stand alone as a picture-pick clue.
+_ART_MANIFEST = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                             "art/cutisie/out/words/manifest.json")
+ART = {}
+if os.path.exists(_ART_MANIFEST):
+    with open(_ART_MANIFEST) as f:
+        ART = {w: e.get("strength", "clear") for w, e in json.load(f)["pictures"].items()}
+
+
+def pictureable(text):
+    """Can stand as a picture-pick answer or distractor."""
+    if ART.get(text) == "weak":
+        return False
+    return text in PICTURES or ART.get(text) == "clear"
+
+
 def split(word, stage):
     """Greedy grapheme split using units taught by `stage` (and magic e)."""
     w = word.lower()
@@ -170,8 +207,9 @@ def sounds_for(word, graphemes, stage):
 def pick_distractors(w, stage_id):
     target = w["graphemes"]
     scored = []
-    for t, pic in PICTURES.items():
-        if t == w["text"] or pic == w["picture"]:
+    pool = {t: PICTURES.get(t, "🖼️" + t) for t in set(PICTURES) | {a for a, s in ART.items() if s == "clear"}}
+    for t, pic in pool.items():
+        if t == w["text"] or pic == w["picture"] or not pictureable(t):
             continue
         g = split(t, stage_id)
         if len(g) == len(target):
@@ -186,11 +224,11 @@ def pick_distractors(w, stage_id):
     scored.sort()
     picked, positions, pics = [], set(), {w["picture"]}
     for rank, pos, t in scored:
-        if PICTURES[t] in pics or (rank == 0 and pos in positions and len(scored) > 3):
+        if pool[t] in pics or (rank == 0 and pos in positions and len(scored) > 3):
             continue
         picked.append(t)
         positions.add(pos)
-        pics.add(PICTURES[t])
+        pics.add(pool[t])
         if len(picked) == 2:
             break
     return picked
@@ -205,18 +243,19 @@ def build():
         for text in st["words"]:
             g = split(text, stage_id)
             words.append({"text": text, "graphemes": g, "sounds": sounds_for(text, g, stage_id),
-                          "picture": PICTURES.get(text), "stage": stage_id})
+                          "picture": PICTURES.get(text) or ("🖼️" if ART.get(text) == "clear" else None),
+                          "art": ART.get(text), "stage": stage_id})
             if PICTURES.get(text):
                 taught_pictured.append((stage_id, text, g))
         # Picture distractors: the child only reads the target, so any word
         # with a picture can be a distractor. Prefer one sound off (so a right
         # pick can't be a first-letter guess), then same first sound.
         for w in words:
-            w["distractors"] = pick_distractors(w, stage_id) if w["picture"] else []
+            w["distractors"] = pick_distractors(w, stage_id) if pictureable(w["text"]) else []
         chains = []
         for c in st["chains"]:
             chains.append([{"text": t, "graphemes": split(t, stage_id), "sounds": sounds_for(t, split(t, stage_id), stage_id),
-                            "picture": PICTURES.get(t)} for t in c])
+                            "picture": PICTURES.get(t) or ("🖼️" if t in ART else None), "art": ART.get(t)} for t in c])
         stages.append({
             "id": stage_id, "name": st["name"], "graphemes": st["graphemes"], "words": words,
             "heartWords": st["heart"], "chains": chains,
@@ -224,7 +263,21 @@ def build():
             "unicornWords": [{"text": u, "graphemes": split(u, stage_id), "sounds": sounds_for(u, split(u, stage_id), stage_id)}
                              for u in st["unicorn"]],
         })
-    return {"version": 1, "stages": stages}
+    pics = {**PICTURES, **EXTRA_PICTURES}
+    warmups = {
+        "rhymeSets": [{"words": [{"text": t, "picture": pics[t]} for t in group], "odd": group[-1]} for group in RHYME_SETS],
+        "syllables": [{"text": t, "picture": p, "count": n} for t, p, n in SYLLABLE_WORDS],
+        "onsets": [{"onset": o, "rime": r, "word": w, "picture": pics[w],
+                    "distractors": [d["text"] for d in [{"text": x} for x in (pick_distractors({"text": w, "graphemes": split(w, 2), "picture": pics[w]}, 2))]]}
+                   for o, r, w in ONSET_ITEMS],
+    }
+    for group in RHYME_SETS:
+        for t in group:
+            assert t in pics, f"no picture for rhyme word {t}"
+    known = {w["text"] for st in stages for w in st["words"]} | {w["text"] for st in stages for c in st["chains"] for w in c}
+    extra = [{"text": t, "graphemes": split(t, 6), "picture": PICTURES.get(t) or "🖼️", "art": ART.get(t)}
+             for t in sorted((set(PICTURES) | set(ART)) - known)]
+    return {"version": 1, "stages": stages, "warmups": warmups, "pictureWords": extra}
 
 
 if __name__ == "__main__":
@@ -235,7 +288,7 @@ if __name__ == "__main__":
     with open(out, "w") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
     for s in data["stages"]:
-        playable = sum(1 for w in s["words"] if w["picture"] and len(w["distractors"]) == 2)
+        playable = sum(1 for w in s["words"] if len(w["distractors"]) == 2)
         print(f"stage {s['id']} {s['name']}: {len(s['words'])} words ({playable} with picture choices), "
               f"{len(s['chains'])} chains, {len(s['heartWords'])} heart words, {len(s['sentences'])} sentences")
     print("wrote", out)

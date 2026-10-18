@@ -44,7 +44,7 @@ private struct WordMachineBoard: View {
 
             ZStack {
                 ChainColumn(words: model.builtWords, reading: model.phase == .chainDone ? model.readingIndex : nil)
-                    .position(x: w * 0.1, y: h * 0.42)
+                    .position(x: w * 0.58, y: h * (landscape ? 0.94 : 0.9))
 
                 PictureBubble(word: model.word, popped: model.poppedWord != nil, size: m.s(180))
                     .position(x: w / 2, y: h * (landscape ? 0.17 : 0.19))
@@ -68,6 +68,7 @@ private struct WordMachineBoard: View {
                 }
                 .position(x: w / 2 + machineW / 2 - machineW * 0.08, y: machineY - machineH * 0.05)
 
+                if model.phase != .chainDone {
                 LetterTray(letters: model.chain.trayLetters, glow: model.glowLetter, tile: m.s(92),
                            maxWidth: w * 0.8, dragging: dragging,
                            onTap: { model.tapLetter($0) },
@@ -83,6 +84,7 @@ private struct WordMachineBoard: View {
                                }
                            })
                     .position(x: w / 2, y: h * (landscape ? 0.8 : 0.74))
+                }
 
                 if let dragging {
                     TrayTile(letter: dragging, size: m.s(104), glow: true)
@@ -123,8 +125,8 @@ private struct PictureBubble: View {
                     Ellipse().fill(.white.opacity(0.5))
                         .frame(width: size * 0.35, height: size * 0.16)
                         .offset(x: -size * 0.18, y: -size * 0.3)
-                    if let picture = word.picture {
-                        Text(picture).font(.system(size: size * 0.5))
+                    if word.picture != nil || WordPicture.card(word.text) != nil {
+                        WordPicture(word: word.text, emoji: word.picture, size: size * 0.66)
                     } else {
                         Image(systemName: "sparkles").font(.system(size: size * 0.4)).foregroundStyle(Theme.gold)
                     }
@@ -357,7 +359,7 @@ private struct ChainColumn: View {
     let reading: Int?
 
     var body: some View {
-        VStack(spacing: 10) {
+        HStack(spacing: 10) {
             ForEach(Array(words.enumerated()), id: \.offset) { i, word in
                 Text(word.text)
                     .font(.reading(30))

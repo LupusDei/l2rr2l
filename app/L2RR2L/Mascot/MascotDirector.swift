@@ -107,6 +107,15 @@ final class MascotDirector {
         }
     }
 
+    /// Play a specific take from the art pack (unicorn words, new-sound hooks).
+    func play(take: String, as moment: MascotClip = .sing) {
+        guard MascotClip.clipURL(take) != nil else { react(moment); return }
+        settleTask?.cancel()
+        clip = moment
+        self.take = take
+        playCount += 1
+    }
+
     /// Called by the player when a one-shot clip ends.
     func finished(_ count: Int) {
         guard count == playCount, clip != nil else { return }

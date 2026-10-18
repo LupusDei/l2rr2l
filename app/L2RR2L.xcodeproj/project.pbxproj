@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		096F3EB9D91611809951A55B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7361C1335BE1B407D985273E /* RootView.swift */; };
 		0C2587655AFBF8B7533EBD92 /* TreasureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E645AD87E9A5B20ECB631DCD /* TreasureView.swift */; };
+		0F1B800F3E54CCFE8FA053DD /* MilestoneScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F73496C43B03880C5F8C74 /* MilestoneScene.swift */; };
 		12671514DC5D7B11099A9B7F /* WordMachineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F77C7F844D7037CFDA7D00A /* WordMachineModel.swift */; };
 		2070B40F7C98A1A567B8000F /* SkillGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 748D136A87362AB8D5B0E750 /* SkillGraph.swift */; };
 		24710DCB6FECA174AB0E038B /* SessionPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D761DC1F79B42BF8311FEBBB /* SessionPlanner.swift */; };
@@ -34,6 +35,7 @@
 		8BDA3D031E97AC72E50A64CF /* WordMachineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A138DAA595093A94CF8CF4C3 /* WordMachineView.swift */; };
 		8F82232F28FD0A06193C725E /* SkyBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102E3EA4C57FA7264F3F44F2 /* SkyBackground.swift */; };
 		92775D9E27C4A5262A7822EF /* StarVoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CFD07344C3F98AB94A056D2 /* StarVoice.swift */; };
+		99532CD549F124261708FE50 /* NewThingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7DEBFFC77B1D0F0221B540 /* NewThingView.swift */; };
 		A4EDE2B4714D035074106E93 /* CheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2559F97FFF68E77B8E07AAC4 /* CheckView.swift */; };
 		B0EBF4DAC4BF5CB4BCA9DB4E /* MascotDirector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB32EFF92D44602CB25C54B /* MascotDirector.swift */; };
 		B1594962632A8A49B3408839 /* StarCatchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3939942C941F2206582599 /* StarCatchModel.swift */; };
@@ -42,10 +44,13 @@
 		C6E79BACFE4CC18C012B4E4E /* ProgressStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA42131C60E5B81B3AA35FB4 /* ProgressStore.swift */; };
 		CF77D8618FCE929812A0EFA0 /* ParallaxMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0220D6D4173A82E0E43F80 /* ParallaxMotion.swift */; };
 		D257EB1A41585FDCC99FFEB8 /* CheckModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D115C909A21BB9B0421C36D /* CheckModel.swift */; };
+		D4504D191341C731B0D7C8A3 /* UnicornMeanings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E36AAA4BB1ADE6B17C7539 /* UnicornMeanings.swift */; };
 		D63AD3DBE867C4E7D95D7E5A /* WordBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E08D5C3EC67D7BB3C9397D3 /* WordBank.swift */; };
 		D841E5E0FBB3B244A076D82F /* CelebrationOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF48B79CBFF2F1C3038BAC69 /* CelebrationOverlay.swift */; };
 		DE06FC0232D4044213CC41F6 /* Speaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF49D974463AD1072850A732 /* Speaker.swift */; };
+		EB6E37380023D7DB03B1D158 /* Autopilot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CAC5AB0491CF1BBD45440 /* Autopilot.swift */; };
 		F4DC29CF06D0EB72275C040A /* PhonemeEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022AF9F87E633E68328F72D4 /* PhonemeEngine.swift */; };
+		FE383C52509B164325998657 /* ParentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74826485F90A2C7D7029E7B0 /* ParentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,7 +68,9 @@
 		102E3EA4C57FA7264F3F44F2 /* SkyBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyBackground.swift; sourceTree = "<group>"; };
 		14942F5FA313B62B804939DB /* L2RR2LTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = L2RR2LTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		15884DEE7C4ED5520EF065EE /* L2RR2L.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = L2RR2L.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		201CAC5AB0491CF1BBD45440 /* Autopilot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autopilot.swift; sourceTree = "<group>"; };
 		2559F97FFF68E77B8E07AAC4 /* CheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckView.swift; sourceTree = "<group>"; };
+		29F73496C43B03880C5F8C74 /* MilestoneScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestoneScene.swift; sourceTree = "<group>"; };
 		2BB32EFF92D44602CB25C54B /* MascotDirector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MascotDirector.swift; sourceTree = "<group>"; };
 		322857F163A035266F57A09A /* BouncyButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BouncyButtonStyle.swift; sourceTree = "<group>"; };
 		39A73EA76CE09A4447F551C6 /* GameID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameID.swift; sourceTree = "<group>"; };
@@ -73,7 +80,9 @@
 		5392452AC8C060FA07112B7B /* CelebrationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationCenter.swift; sourceTree = "<group>"; };
 		5CC604A55D0724564317F43B /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		66D224CACECB112E3EE2A0D9 /* L2RR2LApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LApp.swift; sourceTree = "<group>"; };
+		6A7DEBFFC77B1D0F0221B540 /* NewThingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewThingView.swift; sourceTree = "<group>"; };
 		7361C1335BE1B407D985273E /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		74826485F90A2C7D7029E7B0 /* ParentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentView.swift; sourceTree = "<group>"; };
 		748D136A87362AB8D5B0E750 /* SkillGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillGraph.swift; sourceTree = "<group>"; };
 		7E08D5C3EC67D7BB3C9397D3 /* WordBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordBank.swift; sourceTree = "<group>"; };
 		846D98B10C330FF5ECB67930 /* ProgressModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressModel.swift; sourceTree = "<group>"; };
@@ -92,6 +101,7 @@
 		CF2487D873357238BB6A56AB /* StickerBookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBookView.swift; sourceTree = "<group>"; };
 		D3ED194C00EA9DCC4B545C5F /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		D761DC1F79B42BF8311FEBBB /* SessionPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanner.swift; sourceTree = "<group>"; };
+		D7E36AAA4BB1ADE6B17C7539 /* UnicornMeanings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnicornMeanings.swift; sourceTree = "<group>"; };
 		DF3939942C941F2206582599 /* StarCatchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarCatchModel.swift; sourceTree = "<group>"; };
 		DF49D974463AD1072850A732 /* Speaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Speaker.swift; sourceTree = "<group>"; };
 		E645AD87E9A5B20ECB631DCD /* TreasureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreasureView.swift; sourceTree = "<group>"; };
@@ -145,6 +155,7 @@
 			children = (
 				39A73EA76CE09A4447F551C6 /* GameID.swift */,
 				E88A948EAC3CA5ACF98969A3 /* GameScaffold.swift */,
+				6A7DEBFFC77B1D0F0221B540 /* NewThingView.swift */,
 				DA7A2E5C35482F32FE0F44A5 /* Checks */,
 				E981891607F60DEF55F086C1 /* Content */,
 				34361D4B2DA530561D4D7E3B /* StarCatch */,
@@ -185,6 +196,7 @@
 		8B666455A19E8A886BF8CC35 /* Rewards */ = {
 			isa = PBXGroup;
 			children = (
+				74826485F90A2C7D7029E7B0 /* ParentView.swift */,
 				CF2487D873357238BB6A56AB /* StickerBookView.swift */,
 				E645AD87E9A5B20ECB631DCD /* TreasureView.swift */,
 			);
@@ -258,6 +270,7 @@
 			children = (
 				4D115C909A21BB9B0421C36D /* CheckModel.swift */,
 				2559F97FFF68E77B8E07AAC4 /* CheckView.swift */,
+				D7E36AAA4BB1ADE6B17C7539 /* UnicornMeanings.swift */,
 			);
 			path = Checks;
 			sourceTree = "<group>";
@@ -275,6 +288,7 @@
 			isa = PBXGroup;
 			children = (
 				F3F5BE70F491CDA9F1F1698D /* AppServices.swift */,
+				201CAC5AB0491CF1BBD45440 /* Autopilot.swift */,
 				66D224CACECB112E3EE2A0D9 /* L2RR2LApp.swift */,
 				7361C1335BE1B407D985273E /* RootView.swift */,
 				8551180C4292B10C86EE5292 /* Router.swift */,
@@ -287,6 +301,7 @@
 			children = (
 				5392452AC8C060FA07112B7B /* CelebrationCenter.swift */,
 				EF48B79CBFF2F1C3038BAC69 /* CelebrationOverlay.swift */,
+				29F73496C43B03880C5F8C74 /* MilestoneScene.swift */,
 			);
 			path = Celebration;
 			sourceTree = "<group>";
@@ -407,7 +422,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "PACK=\"${SRCROOT}/../art/cutisie/out/videos\"\nDEST=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Media\"\nif [ -d \"$PACK/alpha\" ]; then\n  mkdir -p \"$DEST/mascot/clips\" \"$DEST/scenes\"\n  rsync -a --delete \"$PACK/alpha/\" \"$DEST/mascot/clips/\"\n  mkdir -p \"$DEST/mascot/posters\"\n  rsync -a --delete \"$PACK/posters/\" \"$DEST/mascot/posters/\"\n  rsync -a --delete \"$PACK/scenes/\" \"$DEST/scenes/\"\nelse\n  echo \"warning: Cutisie art pack not found at $PACK; clips will use still poses\"\nfi\n";
+			shellScript = "PACK=\"${SRCROOT}/../art/cutisie/out/videos\"\nDEST=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Media\"\nif [ -d \"$PACK/alpha\" ]; then\n  mkdir -p \"$DEST/mascot/clips\" \"$DEST/scenes\"\n  rsync -a --delete \"$PACK/alpha/\" \"$DEST/mascot/clips/\"\n  if [ -d \"$PACK/../words/pictures\" ]; then\n    mkdir -p \"$DEST/pictures\"\n    rsync -a --delete \"$PACK/../words/pictures/\" \"$DEST/pictures/\"\n  fi\n  mkdir -p \"$DEST/mascot/posters\"\n  rsync -a --delete \"$PACK/posters/\" \"$DEST/mascot/posters/\"\n  rsync -a --delete \"$PACK/scenes/\" \"$DEST/scenes/\"\nelse\n  echo \"warning: Cutisie art pack not found at $PACK; clips will use still poses\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -425,6 +440,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B34FA95864A6ABE1D2F05192 /* AppServices.swift in Sources */,
+				EB6E37380023D7DB03B1D158 /* Autopilot.swift in Sources */,
 				614565604F650216B355733B /* BouncyButtonStyle.swift in Sources */,
 				393330BB3173AB2537756D3C /* CelebrationCenter.swift in Sources */,
 				D841E5E0FBB3B244A076D82F /* CelebrationOverlay.swift in Sources */,
@@ -438,7 +454,10 @@
 				3600F83A952A28A31AB16FE8 /* L2RR2LApp.swift in Sources */,
 				B0EBF4DAC4BF5CB4BCA9DB4E /* MascotDirector.swift in Sources */,
 				6EE26FAD533C589972A16082 /* MascotView.swift in Sources */,
+				0F1B800F3E54CCFE8FA053DD /* MilestoneScene.swift in Sources */,
+				99532CD549F124261708FE50 /* NewThingView.swift in Sources */,
 				CF77D8618FCE929812A0EFA0 /* ParallaxMotion.swift in Sources */,
+				FE383C52509B164325998657 /* ParentView.swift in Sources */,
 				F4DC29CF06D0EB72275C040A /* PhonemeEngine.swift in Sources */,
 				51F1D7A645D4BDACDC74DE10 /* ProgressModel.swift in Sources */,
 				C6E79BACFE4CC18C012B4E4E /* ProgressStore.swift in Sources */,
@@ -457,6 +476,7 @@
 				46F173488D817468185CEC44 /* StretchyBlendView.swift in Sources */,
 				619623197F8A42BA670095DF /* Theme.swift in Sources */,
 				0C2587655AFBF8B7533EBD92 /* TreasureView.swift in Sources */,
+				D4504D191341C731B0D7C8A3 /* UnicornMeanings.swift in Sources */,
 				D63AD3DBE867C4E7D95D7E5A /* WordBank.swift in Sources */,
 				12671514DC5D7B11099A9B7F /* WordMachineModel.swift in Sources */,
 				8BDA3D031E97AC72E50A64CF /* WordMachineView.swift in Sources */,

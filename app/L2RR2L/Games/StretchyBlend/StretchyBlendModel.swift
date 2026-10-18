@@ -34,6 +34,8 @@ final class StretchyBlendModel {
     @ObservationIgnored private var stuckTask: Task<Void, Never>?
     @ObservationIgnored private var needsListen = true
     @ObservationIgnored private let services: AppServices
+    /// Set when the game leaves the screen so pending steps don't keep talking.
+    @ObservationIgnored private var stopped = false
 
     var item: BlendItem { items[index] }
     var graphemes: [String] { item.word.graphemes }
@@ -56,6 +58,7 @@ final class StretchyBlendModel {
     }
 
     private func beginItem() async {
+        guard !stopped else { return }
         position = 0
         litTile = nil
         pulseTile = nil
@@ -73,6 +76,9 @@ final class StretchyBlendModel {
         phase = .slide
         services.mascot.react(.point)
         await services.voice.say(index == 0 ? "Now you! Slide Cutisie slowly down the rainbow." : "Slide Cutisie slowly.")
+        #if DEBUG
+        autoSlide()
+        #endif
     }
 
     /// Spec step 1: the Star Voice models the stretched word while the tiles
@@ -129,6 +135,9 @@ final class StretchyBlendModel {
                 phase = .zoomReady
                 services.feedback.play(.star)
                 services.voice.announce("Now zoom! Slide fast!")
+                #if DEBUG
+                autoSlide()
+                #endif
             }
         case .zoomReady:
             Task { await zoom() }
@@ -172,7 +181,30 @@ final class StretchyBlendModel {
         cardsShownAt = .now
         services.voice.announce("Which picture?")
         resetStuckTimer()
+        #if DEBUG
+        Autopilot.after(1.5) { [weak self] in
+            guard let self, !self.stopped, self.phase == .pick else { return }
+            if Autopilot.shouldMissThisOne, let wrong = self.cards.first(where: { $0 != self.item.word }) {
+                self.pick(wrong)
+                try? await Task.sleep(for: .seconds(4))
+            }
+            if self.phase == .pick { self.pick(self.item.word) }
+        }
+        #endif
     }
+
+    #if DEBUG
+    private func autoSlide() {
+        Autopilot.after(1.0) { [weak self] in
+            guard let self, !self.stopped, self.phase == .slide || self.phase == .zoomReady else { return }
+            for i in 0...30 {
+                self.slideChanged(to: CGFloat(i) / 30)
+                try? await Task.sleep(for: .milliseconds(70))
+            }
+            self.slideEnded()
+        }
+    }
+    #endif
 
     // MARK: Picking
 
@@ -198,6 +230,7 @@ final class StretchyBlendModel {
         } else {
             wiggleCard = card
             wiggleCount += 1
+            services.noteStruggle(item: item.word.text)
             services.progress.recordAnswer(game: game, word: item.word.text, correct: false,
                                            errorTags: errorTags(for: card))
             Task { await climbHint(missed: true) }
@@ -254,9 +287,13 @@ final class StretchyBlendModel {
     }
 
     private func next() async {
+        guard !stopped else { return }
         if index + 1 >= items.count {
             phase = .roundDone
             services.celebrateRoundComplete(game: game, line: "You stretched every word! Cutisie is so proud!")
+            #if DEBUG
+            Autopilot.finishRound(services)
+            #endif
             return
         }
         index += 1
@@ -270,6 +307,7 @@ final class StretchyBlendModel {
     }
 
     func stop() {
+        stopped = true
         stuckTask?.cancel()
         services.phonemes.release()
     }

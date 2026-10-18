@@ -109,7 +109,7 @@ private struct StickerReveal: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Text(sticker.emoji).font(.system(size: 160))
+            WordPicture(word: sticker.word, emoji: sticker.emoji, size: 200)
             Text(sticker.name)
                 .font(.playful(40))
                 .foregroundStyle(.white)

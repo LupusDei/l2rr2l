@@ -21,6 +21,17 @@ final class CelebrationCenter {
     }
 
     private(set) var bursts: [Burst] = []
+    /// A full-screen milestone scene playing (learning path section 8).
+    var milestoneScene: URL?
+
+    /// Plays `Media/scenes/milestone_NN.mp4` full screen if bundled. Returns false if not.
+    @discardableResult
+    func playMilestone(_ number: Int) -> Bool {
+        guard let url = Bundle.main.url(forResource: String(format: "milestone_%02d", number), withExtension: "mp4",
+                                        subdirectory: "Media/scenes") else { return false }
+        milestoneScene = url
+        return true
+    }
 
     func fire(_ kind: Kind) {
         let burst = Burst(kind: kind)

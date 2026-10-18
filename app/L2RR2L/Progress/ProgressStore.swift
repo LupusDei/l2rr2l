@@ -229,6 +229,29 @@ final class ProgressStore {
         mutate { $0.assessments.append(assessment) }
     }
 
+    func recordWarmUp(_ kind: WarmUpKind, clean: Bool, now: Date = .now) {
+        guard clean else { return }
+        mutate { $0.warmUpDays[kind.rawValue, default: []].insert(dayKey(now)) }
+    }
+
+    /// Next warm-up in rotation; mastered ones (3 clean days) drop out.
+    func nextWarmUp() -> WarmUpKind? {
+        let open = WarmUpKind.allCases.filter { (data.warmUpDays[$0.rawValue]?.count ?? 0) < 3 }
+        guard !open.isEmpty else { return nil }
+        return open[data.sessionsCompleted % open.count]
+    }
+
+    /// The next sound in her world that hasn't had its "new thing" story yet.
+    /// Placement puts her past earlier worlds, so only the current one counts.
+    func nextNewSound() -> String? {
+        guard let stage = Curriculum.shared.stage(max(data.stage, 1)) else { return nil }
+        return stage.graphemes.first { !data.introduced.contains($0) && NewThing.clipName(for: $0) != nil }
+    }
+
+    func markIntroduced(_ grapheme: String) {
+        mutate { $0.introduced.insert(grapheme) }
+    }
+
     /// Ends a session: always grants one collectible. Returns it.
     @discardableResult
     func completeSession(now: Date = .now) -> String {

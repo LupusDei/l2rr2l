@@ -42,4 +42,16 @@ Requires Xcode 26+, iOS 18 deployment target. `brew install xcodegen` if you cha
 
 Launch arguments: `-demoProgress` (placement done, Stage 1 words known so the
 Sky Trial shows, some treats), `-openTreasure` (jump to the end-of-session
-treasure), `-landscape`.
+treasure), `-landscape`, and `-autopilot`, which plays a full Sparkle Check and
+then one whole session (warm-up, new sound, three games, treasure) on its own,
+missing every fourth answer so hints and the struggle rule get exercised.
+
+## Art pack
+
+`art/cutisie/out` (not committed, about 1 GB) holds Cutisie's clips, scenes and
+word picture cards. The "Bundle Cutisie clips" build step copies clips,
+posters, scenes and picture cards into the app when the folder is present;
+without it the app falls back to pose stills and emoji. Letter sounds
+(`Media/phonemes`), spoken words (`Media/words`), poses, backgrounds and
+sounds are committed. The parent page opens by holding the small people icon
+in the home screen's bottom-right corner for 2 seconds.
