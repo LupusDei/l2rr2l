@@ -13,7 +13,7 @@ final class Speaker: NSObject {
     private let synth = AVSpeechSynthesizer()
     private var waiting: [ObjectIdentifier: CheckedContinuation<Void, Never>] = [:]
     private var clipPlayer: AVAudioPlayer?
-    private let voice: AVSpeechSynthesisVoice?
+    let voice: AVSpeechSynthesisVoice?
 
     /// 0...1 where AVSpeechUtteranceDefaultSpeechRate is 0.5.
     var rate: Float = 0.42

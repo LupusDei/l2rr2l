@@ -36,6 +36,16 @@ final class SoundEffects {
         try? engine.start()
     }
 
+    private var packCache: [String: AVAudioPCMBuffer] = [:]
+
+    /// Play a named sound from Cutisie's art pack (`Media/cutisie-sfx`), e.g.
+    /// "squeal_zoom", "giggle", "munch".
+    func playPack(_ name: String) {
+        guard !isMuted else { return }
+        if packCache[name] == nil { packCache[name] = Self.load(name, folder: "Media/cutisie-sfx", format: format) }
+        if let buffer = packCache[name] { schedule(buffer) }
+    }
+
     /// Next note of the sky's pentatonic run; resets to the bottom after a pause.
     func playTwinkle() {
         guard !isMuted else { return }

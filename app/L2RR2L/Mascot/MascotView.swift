@@ -23,7 +23,7 @@ struct MascotView: View {
     }
 
     private var stage: some View {
-        TimelineView(.animation) { timeline in
+        TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
             let t = timeline.date.timeIntervalSinceReferenceDate
             ZStack {
                 // aura
@@ -254,6 +254,9 @@ struct MascotVideoPlayer: UIViewRepresentable {
         private var looper: AVPlayerLooper?
         private var token = Int.min
         private var endObserver: NSObjectProtocol?
+        private var timeObserver: Any?
+        /// The take's first frame, shown until the video draws so swaps never flash empty.
+        private let poster = UIImageView()
         var onFinish: (() -> Void)?
 
         override init(frame: CGRect) {
@@ -268,12 +271,21 @@ struct MascotVideoPlayer: UIViewRepresentable {
             playerLayer.player = player
             backgroundColor = .clear
             isOpaque = false
+            poster.contentMode = .scaleAspectFit
+            poster.frame = bounds
+            poster.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            addSubview(poster)
+            timeObserver = player.addPeriodicTimeObserver(forInterval: CMTime(value: 1, timescale: 30), queue: .main) { [weak self] time in
+                guard let self, self.poster.alpha > 0, time.seconds > 0.05, self.playerLayer.isReadyForDisplay else { return }
+                UIView.animate(withDuration: 0.08) { self.poster.alpha = 0 }
+            }
         }
 
         required init?(coder: NSCoder) { fatalError() }
 
         deinit {
             if let endObserver { NotificationCenter.default.removeObserver(endObserver) }
+            if let timeObserver { player.removeTimeObserver(timeObserver) }
         }
 
         func play(url: URL, idle: Bool, token: Int) {
@@ -283,6 +295,12 @@ struct MascotVideoPlayer: UIViewRepresentable {
             looper = nil
             if let endObserver { NotificationCenter.default.removeObserver(endObserver) }
             endObserver = nil
+            let name = url.deletingPathExtension().lastPathComponent
+            if let path = Bundle.main.path(forResource: name, ofType: "png", inDirectory: "Media/mascot/posters") {
+                poster.layer.removeAllAnimations()
+                poster.image = UIImage(contentsOfFile: path)
+                poster.alpha = 1
+            }
             player.removeAllItems()
             let item = AVPlayerItem(url: url)
             // The pack's alpha clips store straight (unpremultiplied) color, which

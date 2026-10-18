@@ -85,7 +85,7 @@ struct StarVoiceBeacon: View {
 
     var body: some View {
         let speaking = voice.caption != nil
-        TimelineView(.animation) { timeline in
+        TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
             let t = timeline.date.timeIntervalSinceReferenceDate
             ZStack {
                 if speaking {

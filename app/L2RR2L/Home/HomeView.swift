@@ -98,7 +98,7 @@ struct PortalOrb: View {
 
     var body: some View {
         Button(action: action) {
-            TimelineView(.animation) { timeline in
+            TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
                 let t = timeline.date.timeIntervalSinceReferenceDate
                 VStack(spacing: -size * 0.08) {
                     orb(t: t)

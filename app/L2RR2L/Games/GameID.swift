@@ -54,13 +54,13 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
     /// Cutisie's opening line when the game starts.
     var introLine: String {
         switch self {
-        case .stretchyBlend: "Let's stretch some sounds together!"
+        case .stretchyBlend: "Let's stretch sounds with Cutisie!"
         case .wordMachine: "Let's build words with my magic machine!"
         case .starCatch: "Read the word, then catch the star!"
         }
     }
 
-    var isReady: Bool { false }
+    var isReady: Bool { self == .stretchyBlend }
 
     // MARK: Game slots
 
@@ -68,8 +68,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
     func makeView() -> some View {
         switch self {
         case .stretchyBlend:
-            // TODO: replace with StretchyBlendView() (Games/StretchyBlend/)
-            GamePlaceholderView(game: self)
+            StretchyBlendView()
         case .wordMachine:
             // TODO: replace with WordMachineView() (Games/WordMachine/)
             GamePlaceholderView(game: self)

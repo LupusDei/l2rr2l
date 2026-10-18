@@ -17,6 +17,8 @@ final class AppServices {
     let celebration: CelebrationCenter
     let feedback: Feedback
     let parallax: ParallaxMotion
+    /// Holdable letter sounds for blending.
+    let phonemes: PhonemeEngine
 
     var speaker: Speaker { voice.speaker }
 
@@ -34,6 +36,7 @@ final class AppServices {
         self.celebration = CelebrationCenter()
         self.feedback = Feedback(sounds: sounds, haptics: haptics)
         self.parallax = ParallaxMotion()
+        self.phonemes = PhonemeEngine(voice: speaker.voice)
     }
 
     static func live() -> AppServices {

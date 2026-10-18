@@ -14,7 +14,7 @@ struct SkyBackground: View {
     var body: some View {
         GeometryReader { geo in
             let size = geo.size
-            TimelineView(.animation) { timeline in
+            TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
                 let t = timeline.date.timeIntervalSinceReferenceDate
                 let p = motion.offset
                 let painted = imageName.flatMap(SkyBackground.painting)

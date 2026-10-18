@@ -53,6 +53,8 @@ targets:
           if [ -d "$PACK/alpha" ]; then
             mkdir -p "$DEST/mascot/clips" "$DEST/scenes"
             rsync -a --delete "$PACK/alpha/" "$DEST/mascot/clips/"
+            mkdir -p "$DEST/mascot/posters"
+            rsync -a --delete "$PACK/posters/" "$DEST/mascot/posters/"
             rsync -a --delete "$PACK/scenes/" "$DEST/scenes/"
           else
             echo "warning: Cutisie art pack not found at $PACK; clips will use still poses"
