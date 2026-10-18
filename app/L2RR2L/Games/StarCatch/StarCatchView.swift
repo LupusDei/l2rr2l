@@ -151,11 +151,11 @@ struct SparkleStar: Shape {
         let inner = r * 0.32
         var p = Path()
         for i in 0..<8 {
-            let angle = Double(i) * .pi / 4 - .pi / 2
+            let angle = CGFloat(i) * .pi / 4 - .pi / 2
             let radius = i.isMultiple(of: 2) ? r : inner
             let pt = CGPoint(x: c.x + cos(angle) * radius, y: c.y + sin(angle) * radius)
             if i == 0 { p.move(to: pt) } else {
-                let mid = Double(i) * .pi / 4 - .pi / 2 - .pi / 8
+                let mid = CGFloat(i) * .pi / 4 - .pi / 2 - .pi / 8
                 let ctrl = CGPoint(x: c.x + cos(mid) * inner * 0.9, y: c.y + sin(mid) * inner * 0.9)
                 p.addQuadCurve(to: pt, control: ctrl)
             }
