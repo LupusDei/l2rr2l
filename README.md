@@ -26,6 +26,8 @@ Requires Xcode 26+, iOS 18 deployment target. `brew install xcodegen` if you cha
 | `app/L2RR2L/Progress` | saved progress: stages, word mastery over days, spaced review, error patterns, skills with prerequisites/bridges, milestones, stars, treats, egg, sticker book |
 | `app/L2RR2L/Games` | game catalog, shared game screen, and the three playable games: Stretchy Blend, Word Machine, Star Catch (content in `Games/Content/WordBank.swift`) |
 | `app/L2RR2L/Resources/Media` | drop folder for mascot clips, sounds, phonemes, words (see its README) |
+| `app/L2RR2L/Games/Checks` | Sparkle Check placement and Sky Trial checkpoints |
+| `app/L2RR2L/Resources/Media/content/curriculum.json` | all stages: words, tiles and sounds, pictures, distractors, chains, heart words, sentences, unicorn words. Edit `tools/make_curriculum.py` and re-run it |
 | `art/cutisie` | mascot art brief and references |
 
 ## Adding a game
@@ -35,3 +37,9 @@ Requires Xcode 26+, iOS 18 deployment target. `brew install xcodegen` if you cha
 3. Use `AppServices` for everything that should feel the same across games:
    `voice.say(...)`, `voice.sayLetterSound(...)`, `celebrateCorrect(game:word:usedAudioHelp:responseTime:)`,
    `encourageRetry(game:word:errorTags:)`, `celebrateRoundComplete(game:)`, `mascot.react(...)`.
+
+## Trying it without playing for days (debug builds)
+
+Launch arguments: `-demoProgress` (placement done, Stage 1 words known so the
+Sky Trial shows, some treats), `-openTreasure` (jump to the end-of-session
+treasure), `-landscape`.

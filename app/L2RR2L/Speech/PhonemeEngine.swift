@@ -38,7 +38,7 @@ final class PhonemeEngine {
 
     /// Render (or load) the sounds for these graphemes ahead of time.
     func prepare(_ graphemes: [String]) async {
-        for g in Set(graphemes.map { $0.lowercased() }) where cache[g] == nil {
+        for g in Set(graphemes.map { $0.lowercased() }) where !g.isEmpty && cache[g] == nil {
             if let sound = await build(g) { cache[g] = sound }
         }
     }
@@ -50,6 +50,7 @@ final class PhonemeEngine {
     /// Start (or switch to) holding a grapheme's sound.
     func hold(_ grapheme: String) {
         let g = grapheme.lowercased()
+        if g.isEmpty { release(); return } // silent letter (magic e)
         guard g != current, let sound = cache[g] else { return }
         if !engine.isRunning { try? engine.start() }
         fadeOut(active)
@@ -84,6 +85,10 @@ final class PhonemeEngine {
         await prepare(graphemes)
         for (i, g) in graphemes.enumerated() {
             onSound?(i)
+            if g.isEmpty {
+                try? await Task.sleep(for: .seconds(0.2))
+                continue
+            }
             hold(g)
             let isStop = !(LetterSounds.table[g.lowercased()]?.continuous ?? true)
             try? await Task.sleep(for: .seconds(isStop ? 0.25 : perSound))

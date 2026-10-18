@@ -28,19 +28,20 @@ final class WordMachineModel {
     @ObservationIgnored private var wordShownAt = Date()
     @ObservationIgnored private var stuckTask: Task<Void, Never>?
     @ObservationIgnored private let services: AppServices
-    @ObservationIgnored private var chainOffset = Int.random(in: 0..<WordBank.chains.count)
 
     var word: Word { chain.words[index] }
     var target: [String] { word.graphemes }
+    var sounds: [String] { word.soundKeys }
     var game: GameID { .wordMachine }
 
     init(services: AppServices) {
         self.services = services
-        chain = WordBank.chains[chainOffset]
+        chain = SessionPlanner(progress: services.progress).chain()
+            ?? WordChain(id: "starter", words: ["mat", "sat", "sad"].map { Word($0, WordBank.picture($0)) }, distractors: ["p"])
     }
 
     func start() async {
-        await services.phonemes.prepare(chain.trayLetters)
+        await services.phonemes.prepare(chain.trayLetters + chain.words.flatMap(\.soundKeys))
         boxes = Array(repeating: nil, count: target.count)
         try? await Task.sleep(for: .seconds(1.0))
         await beginWord()
@@ -70,7 +71,7 @@ final class WordMachineModel {
 
     /// The machine plays the word stretched, one box at a time.
     private func hum(all: Bool) async {
-        await services.phonemes.stretch(target, perSound: 0.55) { [weak self] i in
+        await services.phonemes.stretch(sounds, perSound: 0.55) { [weak self] i in
             self?.humming = i >= 0 ? i : nil
         }
     }
@@ -92,7 +93,7 @@ final class WordMachineModel {
         guard phase == .build || phase == .ready else { return }
         humming = i
         Task {
-            await services.phonemes.tap(target[i], holdFor: 0.6)
+            await services.phonemes.tap(sounds[i], holdFor: 0.6)
             if humming == i { humming = nil }
         }
         resetStuckTimer()
@@ -119,7 +120,7 @@ final class WordMachineModel {
             services.haptics.play(.drop)
             humming = i
             Task {
-                await services.phonemes.tap(letter, holdFor: 0.45)
+                await services.phonemes.tap(sounds[i], holdFor: 0.45)
                 if humming == i { humming = nil }
             }
             checkComplete()
@@ -143,7 +144,7 @@ final class WordMachineModel {
             await services.voice.say("Touch each sound.")
         case 2:
             humming = i
-            await services.phonemes.tap(target[i], holdFor: 0.8)
+            await services.phonemes.tap(sounds[i], holdFor: 0.8)
             humming = nil
         case 3:
             usedHelp = true
@@ -181,7 +182,7 @@ final class WordMachineModel {
             services.sounds.playPack("magic_zap")
             try? await Task.sleep(for: .seconds(0.4))
             // light slides across the word: a mini Stretchy Blend
-            await services.phonemes.stretch(target, perSound: 0.4) { [weak self] i in
+            await services.phonemes.stretch(sounds, perSound: 0.4) { [weak self] i in
                 self?.readingIndex = i >= 0 ? i : nil
             }
             await services.voice.sayWord(word.text)
@@ -226,8 +227,10 @@ final class WordMachineModel {
     }
 
     func playAgain() {
-        chainOffset += 1
-        chain = WordBank.chains[chainOffset % WordBank.chains.count]
+        let chains = WordBank.chains(for: services.progress.data.stage)
+        if let i = chains.firstIndex(where: { $0.id == chain.id }), !chains.isEmpty {
+            chain = chains[(i + 1) % chains.count]
+        }
         index = 0
         builtWords = []
         boxes = []

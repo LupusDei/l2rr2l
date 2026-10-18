@@ -1,48 +1,36 @@
 import Foundation
 
-/// A word as the games need it: its sound-by-sound spelling and a picture.
-/// Pictures are emoji until the art thread draws the word pictures.
+/// A word as the games need it: tiles (graphemes), the sound each tile makes
+/// (`sounds`, "" for a silent letter like magic e) and a picture. Pictures are
+/// emoji until the art thread draws the word pictures.
 struct Word: Hashable, Identifiable, Codable {
     let text: String
     let graphemes: [String]
+    var sounds: [String]?
     let picture: String?
+    var stage: Int?
+    var distractors: [String]?
     var id: String { text }
 
-    init(_ text: String, _ picture: String?, graphemes: [String]? = nil) {
+    init(_ text: String, _ picture: String?, graphemes: [String]? = nil, sounds: [String]? = nil) {
         self.text = text
         self.picture = picture
         self.graphemes = graphemes ?? text.map(String.init)
+        self.sounds = sounds
     }
+
+    /// Sound key per tile for `PhonemeEngine` ("" = silent).
+    var soundKeys: [String] { sounds ?? graphemes }
+    /// Sound keys with silent tiles removed, for modelling a stretch.
+    var spokenSounds: [String] { soundKeys.filter { !$0.isEmpty } }
 }
 
-/// One Stretchy Blend item: the word plus two picture distractors that
-/// differ by one sound (man: map / pan).
+/// One picture-choice item: the word plus two picture distractors that
+/// differ by one sound where possible (man: map / pan).
 struct BlendItem: Identifiable, Hashable {
     let word: Word
     let distractors: [Word]
     var id: String { word.text }
-}
-
-enum WordBank {
-    /// Stage 1 blending words: continuous first sounds before stop sounds,
-    /// stops at the end. Every word and distractor has a clear picture.
-    static let stage1Blends: [BlendItem] = [
-        BlendItem(word: Word("sun", "☀️"), distractors: [Word("run", "🏃"), Word("sub", "🥪")]),
-        BlendItem(word: Word("man", "👨"), distractors: [Word("map", "🗺️"), Word("pan", "🍳")]),
-        BlendItem(word: Word("fan", "🪭"), distractors: [Word("van", "🚐"), Word("fin", "🦈")]),
-        BlendItem(word: Word("map", "🗺️"), distractors: [Word("mop", "🧹"), Word("cap", "🧢")]),
-        BlendItem(word: Word("ram", "🐏"), distractors: [Word("ham", "🍖"), Word("jam", "🍯")]),
-        BlendItem(word: Word("net", "🥅"), distractors: [Word("nut", "🥜"), Word("jet", "✈️")]),
-        BlendItem(word: Word("mug", "☕️"), distractors: [Word("bug", "🐛"), Word("rug", "🧶")]),
-        BlendItem(word: Word("leg", "🦵"), distractors: [Word("log", "🪵"), Word("peg", "📌")]),
-        BlendItem(word: Word("sad", "😢"), distractors: [Word("mad", "😠"), Word("sap", "🌲")]),
-        BlendItem(word: Word("lip", "👄"), distractors: [Word("lid", "🫙"), Word("hip", "🦴")]),
-        BlendItem(word: Word("fish", "🐟", graphemes: ["f", "i", "sh"]), distractors: [Word("dish", "🍽️"), Word("fist", "✊")]),
-        BlendItem(word: Word("hen", "🐔"), distractors: [Word("pen", "🖊️"), Word("ten", "🔟")]),
-        BlendItem(word: Word("cat", "🐱"), distractors: [Word("bat", "🦇"), Word("cap", "🧢")]),
-        BlendItem(word: Word("pig", "🐷"), distractors: [Word("pin", "📍"), Word("dig", "⛏️")]),
-        BlendItem(word: Word("bus", "🚌"), distractors: [Word("bun", "🍞"), Word("bug", "🐛")]),
-    ]
 }
 
 /// A Word Machine chain: each word differs from the one before by one sound.
@@ -52,36 +40,89 @@ struct WordChain: Identifiable, Hashable {
     /// Extra letters in the tray that aren't needed, to make her listen.
     let distractors: [String]
 
-    /// Every letter the chain needs plus distractors, as single-use stamps.
     var trayLetters: [String] {
-        let needed = words.flatMap(\.graphemes)
         var seen: [String] = []
-        for g in needed + distractors where !seen.contains(g) { seen.append(g) }
+        for g in words.flatMap(\.graphemes) + distractors where !seen.contains(g) { seen.append(g) }
         return seen.sorted()
     }
 }
 
-extension WordBank {
-    static func picture(_ text: String) -> String? {
-        let all = stage1Blends.flatMap { [$0.word] + $0.distractors }
-        if let hit = all.first(where: { $0.text == text }) { return hit.picture }
-        return extraPictures[text]
+/// A short decodable sentence with a scene picture and two near-miss scenes.
+struct Sentence: Codable, Hashable {
+    let text: String
+    let picture: String
+    let distractors: [String]
+}
+
+/// One world in Cutisie's sky (learning path section 4).
+struct Stage: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let graphemes: [String]
+    let words: [Word]
+    let heartWords: [String]
+    let chains: [[Word]]
+    let sentences: [Sentence]
+    let unicornWords: [Word]
+}
+
+struct Curriculum: Codable {
+    let version: Int
+    let stages: [Stage]
+
+    /// Loaded from `Media/content/curriculum.json` (built by tools/make_curriculum.py).
+    static let shared: Curriculum = {
+        guard let url = Bundle.main.url(forResource: "curriculum", withExtension: "json", subdirectory: "Media/content"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode(Curriculum.self, from: data) else {
+            assertionFailure("curriculum.json missing or invalid")
+            return Curriculum(version: 0, stages: [])
+        }
+        return decoded
+    }()
+
+    func stage(_ id: Int) -> Stage? { stages.first { $0.id == id } }
+
+    /// Every word with a picture, for looking up distractor pictures.
+    var pictured: [String: Word] {
+        var out: [String: Word] = [:]
+        for s in stages { for w in s.words + s.chains.flatMap({ $0 }) where w.picture != nil { out[w.text] = w } }
+        return out
+    }
+}
+
+enum WordBank {
+    static let pictures = Curriculum.shared.pictured
+
+    static func picture(_ text: String) -> String? { pictures[text]?.picture }
+
+    /// Picture-choice item for a curriculum word, or nil if it can't be pictured.
+    static func blendItem(_ word: Word) -> BlendItem? {
+        guard word.picture != nil, let names = word.distractors, names.count == 2 else { return nil }
+        let distractors = names.map { pictures[$0] ?? Word($0, nil) }
+        guard distractors.allSatisfy({ $0.picture != nil }) else { return nil }
+        return BlendItem(word: word, distractors: distractors)
     }
 
-    private static let extraPictures: [String: String] = [
-        // words with weak pictures (sat, sit, tip...) stay without one; the
-        // bubble shows a sparkle and the word is still spoken
-        "can": "🥫", "tin": "🥫", "cot": "🛏️", "hot": "🔥", "hop": "🐇",
-    ]
-
-    private static func chain(_ id: String, _ texts: [String], distractors: [String]) -> WordChain {
-        WordChain(id: id, words: texts.map { Word($0, picture($0)) }, distractors: distractors)
+    /// Every pictured word taught at or before `stage`.
+    static func items(upTo stage: Int) -> [BlendItem] {
+        Curriculum.shared.stages.filter { $0.id <= max(stage, 1) }.flatMap(\.words).compactMap(blendItem)
     }
 
-    /// Stage 1-2 chains from spec 3.2: beginning, end, then middle changes.
-    static let chains: [WordChain] = [
-        chain("short-a", ["mat", "sat", "sad", "mad", "man", "can"], distractors: ["p", "i"]),
-        chain("short-i", ["sit", "pit", "pin", "tin", "tip", "lip"], distractors: ["a", "m"]),
-        chain("mixed", ["cat", "cot", "hot", "hop", "hip", "hit"], distractors: ["s", "u"]),
-    ]
+    static func items(in stage: Int) -> [BlendItem] {
+        (Curriculum.shared.stage(max(stage, 1))?.words ?? []).compactMap(blendItem)
+    }
+
+    /// Stage 1 starter set, used by previews and tests.
+    static var stage1Blends: [BlendItem] { items(in: 1) }
+
+    static func chains(for stage: Int) -> [WordChain] {
+        let s = max(stage, 1)
+        let source = Curriculum.shared.stages.last { $0.id <= s && !$0.chains.isEmpty }
+        return (source?.chains ?? []).enumerated().map { i, words in
+            let letters = Set(words.flatMap(\.graphemes))
+            let extras = ["a", "e", "i", "o", "u", "s", "m", "t", "p"].filter { !letters.contains($0) }.shuffled().prefix(2)
+            return WordChain(id: "s\(source?.id ?? s)-\(i)", words: words, distractors: Array(extras))
+        }
+    }
 }

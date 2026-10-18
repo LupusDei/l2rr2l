@@ -35,7 +35,7 @@ private struct StarCatchBoard: View {
             let cloudX = { (i: Int) -> CGFloat in w * [0.3, 0.58, 0.86][i] - (landscape ? w * 0.04 : 0) }
 
             ZStack {
-                Constellation(filled: model.catches, total: StarCatchModel.catchesPerRound,
+                Constellation(filled: model.catches, total: model.total,
                               complete: model.phase == .roundDone)
                     .frame(width: min(w * 0.5, 460), height: h * 0.13)
                     .position(x: w / 2, y: h * 0.13)
@@ -43,14 +43,14 @@ private struct StarCatchBoard: View {
                 WanderingCutisie(size: m.s(130), bounds: CGSize(width: w, height: h))
                     .allowsHitTesting(false)
 
-                ForEach(Array(model.clouds.enumerated()), id: \.element) { i, cloud in
-                    PictureCloud(word: cloud, width: cloudW,
-                                 wiggle: model.wiggleCloud == cloud ? model.wiggleCount : 0,
-                                 glow: model.glowCloud == cloud,
-                                 caught: model.caughtCloud == cloud,
-                                 dimmed: model.caughtCloud != nil && model.caughtCloud != cloud)
+                ForEach(Array(model.choices.enumerated()), id: \.element) { i, choice in
+                    PictureCloud(choice: choice, width: cloudW,
+                                 wiggle: model.wiggleChoice == choice ? model.wiggleCount : 0,
+                                 glow: model.glowChoice == choice,
+                                 caught: model.caughtChoice == choice,
+                                 dimmed: model.caughtChoice != nil && model.caughtChoice != choice)
                         .position(x: cloudX(i), y: cloudY)
-                        .onTapGesture { model.tapCloud(cloud) }
+                        .onTapGesture { model.tap(choice) }
                         .transition(.scale.combined(with: .opacity))
                 }
 
@@ -60,10 +60,10 @@ private struct StarCatchBoard: View {
                         // slow ping-pong fall: no visible time pressure, never a fail
                         let fall = 0.5 - 0.5 * cos(.pi * t / 11)
                         let lane = [0.38, 0.62, 0.5, 0.45, 0.58][model.index % 5]
-                        let caughtAt = model.caughtCloud.flatMap { c in model.clouds.firstIndex(of: c) }
+                        let caughtAt = model.caughtChoice.flatMap { c in model.choices.firstIndex(of: c) }
                         let x = caughtAt.map(cloudX) ?? w * lane + 20 * sin(t * 0.9)
                         let y = caughtAt != nil ? cloudY - cloudW * 0.25 : h * (0.24 + 0.3 * fall)
-                        WordStar(word: model.word, lit: model.litLetter, helped: model.helpUsed,
+                        WordStar(item: model.item, lit: model.litLetter, helped: model.helpUsed,
                                  size: m.s(250), caught: caughtAt != nil)
                             .position(x: x, y: y)
                             .animation(.spring(response: 0.5, dampingFraction: 0.6), value: caughtAt)
@@ -87,7 +87,7 @@ private struct StarCatchBoard: View {
 /// A big glowing four-point star with the word across it. Letters light up
 /// during a help stretch.
 private struct WordStar: View {
-    let word: Word
+    let item: CatchItem
     let lit: Int?
     let helped: Bool
     let size: CGFloat
@@ -110,21 +110,36 @@ private struct WordStar: View {
                     .rotationEffect(.degrees(6 * sin(t * 1.5)))
                     .scaleEffect(helped ? 0.85 : 1 + 0.04 * sin(t * 3))
                     .glow(Theme.gold, radius: size * (helped ? 0.06 : 0.12))
-                HStack(spacing: 2) {
-                    ForEach(Array(word.graphemes.enumerated()), id: \.offset) { i, g in
-                        Text(g)
-                            .foregroundStyle(lit == i ? Theme.pink : Theme.skyTop)
-                            .scaleEffect(lit == i ? 1.25 : 1)
+                Group {
+                    switch item {
+                    case .word(let b):
+                        HStack(spacing: 2) {
+                            ForEach(Array(b.word.graphemes.enumerated()), id: \.offset) { i, g in
+                                Text(g)
+                                    .foregroundStyle(lit == i ? Theme.pink : Theme.skyTop)
+                                    .scaleEffect(lit == i ? 1.25 : 1)
+                            }
+                        }
+                        .font(.reading(size * 0.26))
+                    case .heart:
+                        Image(systemName: "heart.fill")
+                            .font(.system(size: size * 0.22))
+                            .foregroundStyle(Theme.pink)
+                            .padding(.vertical, size * 0.02)
+                    case .sentence(let s):
+                        Text(s.text)
+                            .font(.reading(size * 0.17))
+                            .foregroundStyle(Theme.skyTop)
+                            .fixedSize()
                     }
                 }
-                .font(.reading(size * 0.26))
                 .padding(.horizontal, size * 0.08).padding(.vertical, size * 0.02)
                 .background(Capsule().fill(.white.opacity(0.92)))
                 .animation(.spring(response: 0.25, dampingFraction: 0.5), value: lit)
             }
             .scaleEffect(caught ? 0.45 : 1)
         }
-        .accessibilityLabel("Star: \(word.text)")
+        .accessibilityLabel("Star: \(item.text)")
     }
 }
 
@@ -155,7 +170,7 @@ struct SparkleStar: Shape {
 /// A puffy cloud holding a picture. Wiggles on a miss, glows as a hint,
 /// bursts into its picture when the star lands in it.
 private struct PictureCloud: View {
-    let word: Word
+    let choice: StarCatchModel.Choice
     let width: CGFloat
     let wiggle: Int
     let glow: Bool
@@ -166,8 +181,9 @@ private struct PictureCloud: View {
         ZStack {
             FluffyCloud()
                 .frame(width: width * 1.25, height: width * 0.75)
-            Text(word.picture ?? "✨")
-                .font(.system(size: width * 0.36))
+            Text(choice.display)
+                .font(choice.isText ? .reading(width * 0.2) : .system(size: width * (choice.display.count > 1 ? 0.24 : 0.36)))
+                .foregroundStyle(Theme.skyTop)
                 .offset(y: -width * 0.04)
                 .scaleEffect(caught ? 1.5 : 1)
                 .rotationEffect(.degrees(caught ? -8 : 0))
@@ -184,7 +200,7 @@ private struct PictureCloud: View {
             SpringKeyframe(0, duration: 0.25)
         }
         .animation(.spring(response: 0.35, dampingFraction: 0.45), value: caught)
-        .accessibilityLabel(word.text)
+        .accessibilityLabel(choice.id)
         .accessibilityAddTraits(.isButton)
     }
 }
@@ -195,10 +211,12 @@ private struct Constellation: View {
     let filled: Int
     let total: Int
     let complete: Bool
-    private let points: [UnitPoint] = [
-        UnitPoint(x: 0.05, y: 0.7), UnitPoint(x: 0.28, y: 0.25), UnitPoint(x: 0.5, y: 0.6),
-        UnitPoint(x: 0.72, y: 0.2), UnitPoint(x: 0.95, y: 0.65),
-    ]
+    private var points: [UnitPoint] {
+        (0..<max(total, 1)).map { i in
+            let x = total > 1 ? 0.05 + 0.9 * Double(i) / Double(total - 1) : 0.5
+            return UnitPoint(x: x, y: i.isMultiple(of: 2) ? 0.68 : 0.22)
+        }
+    }
 
     var body: some View {
         GeometryReader { geo in

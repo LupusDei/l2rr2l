@@ -29,6 +29,13 @@ struct StickerBookView: View {
                         rewardPill("🥚", "egg \(progress.data.eggProgress)/\(ProgressStore.treatsPerEgg)")
                         rewardPill("📖", "\(progress.data.stickers.count) words")
                     }
+                    CollectionShelf(items: progress.data.collectibles + progress.data.hatched)
+                    Button { services.router.open(.treasure(fromSession: false)) } label: {
+                        Text("🍓 🥚")
+                            .font(.system(size: m.s(44)))
+                            .frame(width: m.s(180), height: m.s(90))
+                    }
+                    .buttonStyle(.chunky(Theme.pink, depth: m.s(8), cornerRadius: m.s(36)))
 
                     if progress.data.stickers.isEmpty {
                         VStack(spacing: m.s(12)) {
@@ -39,24 +46,28 @@ struct StickerBookView: View {
                         }
                         .padding(.top, m.s(40))
                     } else {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: m.s(160)), spacing: m.s(20))], spacing: m.s(20)) {
-                            ForEach(progress.data.stickers) { sticker in
-                                Button {
-                                    services.feedback.play(.pop)
-                                    Task { await services.voice.sayWord(sticker.word) }
-                                } label: {
-                                    VStack(spacing: 6) {
-                                        Text(sticker.emoji).font(.system(size: m.s(70)))
-                                        Text(sticker.word)
-                                            .font(.reading(m.s(36)))
-                                            .foregroundStyle(Theme.skyTop)
+                        ForEach(stickerGroups, id: \.stage) { group in
+                            VStack(alignment: .leading, spacing: m.s(12)) {
+                                Text(group.name)
+                                    .font(.playful(m.s(26)))
+                                    .foregroundStyle(.white)
+                                LazyVGrid(columns: [GridItem(.adaptive(minimum: m.s(150)), spacing: m.s(18))], spacing: m.s(18)) {
+                                    ForEach(group.stickers) { sticker in
+                                        Button {
+                                            Task { await services.voice.sayWord(sticker.word) }
+                                        } label: {
+                                            VStack(spacing: 6) {
+                                                Text(sticker.emoji).font(.system(size: m.s(64)))
+                                                Text(sticker.word)
+                                                    .font(.reading(m.s(34)))
+                                                    .foregroundStyle(Theme.skyTop)
+                                            }
+                                            .frame(maxWidth: .infinity)
+                                            .padding(m.s(14))
+                                        }
+                                        .buttonStyle(.chunky(.white, depth: m.s(8), cornerRadius: m.s(28)))
                                     }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(m.s(18))
-                                    .background(RoundedRectangle(cornerRadius: 28, style: .continuous).fill(.white))
-                                    .glow(Theme.gold, radius: 8)
                                 }
-                                .buttonStyle(.bouncy)
                             }
                         }
                     }
@@ -66,6 +77,17 @@ struct StickerBookView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .adaptiveMetrics()
+    }
+
+    /// Stickers grouped by the world the word belongs to.
+    private var stickerGroups: [(stage: Int, name: String, stickers: [Sticker])] {
+        var byStage: [Int: [Sticker]] = [:]
+        for sticker in progress.data.stickers {
+            let stage = WordBank.pictures[sticker.word]?.stage
+                ?? Curriculum.shared.stages.first { $0.heartWords.map { $0.lowercased() }.contains(sticker.word) }?.id ?? 1
+            byStage[stage, default: []].append(sticker)
+        }
+        return byStage.keys.sorted().map { ($0, Curriculum.shared.stage($0)?.name ?? "Words", byStage[$0]!) }
     }
 
     private func rewardPill(_ emoji: String, _ text: String) -> some View {

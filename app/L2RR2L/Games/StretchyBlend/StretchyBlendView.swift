@@ -229,28 +229,41 @@ struct PictureCard: View {
     }
 }
 
-/// End of round: play again or go home.
+/// End of round: play again or go home; inside today's session, one big
+/// arrow to the next step instead.
 struct RoundDonePanel: View {
     let onAgain: () -> Void
     let onHome: () -> Void
+    @Environment(Router.self) private var router
     @Environment(\.metrics) private var m
 
     var body: some View {
         HStack(spacing: m.s(30)) {
-            Button(action: onAgain) {
-                Image(systemName: "arrow.clockwise")
-                    .font(.system(size: m.s(54), weight: .black))
-                    .foregroundStyle(.white)
-                    .frame(width: m.s(170), height: m.s(130))
+            if router.inSession {
+                Button { router.advance() } label: {
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: m.s(64), weight: .black))
+                        .foregroundStyle(.white)
+                        .frame(width: m.s(220), height: m.s(140))
+                        .symbolEffect(.bounce, options: .repeating.speed(0.5))
+                }
+                .buttonStyle(.chunky(Theme.gold, depth: m.s(12), cornerRadius: m.s(44)))
+            } else {
+                Button(action: onAgain) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.system(size: m.s(54), weight: .black))
+                        .foregroundStyle(.white)
+                        .frame(width: m.s(170), height: m.s(130))
+                }
+                .buttonStyle(.chunky(Theme.mint, depth: m.s(12), cornerRadius: m.s(40)))
+                Button(action: onHome) {
+                    Image(systemName: "house.fill")
+                        .font(.system(size: m.s(54), weight: .black))
+                        .foregroundStyle(.white)
+                        .frame(width: m.s(170), height: m.s(130))
+                }
+                .buttonStyle(.chunky(Theme.lilac, depth: m.s(12), cornerRadius: m.s(40)))
             }
-            .buttonStyle(.chunky(Theme.mint, depth: m.s(12), cornerRadius: m.s(40)))
-            Button(action: onHome) {
-                Image(systemName: "house.fill")
-                    .font(.system(size: m.s(54), weight: .black))
-                    .foregroundStyle(.white)
-                    .frame(width: m.s(170), height: m.s(130))
-            }
-            .buttonStyle(.chunky(Theme.lilac, depth: m.s(12), cornerRadius: m.s(40)))
         }
     }
 }

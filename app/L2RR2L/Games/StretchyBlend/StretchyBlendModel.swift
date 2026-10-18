@@ -37,19 +37,20 @@ final class StretchyBlendModel {
 
     var item: BlendItem { items[index] }
     var graphemes: [String] { item.word.graphemes }
+    /// Sound key per tile ("" for a silent magic e).
+    var sounds: [String] { item.word.soundKeys }
     var game: GameID { .stretchyBlend }
 
     init(services: AppServices) {
         self.services = services
-        let pool = WordBank.stage1Blends
-        // continuous-first words lead; the rest of the round is a shuffled mix
-        items = Array(pool.prefix(3).shuffled() + pool.dropFirst(3).shuffled()).prefix(Self.itemsPerRound).map { $0 }
+        items = SessionPlanner(progress: services.progress).pictureItems(Self.itemsPerRound)
+        if items.isEmpty { items = WordBank.stage1Blends }
     }
 
     // MARK: Flow
 
     func start() async {
-        await services.phonemes.prepare(items.flatMap(\.word.graphemes))
+        await services.phonemes.prepare(items.flatMap(\.word.soundKeys))
         try? await Task.sleep(for: .seconds(1.0))
         await beginItem()
     }
@@ -86,7 +87,7 @@ final class StretchyBlendModel {
 
     private func modelStretch() async {
         let n = graphemes.count
-        await services.phonemes.stretch(graphemes, perSound: 0.7) { [weak self] i in
+        await services.phonemes.stretch(sounds, perSound: 0.7) { [weak self] i in
             guard let self else { return }
             withAnimation(.easeInOut(duration: 0.6)) {
                 self.litTile = i >= 0 ? i : nil
@@ -105,7 +106,7 @@ final class StretchyBlendModel {
             litTile = tile
             if let tile {
                 visited.insert(tile)
-                services.phonemes.hold(graphemes[tile])
+                services.phonemes.hold(sounds[tile])
             } else {
                 services.phonemes.release()
             }
@@ -215,7 +216,7 @@ final class StretchyBlendModel {
             services.feedback.play(.pop)
             pulseTile = 0
             await services.voice.say("Listen to the first sound.")
-            await services.phonemes.tap(graphemes[0], holdFor: 0.8)
+            await services.phonemes.tap(sounds[0], holdFor: 0.8)
             try? await Task.sleep(for: .seconds(0.6))
             pulseTile = nil
         case 3:
@@ -264,9 +265,8 @@ final class StretchyBlendModel {
 
     func playAgain() {
         index = 0
-        let pool = WordBank.stage1Blends.shuffled()
-        items = Array(pool.prefix(Self.itemsPerRound))
-        Task { await services.phonemes.prepare(items.flatMap(\.word.graphemes)); await beginItem() }
+        items = SessionPlanner(progress: services.progress).pictureItems(Self.itemsPerRound)
+        Task { await services.phonemes.prepare(items.flatMap(\.word.soundKeys)); await beginItem() }
     }
 
     func stop() {

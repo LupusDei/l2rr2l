@@ -16,6 +16,14 @@ struct RootView: View {
                     case .stickerBook:
                         StickerBookView()
                             .navigationTransition(.zoom(sourceID: "stars", in: zoom))
+                    case .sparkleCheck:
+                        CheckView(kind: .sparkleCheck)
+                            .navigationTransition(.zoom(sourceID: "special", in: zoom))
+                    case .skyTrial(let stage):
+                        CheckView(kind: .skyTrial(stage: stage))
+                            .navigationTransition(.zoom(sourceID: "special", in: zoom))
+                    case .treasure(let fromSession):
+                        TreasureView(fromSession: fromSession)
                     }
                 }
         }

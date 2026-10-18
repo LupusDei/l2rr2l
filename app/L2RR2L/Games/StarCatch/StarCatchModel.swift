@@ -2,7 +2,8 @@ import SwiftUI
 
 /// Game flow for Star Catch (spec 3.3): a star carrying a word drifts down
 /// with no audio; she reads it and taps the matching picture cloud. Tapping
-/// the star gives a help stretch. Five catches complete a constellation.
+/// the star gives a help stretch. A heart word round flips it (the Star Voice
+/// says the word, she taps it), and a sentence round ends the constellation.
 /// The time from the star appearing to the right tap is the mastery latency,
 /// measured silently and never shown.
 @MainActor
@@ -10,101 +11,151 @@ import SwiftUI
 final class StarCatchModel {
     enum Phase: Equatable { case intro, falling, caught, roundDone }
 
-    static let catchesPerRound = 5
+    /// One cloud she can tap.
+    struct Choice: Hashable, Identifiable {
+        let id: String
+        /// Emoji picture/scene, or a word for heart rounds.
+        let display: String
+        let isText: Bool
+        let correct: Bool
+    }
 
-    private(set) var items: [BlendItem]
+    private(set) var items: [CatchItem]
     private(set) var index = 0
     private(set) var phase: Phase = .intro
-    private(set) var clouds: [Word] = []
-    /// When the current star appeared (drives its fall).
+    private(set) var choices: [Choice] = []
     private(set) var starStart = Date()
     private(set) var litLetter: Int?
     private(set) var helpUsed = false
-    private(set) var wiggleCloud: Word?
+    private(set) var wiggleChoice: Choice?
     private(set) var wiggleCount = 0
-    private(set) var glowCloud: Word?
-    private(set) var caughtCloud: Word?
+    private(set) var glowChoice: Choice?
+    private(set) var caughtChoice: Choice?
     private(set) var catches = 0
-    private(set) var bump = 0
 
     @ObservationIgnored private var hintLevel = 0
     @ObservationIgnored private var stuckTask: Task<Void, Never>?
     @ObservationIgnored private let services: AppServices
 
-    var item: BlendItem { items[index] }
-    var word: Word { item.word }
+    var item: CatchItem { items[index] }
+    var total: Int { items.count }
     var game: GameID { .starCatch }
+
+    /// The word on the star for word rounds (nil for heart and sentence rounds).
+    var word: Word? { if case .word(let b) = item { b.word } else { nil } }
 
     init(services: AppServices) {
         self.services = services
-        items = Array(WordBank.stage1Blends.shuffled().prefix(Self.catchesPerRound))
+        items = SessionPlanner(progress: services.progress).catchItems(6)
+        if items.isEmpty { items = WordBank.stage1Blends.prefix(5).map { .word($0) } }
     }
 
     func start() async {
-        await services.phonemes.prepare(items.flatMap(\.word.graphemes))
+        await prepareSounds()
         try? await Task.sleep(for: .seconds(2.2))
         services.mascot.react(.point)
         await services.voice.say("Read the star, then tap its picture!")
-        launch()
+        await launch()
     }
 
-    private func launch() {
+    private func prepareSounds() async {
+        let words = items.compactMap { if case .word(let b) = $0 { b.word } else { nil } }
+        await services.phonemes.prepare(words.flatMap(\.soundKeys))
+    }
+
+    private func launch() async {
         hintLevel = 0
         helpUsed = false
         litLetter = nil
-        wiggleCloud = nil
-        glowCloud = nil
-        caughtCloud = nil
-        withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
-            clouds = ([item.word] + item.distractors).shuffled()
+        wiggleChoice = nil
+        glowChoice = nil
+        caughtChoice = nil
+        let newChoices: [Choice]
+        switch item {
+        case .word(let b):
+            newChoices = ([b.word] + b.distractors).map {
+                Choice(id: $0.text, display: $0.picture ?? "✨", isText: false, correct: $0 == b.word)
+            }
+        case .heart(let w, let options):
+            newChoices = options.map { Choice(id: $0, display: $0, isText: true, correct: $0 == w) }
+        case .sentence(let s):
+            newChoices = ([s.picture] + s.distractors).map {
+                Choice(id: $0, display: $0, isText: false, correct: $0 == s.picture)
+            }
         }
-        starStart = .now
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) { choices = newChoices.shuffled() }
         phase = .falling
         services.feedback.play(.whoosh)
+        if case .heart(let w, _) = item {
+            // heart round: the Star Voice says it, she finds it
+            await services.voice.say("Find the heart word")
+            await services.voice.sayWord(w)
+        }
+        starStart = .now
         resetStuckTimer()
     }
 
     /// Help stretch: the letters light and sound, as in Stretchy Blend.
     func tapStar() {
         guard phase == .falling else { return }
-        helpUsed = true
-        resetStuckTimer()
-        Task { await stretch() }
+        switch item {
+        case .word:
+            helpUsed = true
+            resetStuckTimer()
+            Task { await stretch() }
+        case .heart(let w, _):
+            Task { await services.voice.sayWord(w) }
+        case .sentence:
+            break
+        }
     }
 
     private func stretch() async {
-        await services.phonemes.stretch(word.graphemes, perSound: 0.55) { [weak self] i in
+        guard let word else { return }
+        await services.phonemes.stretch(word.soundKeys, perSound: 0.55) { [weak self] i in
             self?.litLetter = i >= 0 ? i : nil
         }
     }
 
-    func tapCloud(_ cloud: Word) {
+    func tap(_ choice: Choice) {
         guard phase == .falling else { return }
         stuckTask?.cancel()
-        if cloud == word {
+        if choice.correct {
             phase = .caught
-            caughtCloud = cloud
+            caughtChoice = choice
             catches += 1
             let helped = helpUsed || hintLevel >= 2
             let latency = Date().timeIntervalSince(starStart)
             services.sounds.playPack("star_catch")
-            services.celebrateCorrect(game: game, word: word.text, usedAudioHelp: helped, responseTime: latency,
+            let recorded: String? = switch item {
+            case .word(let b): b.word.text
+            case .heart(let w, _): w.lowercased()
+            case .sentence: nil
+            }
+            services.celebrateCorrect(game: game, word: recorded, usedAudioHelp: helped, responseTime: latency,
                                       stars: helped ? 1 : (latency <= 3 ? 3 : 2),
                                       line: hintLevel >= 3 ? "We did it together!" : nil)
             services.mascot.react(.catchStar)
             Task {
                 try? await Task.sleep(for: .seconds(1.2))
                 // the word is spoken after the catch, as confirmation
-                await services.voice.sayWord(word.text)
-                try? await Task.sleep(for: .seconds(1.0))
+                switch item {
+                case .word(let b): await services.voice.sayWord(b.word.text)
+                case .heart(let w, _): await services.voice.sayWord(w)
+                case .sentence(let s): await services.voice.say(s.text)
+                }
+                try? await Task.sleep(for: .seconds(0.8))
                 await next()
             }
         } else {
-            wiggleCloud = cloud
+            wiggleChoice = choice
             wiggleCount += 1
-            bump += 1
-            services.progress.recordAnswer(game: game, word: word.text, correct: false,
-                                           errorTags: errorTags(for: cloud))
+            if case .word(let b) = item {
+                services.progress.recordAnswer(game: game, word: b.word.text, correct: false,
+                                               errorTags: errorTags(target: b.word, chosen: choice.id))
+            } else if case .heart(let w, _) = item {
+                services.progress.recordAnswer(game: game, word: w.lowercased(), correct: false)
+            }
             Task { await climbHint(missed: true) }
         }
     }
@@ -115,19 +166,27 @@ final class StarCatchModel {
         case 1:
             if missed { services.feedback.play(.oops) }
             services.mascot.react(missed ? .encourage : .think)
-            await services.voice.say("Touch each sound.")
+            switch item {
+            case .heart(let w, _): await services.voice.say("Listen."); await services.voice.sayWord(w)
+            case .sentence: await services.voice.say("Read each word.")
+            case .word: await services.voice.say("Touch each sound.")
+            }
         case 2:
-            litLetter = 0
-            await services.phonemes.tap(word.graphemes[0], holdFor: 0.7)
-            litLetter = nil
+            if let word {
+                litLetter = 0
+                await services.phonemes.tap(word.soundKeys[0], holdFor: 0.7)
+                litLetter = nil
+            } else if case .sentence(let s) = item {
+                helpUsed = true
+                await services.voice.say(s.text)
+            }
         case 3:
             helpUsed = true
-            await stretch()
+            if word != nil { await stretch() }
         default:
             helpUsed = true
-            glowCloud = word
-            await services.voice.say("It says")
-            await services.voice.sayWord(word.text)
+            glowChoice = choices.first { $0.correct }
+            if let word { await services.voice.say("It says"); await services.voice.sayWord(word.text) }
         }
         resetStuckTimer()
     }
@@ -142,9 +201,12 @@ final class StarCatchModel {
         }
     }
 
-    private func errorTags(for cloud: Word) -> [String] {
-        let a = word.graphemes, b = cloud.graphemes
-        guard a.count == b.count, let i = zip(a, b).enumerated().first(where: { $0.element.0 != $0.element.1 })?.offset else { return [] }
+    private func errorTags(target: Word, chosen: String) -> [String] {
+        guard let cloud = WordBank.pictures[chosen] else { return [] }
+        let a = target.graphemes, b = cloud.graphemes
+        guard a.count == b.count, let i = zip(a, b).enumerated().first(where: { $0.element.0 != $0.element.1 })?.offset else {
+            return a.first == b.first ? ["guess:first-letter"] : []
+        }
         if i == 0 { return ["position:first"] }
         let vowels: Set<String> = ["a", "e", "i", "o", "u"]
         if vowels.contains(a[i]) && vowels.contains(b[i]) { return ["vowel:\(a[i])-\(b[i])", "position:middle"] }
@@ -159,16 +221,16 @@ final class StarCatchModel {
             return
         }
         index += 1
-        launch()
+        await launch()
     }
 
     func playAgain() {
-        items = Array(WordBank.stage1Blends.shuffled().prefix(Self.catchesPerRound))
+        items = SessionPlanner(progress: services.progress).catchItems(6)
         index = 0
         catches = 0
         Task {
-            await services.phonemes.prepare(items.flatMap(\.word.graphemes))
-            launch()
+            await prepareSounds()
+            await launch()
         }
     }
 

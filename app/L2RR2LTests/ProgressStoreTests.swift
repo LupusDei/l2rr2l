@@ -77,3 +77,58 @@ final class SkillGraphTests: XCTestCase {
         XCTAssertEqual(store.data.skills["blend-cvc"]?.stepDowns, 1)
     }
 }
+
+@MainActor
+final class CurriculumTests: XCTestCase {
+    func testCurriculumLoadsAllStagesWithPlayableWords() {
+        let c = Curriculum.shared
+        XCTAssertEqual(c.stages.map(\.id), Array(0...7))
+        for stage in 1...6 {
+            XCTAssertGreaterThanOrEqual(WordBank.items(in: stage).count, 10, "stage \(stage) needs picture words")
+            XCTAssertFalse(WordBank.chains(for: stage).isEmpty, "stage \(stage) needs chains")
+        }
+    }
+
+    func testMagicESoundsAreLongAndSilent() {
+        let cape = Curriculum.shared.stage(5)!.words.first { $0.text == "cape" }!
+        XCTAssertEqual(cape.soundKeys, ["c", "a_e", "p", ""])
+        XCTAssertEqual(cape.spokenSounds, ["c", "a_e", "p"])
+    }
+
+    func testPlannerFillsRoundsFromCurrentStage() {
+        let store = ProgressStore(fileURL: nil)
+        store.completePlacement(startingStage: 2)
+        let planner = SessionPlanner(progress: store)
+        let items = planner.pictureItems(6)
+        XCTAssertEqual(items.count, 6)
+        XCTAssertTrue(items.allSatisfy { ($0.word.stage ?? 0) <= 2 })
+        XCTAssertNotNil(planner.chain())
+        let catches = planner.catchItems(6)
+        XCTAssertGreaterThanOrEqual(catches.count, 6)
+    }
+
+    func testSkyTrialOpensAtEightyPercentKnown() {
+        let store = ProgressStore(fileURL: nil)
+        store.completePlacement(startingStage: 1)
+        XCTAssertFalse(store.skyTrialReady)
+        let words = WordBank.items(in: 1).map(\.word.text)
+        let cal = Calendar(identifier: .gregorian)
+        for day in 1...2 {
+            let date = cal.date(from: DateComponents(year: 2026, month: 10, day: day, hour: 9))!
+            for w in words { store.recordAnswer(game: .starCatch, word: w, correct: true, responseTime: 5, now: date) }
+        }
+        XCTAssertTrue(store.skyTrialReady)
+        store.passStageTrial(1)
+        XCTAssertEqual(store.data.stage, 2)
+    }
+
+    func testOldSaveFilesStillLoad() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".json")
+        defer { try? FileManager.default.removeItem(at: url) }
+        try #"{"stars": 7, "words": {"cat": {"attempts": 2, "correct": 2, "masteryDays": []}}}"#.write(to: url, atomically: true, encoding: .utf8)
+        let store = ProgressStore(fileURL: url)
+        XCTAssertEqual(store.data.stars, 7)
+        XCTAssertEqual(store.data.words["cat"]?.correct, 2)
+        XCTAssertEqual(store.data.collectibles, [])
+    }
+}

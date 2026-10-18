@@ -76,6 +76,7 @@ final class AppServices {
         let sticker = progress.recordAnswer(game: game, word: word, correct: true,
                                             usedAudioHelp: usedAudioHelp, responseTime: responseTime)
         progress.awardStars(stars, game: game)
+        checkMilestones()
         celebration.fire(.sparkle)
         mascot.react(.cheer)
         voice.announce(line ?? nextPraise())
@@ -114,6 +115,28 @@ final class AppServices {
         celebration.fire(.sticker(sticker))
         mascot.react(.dance)
         voice.announce("\(sticker.word.capitalized) goes in your sticker book!")
+    }
+
+    /// Learning path section 8 milestones that come from reading words alone.
+    private func checkMilestones() {
+        let readAlone = progress.wordsReadAlone
+        let milestones: [(Int, String, MascotClip, String)] = [
+            (1, "first-word", .levelUp, "Your very first word, all by yourself!"),
+            (10, "ten-words", .bird, "Ten words read alone! Cutisie's wings are sparkling!"),
+            (50, "fifty-words", .levelUp, "Fifty words! A new part of the sky is glowing!"),
+            (100, "hundred-words", .bird, "One hundred words! Party time with the bird friend!"),
+        ]
+        for (count, id, clip, line) in milestones where readAlone >= count {
+            guard progress.reachMilestone(id) else { continue }
+            Task {
+                try? await Task.sleep(for: .seconds(2.2))
+                feedback.play(.fanfare)
+                celebration.fire(.fireworks)
+                mascot.react(clip)
+                await voice.say(line)
+            }
+            break
+        }
     }
 
     private func nextPraise() -> String {

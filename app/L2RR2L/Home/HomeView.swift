@@ -6,6 +6,7 @@ import SwiftUI
 /// Cutisie makes her react.
 struct HomeView: View {
     @Environment(AppServices.self) private var services
+    @Environment(ProgressStore.self) private var progress
     @Environment(\.metrics) private var m
     @Environment(\.zoomNamespace) private var zoom
     @State private var appeared = false
@@ -28,6 +29,15 @@ struct HomeView: View {
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : -60)
 
+                // the world she's in, for grown-ups glancing over
+                Text(Curriculum.shared.stage(progress.data.stage)?.name ?? "")
+                    .font(.playful(m.s(20), weight: .bold))
+                    .foregroundStyle(.white.opacity(0.85))
+                    .padding(.horizontal, 14).padding(.vertical, 5)
+                    .background(Capsule().fill(Theme.skyTop.opacity(0.45)))
+                    .position(x: w / 2, y: h * 0.12 + m.s(48))
+                    .opacity(progress.data.placementDone ? 1 : 0)
+
                 MascotView(size: mascotSize, style: .stage)
                     .contentShape(Circle())
                     .onTapGesture { tapCutisie() }
@@ -48,6 +58,22 @@ struct HomeView: View {
                                value: appeared)
                 }
 
+                // one big obvious button: today's adventure (the Sparkle Check first time)
+                PlayButton(size: m.s(130)) { play() }
+                    .position(x: w / 2, y: h * (landscape ? 0.66 : 0.6))
+                    .scaleEffect(appeared ? 1 : 0.01)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.5).delay(0.8), value: appeared)
+
+                if progress.skyTrialReady {
+                    SkyTrialOrb(size: orb * 0.8) {
+                        services.feedback.play(.whoosh)
+                        services.router.open(.skyTrial(progress.data.stage))
+                    }
+                    .background { Circle().fill(.clear).frame(width: orb * 0.8, height: orb * 0.8).zoomSource("special", in: zoom) }
+                    .position(x: w * (landscape ? 0.86 : 0.84), y: h * (landscape ? 0.3 : 0.3))
+                    .transition(.scale.combined(with: .opacity))
+                }
+
                 StarJar()
                     .background { Capsule().fill(.clear).zoomSource("stars", in: zoom) }
                     .position(x: w - m.s(110), y: m.s(70))
@@ -64,7 +90,15 @@ struct HomeView: View {
                 try? await Task.sleep(for: .seconds(0.7))
                 services.mascot.react(.hello)
                 try? await Task.sleep(for: .seconds(0.5))
-                await services.voice.say("Hello, star reader! Cutisie is so happy to see you. Pick a game!")
+                let line: String
+                if !services.progress.data.placementDone {
+                    line = "Hello, star reader! I'm the Star Voice, and this is Cutisie. Press the big button to play!"
+                } else if services.progress.skyTrialReady {
+                    line = "Hello, star reader! A Sky Trial is waiting. Can you help Cutisie fly to a new world?"
+                } else {
+                    line = "Hello, star reader! Cutisie is so happy to see you. Ready for today's adventure?"
+                }
+                await services.voice.say(line)
             }
         }
     }
@@ -76,11 +110,67 @@ struct HomeView: View {
         return spots[index]
     }
 
+    private func play() {
+        services.feedback.play(.whoosh)
+        if progress.data.placementDone {
+            services.router.startSession()
+        } else {
+            services.router.open(.sparkleCheck)
+        }
+    }
+
     private func tapCutisie() {
         let reactions: [MascotClip] = [.cheer, .dance, .hello, .encourage]
         services.mascot.react(reactions[reactionIndex % reactions.count])
         services.celebration.fire(.sparkle)
         reactionIndex += 1
+    }
+}
+
+/// The big gold play button for today's adventure. Breathes gently so it's
+/// the obvious thing to press.
+struct PlayButton: View {
+    let size: CGFloat
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "play.fill")
+                .font(.system(size: size * 0.45, weight: .black))
+                .foregroundStyle(.white)
+                .shadow(color: .black.opacity(0.25), radius: 0, y: 3)
+                .frame(width: size * 1.5, height: size)
+        }
+        .buttonStyle(.chunky(Theme.gold, depth: size * 0.1, cornerRadius: size * 0.5))
+        .phaseAnimator([1.0, 1.06]) { view, scale in
+            view.scaleEffect(scale)
+        } animation: { _ in .easeInOut(duration: 1.1) }
+        .accessibilityLabel("Play today's adventure")
+    }
+}
+
+/// Appears when the current world's Sky Trial is ready.
+struct SkyTrialOrb: View {
+    let size: CGFloat
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle().fill(RadialGradient(colors: [.white, Theme.gold, Theme.peach], center: UnitPoint(x: 0.35, y: 0.3),
+                                             startRadius: 0, endRadius: size * 0.6))
+                Image(systemName: "rainbow")
+                    .font(.system(size: size * 0.42, weight: .bold))
+                    .symbolRenderingMode(.multicolor)
+            }
+            .frame(width: size, height: size)
+            .glow(Theme.gold, radius: 20)
+            .phaseAnimator([0.0, 1.0]) { view, p in
+                view.rotationEffect(.degrees(-6 + 12 * p)).scaleEffect(1 + 0.05 * p)
+            } animation: { _ in .easeInOut(duration: 0.9) }
+        }
+        .buttonStyle(BouncyButtonStyle(pressedScale: 0.88, sound: .pick))
+        .accessibilityLabel("Sky Trial")
     }
 }
 

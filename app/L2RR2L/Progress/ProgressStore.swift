@@ -69,6 +69,7 @@ final class ProgressStore {
                 record.correct += 1
                 let fast = (responseTime ?? .infinity) <= WordRecord.fastReadSeconds
                 if !usedAudioHelp && fast { record.masteryDays.insert(dayKey(now)) }
+                if !usedAudioHelp { record.knownDays.insert(dayKey(now)) }
                 record.reviewIntervalDays = max(1, record.reviewIntervalDays * 2)
             } else {
                 record.reviewIntervalDays = 0
@@ -204,6 +205,43 @@ final class ProgressStore {
     }
 
     func reset() { mutate { $0 = ProgressData() } }
+
+    // MARK: Stages, assessments, sessions
+
+    /// Words read correctly without help at least once (for milestones).
+    var wordsReadAlone: Int { data.words.values.filter { !$0.knownDays.isEmpty }.count }
+
+    /// Share of a stage's pictured words that are known (learning path:
+    /// the next stage opens at 80% known plus a passed Sky Trial).
+    func knownShare(of stage: Int) -> Double {
+        let words = WordBank.items(in: stage).map(\.word.text)
+        guard !words.isEmpty else { return 1 }
+        let known = words.filter { data.words[$0]?.isKnown ?? false }.count
+        return Double(known) / Double(words.count)
+    }
+
+    /// The Sky Trial for the current stage is ready when 80% of its words are known.
+    var skyTrialReady: Bool {
+        data.placementDone && !data.stageTrialsPassed.contains(data.stage) && knownShare(of: data.stage) >= 0.8
+    }
+
+    func record(_ assessment: Assessment) {
+        mutate { $0.assessments.append(assessment) }
+    }
+
+    /// Ends a session: always grants one collectible. Returns it.
+    @discardableResult
+    func completeSession(now: Date = .now) -> String {
+        var prize = ""
+        mutate { d in
+            d.sessionsCompleted += 1
+            let owned = Set(d.collectibles)
+            let next = Collectibles.pool.first { !owned.contains($0) } ?? Collectibles.pool.randomElement()!
+            d.collectibles.append(next)
+            prize = next
+        }
+        return prize
+    }
 
     // MARK: Persistence
 
