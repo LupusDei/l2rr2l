@@ -1,18 +1,19 @@
-# Media drop folder
+# Media
 
-Everything in here is copied into the app bundle as-is (it's a folder reference
-in `project.yml`), so adding a file needs no project change. The code already
-looks for these names and falls back to built-in placeholders when a file is
-missing.
+Everything in here is copied into the app bundle as-is (a folder reference in
+`project.yml`), so adding a file needs no project change.
 
-| Folder | Files | Used by |
+| Folder | Contents | Used by |
 |---|---|---|
-| `mascot/` | `hello`, `cheer`, `dance`, `encourage`, `think`, `listen`, `fly`, `read`, `bird` as `.mp4`/`.mov` (HEVC with alpha works); stills `idle`, `wave`, `cheer`, `think`, `listen`, `fly`, `read`, `proud`, `bird` as `.png` | `MascotClip`, `MascotView` |
-| `sfx/` | `tap`, `pick`, `drop`, `correct`, `oops`, `star`, `sticker`, `fanfare`, `whoosh`, `pop` as `.wav`/`.m4a`/`.caf` | `SoundEffects` (replaces the synth sound) |
-| `phonemes/` | pure letter sounds: `m.m4a`, `sh.m4a` … plus optional held versions `m-long.m4a` for stretching | `Speaker.sayLetterSound` |
-| `words/` | spoken words: `cat.m4a` … | `Speaker.sayWord` |
+| `mascot/poses/` | Cutisie's 17 pose stills from the art pack (640px) | `MascotView` when clips aren't bundled |
+| `mascot/clips/` | **not committed**: the 52 HEVC-with-alpha `.mov` clips, copied in at build time from `art/cutisie/out/videos/alpha` by the "Bundle Cutisie clips" build step | `MascotClip`, `MascotVideoPlayer` |
+| `scenes/` | **not committed**: game intro and story scenes, copied the same way from `art/cutisie/out/videos/scenes` | game intros (to come) |
+| `backgrounds/` | painted scenes (`bg-home`, `bg-blend`, `bg-build`, `bg-catch`, `bg-treasure`, ...) | `SkyBackground(imageName:)` |
+| `cutisie-sfx/` | art-pack sounds; several stand in for app effects (see `SoundEffects.packNames`) | `SoundEffects` |
+| `narration/` | placeholder Star Voice lines for the story beats | story (to come) |
+| `sfx/` | optional overrides named after `SoundEffect` cases | `SoundEffects` |
+| `phonemes/` | pure letter sounds: `m.m4a`, `sh.m4a`, plus held `m-long.m4a` | `Speaker.sayLetterSound` |
+| `words/` | spoken words: `cat.m4a` | `Speaker.sayWord` |
 
-Painted backgrounds (`bg-home`, `bg-blend`, `bg-build`, `bg-catch`) go in
-`Assets.xcassets` as image sets with those names.
-
-Names match `art/cutisie/BRIEF.md`.
+Clip ids and which moment uses them are in `MascotClip.takes`, matching
+`art/cutisie/out/manifest.json`.

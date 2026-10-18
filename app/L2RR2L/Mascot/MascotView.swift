@@ -32,12 +32,14 @@ struct MascotView: View {
                                          center: .center, startRadius: 0, endRadius: size * 0.62))
                     .scaleEffect(1 + 0.05 * sin(t * 1.4))
                 OrbitingSparkles(t: t, radius: size * 0.48, size: size * 0.05)
+                if !MascotClip.hasClips {
                 FluffyCloud()
                     .frame(width: size * 1.35, height: size * 0.5)
                     .offset(y: size * 0.42)
                     .offset(y: 4 * sin(t * 1.1 + 0.5))
+                }
                 artwork
-                    .frame(width: size * 0.82, height: size * 0.95)
+                    .frame(width: size * 0.95, height: size * 0.95)
                     .offset(y: -size * 0.02 + 7 * sin(t * 1.1))
                     .scaleEffect(x: 1 + 0.012 * sin(t * 2.2), y: 1 - 0.012 * sin(t * 2.2), anchor: .bottom)
                     .shadow(color: Theme.aurora2.opacity(0.6), radius: 18)
@@ -63,27 +65,39 @@ struct MascotView: View {
     }
 
     @ViewBuilder private var artwork: some View {
-        let clip = mascot.clip
-        if let clip, let url = clip.videoURL {
-            MascotVideoPlayer(url: url, loops: clip.loops, playCount: mascot.playCount)
+        if MascotClip.hasClips {
+            let take = mascot.take ?? mascot.idleTake
+            let count = mascot.playCount
+            if let url = MascotClip.clipURL(take) {
+                // Clips frame her small and low with room to move; enlarge and
+                // lift so she fills the space at rest.
+                GeometryReader { geo in
+                    let side = min(geo.size.width, geo.size.height)
+                    MascotVideoPlayer(url: url, idle: mascot.clip == nil, token: mascot.clip == nil ? -count - 1 : count) {
+                        mascot.finished(count)
+                    }
+                    .frame(width: side * 1.6, height: side * 1.6)
+                    .position(x: geo.size.width / 2, y: geo.size.height / 2 - side * 0.24)
+                }
+            }
         } else {
-            Image(uiImage: MascotStill.image(clip?.stillName ?? "idle") ?? UIImage())
+            Image(uiImage: MascotStill.image(mascot.clip?.poseName ?? "idle") ?? UIImage())
                 .resizable()
                 .scaledToFit()
-                .modifier(MascotMotion(clip: clip, playCount: mascot.playCount))
+                .modifier(MascotMotion(clip: mascot.clip, playCount: mascot.playCount))
         }
     }
 }
 
 enum MascotStill {
-    /// Real art from `Media/mascot/<name>.png` first, then the interim cut-out.
+    /// Pose stills from the art pack, bundled in `Media/mascot/poses`.
     static func image(_ name: String) -> UIImage? {
         for ext in ["png", "jpg", "heic"] {
-            if let path = Bundle.main.path(forResource: name, ofType: ext, inDirectory: "Media/mascot") {
+            if let path = Bundle.main.path(forResource: name, ofType: ext, inDirectory: "Media/mascot/poses") {
                 return UIImage(contentsOfFile: path)
             }
         }
-        return UIImage(named: "cutisie-placeholder")
+        return nil
     }
 }
 
@@ -217,17 +231,20 @@ private struct MascotMotion: ViewModifier {
     }
 }
 
-/// Bare AVPlayerLayer (no controls), loops when asked. Videos encoded as HEVC
-/// with alpha render with transparent backgrounds.
+/// Bare AVPlayerLayer (no controls) that renders Cutisie's HEVC-with-alpha
+/// clips over whatever is behind her. Idle takes loop silently; reaction takes
+/// play once with their squeaks and call `onFinish`.
 struct MascotVideoPlayer: UIViewRepresentable {
     let url: URL
-    let loops: Bool
-    let playCount: Int
+    let idle: Bool
+    let token: Int
+    let onFinish: () -> Void
 
     func makeUIView(context: Context) -> PlayerView { PlayerView() }
 
     func updateUIView(_ view: PlayerView, context: Context) {
-        view.play(url: url, loops: loops, token: playCount)
+        view.onFinish = onFinish
+        view.play(url: url, idle: idle, token: token)
     }
 
     final class PlayerView: UIView {
@@ -235,28 +252,52 @@ struct MascotVideoPlayer: UIViewRepresentable {
         private var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
         private let player = AVQueuePlayer()
         private var looper: AVPlayerLooper?
-        private var token = -1
+        private var token = Int.min
+        private var endObserver: NSObjectProtocol?
+        var onFinish: (() -> Void)?
 
         override init(frame: CGRect) {
             super.init(frame: frame)
-            player.isMuted = false // clip audio is Cutisie's squeaks; the Star Voice is separate
-            playerLayer.player = player
+            player.preventsDisplaySleepDuringVideoPlayback = false
+            // alpha video needs a BGRA pixel buffer and a clear, non-opaque layer
+            // (set before attaching the player) to stay transparent
+            playerLayer.pixelBufferAttributes = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
+            playerLayer.backgroundColor = UIColor.clear.cgColor
+            playerLayer.isOpaque = false
             playerLayer.videoGravity = .resizeAspect
+            playerLayer.player = player
             backgroundColor = .clear
+            isOpaque = false
         }
 
         required init?(coder: NSCoder) { fatalError() }
 
-        func play(url: URL, loops: Bool, token: Int) {
+        deinit {
+            if let endObserver { NotificationCenter.default.removeObserver(endObserver) }
+        }
+
+        func play(url: URL, idle: Bool, token: Int) {
             guard token != self.token else { return }
             self.token = token
+            looper?.disableLooping()
             looper = nil
+            if let endObserver { NotificationCenter.default.removeObserver(endObserver) }
+            endObserver = nil
             player.removeAllItems()
             let item = AVPlayerItem(url: url)
-            if loops {
+            // The pack's alpha clips store straight (unpremultiplied) color, which
+            // the layer would show as a pale box; premultiply each frame.
+            item.videoComposition = AVVideoComposition(asset: item.asset) { request in
+                request.finish(with: request.sourceImage.premultiplyingAlpha(), context: nil)
+            }
+            player.isMuted = idle
+            if idle {
                 looper = AVPlayerLooper(player: player, templateItem: item)
             } else {
                 player.insert(item, after: nil)
+                endObserver = NotificationCenter.default.addObserver(
+                    forName: AVPlayerItem.didPlayToEndTimeNotification, object: item, queue: .main
+                ) { [weak self] _ in self?.onFinish?() }
             }
             player.play()
         }

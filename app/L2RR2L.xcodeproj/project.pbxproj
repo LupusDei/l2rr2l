@@ -256,6 +256,7 @@
 			buildPhases = (
 				4E90A4A6AC87AF30F8074F60 /* Sources */,
 				06C3E688A4A1C35DDEF6C902 /* Resources */,
+				64934A3C06D4152513C74CD9 /* Bundle Cutisie clips */,
 			);
 			buildRules = (
 			);
@@ -314,6 +315,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		64934A3C06D4152513C74CD9 /* Bundle Cutisie clips */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle Cutisie clips";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "PACK=\"${SRCROOT}/../art/cutisie/out/videos\"\nDEST=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Media\"\nif [ -d \"$PACK/alpha\" ]; then\n  mkdir -p \"$DEST/mascot/clips\" \"$DEST/scenes\"\n  rsync -a --delete \"$PACK/alpha/\" \"$DEST/mascot/clips/\"\n  rsync -a --delete \"$PACK/scenes/\" \"$DEST/scenes/\"\nelse\n  echo \"warning: Cutisie art pack not found at $PACK; clips will use still poses\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4E3FC378CABB7303CBD66974 /* Sources */ = {
@@ -393,6 +416,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Cutisie Reads";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -486,6 +510,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Cutisie Reads";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

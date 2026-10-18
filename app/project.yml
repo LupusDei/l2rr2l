@@ -40,6 +40,23 @@ targets:
         ENABLE_PREVIEWS: YES
         DEVELOPMENT_TEAM: ""
         CODE_SIGN_STYLE: Automatic
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+    postBuildScripts:
+      # Cutisie's video clips (~260 MB) aren't committed. When the art pack is
+      # on this machine, copy them into the app; otherwise the app falls back
+      # to her pose stills.
+      - name: Bundle Cutisie clips
+        basedOnDependencyAnalysis: false
+        script: |
+          PACK="${SRCROOT}/../art/cutisie/out/videos"
+          DEST="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Media"
+          if [ -d "$PACK/alpha" ]; then
+            mkdir -p "$DEST/mascot/clips" "$DEST/scenes"
+            rsync -a --delete "$PACK/alpha/" "$DEST/mascot/clips/"
+            rsync -a --delete "$PACK/scenes/" "$DEST/scenes/"
+          else
+            echo "warning: Cutisie art pack not found at $PACK; clips will use still poses"
+          fi
   L2RR2LTests:
     type: bundle.unit-test
     platform: iOS

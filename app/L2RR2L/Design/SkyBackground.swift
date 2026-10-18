@@ -17,18 +17,30 @@ struct SkyBackground: View {
             TimelineView(.animation) { timeline in
                 let t = timeline.date.timeIntervalSinceReferenceDate
                 let p = motion.offset
+                let painted = imageName.flatMap(SkyBackground.painting)
                 ZStack {
-                    AuroraMesh(t: t, tint: tint)
-                        .scaleEffect(1.15)
-                        .offset(x: p.width * 8, y: p.height * 8)
+                    if let painted {
+                        // painted scene from the art pack, slightly oversized so it can drift
+                        Image(uiImage: painted).resizable().scaledToFill()
+                            .frame(width: size.width, height: size.height)
+                            .scaleEffect(1.08)
+                            .offset(x: p.width * 12, y: p.height * 12)
+                            .clipped()
+                    } else {
+                        AuroraMesh(t: t, tint: tint)
+                            .scaleEffect(1.15)
+                            .offset(x: p.width * 8, y: p.height * 8)
+                    }
 
                     StarField(t: t, layer: .far)
                         .offset(x: p.width * 14, y: p.height * 14)
 
+                    if painted == nil {
                     Moon()
                         .frame(width: size.width * 0.14, height: size.width * 0.14)
                         .position(x: size.width * 0.12, y: size.height * 0.2)
                         .offset(x: p.width * 20, y: p.height * 20)
+                    }
 
                     StarField(t: t, layer: .near)
                         .offset(x: p.width * 30, y: p.height * 30)
@@ -38,12 +50,7 @@ struct SkyBackground: View {
                     RisingSparkles(t: t)
                         .offset(x: p.width * 45, y: p.height * 45)
 
-                    if let imageName, UIImage(named: imageName) != nil {
-                        Image(imageName).resizable().scaledToFill()
-                            .offset(x: p.width * 12, y: p.height * 12)
-                    }
-
-                    if showsClouds {
+                    if showsClouds && painted == nil {
                         CloudBank(t: t, color: Theme.lilac.opacity(0.35), height: 0.30, phase: 0)
                             .offset(x: p.width * 50, y: p.height * 20)
                         CloudBank(t: t, color: Theme.pink.opacity(0.28), height: 0.22, phase: 2)
@@ -57,6 +64,19 @@ struct SkyBackground: View {
             }
         }
         .ignoresSafeArea()
+    }
+}
+
+extension SkyBackground {
+    private static var cache: [String: UIImage] = [:]
+
+    /// Background paintings live in `Media/backgrounds/<name>.jpg`.
+    static func painting(_ name: String) -> UIImage? {
+        if let hit = cache[name] { return hit }
+        guard let path = Bundle.main.path(forResource: name, ofType: "jpg", inDirectory: "Media/backgrounds"),
+              let image = UIImage(contentsOfFile: path) else { return nil }
+        cache[name] = image
+        return image
     }
 }
 

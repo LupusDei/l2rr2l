@@ -59,9 +59,25 @@ final class SoundEffects {
         node.play()
     }
 
+    /// Sounds from Cutisie's art pack (`Media/cutisie-sfx`) used for app effects.
+    private static let packNames: [SoundEffect: String] = [
+        .correct: "success_chime", .oops: "try_again_boop", .star: "star_catch",
+        .sticker: "level_up", .fanfare: "firework_big", .whoosh: "swoosh_in",
+        .squeak: "squeak_happy",
+    ]
+
     private static func bundled(_ effect: SoundEffect, format: AVAudioFormat) -> AVAudioPCMBuffer? {
+        var candidates = [(effect.rawValue, "Media/sfx")]
+        if let pack = packNames[effect] { candidates.append((pack, "Media/cutisie-sfx")) }
+        for (name, folder) in candidates {
+            if let buffer = load(name, folder: folder, format: format) { return buffer }
+        }
+        return nil
+    }
+
+    private static func load(_ name: String, folder: String, format: AVAudioFormat) -> AVAudioPCMBuffer? {
         for ext in ["wav", "m4a", "caf", "mp3"] {
-            guard let url = Bundle.main.url(forResource: effect.rawValue, withExtension: ext, subdirectory: "Media/sfx"),
+            guard let url = Bundle.main.url(forResource: name, withExtension: ext, subdirectory: folder),
                   let file = try? AVAudioFile(forReading: url),
                   let src = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: AVAudioFrameCount(file.length)),
                   (try? file.read(into: src)) != nil

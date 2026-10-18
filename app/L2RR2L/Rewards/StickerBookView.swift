@@ -10,7 +10,7 @@ struct StickerBookView: View {
 
     var body: some View {
         ZStack {
-            SkyBackground(tint: Theme.gold)
+            SkyBackground(tint: Theme.gold, imageName: "bg-treasure")
             ScrollView {
                 VStack(spacing: m.s(24)) {
                     HStack {
