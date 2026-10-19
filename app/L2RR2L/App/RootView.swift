@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RootView: View {
     @Environment(Router.self) private var router
+    @Environment(AppServices.self) private var services
     @Namespace private var zoom
 
     var body: some View {
@@ -32,11 +33,15 @@ struct RootView: View {
                 }
         }
         .environment(\.zoomNamespace, zoom)
+        // watches every touch (without blocking any) so Cutisie can follow it
+        .background(TouchWatcher(attention: services.attention))
         .overlay { CelebrationOverlay().allowsHitTesting(false) }
+        .overlay { WordAliveOverlay() }
         .overlay { StarVoiceCaption().allowsHitTesting(false) }
         .overlay { MilestoneSceneOverlay() }
-        .overlay(alignment: .top) {
-            StarVoiceBeacon(size: 40).allowsHitTesting(false).offset(y: -10)
+        .overlay(alignment: .topLeading) {
+            // the Star Voice's star sits beside the home button, clear of titles
+            StarVoiceBeacon(size: 30).allowsHitTesting(false).offset(x: 80, y: 20)
         }
         .adaptiveMetrics()
     }

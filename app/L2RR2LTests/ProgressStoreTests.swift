@@ -158,3 +158,63 @@ final class WarmUpTests: XCTestCase {
         }
     }
 }
+
+/// Word Machine broke after the first word on a real phone. These play every
+/// chain to the end, the same chain twice, and three chains back to back.
+final class WordMachineEngineTests: XCTestCase {
+    private func playWholeChain(_ chain: WordChain, file: StaticString = #filePath, line: UInt = #line) {
+        var e = WordMachineEngine(chain: chain)
+        XCTAssertEqual(e.state, .idle, file: file, line: line)
+        for (n, word) in chain.words.enumerated() {
+            e.beginWord()
+            XCTAssertEqual(e.state, .building, "\(chain.id) word \(n) \(word.text)", file: file, line: line)
+            XCTAssertEqual(e.word, word, file: file, line: line)
+            // every letter she needs is in the tray
+            for slot in e.wrongSlots {
+                XCTAssertTrue(e.tray.contains(e.target[slot]), "\(word.text): tray \(e.tray) lacks \(e.target[slot])", file: file, line: line)
+            }
+            // a wrong letter is rejected and changes nothing
+            if let slot = e.wrongSlots.first, let wrong = e.tray.first(where: { $0 != e.target[slot] }) {
+                let before = e.slots
+                XCTAssertEqual(e.place(wrong, at: slot), .rejected, file: file, line: line)
+                XCTAssertEqual(e.slots, before, file: file, line: line)
+            }
+            if n > 0 && e.target.count == chain.words[n - 1].graphemes.count {
+                XCTAssertTrue(e.isChangeStep, "\(word.text) should keep the last word's letters", file: file, line: line)
+                XCTAssertLessThan(e.wrongSlots.count, e.target.count, file: file, line: line)
+            }
+            for slot in e.wrongSlots { e.place(e.target[slot], at: slot) }
+            XCTAssertEqual(e.state, .complete, file: file, line: line)
+            XCTAssertTrue(e.pullLever(), file: file, line: line)
+            XCTAssertFalse(e.pullLever(), "the lever can't be pulled twice", file: file, line: line)
+            e.finishRun()
+            XCTAssertEqual(e.state, .reveal, file: file, line: line)
+            e.finishReveal()
+            XCTAssertEqual(e.state, n == chain.words.count - 1 ? .scene : .nextWord, file: file, line: line)
+        }
+        XCTAssertEqual(e.built, chain.words, file: file, line: line)
+    }
+
+    func testEveryStageChainPlaysToTheEnd() {
+        for stage in 1...6 {
+            for chain in WordBank.chains(for: stage) { playWholeChain(chain) }
+        }
+    }
+
+    func testSameChainTwiceAndThreeChainsBackToBack() {
+        let chains = WordBank.chains(for: 1)
+        XCTAssertGreaterThanOrEqual(chains.count, 3)
+        playWholeChain(chains[0])
+        playWholeChain(chains[0])
+        for chain in chains.prefix(3) { playWholeChain(chain) }
+    }
+
+    func testTrayNeverSpellsTheAnswerInOrder() {
+        for chain in WordBank.chains(for: 1) {
+            var e = WordMachineEngine(chain: chain)
+            e.beginWord()
+            XCTAssertNotEqual(e.tray.joined(), e.word.text, chain.id)
+            XCTAssertLessThanOrEqual(e.tray.count, e.target.count + 3)
+        }
+    }
+}

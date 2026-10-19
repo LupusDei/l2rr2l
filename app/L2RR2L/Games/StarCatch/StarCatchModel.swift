@@ -141,6 +141,12 @@ final class StarCatchModel {
             let helped = helpUsed || hintLevel >= 2
             let latency = Date().timeIntervalSince(starStart)
             services.sounds.playPack("star_catch")
+            if case .word(let b) = item {
+                Task {
+                    try? await Task.sleep(for: .milliseconds(70))
+                    services.celebration.comeAlive(b.word)
+                }
+            }
             let recorded: String? = switch item {
             case .word(let b): b.word.text
             case .heart(let w, _): w.lowercased()

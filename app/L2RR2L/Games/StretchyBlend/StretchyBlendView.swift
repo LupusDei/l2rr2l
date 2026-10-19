@@ -324,6 +324,7 @@ struct RoundDonePanel: View {
                         .frame(width: m.s(170), height: m.s(130))
                 }
                 .buttonStyle(.chunky(Theme.mint, depth: m.s(12), cornerRadius: m.s(40)))
+                .accessibilityIdentifier("playAgain")
                 Button(action: onHome) {
                     Image(systemName: "house.fill")
                         .font(.system(size: m.s(54), weight: .black))

@@ -50,6 +50,17 @@
                ReferencedContainer = "container:L2RR2L.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F29ACA4678888AB13811F81B"
+               BuildableName = "L2RR2LUITests.xctest"
+               BlueprintName = "L2RR2LUITests"
+               ReferencedContainer = "container:L2RR2L.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

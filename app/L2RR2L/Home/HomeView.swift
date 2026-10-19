@@ -38,9 +38,7 @@ struct HomeView: View {
                     .position(x: w / 2, y: h * 0.12 + m.s(48))
                     .opacity(progress.data.placementDone ? 1 : 0)
 
-                MascotView(size: mascotSize, style: .stage)
-                    .contentShape(Circle())
-                    .onTapGesture { tapCutisie() }
+                CutisieActor(size: mascotSize)
                     .position(x: w / 2, y: h * (landscape ? 0.42 : 0.35))
                     .scaleEffect(appeared ? 1 : 0.3)
                     .offset(y: appeared ? 0 : -h * 0.5)

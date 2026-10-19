@@ -30,8 +30,8 @@ struct GameScaffold<Content: View>: View {
                 }
                 Spacer()
                 HStack {
-                    MascotView(size: m.s(190), style: .window)
-                        .onTapGesture { services.mascot.react(.cheer) }
+                    CutisieActor(size: m.s(230))
+                        .offset(x: -m.s(20), y: m.s(30))
                     Spacer()
                 }
             }

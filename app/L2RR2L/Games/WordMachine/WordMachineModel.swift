@@ -1,31 +1,29 @@
 import SwiftUI
 
-/// Game flow for Word Machine (spec 3.2): hear a word, build it from letter
-/// tiles in the sound boxes, pull the lever, then change one letter to make
-/// the next word in the chain.
+/// Word Machine (design v2, 4.2): hear a word, build it from jelly letter
+/// tiles, pull the lever, watch the thing come out of the chute, then change
+/// one letter to make the next word. The rules live in `WordMachineEngine`;
+/// this class adds the Star Voice, sounds, hints and Cutisie.
 @MainActor
 @Observable
 final class WordMachineModel {
-    enum Phase: Equatable { case intro, hear, build, ready, running, chainDone }
+    typealias State = WordMachineEngine.State
 
-    private(set) var chain: WordChain
-    private(set) var index = 0
-    private(set) var phase: Phase = .intro
-    /// Letter in each sound box (nil = empty).
-    private(set) var boxes: [String?] = []
+    private(set) var engine: WordMachineEngine
     private(set) var humming: Int?
     private(set) var glowLetter: String?
     private(set) var rejectBox: Int?
     private(set) var rejectCount = 0
+    private(set) var snapBox: Int?
     private(set) var snapCount = 0
     private(set) var runCount = 0
-    private(set) var poppedWord: Word?
-    private(set) var builtWords: [Word] = []
     private(set) var readingIndex: Int?
     /// A tray letter she picked up, waiting for a box tap.
     private(set) var heldLetter: String?
-    @ObservationIgnored private var explainedPickUp = false
+    /// Bumps when the built word should come alive (letters morph into the thing).
+    private(set) var aliveCount = 0
 
+    @ObservationIgnored private var explainedPickUp = false
     @ObservationIgnored private var misses: [Int: Int] = [:]
     @ObservationIgnored private var usedHelp = false
     @ObservationIgnored private var wordShownAt = Date()
@@ -34,20 +32,26 @@ final class WordMachineModel {
     /// Set when the game leaves the screen so pending steps don't keep talking.
     @ObservationIgnored private var stopped = false
 
-    var word: Word { chain.words[index] }
-    var target: [String] { word.graphemes }
+    var phase: State { engine.state }
+    var word: Word { engine.word }
+    var target: [String] { engine.target }
+    var boxes: [String?] { engine.slots }
+    var tray: [String] { engine.tray }
+    var builtWords: [Word] { engine.built }
     var sounds: [String] { word.soundKeys }
     var game: GameID { .wordMachine }
+    var chain: WordChain { engine.chain }
 
-    init(services: AppServices) {
+    init(services: AppServices, chain: WordChain? = nil) {
         self.services = services
-        chain = SessionPlanner(progress: services.progress).chain()
+        let chosen = chain
+            ?? SessionPlanner(progress: services.progress).chain()
             ?? WordChain(id: "starter", words: ["mat", "sat", "sad"].map { Word($0, WordBank.picture($0)) }, distractors: ["p"])
+        engine = WordMachineEngine(chain: chosen)
     }
 
     func start() async {
-        await services.phonemes.prepare(chain.trayLetters + chain.words.flatMap(\.soundKeys))
-        boxes = Array(repeating: nil, count: target.count)
+        await services.phonemes.prepare(chain.words.flatMap { $0.graphemes + $0.soundKeys } + ["a", "i", "o", "e", "u", "s", "m", "t", "p", "n"])
         try? await Task.sleep(for: .seconds(1.0))
         await beginWord()
     }
@@ -57,39 +61,27 @@ final class WordMachineModel {
         misses = [:]
         usedHelp = false
         glowLetter = nil
-        poppedWord = nil
-        phase = .hear
-        if boxes.count != target.count { boxes = Array(repeating: nil, count: target.count) }
         heldLetter = nil
-        if index == 0 {
+        withAnimation(.spring(response: 0.45, dampingFraction: 0.6)) { engine.beginWord() }
+        let changeStep = engine.isChangeStep
+        if !changeStep {
             await services.voice.say([.line("Let's make"), .word(word.text)])
         } else {
             services.mascot.react(.think)
             await services.voice.say([.line("Now make it"), .word(word.text)])
-            if index == 1 { await services.voice.say("Change one letter!") }
+            if engine.index == 1 { await services.voice.say("Change one letter!") }
         }
-        await hum(all: true)
-        phase = .build
+        guard !stopped else { return }
+        await hum()
         wordShownAt = .now
         resetStuckTimer()
-        checkComplete()
         #if DEBUG
-        Autopilot.after(1.0) { [weak self] in
-            guard let self, !self.stopped else { return }
-            for i in self.target.indices where self.phase == .build && self.boxes[i] != self.target[i] {
-                if Autopilot.shouldMissThisOne, let wrong = self.chain.trayLetters.first(where: { $0 != self.target[i] }) {
-                    self.drop(wrong, into: i)
-                    try? await Task.sleep(for: .seconds(2.5))
-                }
-                if self.phase == .build && self.boxes[i] != self.target[i] { self.drop(self.target[i], into: i) }
-                try? await Task.sleep(for: .seconds(0.8))
-            }
-        }
+        autoplay()
         #endif
     }
 
-    /// The machine plays the word stretched, one box at a time.
-    private func hum(all: Bool) async {
+    /// The machine hums the word stretched, one box at a time.
+    private func hum() async {
         await services.phonemes.stretch(sounds, perSound: 0.55) { [weak self] i in
             self?.humming = i >= 0 ? i : nil
         }
@@ -99,24 +91,24 @@ final class WordMachineModel {
 
     /// Tap the picture bubble to hear the word again.
     func hearAgain() {
-        guard phase == .build || phase == .ready else { return }
+        guard phase == .building || phase == .complete else { return }
         Task {
             await services.voice.sayWord(word.text)
-            await hum(all: true)
+            await hum()
         }
         resetStuckTimer()
     }
 
-    /// Tap a box to hear the sound that belongs in it.
+    /// Tap a box: drop a picked-up letter in, or hear the sound that belongs there.
     func tapBox(_ i: Int) {
-        guard phase == .build || phase == .ready else { return }
-        // a picked-up letter goes into the box she taps
-        if let letter = heldLetter, phase == .build {
+        guard phase == .building || phase == .complete else { return }
+        if let letter = heldLetter, phase == .building {
             heldLetter = nil
             drop(letter, into: i)
             return
         }
         humming = i
+        services.sounds.playTwinkle()
         Task {
             await services.phonemes.tap(sounds[i], holdFor: 0.6)
             if humming == i { humming = nil }
@@ -124,12 +116,11 @@ final class WordMachineModel {
         resetStuckTimer()
     }
 
-    /// Tapping a tray letter drops it in the first empty box. In a chain the
-    /// boxes are already full, so a tap picks the letter up (it floats and
-    /// glows, the boxes wiggle) and she taps the box it should go in. Noticing
-    /// which box changed is the point, so the app never picks the box for her.
+    /// Tap a tray letter: its sound plays. If a box is empty it goes in the
+    /// first empty one; otherwise (a change step) it's picked up and she taps
+    /// the box it belongs in. The app never chooses the box for her.
     func tapLetter(_ letter: String) {
-        guard phase == .build else { return }
+        guard phase == .building else { return }
         services.phonemes.hold(letter)
         Task {
             try? await Task.sleep(for: .seconds(0.4))
@@ -148,20 +139,13 @@ final class WordMachineModel {
     }
 
     func drop(_ letter: String, into i: Int) {
-        guard phase == .build, boxes.indices.contains(i) else { return }
+        guard phase == .building else { return }
         resetStuckTimer()
-        if letter == target[i] {
-            boxes[i] = letter
-            snapCount += 1
-            services.sounds.playTwinkle()
-            services.haptics.play(.drop)
-            humming = i
-            Task {
-                await services.phonemes.tap(sounds[i], holdFor: 0.45)
-                if humming == i { humming = nil }
-            }
-            checkComplete()
-        } else {
+        switch engine.place(letter, at: i) {
+        case .accepted, .completed:
+            snapped(i)
+            if phase == .complete { completed() }
+        case .rejected:
             rejectBox = i
             rejectCount += 1
             services.noteStruggle(item: word.text)
@@ -171,6 +155,20 @@ final class WordMachineModel {
             services.progress.recordAnswer(game: game, word: word.text, correct: false,
                                            errorTags: ["position:\(position)"])
             Task { await hint(for: i) }
+        case .ignored:
+            break
+        }
+    }
+
+    private func snapped(_ i: Int) {
+        snapBox = i
+        snapCount += 1
+        services.sounds.playTwinkle()
+        services.haptics.play(.drop)
+        humming = i
+        Task {
+            await services.phonemes.tap(sounds[i], holdFor: 0.45)
+            if humming == i { humming = nil }
         }
     }
 
@@ -187,36 +185,32 @@ final class WordMachineModel {
         case 3:
             usedHelp = true
             glowLetter = target[i]
-            await hum(all: true)
+            await hum()
         default:
             usedHelp = true
             services.mascot.react(.carryTile)
             try? await Task.sleep(for: .seconds(1.2))
             glowLetter = nil
-            boxes[i] = target[i]
-            snapCount += 1
-            services.feedback.play(.drop)
-            checkComplete()
+            if engine.autoFill(i) != .ignored { snapped(i) }
+            if phase == .complete { completed() }
         }
     }
 
-    private func checkComplete() {
-        guard phase == .build, boxes.count == target.count,
-              zip(boxes, target).allSatisfy({ $0 == $1 }) else { return }
+    private func completed() {
         stuckTask?.cancel()
-        phase = .ready
+        heldLetter = nil
+        glowLetter = nil
+        services.feedback.play(.star)
+        services.voice.announce(engine.index == 0 ? "Pull the lever!" : "Pull it!")
         #if DEBUG
         Autopilot.after(1.5) { [weak self] in self?.pullLever() }
         #endif
-        services.feedback.play(.star)
-        services.voice.announce(index == 0 ? "Pull the lever!" : "Pull it!")
     }
 
     // MARK: Running the machine
 
     func pullLever() {
-        guard phase == .ready else { return }
-        phase = .running
+        guard engine.pullLever() else { return }
         runCount += 1
         Task {
             services.feedback.play(.whoosh)
@@ -226,26 +220,31 @@ final class WordMachineModel {
             await services.phonemes.stretch(sounds, perSound: 0.4) { [weak self] i in
                 self?.readingIndex = i >= 0 ? i : nil
             }
+            guard !stopped else { return }
+            // hit-pause, then the letters come alive as the thing
+            try? await Task.sleep(for: .milliseconds(70))
+            engine.finishRun()
+            aliveCount += 1
+            services.celebration.comeAlive(word)
             await services.voice.sayWord(word.text)
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.55)) { poppedWord = word }
             services.celebrateCorrect(game: game, word: word.text, usedAudioHelp: true,
                                       responseTime: Date().timeIntervalSince(wordShownAt),
                                       stars: usedHelp ? 1 : 2)
-            builtWords.append(word)
-            try? await Task.sleep(for: .seconds(2.2))
+            try? await Task.sleep(for: .seconds(2.0))
             await next()
         }
     }
 
     private func next() async {
         guard !stopped else { return }
-        if index + 1 >= chain.words.count {
-            phase = .chainDone
-            withAnimation { poppedWord = nil }
-            // read the whole chain back, lighting each word
+        engine.finishReveal()
+        if phase == .scene {
+            // the chain's things line up and are read back in order
             for (i, w) in builtWords.enumerated() {
+                guard !stopped else { return }
                 readingIndex = i
                 await services.voice.sayWord(w.text)
+                try? await Task.sleep(for: .milliseconds(200))
             }
             readingIndex = nil
             services.celebrateRoundComplete(game: game, line: "You built a whole word chain!")
@@ -254,17 +253,16 @@ final class WordMachineModel {
             #endif
             return
         }
-        index += 1
         await beginWord()
     }
 
     private func resetStuckTimer() {
         stuckTask?.cancel()
-        guard phase == .build else { return }
+        guard phase == .building else { return }
         stuckTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(9))
-            guard !Task.isCancelled, let self, self.phase == .build,
-                  let stuck = self.boxes.indices.first(where: { self.boxes[$0] != self.target[$0] }) else { return }
+            guard !Task.isCancelled, let self, self.phase == .building,
+                  let stuck = self.engine.wrongSlots.first else { return }
             self.misses[stuck, default: 0] += 1
             await self.hint(for: stuck)
             self.resetStuckTimer()
@@ -273,12 +271,14 @@ final class WordMachineModel {
 
     func playAgain() {
         let chains = WordBank.chains(for: services.progress.data.stage)
+        var nextChain = chain
         if let i = chains.firstIndex(where: { $0.id == chain.id }), !chains.isEmpty {
-            chain = chains[(i + 1) % chains.count]
+            nextChain = chains[(i + 1) % chains.count]
+        } else if let first = chains.first {
+            nextChain = first
         }
-        index = 0
-        builtWords = []
-        boxes = []
+        engine = WordMachineEngine(chain: nextChain)
+        readingIndex = nil
         Task { await start() }
     }
 
@@ -287,4 +287,20 @@ final class WordMachineModel {
         stuckTask?.cancel()
         services.phonemes.release()
     }
+
+    #if DEBUG
+    private func autoplay() {
+        Autopilot.after(1.0) { [weak self] in
+            guard let self, !self.stopped else { return }
+            for i in self.engine.wrongSlots where self.phase == .building {
+                if Autopilot.shouldMissThisOne, let wrong = self.tray.first(where: { $0 != self.target[i] }) {
+                    self.drop(wrong, into: i)
+                    try? await Task.sleep(for: .seconds(2.5))
+                }
+                if self.phase == .building && self.boxes[i] != self.target[i] { self.drop(self.target[i], into: i) }
+                try? await Task.sleep(for: .seconds(0.8))
+            }
+        }
+    }
+    #endif
 }

@@ -27,6 +27,17 @@ final class CelebrationCenter {
     }
 
     private(set) var bursts: [Burst] = []
+    /// A word coming alive: its letters swirl and morph into the thing (design v2, 3.1).
+    struct AliveWord: Identifiable, Equatable {
+        let id = UUID()
+        let word: Word
+    }
+    var alive: AliveWord?
+
+    func comeAlive(_ word: Word) {
+        alive = AliveWord(word: word)
+    }
+
     /// A full-screen milestone scene playing (learning path section 8).
     var milestoneScene: URL?
 

@@ -13,7 +13,15 @@ struct WordMachineView: View {
             if let model { WordMachineBoard(model: model) }
         }
         .task {
-            let m = WordMachineModel(services: services)
+            var chain: WordChain? = nil
+            #if DEBUG
+            if let i = CommandLine.arguments.firstIndex(of: "-uitestChain"), i + 1 < CommandLine.arguments.count,
+               let n = Int(CommandLine.arguments[i + 1]) {
+                let chains = WordBank.chains(for: 1)
+                chain = chains[n % chains.count]
+            }
+            #endif
+            let m = WordMachineModel(services: services, chain: chain)
             model = m
             await m.start()
         }
@@ -33,134 +41,210 @@ private struct WordMachineBoard: View {
             let w = geo.size.width, h = geo.size.height
             let landscape = w > h
             let n = max(model.boxes.count, 1)
-            let machineW = min(w * 0.74, m.s(760))
-            let box = min(m.s(150), machineW * 0.72 / CGFloat(n) - 18)
-            let gap = box * 0.22
-            let machineY = h * (landscape ? 0.47 : 0.44)
+            let machineW = min(w * 0.82, m.s(760))
+            let box = min(m.s(150), machineW * 0.7 / CGFloat(n) - 16)
+            let gap = box * 0.2
+            let machineY = h * (landscape ? 0.45 : 0.42)
             let machineH = box * 2.0
             let boxCenter = { (i: Int) -> CGPoint in
                 CGPoint(x: w / 2 - machineW * 0.06 + (CGFloat(i) - CGFloat(n - 1) / 2) * (box + gap), y: machineY + box * 0.08)
             }
+            let benchY = h * (landscape ? 0.8 : 0.74)
+            let benchW = min(w * 0.9, m.s(820))
+            let tile = min(m.s(96), benchW / 5.2)
 
             ZStack {
-                ChainColumn(words: model.builtWords, reading: model.phase == .chainDone ? model.readingIndex : nil)
-                    .position(x: w * 0.58, y: h * (landscape ? 0.94 : 0.9))
+                // things she has made in this chain, as pictures (never as text)
+                ChainShelf(words: model.builtWords, reading: model.phase == .scene ? model.readingIndex : nil,
+                           size: m.s(model.phase == .scene ? 120 : 64))
+                    .position(x: w / 2, y: model.phase == .scene ? h * 0.72 : h * (landscape ? 0.95 : 0.93))
 
-                PictureBubble(word: model.word, popped: model.poppedWord != nil, size: m.s(180))
+                PictureBubble(word: model.word, size: m.s(180))
                     .position(x: w / 2, y: h * (landscape ? 0.17 : 0.19))
                     .onTapGesture { model.hearAgain() }
+                    .accessibilityIdentifier("bubble")
+                    .opacity(model.phase == .scene ? 0 : 1)
 
                 MachineBody(running: model.phase == .running, width: machineW, height: machineH)
                     .position(x: w / 2, y: machineY)
                     // once the word is built, the whole machine is the lever
-                    .onTapGesture { if model.phase == .ready { model.pullLever() } }
+                    .onTapGesture { if model.phase == .complete { model.pullLever() } }
 
                 ForEach(0..<model.boxes.count, id: \.self) { i in
                     SoundBox(letter: model.boxes[i], size: box,
                              humming: model.humming == i || model.readingIndex == i && model.phase == .running,
                              reject: model.rejectBox == i ? model.rejectCount : 0,
-                             snaps: model.snapCount,
-                             target: (dragging != nil && hit(dragPoint, boxCenter(i), box)) || model.heldLetter != nil)
+                             snaps: model.snapBox == i ? model.snapCount : 0,
+                             target: (dragging != nil && near(dragPoint, boxCenter(i), box)) || model.heldLetter != nil)
                         .position(boxCenter(i))
                         .onTapGesture { model.tapBox(i) }
+                        .accessibilityElement()
+                        .accessibilityIdentifier("box-\(i)")
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityAction { model.tapBox(i) }
                 }
 
-                // the finished word's picture shoots out of the machine's chute
-                if let popped = model.poppedWord {
-                    ChuteCard(word: popped, size: m.s(170), drop: machineH * 1.1)
-                        .position(x: w / 2, y: machineY + machineH * 0.3)
-                        .id(model.runCount)
-                        .allowsHitTesting(false)
-                }
-
-                Lever(ready: model.phase == .ready, pulled: model.runCount, height: machineH * 0.9) {
+                Lever(ready: model.phase == .complete, pulled: model.runCount, height: machineH * 0.9) {
                     model.pullLever()
                 }
                 .position(x: w / 2 + machineW / 2 - machineW * 0.08, y: machineY - machineH * 0.05)
+                .accessibilityIdentifier("lever")
 
-                if model.phase != .chainDone {
-                LetterTray(letters: model.chain.trayLetters, glow: model.heldLetter ?? model.glowLetter, tile: m.s(92),
-                           maxWidth: w * 0.8, dragging: dragging,
-                           onTap: { model.tapLetter($0) },
-                           onDrag: { letter, point in
-                               if dragging == nil { services.feedback.play(.pick) }
-                               dragging = letter
-                               dragPoint = point
-                           },
-                           onDrop: { letter, point in
-                               dragging = nil
-                               if let i = (0..<model.boxes.count).first(where: { hit(point, boxCenter($0), box) }) {
-                                   model.drop(letter, into: i)
-                               }
-                           })
-                    .position(x: w / 2, y: h * (landscape ? 0.8 : 0.74))
+                if model.phase == .building || model.phase == .complete || model.phase == .idle || model.phase == .nextWord {
+                    Workbench(width: benchW, height: tile * 2.6)
+                        .position(x: w / 2, y: benchY)
+                    ForEach(Array(model.tray.enumerated()), id: \.element) { i, letter in
+                        JellyTile(letter: letter, size: tile,
+                                  glow: model.heldLetter == letter || model.glowLetter == letter,
+                                  dimmed: dragging == letter,
+                                  space: .named("machine"),
+                                  onTap: { model.tapLetter(letter) },
+                                  onDrag: { point in
+                                      dragging = letter
+                                      dragPoint = point
+                                  },
+                                  onDrop: { point in
+                                      dragging = nil
+                                      // magnetic: a tile dropped near a box is pulled into the nearest one
+                                      let nearest = (0..<model.boxes.count).min { a, b in
+                                          dist(point, boxCenter(a)) < dist(point, boxCenter(b))
+                                      }
+                                      if let nearest, near(point, boxCenter(nearest), box) {
+                                          model.drop(letter, into: nearest)
+                                      }
+                                  })
+                            .position(scatter(i, count: model.tray.count, center: CGPoint(x: w / 2, y: benchY),
+                                              width: benchW, tile: tile))
+                            .transition(.scale(scale: 0.3).combined(with: .opacity))
+                    }
+                    .id(model.engine.index)
                 }
 
-                if let dragging {
-                    TrayTile(letter: dragging, size: m.s(104), glow: true)
-                        .position(dragPoint)
-                        .allowsHitTesting(false)
-                }
-
-                if model.phase == .chainDone {
+                if model.phase == .scene {
                     RoundDonePanel(onAgain: { model.playAgain() }, onHome: { services.router.goHome() })
-                        .position(x: w / 2, y: h * 0.74)
+                        .position(x: w / 2, y: h * 0.88)
                         .transition(.scale.combined(with: .opacity))
                 }
+
+                #if DEBUG
+                // the answer, for UI tests only: never drawn
+                if CommandLine.arguments.contains("-uitest") {
+                    Color.clear.frame(width: 1, height: 1)
+                        .accessibilityElement()
+                        .accessibilityIdentifier("answer")
+                        .accessibilityValue(model.phase == .building ? model.target.joined(separator: " ") : "\(model.phase)")
+                }
+                #endif
             }
             .coordinateSpace(.named("machine"))
             .animation(.spring(response: 0.45, dampingFraction: 0.7), value: model.phase)
         }
     }
 
-    private func hit(_ p: CGPoint, _ c: CGPoint, _ box: CGFloat) -> Bool {
-        abs(p.x - c.x) < box * 0.75 && abs(p.y - c.y) < box * 0.9
+    private func dist(_ a: CGPoint, _ b: CGPoint) -> CGFloat { hypot(a.x - b.x, a.y - b.y) }
+
+    private func near(_ p: CGPoint, _ c: CGPoint, _ box: CGFloat) -> Bool {
+        dist(p, c) < box * 1.15
+    }
+
+    /// Tiles lie scattered on the bench like toys, not in a keyboard grid.
+    /// Positions are fixed per slot so nothing jumps around while she plays.
+    private func scatter(_ i: Int, count: Int, center: CGPoint, width: CGFloat, tile: CGFloat) -> CGPoint {
+        let perRow = min(count, 4)
+        let rows = (count + perRow - 1) / perRow
+        let row = i / perRow, col = i % perRow
+        let inRow = row == rows - 1 ? count - row * perRow : perRow
+        let spacing = min(tile * 1.45, width / CGFloat(max(perRow, 1)))
+        var x = center.x + (CGFloat(col) - CGFloat(inRow - 1) / 2) * spacing
+        var y = center.y + (CGFloat(row) - CGFloat(rows - 1) / 2) * tile * 1.3
+        // a little jitter so it looks tossed on the bench
+        var rng = SeededRandom(seed: UInt64(i * 31 + count))
+        x += (rng.next() - 0.5) * tile * 0.3
+        y += (rng.next() - 0.5) * tile * 0.25
+        return CGPoint(x: x, y: y)
     }
 }
 
-/// The word's picture floating in a bubble. Tap to hear the word again.
+/// A soft wooden-and-cloud workbench the letter toys sit on.
+private struct Workbench: View {
+    let width: CGFloat
+    let height: CGFloat
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: height * 0.3, style: .continuous)
+                .fill(Color(red: 0.55, green: 0.38, blue: 0.62).mix(with: .black, by: 0.25))
+                .offset(y: height * 0.08)
+            RoundedRectangle(cornerRadius: height * 0.3, style: .continuous)
+                .fill(LinearGradient(colors: [Color(red: 0.98, green: 0.86, blue: 0.95), Color(red: 0.86, green: 0.74, blue: 0.98)],
+                                     startPoint: .top, endPoint: .bottom))
+            RoundedRectangle(cornerRadius: height * 0.3, style: .continuous)
+                .stroke(.white.opacity(0.8), lineWidth: 3)
+        }
+        .frame(width: width, height: height)
+        .glow(Theme.lilac, radius: 12)
+    }
+}
+
+/// The things made in this chain, as picture chips. At the end of the chain
+/// they grow big and light up one by one as the Star Voice reads them back.
+private struct ChainShelf: View {
+    let words: [Word]
+    let reading: Int?
+    let size: CGFloat
+
+    var body: some View {
+        HStack(spacing: size * 0.15) {
+            ForEach(Array(words.enumerated()), id: \.offset) { i, word in
+                WordPicture(word: word.text, emoji: word.picture, size: size)
+                    .padding(size * 0.08)
+                    .background(Circle().fill(.white.opacity(reading == i ? 0.95 : 0.25)))
+                    .scaleEffect(reading == i ? 1.25 : 1)
+                    .glow(reading == i ? Theme.gold : .clear, radius: 12)
+                    .transition(.scale(scale: 0.2).combined(with: .offset(y: -200)))
+            }
+        }
+        .animation(.spring(response: 0.45, dampingFraction: 0.55), value: words.count)
+        .animation(.spring(response: 0.3, dampingFraction: 0.5), value: reading)
+        .allowsHitTesting(false)
+    }
+}
+
+/// The word's picture floating in a bubble (tap to hear it again). Words
+/// that can't be pictured show a big ear: the word is spoken, never written,
+/// so she builds it from its sounds.
 private struct PictureBubble: View {
     let word: Word
-    let popped: Bool
     let size: CGFloat
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
             let t = timeline.date.timeIntervalSinceReferenceDate
-            VStack(spacing: 8) {
-                ZStack {
-                    Circle().fill(RadialGradient(colors: [.white.opacity(0.35), Theme.sky.opacity(0.25)],
-                                                 center: UnitPoint(x: 0.35, y: 0.3), startRadius: 0, endRadius: size * 0.6))
-                    Circle().stroke(.white.opacity(0.7), lineWidth: 3)
-                    Ellipse().fill(.white.opacity(0.5))
-                        .frame(width: size * 0.35, height: size * 0.16)
-                        .offset(x: -size * 0.18, y: -size * 0.3)
-                    if word.picture != nil || WordPicture.card(word.text) != nil {
-                        WordPicture(word: word.text, emoji: word.picture, size: size * 0.66)
-                    } else {
-                        Image(systemName: "sparkles").font(.system(size: size * 0.4)).foregroundStyle(Theme.gold)
-                    }
-                }
-                .frame(width: size, height: size)
-                .overlay(alignment: .bottomTrailing) {
-                    Image(systemName: "speaker.wave.2.fill")
-                        .font(.system(size: size * 0.14, weight: .bold))
+            ZStack {
+                Circle().fill(RadialGradient(colors: [.white.opacity(0.35), Theme.sky.opacity(0.25)],
+                                             center: UnitPoint(x: 0.35, y: 0.3), startRadius: 0, endRadius: size * 0.6))
+                Circle().stroke(.white.opacity(0.7), lineWidth: 3)
+                Ellipse().fill(.white.opacity(0.5))
+                    .frame(width: size * 0.35, height: size * 0.16)
+                    .offset(x: -size * 0.18, y: -size * 0.3)
+                if word.art != "weak", WordPicture.card(word.text) != nil || (word.picture != nil && word.picture != "🖼️") {
+                    WordPicture(word: word.text, emoji: word.picture, size: size * 0.7)
+                } else {
+                    Image(systemName: "ear.and.waveform")
+                        .font(.system(size: size * 0.38, weight: .bold))
                         .foregroundStyle(.white)
-                        .padding(size * 0.06)
-                        .background(Circle().fill(Theme.sky))
-                }
-                if popped {
-                    Text(word.text)
-                        .font(.reading(size * 0.42))
-                        .foregroundStyle(.white)
-                        .glow(Theme.gold, radius: 10)
-                        .transition(.scale.combined(with: .opacity))
+                        .symbolEffect(.variableColor.iterative, options: .repeating)
                 }
             }
-            .scaleEffect(popped ? 1.2 : 1)
+            .frame(width: size, height: size)
+            .overlay(alignment: .bottomTrailing) {
+                Image(systemName: "speaker.wave.2.fill")
+                    .font(.system(size: size * 0.14, weight: .bold))
+                    .foregroundStyle(.white)
+                    .padding(size * 0.06)
+                    .background(Circle().fill(Theme.sky))
+            }
             .offset(y: 8 * sin(t * 1.4))
             .glow(Theme.sky, radius: 14)
-            .animation(.spring(response: 0.45, dampingFraction: 0.55), value: popped)
         }
         .id(word.text)
         .transition(.scale.combined(with: .opacity))
@@ -254,6 +338,17 @@ private struct SoundBox: View {
             CubicKeyframe(-6, duration: 0.08)
             SpringKeyframe(0, duration: 0.2)
         }
+        // a tile landing: squash flat, spring back, with a ring of sparkles
+        .keyframeAnimator(initialValue: CGFloat(1), trigger: snaps) { view, s in
+            view.scaleEffect(x: 2 - s, y: s, anchor: .bottom)
+        } keyframes: { _ in
+            CubicKeyframe(0.72, duration: 0.07)
+            SpringKeyframe(1.12, duration: 0.14)
+            SpringKeyframe(1.0, duration: 0.3, spring: .bouncy)
+        }
+        .overlay {
+            SnapRing(trigger: snaps, size: size)
+        }
         .animation(.spring(response: 0.3, dampingFraction: 0.5), value: humming)
         .animation(.spring(response: 0.35, dampingFraction: 0.55), value: letter)
     }
@@ -282,51 +377,6 @@ struct TrayTile: View {
     }
 }
 
-/// The letter stamps: tap to drop into the next empty box, or drag to a box.
-private struct LetterTray: View {
-    let letters: [String]
-    let glow: String?
-    let tile: CGFloat
-    let maxWidth: CGFloat
-    let dragging: String?
-    let onTap: (String) -> Void
-    let onDrag: (String, CGPoint) -> Void
-    let onDrop: (String, CGPoint) -> Void
-
-    var body: some View {
-        let perRow = max(1, Int(maxWidth / (tile + 18)))
-        let rows = stride(from: 0, to: letters.count, by: perRow).map { Array(letters[$0..<min($0 + perRow, letters.count)]) }
-        VStack(spacing: 20) {
-            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
-                HStack(spacing: 18) {
-                    ForEach(row, id: \.self) { letter in
-                        TrayTile(letter: letter, size: tile, glow: glow == letter)
-                            .opacity(dragging == letter ? 0.4 : 1)
-                            .scaleEffect(glow == letter ? 1.08 : 1)
-                            .gesture(
-                                DragGesture(minimumDistance: 0, coordinateSpace: .named("machine"))
-                                    .onChanged { value in
-                                        if hypot(value.translation.width, value.translation.height) > 8 {
-                                            onDrag(letter, value.location)
-                                        }
-                                    }
-                                    .onEnded { value in
-                                        if hypot(value.translation.width, value.translation.height) > 8 {
-                                            onDrop(letter, value.location)
-                                        } else {
-                                            onTap(letter)
-                                        }
-                                    }
-                            )
-                    }
-                }
-            }
-        }
-        .padding(22)
-        .background(RoundedRectangle(cornerRadius: 36, style: .continuous).fill(Theme.skyTop.opacity(0.45)))
-        .overlay(RoundedRectangle(cornerRadius: 36, style: .continuous).stroke(.white.opacity(0.25), lineWidth: 2))
-    }
-}
 
 /// Pull it to run the machine. Glows and bobs when the word is ready.
 private struct Lever: View {
@@ -364,68 +414,31 @@ private struct Lever: View {
     }
 }
 
-/// Words built so far in this chain, stacked; read back at the end.
-private struct ChainColumn: View {
-    let words: [Word]
-    let reading: Int?
+
+
+/// A burst of little sparkles around a box when a tile lands in it.
+private struct SnapRing: View {
+    let trigger: Int
+    let size: CGFloat
+    @State private var start: Date?
 
     var body: some View {
-        HStack(spacing: 10) {
-            ForEach(Array(words.enumerated()), id: \.offset) { i, word in
-                Text(word.text)
-                    .font(.reading(30))
-                    .foregroundStyle(reading == i ? Theme.skyTop : .white)
-                    .padding(.horizontal, 16).padding(.vertical, 6)
-                    .background(Capsule().fill(reading == i ? Theme.gold : Theme.skyTop.opacity(0.75)))
-                    .overlay(Capsule().stroke(.white.opacity(0.5), lineWidth: 2))
-                    .scaleEffect(reading == i ? 1.15 : 1)
-                    .transition(.scale.combined(with: .opacity))
+        TimelineView(.animation(paused: start == nil)) { timeline in
+            let t = start.map { timeline.date.timeIntervalSince($0) } ?? 1
+            ZStack {
+                if t < 0.5 {
+                    ForEach(0..<8, id: \.self) { i in
+                        let a = Double(i) / 8 * 2 * .pi
+                        Image(systemName: "sparkle")
+                            .font(.system(size: size * 0.14))
+                            .foregroundStyle(Theme.confetti[i % Theme.confetti.count])
+                            .offset(x: cos(a) * size * (0.4 + t * 1.2), y: sin(a) * size * (0.4 + t * 1.2))
+                            .opacity(1 - t * 2)
+                    }
+                }
             }
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.6), value: words)
-        .animation(.spring(response: 0.3, dampingFraction: 0.5), value: reading)
-    }
-}
-
-/// The machine's output: the word's picture card pops out of the chute,
-/// spins up big for a moment, then floats down into the chain row.
-private struct ChuteCard: View {
-    let word: Word
-    let size: CGFloat
-    let drop: CGFloat
-    @State private var go = false
-
-    struct Pop { var y: CGFloat = 0; var scale: CGFloat = 0.2; var angle: Double = 0; var opacity: Double = 0 }
-
-    var body: some View {
-        WordPicture(word: word.text, emoji: word.picture, size: size)
-            .padding(size * 0.12)
-            .background(RoundedRectangle(cornerRadius: size * 0.25, style: .continuous).fill(.white))
-            .glow(Theme.gold, radius: 18)
-            .keyframeAnimator(initialValue: Pop(), trigger: go) { view, p in
-                view.offset(y: p.y).scaleEffect(p.scale).rotationEffect(.degrees(p.angle)).opacity(p.opacity)
-            } keyframes: { _ in
-                KeyframeTrack(\.y) {
-                    CubicKeyframe(drop * 0.35, duration: 0.35)
-                    SpringKeyframe(drop * 0.15, duration: 0.5, spring: .bouncy)
-                    CubicKeyframe(drop * 0.15, duration: 0.6)
-                    CubicKeyframe(drop, duration: 0.45)
-                }
-                KeyframeTrack(\.scale) {
-                    SpringKeyframe(1.15, duration: 0.45, spring: .bouncy)
-                    CubicKeyframe(1.0, duration: 0.9)
-                    CubicKeyframe(0.3, duration: 0.45)
-                }
-                KeyframeTrack(\.angle) {
-                    CubicKeyframe(360, duration: 0.5)
-                    CubicKeyframe(360, duration: 1.25)
-                }
-                KeyframeTrack(\.opacity) {
-                    CubicKeyframe(1, duration: 0.15)
-                    CubicKeyframe(1, duration: 1.4)
-                    CubicKeyframe(0, duration: 0.3)
-                }
-            }
-            .onAppear { go = true }
+        .allowsHitTesting(false)
+        .onChange(of: trigger) { _, v in if v > 0 { start = .now } }
     }
 }

@@ -2,7 +2,7 @@ import SwiftUI
 
 @main
 struct L2RR2LApp: App {
-    @State private var services = AppServices.live()
+    @State private var services = AppServices.launch()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -19,6 +19,7 @@ struct L2RR2LApp: App {
                     // `-demoProgress`: placement done, Stage 1 words known, treats to feed,
                     // so the Sky Trial and treasure can be tried without playing for days.
                     if CommandLine.arguments.contains("-demoProgress") { DemoProgress.seed(services.progress) }
+                    if CommandLine.arguments.contains("-uitest") { services.router.open(.game(.wordMachine)) }
                     if CommandLine.arguments.contains("-openTreasure") { services.router.open(.treasure(fromSession: true)) }
                     if CommandLine.arguments.contains("-landscape"),
                        let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {

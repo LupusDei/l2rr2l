@@ -17,6 +17,8 @@ final class AppServices {
     let celebration: CelebrationCenter
     let feedback: Feedback
     let parallax: ParallaxMotion
+    /// Where her finger is, so Cutisie can react to it.
+    let attention = Attention()
     /// Holdable letter sounds for blending.
     let phonemes: PhonemeEngine
 
@@ -46,6 +48,18 @@ final class AppServices {
                            sounds: SoundEffects(),
                            haptics: Haptics(),
                            speaker: Speaker())
+    }
+
+    /// Live services, or a clean in-memory setup for UI tests (`-uitest`).
+    static func launch() -> AppServices {
+        #if DEBUG
+        if CommandLine.arguments.contains("-uitest") {
+            let services = preview()
+            services.progress.completePlacement(startingStage: 1)
+            return services
+        }
+        #endif
+        return live()
     }
 
     static func preview() -> AppServices {
@@ -114,9 +128,15 @@ final class AppServices {
                                             usedAudioHelp: usedAudioHelp, responseTime: responseTime)
         progress.awardStars(stars, game: game)
         itemFinished(word)
-        streakStep(clean: !usedAudioHelp)
         checkMilestones()
-        celebration.fire(Self.variant(after: &lastVariant))
+        // hit-pause: a 70 ms beat before the celebration so the moment lands
+        let variant = Self.variant(after: &lastVariant)
+        let clean = !usedAudioHelp
+        Task {
+            try? await Task.sleep(for: .milliseconds(70))
+            celebration.fire(variant)
+            streakStep(clean: clean)
+        }
         if streak != 5 { mascot.react(.cheer) }
         voice.announce(line ?? nextPraise())
         if let sticker {

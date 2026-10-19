@@ -25,9 +25,8 @@ struct TreasureView: View {
                 SkyBackground(tint: Theme.gold, imageName: "bg-treasure")
                 TouchSparkles()
 
-                MascotView(size: min(w, h) * 0.42, style: .stage)
+                CutisieActor(size: min(w, h) * 0.42)
                     .position(x: w * 0.5, y: h * 0.33)
-                    .onTapGesture { services.mascot.react(.cheer) }
 
                 // treats to feed her
                 VStack(spacing: m.s(10)) {

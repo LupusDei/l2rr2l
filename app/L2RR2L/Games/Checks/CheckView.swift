@@ -33,7 +33,7 @@ struct CheckView: View {
                 }
                 Spacer()
                 HStack {
-                    MascotView(size: m.s(190), style: .window)
+                    CutisieActor(size: m.s(220))
                     Spacer()
                 }
             }

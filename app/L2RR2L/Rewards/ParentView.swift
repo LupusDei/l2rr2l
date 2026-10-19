@@ -90,6 +90,14 @@ struct ParentView: View {
                     }
                 }
 
+                Section("Check the sounds") {
+                    NavigationLink {
+                        SoundBoardView()
+                    } label: {
+                        Label("Sound Board: hear every letter sound and word", systemImage: "speaker.wave.2.circle")
+                    }
+                }
+
                 Section {
                     Button("Run the Sparkle Check again") {
                         dismiss()

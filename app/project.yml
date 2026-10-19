@@ -41,6 +41,16 @@ targets:
         DEVELOPMENT_TEAM: ""
         CODE_SIGN_STYLE: Automatic
         ENABLE_USER_SCRIPT_SANDBOXING: NO
+    preBuildScripts:
+      # The app plays recorded Star Voice audio only. System speech sounds
+      # robotic and gets letter sounds wrong, so it must never come back.
+      - name: Forbid system speech
+        basedOnDependencyAnalysis: false
+        script: |
+          if grep -rnE "AVSpeechSynthesi[sz]er|AVSpeechUtterance" "${SRCROOT}/L2RR2L" --include=*.swift; then
+            echo "error: System speech (AVSpeechSynthesizer) is not allowed. Use recorded Star Voice audio (Speaker / StarVoice)."
+            exit 1
+          fi
     postBuildScripts:
       # Cutisie's video clips (~260 MB) aren't committed. When the art pack is
       # on this machine, copy them into the app; otherwise the app falls back
@@ -73,10 +83,21 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.lupusdei.l2rr2l.tests
+  L2RR2LUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [L2RR2LUITests]
+    dependencies:
+      - target: L2RR2L
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.lupusdei.l2rr2l.uitests
+        TEST_TARGET_NAME: L2RR2L
 schemes:
   L2RR2L:
     build:
       targets:
         L2RR2L: all
     test:
-      targets: [L2RR2LTests]
+      targets: [L2RR2LTests, L2RR2LUITests]

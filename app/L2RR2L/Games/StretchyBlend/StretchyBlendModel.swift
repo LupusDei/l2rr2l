@@ -224,6 +224,10 @@ final class StretchyBlendModel {
             phase = .won
             winVariant = Int.random(in: 0..<4)
             burstCard = card
+            Task {
+                try? await Task.sleep(for: .milliseconds(70))
+                services.celebration.comeAlive(card)
+            }
             tilesBounce += 1
             let helped = usedHelp || hintLevel >= 3
             services.celebrateCorrect(game: game, word: card.text, usedAudioHelp: helped,
