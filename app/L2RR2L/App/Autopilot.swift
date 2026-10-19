@@ -9,6 +9,12 @@ import Foundation
 @MainActor
 enum Autopilot {
     static let enabled = CommandLine.arguments.contains("-autopilot")
+    /// `-game <id>` with `-autopilot`: play only that game (e.g. readAlong).
+    static let soloGame: GameID? = {
+        let args = CommandLine.arguments
+        guard enabled, let i = args.firstIndex(of: "-game"), i + 1 < args.count else { return nil }
+        return GameID(rawValue: args[i + 1])
+    }()
     /// Counts answers so every few is deliberately wrong first.
     static var answers = 0
     static var sessionsPlayed = 0

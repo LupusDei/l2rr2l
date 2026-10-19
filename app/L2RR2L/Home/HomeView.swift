@@ -86,7 +86,13 @@ struct HomeView: View {
         .onAppear {
             appeared = true
             #if DEBUG
-            if Autopilot.enabled && (!progress.data.placementDone || Autopilot.sessionsPlayed == 0) {
+            if let game = Autopilot.soloGame, Autopilot.sessionsPlayed == 0 {
+                // `-autopilot -game readAlong`: play just that game, then stop at home
+                Autopilot.after(3) {
+                    Autopilot.sessionsPlayed += 1
+                    services.router.open(.game(game))
+                }
+            } else if Autopilot.enabled && (!progress.data.placementDone || Autopilot.sessionsPlayed == 0) {
                 Autopilot.after(4) {
                     if progress.data.placementDone { Autopilot.sessionsPlayed += 1 }
                     play()
