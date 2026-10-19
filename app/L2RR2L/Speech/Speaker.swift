@@ -58,7 +58,7 @@ final class Speaker: NSObject, AVAudioPlayerDelegate {
         return true
     }
 
-    static func url(_ name: String, in folder: String) -> URL? {
+    nonisolated static func url(_ name: String, in folder: String) -> URL? {
         for ext in ["m4a", "mp3", "wav", "caf"] {
             if let url = Bundle.main.url(forResource: name, withExtension: ext, subdirectory: folder) { return url }
         }

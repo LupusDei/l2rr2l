@@ -37,7 +37,7 @@ private struct ReadAlongBoard: View {
 
             ZStack {
                 CutisieReader(puppet: model.puppet, size: readerSize) { model.askCutisie() }
-                    .anchorPreference(key: ReadAnchorsKey.self, value: .point(ReaderRig.hornTip)) { ReadAnchors(horn: $0) }
+                    .anchorPreference(key: ReadAnchorsKey.self, value: .unitPoint(ReaderRig.hornTip)) { ReadAnchors(horn: $0) }
                     .position(x: landscape ? w * 0.22 : w * 0.5,
                               y: landscape ? h * 0.52 : h * 0.3)
 
