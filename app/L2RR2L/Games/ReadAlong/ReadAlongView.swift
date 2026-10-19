@@ -58,8 +58,10 @@ private struct ReadAlongBoard: View {
             .overlayPreferenceValue(ReadAnchorsKey.self) { anchors in
                 // the reading beam from her horn to the word she's on
                 GeometryReader { proxy in
-                    if let horn = anchors.horn, let active = model.activeWord, let word = anchors.words[active] {
-                        ReadingBeam(from: proxy[horn], to: proxy[word])
+                    // no beam while a video take plays: its horn isn't where the rig's is
+                    if !(services.mascot.clip != nil && MascotClip.hasClips),
+                       let horn = anchors.horn, let active = model.activeWord, let word = anchors.words[active] {
+                        ReadingBeam(from: proxy[horn], to: proxy[word], around: readerSize)
                             .transition(.opacity)
                     }
                 }
@@ -160,6 +162,8 @@ private struct ReadWordView: View {
                         .font(.reading(font))
                         .foregroundStyle(ink.opacity(0.7))
                 }
+                // a word never breaks inside itself ("bath" must not wrap its "th")
+                .fixedSize()
             }
             .padding(.horizontal, font * 0.12)
             .background {
@@ -258,18 +262,27 @@ private struct BobbingStar: View {
 }
 
 /// A soft, sparkly beam from Cutisie's horn to the top of the word she's on.
+/// It arcs out past her wing on the word's side, so it never cuts across her
+/// face when the word sits right below her (portrait).
 private struct ReadingBeam: View {
     let from: CGPoint
     let to: CGRect
+    /// Cutisie's size, for how wide the arc swings around her.
+    let around: CGFloat
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
             let t = timeline.date.timeIntervalSinceReferenceDate
             Canvas { ctx, _ in
                 let end = CGPoint(x: to.midX, y: to.minY + to.height * 0.12)
+                let side: CGFloat = end.x < from.x - 1 ? -1 : 1
+                let swing = from.x + side * around * 0.6
                 var path = Path()
                 path.move(to: from)
-                path.addQuadCurve(to: end, control: CGPoint(x: (from.x + end.x) / 2, y: min(from.y, end.y) - 60))
+                path.addCurve(to: end,
+                              control1: CGPoint(x: from.x + side * around * 0.35, y: from.y - around * 0.12),
+                              control2: CGPoint(x: side > 0 ? max(swing, end.x) : min(swing, end.x),
+                                                y: end.y - around * 0.3))
                 var glow = ctx
                 glow.addFilter(.blur(radius: 8))
                 glow.stroke(path, with: .color(Theme.gold.opacity(0.5)), style: StrokeStyle(lineWidth: 16, lineCap: .round))

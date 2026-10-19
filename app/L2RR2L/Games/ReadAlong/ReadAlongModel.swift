@@ -137,7 +137,8 @@ final class ReadAlongModel {
         guard !stopped else { return }
         phase = .yourTurn
         activeWord = nil
-        services.mascot.react(.point)
+        // a hop, not a video take: the rig stays up so she can mouth along
+        puppet.hop()
         await services.voice.say(index == 0 ? "Your turn! Tap each word and read it." : "Your turn!")
         resetStuckTimer()
         #if DEBUG
@@ -196,7 +197,6 @@ final class ReadAlongModel {
         stuckTask?.cancel()
         hintWord = i
         activeWord = i
-        services.mascot.react(.think)
         let token = tokens[i]
         if !token.isHeart, token.word.spokenSounds.count > 1 { await soundOut(token) }
         await puppet.read(token.word, voice: services.voice)

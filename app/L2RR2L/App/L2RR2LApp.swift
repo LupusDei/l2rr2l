@@ -21,9 +21,13 @@ struct L2RR2LApp: App {
                     if CommandLine.arguments.contains("-demoProgress") { DemoProgress.seed(services.progress) }
                     if CommandLine.arguments.contains("-uitest") { services.router.open(.game(.wordMachine)) }
                     if CommandLine.arguments.contains("-openTreasure") { services.router.open(.treasure(fromSession: true)) }
-                    if CommandLine.arguments.contains("-landscape"),
-                       let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                        scene.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight))
+                    if CommandLine.arguments.contains("-landscape") {
+                        // asked once the scene is active, or the request is ignored
+                        Task { @MainActor in
+                            try? await Task.sleep(for: .seconds(1))
+                            guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+                            scene.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight)) { print("landscape:", $0) }
+                        }
                     }
                     #endif
                 }
