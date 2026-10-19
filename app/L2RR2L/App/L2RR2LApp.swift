@@ -19,7 +19,12 @@ struct L2RR2LApp: App {
                     // `-demoProgress`: placement done, Stage 1 words known, treats to feed,
                     // so the Sky Trial and treasure can be tried without playing for days.
                     if CommandLine.arguments.contains("-demoProgress") { DemoProgress.seed(services.progress) }
-                    if CommandLine.arguments.contains("-uitest") { services.router.open(.game(.wordMachine)) }
+                    if CommandLine.arguments.contains("-uitest") {
+                        // `-uitestGame readAlong` picks the game; Word Machine by default
+                        let args = CommandLine.arguments
+                        let game = args.firstIndex(of: "-uitestGame").flatMap { $0 + 1 < args.count ? GameID(rawValue: args[$0 + 1]) : nil }
+                        services.router.open(.game(game ?? .wordMachine))
+                    }
                     if CommandLine.arguments.contains("-openTreasure") { services.router.open(.treasure(fromSession: true)) }
                     if CommandLine.arguments.contains("-landscape") {
                         // asked once the scene is active, or the request is ignored

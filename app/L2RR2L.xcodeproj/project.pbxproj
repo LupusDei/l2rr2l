@@ -26,6 +26,7 @@
 		3A44452A5B594AFA87B3D36B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3ED194C00EA9DCC4B545C5F /* HomeView.swift */; };
 		3CAE7EBE53135CF916C71B97 /* WordAliveOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4841AF1C0DA2F1621B8DCCBF /* WordAliveOverlay.swift */; };
 		46F173488D817468185CEC44 /* StretchyBlendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7216D011B5A0D026A63DDBF /* StretchyBlendView.swift */; };
+		49E3F47C730800E2A22DB295 /* ReadAlongUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F55CD56068F41D2C29C1571D /* ReadAlongUITests.swift */; };
 		4C8BB5ACE65CFBE518A3DBAF /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FE6A55D6003776E8028604 /* Feedback.swift */; };
 		51F1D7A645D4BDACDC74DE10 /* ProgressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D98B10C330FF5ECB67930 /* ProgressModel.swift */; };
 		54F81895FC44F9B69920A0B9 /* CutisieReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD49B20018419B2E8AF665D6 /* CutisieReader.swift */; };
@@ -141,6 +142,7 @@
 		E9E636DF38F5826DE7EC7FD2 /* Media */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Media; path = L2RR2L/Resources/Media; sourceTree = SOURCE_ROOT; };
 		EF48B79CBFF2F1C3038BAC69 /* CelebrationOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationOverlay.swift; sourceTree = "<group>"; };
 		F3F5BE70F491CDA9F1F1698D /* AppServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppServices.swift; sourceTree = "<group>"; };
+		F55CD56068F41D2C29C1571D /* ReadAlongUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadAlongUITests.swift; sourceTree = "<group>"; };
 		F7216D011B5A0D026A63DDBF /* StretchyBlendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchyBlendView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -297,6 +299,7 @@
 		BC5FD734B7367467466D4D2D /* L2RR2LUITests */ = {
 			isa = PBXGroup;
 			children = (
+				F55CD56068F41D2C29C1571D /* ReadAlongUITests.swift */,
 				BE9D02751713A0C3AB3766D1 /* WordMachineUITests.swift */,
 			);
 			path = L2RR2LUITests;
@@ -534,6 +537,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49E3F47C730800E2A22DB295 /* ReadAlongUITests.swift in Sources */,
 				381DFBCDFDC8C9C63D444752 /* WordMachineUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

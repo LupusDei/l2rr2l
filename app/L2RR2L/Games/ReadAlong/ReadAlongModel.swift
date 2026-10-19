@@ -42,7 +42,7 @@ final class ReadAlongModel {
     @ObservationIgnored private var stuckTask: Task<Void, Never>?
     @ObservationIgnored private var fixMisses = 0
     @ObservationIgnored private var helped = false
-    @ObservationIgnored private var busy = false
+    private var busy = false
 
     var sentence: ReadSentence { sentences[index] }
     var tokens: [ReadToken] { sentence.tokens }
@@ -336,6 +336,11 @@ final class ReadAlongModel {
     }
 
     #if DEBUG
+    /// "phase busy next misread", for UI tests (e.g. "yourTurn 0 2 -", "fixIt 0 - 1").
+    var testState: String {
+        "\(phase) \(busy ? 1 : 0) \(nextWord.map(String.init) ?? "-") \(misread.map { String($0.index) } ?? "-") \(tokens.count) \(index)"
+    }
+
     private func autoRead() {
         Autopilot.after(1.0) { [weak self] in
             guard let self else { return }

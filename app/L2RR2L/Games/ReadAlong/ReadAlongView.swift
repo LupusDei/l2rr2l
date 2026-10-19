@@ -37,6 +37,7 @@ private struct ReadAlongBoard: View {
 
             ZStack {
                 CutisieReader(puppet: model.puppet, size: readerSize) { model.askCutisie() }
+                    .accessibilityIdentifier("cutisie")
                     .anchorPreference(key: ReadAnchorsKey.self, value: .unitPoint(ReaderRig.hornTip)) { ReadAnchors(horn: $0) }
                     .position(x: landscape ? w * 0.22 : w * 0.5,
                               y: landscape ? h * 0.52 : h * 0.3)
@@ -47,6 +48,17 @@ private struct ReadAlongBoard: View {
                                             removal: .move(edge: .leading).combined(with: .opacity)))
                     .position(x: landscape ? w * 0.66 : w * 0.5,
                               y: landscape ? h * 0.42 : h * 0.64)
+
+                #if DEBUG
+                // the game's state, for UI tests only: never drawn
+                if CommandLine.arguments.contains("-uitest") {
+                    Color.clear.frame(width: 1, height: 1)
+                        .accessibilityElement()
+                        .accessibilityIdentifier("readState")
+                        .accessibilityValue(model.testState)
+                        .position(x: 1, y: 1)
+                }
+                #endif
 
                 if model.phase == .roundDone {
                     RoundDonePanel(onAgain: { model.playAgain() },
@@ -95,6 +107,7 @@ private struct StoryPage: View {
                     model.tap(i)
                 }
                 .anchorPreference(key: ReadAnchorsKey.self, value: .bounds) { ReadAnchors(words: [i: $0]) }
+                .accessibilityIdentifier("word-\(i)")
             }
         }
         .padding(.horizontal, font * 0.5)

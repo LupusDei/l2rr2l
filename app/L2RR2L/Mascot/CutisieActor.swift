@@ -36,6 +36,9 @@ struct CutisieActor: View {
     @State private var frame: CGRect = .zero
     @State private var hop = 0
     @State private var sleeping = false
+    /// Off screen (e.g. home under a pushed game) she must not nap: the
+    /// director is shared, so her nap would play over the game's Cutisie.
+    @State private var onScreen = false
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
@@ -90,13 +93,15 @@ struct CutisieActor: View {
         }
         .onChange(of: services.attention.touches) { _, _ in if sleeping { wake() } }
         .onChange(of: services.celebration.bursts.count) { old, new in if new > old { hop += 1 } }
+        .onAppear { onScreen = true }
+        .onDisappear { onScreen = false }
         .accessibilityLabel("Cutisie")
         .accessibilityAddTraits(.isButton)
     }
 
     /// Nap after 20 s with no touches (design v2, 3.4).
     private func checkNap() {
-        guard !sleeping, mascot.clip == nil,
+        guard onScreen, !sleeping, mascot.clip == nil,
               Date().timeIntervalSince(services.attention.lastTouch) > 20 else { return }
         withAnimation { sleeping = true }
         mascot.play(take: "idle_sleepy", as: .sleepy)
