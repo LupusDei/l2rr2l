@@ -7,6 +7,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
     case stretchyBlend
     case wordMachine
     case starCatch
+    case readAlong
 
     var id: String { rawValue }
 
@@ -15,6 +16,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .stretchyBlend: "Stretchy Blend"
         case .wordMachine: "Word Machine"
         case .starCatch: "Star Catch"
+        case .readAlong: "Read Along"
         }
     }
 
@@ -23,6 +25,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .stretchyBlend: "Slide to stretch the sounds"
         case .wordMachine: "Build words with the magic machine"
         case .starCatch: "Read it, then catch it!"
+        case .readAlong: "Read a story line with Cutisie"
         }
     }
 
@@ -31,6 +34,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .stretchyBlend: "rainbow"
         case .wordMachine: "gearshape.2.fill"
         case .starCatch: "star.fill"
+        case .readAlong: "book.fill"
         }
     }
 
@@ -39,6 +43,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .stretchyBlend: [Theme.pink, Theme.lilac]
         case .wordMachine: [Theme.mint, Theme.sky]
         case .starCatch: [Theme.gold, Theme.peach]
+        case .readAlong: [Theme.peach, Theme.pink]
         }
     }
 
@@ -48,6 +53,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .stretchyBlend: "bg-blend"
         case .wordMachine: "bg-build"
         case .starCatch: "bg-catch"
+        case .readAlong: "bg-story"
         }
     }
 
@@ -57,10 +63,14 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .stretchyBlend: "Let's stretch sounds with Cutisie!"
         case .wordMachine: "Let's build words with my magic machine!"
         case .starCatch: "Read the word, then catch the star!"
+        case .readAlong: "Story time! Let's read with Cutisie."
         }
     }
 
     var isReady: Bool { true }
+
+    /// Read Along has its own big reading Cutisie, so the scene one stays away.
+    var showsActor: Bool { self != .readAlong }
 
     // MARK: Game slots
 
@@ -73,6 +83,8 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
             WordMachineView()
         case .starCatch:
             StarCatchView()
+        case .readAlong:
+            ReadAlongView()
         }
     }
 }

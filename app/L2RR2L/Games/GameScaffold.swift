@@ -29,10 +29,12 @@ struct GameScaffold<Content: View>: View {
                     StarJar()
                 }
                 Spacer()
-                HStack {
-                    CutisieActor(size: m.s(230))
-                        .offset(x: -m.s(20), y: m.s(30))
-                    Spacer()
+                if game.showsActor {
+                    HStack {
+                        CutisieActor(size: m.s(230))
+                            .offset(x: -m.s(20), y: m.s(30))
+                        Spacer()
+                    }
                 }
             }
             .padding(m.s(24))

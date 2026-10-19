@@ -114,8 +114,8 @@ struct HomeView: View {
 
     private func portalSpot(_ index: Int, landscape: Bool) -> UnitPoint {
         let spots: [UnitPoint] = landscape
-            ? [UnitPoint(x: 0.16, y: 0.66), UnitPoint(x: 0.5, y: 0.83), UnitPoint(x: 0.84, y: 0.66)]
-            : [UnitPoint(x: 0.2, y: 0.68), UnitPoint(x: 0.5, y: 0.79), UnitPoint(x: 0.8, y: 0.68)]
+            ? [UnitPoint(x: 0.13, y: 0.64), UnitPoint(x: 0.37, y: 0.84), UnitPoint(x: 0.63, y: 0.84), UnitPoint(x: 0.87, y: 0.64)]
+            : [UnitPoint(x: 0.18, y: 0.7), UnitPoint(x: 0.35, y: 0.86), UnitPoint(x: 0.65, y: 0.86), UnitPoint(x: 0.82, y: 0.7)]
         return spots[index]
     }
 
