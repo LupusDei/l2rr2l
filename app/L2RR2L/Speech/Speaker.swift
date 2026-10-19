@@ -1,135 +1,100 @@
 import AVFoundation
 
-/// Spoken audio for words, letter names and letter sounds.
+/// Plays the Star Voice's recorded audio. There is no synthesized speech in
+/// the app: every line, word and sound is a recording in one voice (the
+/// Runway "Serene" Star Voice).
 ///
-/// Order of preference for anything the child must *hear correctly*:
-/// 1. A bundled recording (`Media/phonemes/<key>.m4a`, `Media/words/<word>.m4a`)
-/// 2. On-device TTS (best installed English voice, slowed and brightened for kids)
+/// - Lines: `Media/voice/<slug>.(m4a|mp3|wav)`, slug from `VoiceSlug.make`
+///   (the list to record is `Media/content/voice_lines.json`, built by
+///   tools/voice_lines.py)
+/// - Words: `Media/words/<word>.m4a`
+/// - Letter sounds: `Media/phonemes/<key>.wav` (played by `PhonemeEngine`)
 ///
-/// Letter sounds must be pure (/mmm/, not "muh"), so TTS uses IPA for them, but
-/// real recordings are the goal; drop them in and they win automatically.
+/// A missing recording plays nothing (the caption still shows) and is logged
+/// in debug builds so it can be recorded.
 @MainActor
-final class Speaker: NSObject {
-    private let synth = AVSpeechSynthesizer()
-    private var waiting: [ObjectIdentifier: CheckedContinuation<Void, Never>] = [:]
-    private var clipPlayer: AVAudioPlayer?
-    let voice: AVSpeechSynthesisVoice?
-
-    /// 0...1 where AVSpeechUtteranceDefaultSpeechRate is 0.5.
-    var rate: Float = 0.42
-    var pitch: Float = 1.15
-
-    override init() {
-        voice = Self.bestVoice()
-        super.init()
-        synth.delegate = self
-    }
-
-    var isSpeaking: Bool { synth.isSpeaking || (clipPlayer?.isPlaying ?? false) }
+final class Speaker: NSObject, AVAudioPlayerDelegate {
+    private var player: AVAudioPlayer?
+    private var finished: CheckedContinuation<Void, Never>?
+    private(set) var missing: Set<String> = []
 
     func stop() {
-        synth.stopSpeaking(at: .immediate)
-        clipPlayer?.stop()
+        player?.stop()
+        player = nil
+        resume()
     }
 
-    // MARK: Public API
+    var isSpeaking: Bool { player?.isPlaying ?? false }
 
-    /// Encouragement, instructions, mascot lines.
-    func say(_ text: String) async {
-        await speak(AVSpeechUtterance(string: text))
+    /// A narrator line. Returns false if there is no recording for it.
+    @discardableResult
+    func say(_ text: String) async -> Bool {
+        await play(VoiceSlug.make(text), in: "Media/voice", label: text)
     }
 
-    /// A word to read: slightly slower, with a beat of space after.
-    func sayWord(_ word: String) async {
-        if await playClip(named: word.lowercased(), in: "Media/words") { return }
-        let u = AVSpeechUtterance(string: word)
-        u.rate = rate * 0.85
-        u.postUtteranceDelay = 0.15
-        await speak(u)
+    /// A single word, said normally.
+    @discardableResult
+    func sayWord(_ word: String) async -> Bool {
+        await play(word.lowercased(), in: "Media/words", label: word)
     }
 
-    /// "bee" for b.
-    func sayLetterName(_ letter: String) async {
-        await speak(AVSpeechUtterance(string: letter.uppercased()))
-    }
-
-    /// The pure sound a letter (or digraph like "sh") makes.
-    /// `stretched` holds continuous sounds longer, for blending ("mmmaaat").
-    func sayLetterSound(_ grapheme: String, stretched: Bool = false) async {
-        let key = grapheme.lowercased()
-        let clipName = stretched ? "\(key)-long" : key
-        if await playClip(named: clipName, in: "Media/phonemes") { return }
-        if stretched, await playClip(named: key, in: "Media/phonemes") { return }
-        guard let sound = LetterSounds.table[key] else {
-            await sayLetterName(grapheme)
-            return
+    /// Plays a recording and waits for it to finish.
+    func play(_ name: String, in folder: String, label: String) async -> Bool {
+        guard let url = Self.url(name, in: folder) else {
+            #if DEBUG
+            if !missing.contains(label) { print("🔇 missing recording: \(folder)/\(name) (\(label))") }
+            #endif
+            missing.insert(label)
+            return false
         }
-        let ipa = stretched && sound.continuous ? sound.ipa + "ːːː" : sound.ipa
-        let text = NSAttributedString(string: grapheme, attributes: [
-            NSAttributedString.Key(AVSpeechSynthesisIPANotationAttribute): ipa
-        ])
-        let u = AVSpeechUtterance(attributedString: text)
-        u.rate = rate * 0.8
-        await speak(u)
-    }
-
-    /// Sound out then say: "c... a... t... cat!"
-    func sayBlend(_ graphemes: [String], word: String) async {
-        for g in graphemes { await sayLetterSound(g, stretched: true) }
-        try? await Task.sleep(for: .milliseconds(200))
-        await sayWord(word)
-    }
-
-    // MARK: Internals
-
-    private func speak(_ utterance: AVSpeechUtterance) async {
-        utterance.voice = voice
-        if utterance.rate == AVSpeechUtteranceDefaultSpeechRate { utterance.rate = rate }
-        utterance.pitchMultiplier = pitch
+        stop()
+        guard let p = try? AVAudioPlayer(contentsOf: url) else { return false }
+        p.delegate = self
+        player = p
         await withCheckedContinuation { continuation in
-            waiting[ObjectIdentifier(utterance)] = continuation
-            synth.speak(utterance)
+            finished = continuation
+            if !p.play() { resume() }
         }
-    }
-
-    private func playClip(named name: String, in folder: String) async -> Bool {
-        let url = ["m4a", "wav", "mp3", "caf"].lazy
-            .compactMap { Bundle.main.url(forResource: name, withExtension: $0, subdirectory: folder) }
-            .first
-        guard let url, let player = try? AVAudioPlayer(contentsOf: url) else { return false }
-        clipPlayer = player
-        player.play()
-        try? await Task.sleep(for: .seconds(player.duration))
         return true
     }
 
-    private func finish(_ id: ObjectIdentifier) {
-        waiting.removeValue(forKey: id)?.resume()
+    static func url(_ name: String, in folder: String) -> URL? {
+        for ext in ["m4a", "mp3", "wav", "caf"] {
+            if let url = Bundle.main.url(forResource: name, withExtension: ext, subdirectory: folder) { return url }
+        }
+        return nil
     }
 
-    private static func bestVoice() -> AVSpeechSynthesisVoice? {
-        let english = AVSpeechSynthesisVoice.speechVoices().filter { $0.language.hasPrefix("en") }
-        let preferredNames = ["Ava", "Samantha", "Zoe", "Allison", "Susan"]
-        let ranked = english.sorted { a, b in
-            if a.quality != b.quality { return a.quality.rawValue > b.quality.rawValue }
-            if (a.language == "en-US") != (b.language == "en-US") { return a.language == "en-US" }
-            let ai = preferredNames.firstIndex { a.name.contains($0) } ?? 99
-            let bi = preferredNames.firstIndex { b.name.contains($0) } ?? 99
-            return ai < bi
-        }
-        return ranked.first ?? AVSpeechSynthesisVoice(language: "en-US")
+    static func hasRecording(for text: String) -> Bool { url(VoiceSlug.make(text), in: "Media/voice") != nil }
+
+    private func resume() {
+        finished?.resume()
+        finished = nil
+    }
+
+    nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        Task { @MainActor in self.resume() }
     }
 }
 
-extension Speaker: AVSpeechSynthesizerDelegate {
-    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        let id = ObjectIdentifier(utterance)
-        Task { @MainActor in self.finish(id) }
-    }
-
-    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        let id = ObjectIdentifier(utterance)
-        Task { @MainActor in self.finish(id) }
+/// File name for a narrator line: lowercase words joined by underscores,
+/// e.g. "Touch each sound." -> "touch_each_sound". tools/voice_lines.py uses
+/// the same rule.
+enum VoiceSlug {
+    static func make(_ text: String) -> String {
+        var out = ""
+        var lastUnderscore = true
+        for ch in text.lowercased().replacingOccurrences(of: "'", with: "") {
+            if ch.isLetter || ch.isNumber, ch.isASCII {
+                out.append(ch)
+                lastUnderscore = false
+            } else if !lastUnderscore {
+                out.append("_")
+                lastUnderscore = true
+            }
+        }
+        while out.hasSuffix("_") { out.removeLast() }
+        return String(out.prefix(80))
     }
 }
 

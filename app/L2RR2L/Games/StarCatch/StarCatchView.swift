@@ -25,6 +25,7 @@ private struct StarCatchBoard: View {
     let model: StarCatchModel
     @Environment(AppServices.self) private var services
     @Environment(\.metrics) private var m
+    @State private var drag: CGSize = .zero
 
     var body: some View {
         GeometryReader { geo in
@@ -66,8 +67,29 @@ private struct StarCatchBoard: View {
                         WordStar(item: model.item, lit: model.litLetter, helped: model.helpUsed,
                                  size: m.s(250), caught: caughtAt != nil)
                             .position(x: x, y: y)
+                            .offset(caughtAt == nil ? drag : .zero)
                             .animation(.spring(response: 0.5, dampingFraction: 0.6), value: caughtAt)
-                            .onTapGesture { model.tapStar() }
+                            // tap for a help stretch, or drag the star into a cloud
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { v in
+                                        if hypot(v.translation.width, v.translation.height) > 10 { drag = v.translation }
+                                    }
+                                    .onEnded { v in
+                                        let moved = hypot(v.translation.width, v.translation.height)
+                                        if moved <= 10 {
+                                            model.tapStar()
+                                        } else {
+                                            let drop = CGPoint(x: x + v.translation.width, y: y + v.translation.height)
+                                            if let i = model.choices.indices.first(where: {
+                                                abs(cloudX($0) - drop.x) < cloudW * 0.6 && abs(cloudY - drop.y) < cloudW * 0.55
+                                            }) {
+                                                model.tap(model.choices[i])
+                                            }
+                                        }
+                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) { drag = .zero }
+                                    }
+                            )
                     }
                     .id(model.index)
                     .transition(.asymmetric(insertion: .move(edge: .top).combined(with: .opacity), removal: .opacity))

@@ -93,8 +93,7 @@ final class StarCatchModel {
         services.feedback.play(.whoosh)
         if case .heart(let w, _) = item {
             // heart round: the Star Voice says it, she finds it
-            await services.voice.say("Find the heart word")
-            await services.voice.sayWord(w)
+            await services.voice.say([.line("Find the heart word"), .word(w)])
         }
         starStart = .now
         resetStuckTimer()
@@ -183,7 +182,7 @@ final class StarCatchModel {
             if missed { services.feedback.play(.oops) }
             services.mascot.react(missed ? .encourage : .think)
             switch item {
-            case .heart(let w, _): await services.voice.say("Listen."); await services.voice.sayWord(w)
+            case .heart(let w, _): await services.voice.say([.line("Listen."), .word(w)])
             case .sentence: await services.voice.say("Read each word.")
             case .word: await services.voice.say("Touch each sound.")
             }
@@ -202,7 +201,7 @@ final class StarCatchModel {
         default:
             helpUsed = true
             glowChoice = choices.first { $0.correct }
-            if let word { await services.voice.say("It says"); await services.voice.sayWord(word.text) }
+            if let word { await services.voice.say([.line("It says"), .word(word.text)]) }
         }
         resetStuckTimer()
     }

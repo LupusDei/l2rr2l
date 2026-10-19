@@ -12,6 +12,12 @@ final class CelebrationCenter {
         case fireworks
         /// A new sticker floats in.
         case sticker(Sticker)
+        /// Right-answer variants so celebrations stay surprising (spec 4).
+        case starShower, hearts, bubbles
+        /// Streak rewards: 3 in a row, 10 in a row.
+        case rainbow, aurora
+
+        static let rightAnswerVariants: [Kind] = [.sparkle, .starShower, .hearts, .bubbles]
     }
 
     struct Burst: Identifiable {
@@ -49,6 +55,9 @@ extension CelebrationCenter.Kind {
         case .sparkle: 1.6
         case .fireworks: 3.2
         case .sticker: 3.0
+        case .starShower, .hearts, .bubbles: 1.8
+        case .rainbow: 2.4
+        case .aurora: 3.5
         }
     }
 }

@@ -51,8 +51,19 @@ private struct StretchyBlendBoard: View {
                 .id(model.index)
                 .transition(.scale.combined(with: .opacity))
 
-                SlideRider(zooming: model.phase == .zooming, size: tile * 0.95)
-                    .position(x: slideX0 + (slideX1 - slideX0) * model.position, y: slideY - tile * 0.95)
+                // rainbow trail behind Cutisie as she slides
+                let riderX = slideX0 + (slideX1 - slideX0) * model.position
+                Capsule()
+                    .fill(LinearGradient(colors: ([.red, .orange, .yellow, .green, .cyan, .blue, .purple] as [Color]).map { $0.opacity(0.85) },
+                                         startPoint: .leading, endPoint: .trailing))
+                    .frame(width: max(0, riderX - slideX0), height: tile * 0.16)
+                    .position(x: slideX0 + max(0, riderX - slideX0) / 2, y: slideY - tile * 0.62)
+                    .glow(.white, radius: 8)
+                    .opacity(model.position > 0.02 ? 1 : 0)
+                    .allowsHitTesting(false)
+
+                SlideRider(zooming: model.phase == .zooming, tumble: model.tumbleCount, size: tile * 0.95)
+                    .position(x: riderX, y: slideY - tile * 0.95)
 
                 if model.phase == .zoomReady {
                     ZoomSparkle(size: tile * 0.7)
@@ -62,7 +73,7 @@ private struct StretchyBlendBoard: View {
 
                 HStack(spacing: m.s(28)) {
                     ForEach(Array(model.cards.enumerated()), id: \.element) { i, card in
-                        PictureCard(word: card, size: m.s(200),
+                        PictureCard(word: card, size: m.s(200), variant: model.winVariant,
                                     wiggle: model.wiggleCard == card ? model.wiggleCount : 0,
                                     glow: model.glowCard == card,
                                     burst: model.burstCard == card,
@@ -160,6 +171,7 @@ private struct SoundTile: View {
 /// Cutisie riding the slide (her hover pose), tilting forward when zooming.
 private struct SlideRider: View {
     let zooming: Bool
+    let tumble: Int
     let size: CGFloat
 
     var body: some View {
@@ -173,8 +185,35 @@ private struct SlideRider: View {
                 .offset(y: 5 * sin(t * 3))
                 .shadow(color: Theme.aurora2.opacity(0.8), radius: 14)
         }
+        // the zoom overshoot: she tumbles off the end, then pops up proud
+        .keyframeAnimator(initialValue: Tumble(), trigger: tumble) { view, v in
+            view.rotationEffect(.degrees(v.angle)).offset(x: v.x, y: v.y)
+        } keyframes: { _ in
+            KeyframeTrack(\.angle) {
+                CubicKeyframe(200, duration: 0.35)
+                CubicKeyframe(380, duration: 0.3)
+                SpringKeyframe(360, duration: 0.4, spring: .bouncy)
+                MoveKeyframe(0)
+            }
+            KeyframeTrack(\.x) {
+                CubicKeyframe(40, duration: 0.35)
+                CubicKeyframe(55, duration: 0.3)
+                SpringKeyframe(0, duration: 0.6)
+            }
+            KeyframeTrack(\.y) {
+                CubicKeyframe(60, duration: 0.35)
+                CubicKeyframe(-50, duration: 0.3)
+                SpringKeyframe(0, duration: 0.6, spring: .bouncy)
+            }
+        }
         .allowsHitTesting(false)
     }
+}
+
+private struct Tumble {
+    var angle: Double = 0
+    var x: CGFloat = 0
+    var y: CGFloat = 0
 }
 
 private struct ZoomSparkle: View {
@@ -196,6 +235,8 @@ private struct ZoomSparkle: View {
 struct PictureCard: View {
     let word: Word
     let size: CGFloat
+    /// Which "comes alive" animation the right card plays (varies each win).
+    var variant: Int = 0
     let wiggle: Int
     let glow: Bool
     let burst: Bool
@@ -206,8 +247,36 @@ struct PictureCard: View {
         Button(action: action) {
             WordPicture(word: word.text, emoji: word.picture, size: size * 0.8)
                 .frame(width: size, height: size * 1.05)
-                .scaleEffect(burst ? 1.25 : 1)
-                .rotationEffect(.degrees(burst ? 8 : 0))
+                .keyframeAnimator(initialValue: Alive(), trigger: burst) { view, a in
+                    view.scaleEffect(a.scale).rotationEffect(.degrees(a.angle)).offset(y: a.lift)
+                } keyframes: { _ in
+                    // four ways the picture comes alive, so wins stay surprising
+                    KeyframeTrack(\.scale) {
+                        if variant % 4 == 3 {
+                            SpringKeyframe(1.6, duration: 0.3, spring: .bouncy); SpringKeyframe(1.25, duration: 0.5)
+                        } else {
+                            SpringKeyframe(1.3, duration: 0.3, spring: .bouncy); SpringKeyframe(1.2, duration: 0.5)
+                        }
+                    }
+                    KeyframeTrack(\.angle) {
+                        if variant % 4 == 0 {
+                            CubicKeyframe(360, duration: 0.6); MoveKeyframe(0)
+                        } else if variant % 4 == 2 {
+                            CubicKeyframe(-14, duration: 0.12); CubicKeyframe(14, duration: 0.12)
+                            CubicKeyframe(-10, duration: 0.12); CubicKeyframe(10, duration: 0.12); SpringKeyframe(0, duration: 0.3)
+                        } else {
+                            CubicKeyframe(8, duration: 0.3)
+                        }
+                    }
+                    KeyframeTrack(\.lift) {
+                        if variant % 4 == 1 {
+                            CubicKeyframe(-60, duration: 0.25); SpringKeyframe(0, duration: 0.5, spring: .bouncy)
+                            CubicKeyframe(-30, duration: 0.2); SpringKeyframe(0, duration: 0.4, spring: .bouncy)
+                        } else {
+                            CubicKeyframe(0, duration: 0.1)
+                        }
+                    }
+                }
         }
         .buttonStyle(ChunkyButtonStyle(color: glow ? Theme.gold : .white, depth: size * 0.06,
                                        cornerRadius: size * 0.2, sound: .pick))
@@ -265,4 +334,10 @@ struct RoundDonePanel: View {
             }
         }
     }
+}
+
+private struct Alive {
+    var scale: CGFloat = 1
+    var angle: Double = 0
+    var lift: CGFloat = 0
 }

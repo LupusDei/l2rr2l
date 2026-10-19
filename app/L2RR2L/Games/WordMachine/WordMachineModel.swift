@@ -22,6 +22,9 @@ final class WordMachineModel {
     private(set) var poppedWord: Word?
     private(set) var builtWords: [Word] = []
     private(set) var readingIndex: Int?
+    /// A tray letter she picked up, waiting for a box tap.
+    private(set) var heldLetter: String?
+    @ObservationIgnored private var explainedPickUp = false
 
     @ObservationIgnored private var misses: [Int: Int] = [:]
     @ObservationIgnored private var usedHelp = false
@@ -57,13 +60,13 @@ final class WordMachineModel {
         poppedWord = nil
         phase = .hear
         if boxes.count != target.count { boxes = Array(repeating: nil, count: target.count) }
+        heldLetter = nil
         if index == 0 {
-            await services.voice.say("Let's make")
-            await services.voice.sayWord(word.text)
+            await services.voice.say([.line("Let's make"), .word(word.text)])
         } else {
             services.mascot.react(.think)
-            await services.voice.say("Now make it")
-            await services.voice.sayWord(word.text)
+            await services.voice.say([.line("Now make it"), .word(word.text)])
+            if index == 1 { await services.voice.say("Change one letter!") }
         }
         await hum(all: true)
         phase = .build
@@ -107,6 +110,12 @@ final class WordMachineModel {
     /// Tap a box to hear the sound that belongs in it.
     func tapBox(_ i: Int) {
         guard phase == .build || phase == .ready else { return }
+        // a picked-up letter goes into the box she taps
+        if let letter = heldLetter, phase == .build {
+            heldLetter = nil
+            drop(letter, into: i)
+            return
+        }
         humming = i
         Task {
             await services.phonemes.tap(sounds[i], holdFor: 0.6)
@@ -116,13 +125,25 @@ final class WordMachineModel {
     }
 
     /// Tapping a tray letter drops it in the first empty box. In a chain the
-    /// boxes are full, so a tap only plays the letter's sound: noticing which
-    /// box to change is the point, so she drags it there herself.
+    /// boxes are already full, so a tap picks the letter up (it floats and
+    /// glows, the boxes wiggle) and she taps the box it should go in. Noticing
+    /// which box changed is the point, so the app never picks the box for her.
     func tapLetter(_ letter: String) {
+        guard phase == .build else { return }
+        services.phonemes.hold(letter)
+        Task {
+            try? await Task.sleep(for: .seconds(0.4))
+            services.phonemes.release()
+        }
         if let slot = boxes.indices.first(where: { boxes[$0] == nil }) {
             drop(letter, into: slot)
         } else {
-            Task { await services.phonemes.tap(letter, holdFor: 0.4) }
+            heldLetter = heldLetter == letter ? nil : letter
+            services.feedback.play(.pick)
+            if heldLetter != nil && !explainedPickUp {
+                explainedPickUp = true
+                services.voice.announce("Now tap the box it goes in!")
+            }
         }
     }
 

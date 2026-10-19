@@ -17,13 +17,17 @@ final class StarVoice {
 
     init(speaker: Speaker) { self.speaker = speaker }
 
-    /// Speak a narrator line (instruction or praise) and wait for it to finish.
+    /// Play a narrator line (instruction or praise) and wait for it to finish.
+    /// Without a recording the caption shows for a reading-length beat.
     func say(_ line: String) async {
         lineID += 1
         let id = lineID
         speaker.stop()
         caption = line
-        await speaker.say(line)
+        if !(await speaker.say(line)) {
+            let words = Double(line.split(separator: " ").count)
+            try? await Task.sleep(for: .seconds(min(4, 0.6 + words * 0.3)))
+        }
         if id == lineID { caption = nil }
     }
 
@@ -33,11 +37,33 @@ final class StarVoice {
     }
 
     func sayWord(_ word: String) async { await speaker.sayWord(word) }
-    func sayLetterSound(_ grapheme: String, stretched: Bool = false) async {
-        await speaker.sayLetterSound(grapheme, stretched: stretched)
+
+    /// Several pieces in a row, e.g. ["Now make it", word: "hot"].
+    func say(_ parts: [Part]) async {
+        lineID += 1
+        let id = lineID
+        caption = parts.map(\.text).joined(separator: " ")
+        for part in parts {
+            guard id == lineID else { return }
+            switch part {
+            case .line(let t): _ = await speaker.say(t)
+            case .word(let w): _ = await speaker.sayWord(w)
+            }
+        }
+        if id == lineID { caption = nil }
     }
-    func sayBlend(_ graphemes: [String], word: String) async {
-        await speaker.sayBlend(graphemes, word: word)
+
+    func announce(_ parts: [Part]) { Task { await say(parts) } }
+
+    enum Part {
+        case line(String)
+        case word(String)
+        var text: String {
+            switch self {
+            case .line(let t): t
+            case .word(let w): w
+            }
+        }
     }
 
     func stop() {

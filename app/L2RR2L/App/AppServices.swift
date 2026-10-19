@@ -36,7 +36,7 @@ final class AppServices {
         self.celebration = CelebrationCenter()
         self.feedback = Feedback(sounds: sounds, haptics: haptics)
         self.parallax = ParallaxMotion()
-        self.phonemes = PhonemeEngine(voice: speaker.voice)
+        self.phonemes = PhonemeEngine()
     }
 
     static func live() -> AppServices {
@@ -72,6 +72,7 @@ final class AppServices {
 
     /// A game reports a miss on an item. Counted once per item.
     func noteStruggle(item: String) {
+        streak = 0
         guard router.inSession, item != lastStruggle else { return }
         lastStruggle = item
         struggleStreak += 1
@@ -113,9 +114,10 @@ final class AppServices {
                                             usedAudioHelp: usedAudioHelp, responseTime: responseTime)
         progress.awardStars(stars, game: game)
         itemFinished(word)
+        streakStep(clean: !usedAudioHelp)
         checkMilestones()
-        celebration.fire(.sparkle)
-        mascot.react(.cheer)
+        celebration.fire(Self.variant(after: &lastVariant))
+        if streak != 5 { mascot.react(.cheer) }
         voice.announce(line ?? nextPraise())
         if let sticker {
             Task {
@@ -132,6 +134,7 @@ final class AppServices {
                         errorTags: [String] = [],
                         line: String? = "Almost! Let's try again.") {
         feedback.play(.oops)
+        streak = 0
         progress.recordAnswer(game: game, word: word, correct: false, errorTags: errorTags)
         mascot.react(.encourage)
         if let line { voice.announce(line) }
@@ -151,7 +154,40 @@ final class AppServices {
         feedback.play(.sticker)
         celebration.fire(.sticker(sticker))
         mascot.react(.dance)
-        voice.announce("\(sticker.word.capitalized) goes in your sticker book!")
+        voice.announce([.word(sticker.word), .line("goes in your sticker book!")])
+    }
+
+    // MARK: Streaks (game spec 4: rainbow trail at 3, a swoop at 5, aurora at 10)
+
+    private(set) var streak = 0
+    @ObservationIgnored private var lastVariant = -1
+
+    /// Misses reset it quietly; games call this on a wrong answer.
+    func breakStreak() { streak = 0 }
+
+    private func streakStep(clean: Bool) {
+        guard clean else { streak = 0; return }
+        streak += 1
+        // the chime climbs with the streak
+        for _ in 0..<min(streak, 4) { sounds.playTwinkle() }
+        switch streak {
+        case 3: celebration.fire(.rainbow)
+        case 5:
+            celebration.fire(.starShower)
+            mascot.react(.streak)
+        case 10, 15, 20:
+            celebration.fire(.aurora)
+            mascot.react(.streak)
+        default: break
+        }
+    }
+
+    private static func variant(after last: inout Int) -> CelebrationCenter.Kind {
+        let options = CelebrationCenter.Kind.rightAnswerVariants
+        var i = Int.random(in: 0..<options.count)
+        if i == last { i = (i + 1) % options.count }
+        last = i
+        return options[i]
     }
 
     /// Learning path section 8 milestones that come from reading words alone.

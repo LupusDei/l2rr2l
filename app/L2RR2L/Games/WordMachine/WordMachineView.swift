@@ -52,15 +52,25 @@ private struct WordMachineBoard: View {
 
                 MachineBody(running: model.phase == .running, width: machineW, height: machineH)
                     .position(x: w / 2, y: machineY)
+                    // once the word is built, the whole machine is the lever
+                    .onTapGesture { if model.phase == .ready { model.pullLever() } }
 
                 ForEach(0..<model.boxes.count, id: \.self) { i in
                     SoundBox(letter: model.boxes[i], size: box,
                              humming: model.humming == i || model.readingIndex == i && model.phase == .running,
                              reject: model.rejectBox == i ? model.rejectCount : 0,
                              snaps: model.snapCount,
-                             target: dragging != nil && hit(dragPoint, boxCenter(i), box))
+                             target: (dragging != nil && hit(dragPoint, boxCenter(i), box)) || model.heldLetter != nil)
                         .position(boxCenter(i))
                         .onTapGesture { model.tapBox(i) }
+                }
+
+                // the finished word's picture shoots out of the machine's chute
+                if let popped = model.poppedWord {
+                    ChuteCard(word: popped, size: m.s(170), drop: machineH * 1.1)
+                        .position(x: w / 2, y: machineY + machineH * 0.3)
+                        .id(model.runCount)
+                        .allowsHitTesting(false)
                 }
 
                 Lever(ready: model.phase == .ready, pulled: model.runCount, height: machineH * 0.9) {
@@ -69,7 +79,7 @@ private struct WordMachineBoard: View {
                 .position(x: w / 2 + machineW / 2 - machineW * 0.08, y: machineY - machineH * 0.05)
 
                 if model.phase != .chainDone {
-                LetterTray(letters: model.chain.trayLetters, glow: model.glowLetter, tile: m.s(92),
+                LetterTray(letters: model.chain.trayLetters, glow: model.heldLetter ?? model.glowLetter, tile: m.s(92),
                            maxWidth: w * 0.8, dragging: dragging,
                            onTap: { model.tapLetter($0) },
                            onDrag: { letter, point in
@@ -337,7 +347,8 @@ private struct Lever: View {
                     .offset(y: -height * 0.1)
                     .glow(ready ? Theme.pink : .clear, radius: 16)
             }
-            .frame(width: height * 0.3, height: height)
+            .frame(width: max(height * 0.3, 88), height: max(height, 110))
+            .contentShape(Rectangle())
             .keyframeAnimator(initialValue: 0.0, trigger: pulled) { view, angle in
                 view.rotationEffect(.degrees(angle), anchor: .bottom)
             } keyframes: { _ in
@@ -373,5 +384,48 @@ private struct ChainColumn: View {
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.6), value: words)
         .animation(.spring(response: 0.3, dampingFraction: 0.5), value: reading)
+    }
+}
+
+/// The machine's output: the word's picture card pops out of the chute,
+/// spins up big for a moment, then floats down into the chain row.
+private struct ChuteCard: View {
+    let word: Word
+    let size: CGFloat
+    let drop: CGFloat
+    @State private var go = false
+
+    struct Pop { var y: CGFloat = 0; var scale: CGFloat = 0.2; var angle: Double = 0; var opacity: Double = 0 }
+
+    var body: some View {
+        WordPicture(word: word.text, emoji: word.picture, size: size)
+            .padding(size * 0.12)
+            .background(RoundedRectangle(cornerRadius: size * 0.25, style: .continuous).fill(.white))
+            .glow(Theme.gold, radius: 18)
+            .keyframeAnimator(initialValue: Pop(), trigger: go) { view, p in
+                view.offset(y: p.y).scaleEffect(p.scale).rotationEffect(.degrees(p.angle)).opacity(p.opacity)
+            } keyframes: { _ in
+                KeyframeTrack(\.y) {
+                    CubicKeyframe(drop * 0.35, duration: 0.35)
+                    SpringKeyframe(drop * 0.15, duration: 0.5, spring: .bouncy)
+                    CubicKeyframe(drop * 0.15, duration: 0.6)
+                    CubicKeyframe(drop, duration: 0.45)
+                }
+                KeyframeTrack(\.scale) {
+                    SpringKeyframe(1.15, duration: 0.45, spring: .bouncy)
+                    CubicKeyframe(1.0, duration: 0.9)
+                    CubicKeyframe(0.3, duration: 0.45)
+                }
+                KeyframeTrack(\.angle) {
+                    CubicKeyframe(360, duration: 0.5)
+                    CubicKeyframe(360, duration: 1.25)
+                }
+                KeyframeTrack(\.opacity) {
+                    CubicKeyframe(1, duration: 0.15)
+                    CubicKeyframe(1, duration: 1.4)
+                    CubicKeyframe(0, duration: 0.3)
+                }
+            }
+            .onAppear { go = true }
     }
 }

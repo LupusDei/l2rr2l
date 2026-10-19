@@ -143,8 +143,7 @@ final class CheckModel {
         case .sparkleCheck:
             await services.voice.say("Let's play Cutisie's Sparkle Check! There are no wrong answers. Every answer makes a sparkle.")
         case .skyTrial(let stage):
-            let name = Curriculum.shared.stage(stage)?.name ?? "this world"
-            await services.voice.say("It's a Sky Trial! Help Cutisie fly past \(name)!")
+            await services.voice.say("It's a Sky Trial! Help Cutisie fly to a new world!")
         case .warmUp(.rhymePop):
             await services.voice.say("Rhyme Pop! Pop the word that doesn't rhyme.")
         case .warmUp(.wingClaps):
@@ -330,7 +329,7 @@ final class CheckModel {
             // Cutisie acts out what the unicorn word "means"
             let meaning = UnicornMeanings.meaning(for: w.text)
             services.mascot.play(take: "unicorn_word_\(meaning.clip)")
-            services.voice.announce("In unicorn, \(w.text) means \(meaning.phrase)!")
+            services.voice.announce([.line("In unicorn,"), .word(w.text), .line("means \(meaning.phrase)!")])
             pause = 4.5
         }
         Task {
@@ -374,7 +373,7 @@ final class CheckModel {
             services.progress.record(Assessment(kind: .placement, date: .now, stage: max(1, start),
                                                 parts: score, passed: true, shakySounds: shaky))
             passed = true
-            resultLine = "Cutisie knows just where to start! Let's fly to \(Curriculum.shared.stage(max(1, start))?.name ?? "the sky")!"
+            resultLine = "Cutisie knows just where to start! Let's fly!"
             services.celebrateRoundComplete(game: .starCatch, line: resultLine)
             services.mascot.react(.levelUp)
         case .warmUp(let warmUp):
@@ -398,8 +397,7 @@ final class CheckModel {
                 if let number = [2: 5, 3: 8, 4: 10, 5: 11][stage] {
                     services.celebration.playMilestone(number)
                 }
-                let next = Curriculum.shared.stage(stage + 1)?.name ?? "a brand new sky"
-                resultLine = "You did it! A rainbow bridge opens to \(next)!"
+                resultLine = "You did it! A rainbow bridge opens to a new world!"
                 services.celebrateRoundComplete(game: .starCatch, line: resultLine)
                 services.mascot.react(.levelUp)
             } else {

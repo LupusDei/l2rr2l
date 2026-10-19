@@ -18,6 +18,16 @@ struct CelebrationOverlay: View {
                         ConfettiBurst(start: burst.start, origins: [UnitPoint(x: 0.5, y: 0.5)], count: 80, power: 1.1)
                         StickerReveal(sticker: sticker)
                     }
+                case .starShower:
+                    FallingThings(start: burst.start, symbols: ["star.fill", "sparkle"], rising: false)
+                case .hearts:
+                    FallingThings(start: burst.start, symbols: ["heart.fill"], rising: true)
+                case .bubbles:
+                    FallingThings(start: burst.start, symbols: ["circle.fill", "circle"], rising: true)
+                case .rainbow:
+                    RainbowSweep(start: burst.start)
+                case .aurora:
+                    AuroraWash(start: burst.start)
                 }
             }
         }
@@ -123,6 +133,80 @@ private struct StickerReveal: View {
         .onAppear {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.55)) { shown = true }
             withAnimation(.easeIn(duration: 0.4).delay(2.4)) { shown = false }
+        }
+    }
+}
+
+/// Stars raining down, or hearts / bubbles floating up, across the screen.
+private struct FallingThings: View {
+    let start: Date
+    let symbols: [String]
+    let rising: Bool
+    private let items: [(x: CGFloat, delay: Double, size: CGFloat, sway: Double, color: Int, symbol: Int)] = (0..<34).map { i in
+        (CGFloat.random(in: 0.03...0.97), Double.random(in: 0...0.5), CGFloat.random(in: 18...44),
+         Double.random(in: 0...6), i % Theme.confetti.count, i)
+    }
+
+    var body: some View {
+        TimelineView(.animation) { timeline in
+            let t = timeline.date.timeIntervalSince(start)
+            Canvas { ctx, size in
+                for item in items {
+                    let p = (t - item.delay) / 1.5
+                    guard p > 0, p < 1, let symbol = ctx.resolveSymbol(id: item.symbol % symbols.count) else { continue }
+                    let y = rising ? size.height * (1.05 - 1.1 * p) : size.height * (-0.05 + 1.1 * p)
+                    let x = item.x * size.width + 24 * sin(t * 3 + item.sway)
+                    var c = ctx
+                    c.opacity = min(1, (1 - p) * 3)
+                    c.addFilter(.colorMultiply(Theme.confetti[item.color]))
+                    c.draw(symbol, in: CGRect(x: x - item.size / 2, y: y - item.size / 2, width: item.size, height: item.size))
+                }
+            } symbols: {
+                ForEach(Array(symbols.enumerated()), id: \.offset) { i, name in
+                    Image(systemName: name).font(.system(size: 44)).foregroundStyle(.white).tag(i)
+                }
+            }
+        }
+    }
+}
+
+/// A rainbow that arcs across the sky: the 3-in-a-row streak reward.
+private struct RainbowSweep: View {
+    let start: Date
+    private let colors: [Color] = [.red, .orange, .yellow, .green, .cyan, .blue, .purple]
+
+    var body: some View {
+        TimelineView(.animation) { timeline in
+            let t = timeline.date.timeIntervalSince(start)
+            let grow = min(1, t / 0.8), fade = max(0, min(1, (2.4 - t) / 0.6))
+            GeometryReader { geo in
+                let w = geo.size.width
+                ZStack {
+                    ForEach(0..<colors.count, id: \.self) { i in
+                        Circle()
+                            .trim(from: 0.5, to: 0.5 + 0.5 * grow)
+                            .stroke(colors[i].opacity(0.75), lineWidth: w * 0.025)
+                            .frame(width: w * (1.1 - 0.05 * CGFloat(i)), height: w * (1.1 - 0.05 * CGFloat(i)))
+                    }
+                }
+                .position(x: w / 2, y: geo.size.height * 0.62)
+                .opacity(fade)
+                .blur(radius: 1)
+            }
+        }
+    }
+}
+
+/// The whole sky lights up: the 10-in-a-row streak reward.
+private struct AuroraWash: View {
+    let start: Date
+    var body: some View {
+        TimelineView(.animation) { timeline in
+            let t = timeline.date.timeIntervalSince(start)
+            let a = sin(min(1, t / 3.5) * .pi)
+            LinearGradient(colors: [Theme.aurora2.opacity(0.5 * a), Theme.aurora3.opacity(0.4 * a), Theme.aurora1.opacity(0.5 * a), .clear],
+                           startPoint: UnitPoint(x: 0.5 + 0.3 * sin(t), y: 0), endPoint: .bottom)
+                .blendMode(.screen)
         }
     }
 }

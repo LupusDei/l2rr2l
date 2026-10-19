@@ -4,70 +4,81 @@
 /// keeps going (/mmmmm/), and moving to the next tile crossfades into the next
 /// sound with no gap. That is what makes Stretchy Blend work.
 ///
-/// Sources, best first:
-/// 1. `Media/phonemes/<g>.m4a` recordings (optionally `<g>-long.m4a` to loop)
-/// 2. The Star Voice's TTS rendered offline from IPA, with a steady middle
-///    slice cut out and crossfade-looped for continuous sounds.
+/// Sounds come only from recordings: `Media/phonemes/<g>.wav` (the natural
+/// sound) and, for continuous sounds, `<g>-long.wav` (a seamless loop to hold).
+/// There is no synthesized fallback; a missing sound is silent and logged.
 ///
 /// Stop sounds (t, p, b, d, k, g...) can't be held; they play once as a pop.
 @MainActor
 final class PhonemeEngine {
     private struct Sound {
+        /// Plays first (for held sounds, the same seamless loop).
         let onset: AVAudioPCMBuffer
+        /// Seamless loop for continuous sounds; nil for one-shots (stops,
+        /// vowel teams), which always play to the end.
         let loop: AVAudioPCMBuffer?
+        var duration: Double { Double(onset.frameLength) / onset.format.sampleRate }
     }
 
     private let engine = AVAudioEngine()
-    private let nodes = [AVAudioPlayerNode(), AVAudioPlayerNode()]
+    /// Two nodes for held sounds so one can fade while the next starts.
+    private let holdNodes = [AVAudioPlayerNode(), AVAudioPlayerNode()]
+    /// One-shots get their own node and are never cut off by a fade, so a
+    /// short /t/ at the end of a slide is always heard in full.
+    private let oneShotNode = AVAudioPlayerNode()
     private var active = 0
     private var cache: [String: Sound] = [:]
     private let format = AVAudioFormat(standardFormatWithSampleRate: 44_100, channels: 1)!
-    private let renderer = AVSpeechSynthesizer()
-    private let voice: AVSpeechSynthesisVoice?
     private var fadeTasks: [Int: Task<Void, Never>] = [:]
     private(set) var current: String?
 
-    init(voice: AVSpeechSynthesisVoice?) {
-        self.voice = voice
-        for node in nodes {
+    init() {
+        for node in holdNodes + [oneShotNode] {
             engine.attach(node)
             engine.connect(node, to: engine.mainMixerNode, format: format)
         }
         try? engine.start()
     }
 
-    /// Render (or load) the sounds for these graphemes ahead of time.
+    /// Load the sounds for these graphemes ahead of time.
     func prepare(_ graphemes: [String]) async {
         for g in Set(graphemes.map { $0.lowercased() }) where !g.isEmpty && cache[g] == nil {
             if let sound = await build(g) { cache[g] = sound }
         }
     }
 
-    var continuousGraphemes: Set<String> {
-        Set(LetterSounds.table.filter { $0.value.continuous }.keys)
+    /// How long a grapheme's one-shot lasts (0 for held sounds or unknown).
+    func oneShotDuration(_ grapheme: String) -> Double {
+        guard let s = cache[grapheme.lowercased()], s.loop == nil else { return 0 }
+        return s.duration
     }
 
-    /// Start (or switch to) holding a grapheme's sound.
+    /// Start (or switch to) a grapheme's sound. Continuous sounds keep going
+    /// until `release()` or the next `hold`; one-shots play once, in full.
     func hold(_ grapheme: String) {
         let g = grapheme.lowercased()
         if g.isEmpty { release(); return } // silent letter (magic e)
         guard g != current, let sound = cache[g] else { return }
         if !engine.isRunning { try? engine.start() }
         fadeOut(active)
-        active = (active + 1) % nodes.count
-        let node = nodes[active]
+        current = g
+        guard let loop = sound.loop else {
+            oneShotNode.stop()
+            oneShotNode.volume = 1
+            oneShotNode.scheduleBuffer(sound.onset, at: nil, options: [])
+            oneShotNode.play()
+            return
+        }
+        active = (active + 1) % holdNodes.count
+        let node = holdNodes[active]
         fadeTasks[active]?.cancel()
         node.stop()
         node.volume = 1
-        node.scheduleBuffer(sound.onset, at: nil, options: [])
-        if let loop = sound.loop {
-            node.scheduleBuffer(loop, at: nil, options: .loops)
-        }
+        node.scheduleBuffer(loop, at: nil, options: .loops)
         node.play()
-        current = g
     }
 
-    /// Let go: the held sound fades out quickly.
+    /// Let go: a held sound fades out quickly (one-shots finish on their own).
     func release() {
         fadeOut(active)
         current = nil
@@ -76,7 +87,8 @@ final class PhonemeEngine {
     /// Play one grapheme briefly (hint pulses, tile taps).
     func tap(_ grapheme: String, holdFor seconds: Double = 0.5) async {
         hold(grapheme)
-        try? await Task.sleep(for: .seconds(seconds))
+        let shot = oneShotDuration(grapheme)
+        try? await Task.sleep(for: .seconds(shot > 0 ? shot + 0.05 : seconds))
         release()
     }
 
@@ -90,15 +102,16 @@ final class PhonemeEngine {
                 continue
             }
             hold(g)
-            let isStop = !(LetterSounds.table[g.lowercased()]?.continuous ?? true)
-            try? await Task.sleep(for: .seconds(isStop ? 0.25 : perSound))
+            let shot = oneShotDuration(g)
+            try? await Task.sleep(for: .seconds(shot > 0 ? max(shot + 0.06, 0.2) : perSound))
+            if shot > 0 { current = nil }
         }
         release()
         onSound?(-1)
     }
 
     private func fadeOut(_ index: Int) {
-        let node = nodes[index]
+        let node = holdNodes[index]
         fadeTasks[index]?.cancel()
         fadeTasks[index] = Task { [weak self] in
             for step in stride(from: 1.0, through: 0, by: -0.125) {
@@ -115,16 +128,15 @@ final class PhonemeEngine {
 
     private func build(_ g: String) async -> Sound? {
         if let recorded = loadRecording(g) { return recorded }
-        guard let info = LetterSounds.table[g] else { return nil }
-        // Render longer than needed so the steady middle is easy to find.
-        let ipa = info.continuous ? info.ipa + "ːːː" : info.ipa
-        guard let raw = await render(ipa: ipa, text: g), let pcm = convert(raw) else { return nil }
-        return slice(pcm, continuous: info.continuous)
+        #if DEBUG
+        print("🔇 missing letter sound: Media/phonemes/\(g).wav")
+        #endif
+        return nil
     }
 
     private func loadRecording(_ g: String) -> Sound? {
         func read(_ name: String) -> AVAudioPCMBuffer? {
-            for ext in ["m4a", "wav", "caf", "mp3"] {
+            for ext in ["wav", "caf", "m4a", "mp3"] {
                 guard let url = Bundle.main.url(forResource: name, withExtension: ext, subdirectory: "Media/phonemes"),
                       let file = try? AVAudioFile(forReading: url),
                       let buffer = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: AVAudioFrameCount(file.length)),
@@ -133,48 +145,43 @@ final class PhonemeEngine {
             }
             return nil
         }
-        if let long = read("\(g)-long") { return Sound(onset: long, loop: long) }
+        // Held sound: the -long take, re-seamed with a crossfade so the loop
+        // never clicks (some takes, like s and sh, don't meet exactly).
+        if let long = read("\(g)-long"), let loop = seamless(long) {
+            return Sound(onset: loop, loop: loop)
+        }
+        // Everything else plays once, untrimmed apart from silence.
         guard let short = read(g) else { return nil }
-        let continuous = LetterSounds.table[g]?.continuous ?? false
-        return slice(short, continuous: continuous)
+        return Sound(onset: trimSilence(short), loop: nil)
     }
 
-    private func render(ipa: String, text: String) async -> AVAudioPCMBuffer? {
-        let attributed = NSAttributedString(string: text, attributes: [
-            NSAttributedString.Key(AVSpeechSynthesisIPANotationAttribute): ipa,
-        ])
-        let utterance = AVSpeechUtterance(attributedString: attributed)
-        utterance.voice = voice
-        utterance.rate = 0.3
-        return await withCheckedContinuation { continuation in
-            var chunks: [AVAudioPCMBuffer] = []
-            var done = false
-            renderer.write(utterance) { buffer in
-                guard !done else { return }
-                guard let pcm = buffer as? AVAudioPCMBuffer, pcm.frameLength > 0 else {
-                    done = true
-                    continuation.resume(returning: Self.join(chunks))
-                    return
-                }
-                chunks.append(pcm)
+    /// Blends the last 40 ms into the first 40 ms so the end meets the start.
+    private func seamless(_ buffer: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {
+        let n = Int(buffer.frameLength)
+        let fade = Int(format.sampleRate * 0.04)
+        guard n > fade * 4, let out = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(n - fade)) else { return nil }
+        out.frameLength = AVAudioFrameCount(n - fade)
+        let src = buffer.floatChannelData![0], dst = out.floatChannelData![0]
+        for i in 0..<(n - fade) {
+            var sample = src[i]
+            if i < fade {
+                let w = Float(i) / Float(fade)
+                sample = src[i] * w + src[n - fade + i] * (1 - w)
             }
+            dst[i] = sample
         }
+        return out
     }
 
-    nonisolated private static func join(_ chunks: [AVAudioPCMBuffer]) -> AVAudioPCMBuffer? {
-        guard let first = chunks.first else { return nil }
-        let total = chunks.reduce(0) { $0 + Int($1.frameLength) }
-        guard let out = AVAudioPCMBuffer(pcmFormat: first.format, frameCapacity: AVAudioFrameCount(total)) else { return nil }
-        let bytesPerFrame = Int(first.format.streamDescription.pointee.mBytesPerFrame)
-        var offset = 0
-        for chunk in chunks {
-            let n = Int(chunk.frameLength)
-            let dst = out.audioBufferList.pointee.mBuffers.mData!.advanced(by: offset * bytesPerFrame)
-            memcpy(dst, chunk.audioBufferList.pointee.mBuffers.mData!, n * bytesPerFrame)
-            offset += n
-        }
-        out.frameLength = AVAudioFrameCount(total)
-        return out
+    /// Cuts leading/trailing near-silence (very gently, so quiet stops survive).
+    private func trimSilence(_ buffer: AVAudioPCMBuffer) -> AVAudioPCMBuffer {
+        let data = buffer.floatChannelData![0]
+        let n = Int(buffer.frameLength)
+        let threshold: Float = 0.004
+        let start = max(0, ((0..<n).first { abs(data[$0]) > threshold } ?? 0) - 64)
+        let end = min(n, ((0..<n).last { abs(data[$0]) > threshold } ?? (n - 1)) + 256)
+        guard end > start else { return buffer }
+        return copy(buffer, from: start, count: end - start, fadeOutMs: 4)
     }
 
     private func convert(_ buffer: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {
@@ -190,42 +197,6 @@ final class PhonemeEngine {
             return buffer
         }
         return out
-    }
-
-    /// Trim silence; for continuous sounds cut an onset plus a seamless loop
-    /// from the steady middle.
-    private func slice(_ buffer: AVAudioPCMBuffer, continuous: Bool) -> Sound? {
-        let data = buffer.floatChannelData![0]
-        let n = Int(buffer.frameLength)
-        let threshold: Float = 0.02
-        guard let start = (0..<n).first(where: { abs(data[$0]) > threshold }),
-              let end = (0..<n).last(where: { abs(data[$0]) > threshold }), end > start else { return nil }
-        let sr = format.sampleRate
-        if !continuous {
-            return Sound(onset: copy(buffer, from: start, count: end - start, fadeOutMs: 15), loop: nil)
-        }
-        let length = end - start
-        let loopStart = start + Int(Double(length) * 0.3)
-        let loopEnd = start + Int(Double(length) * 0.75)
-        let crossfade = Int(sr * 0.025)
-        guard loopEnd - loopStart > crossfade * 3 else {
-            return Sound(onset: copy(buffer, from: start, count: length, fadeOutMs: 15), loop: nil)
-        }
-        let onset = copy(buffer, from: start, count: loopStart - start, fadeOutMs: 0)
-        // loop = segment with its tail blended over its head so the seam is silent
-        let loopLength = loopEnd - loopStart - crossfade
-        let loop = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(loopLength))!
-        loop.frameLength = AVAudioFrameCount(loopLength)
-        let out = loop.floatChannelData![0]
-        for i in 0..<loopLength {
-            var sample = data[loopStart + i]
-            if i < crossfade {
-                let w = Float(i) / Float(crossfade)
-                sample = sample * w + data[loopStart + loopLength + i] * (1 - w)
-            }
-            out[i] = sample
-        }
-        return Sound(onset: onset, loop: loop)
     }
 
     private func copy(_ buffer: AVAudioPCMBuffer, from start: Int, count: Int, fadeOutMs: Double) -> AVAudioPCMBuffer {

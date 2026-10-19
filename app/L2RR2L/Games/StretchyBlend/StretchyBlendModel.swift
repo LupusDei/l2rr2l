@@ -27,6 +27,8 @@ final class StretchyBlendModel {
     private(set) var hintLevel = 0
     private(set) var wiggleCount = 0
     private(set) var tilesBounce = 0
+    private(set) var tumbleCount = 0
+    private(set) var winVariant = 0
 
     @ObservationIgnored private var visited: Set<Int> = []
     @ObservationIgnored private var usedHelp = false
@@ -166,6 +168,13 @@ final class StretchyBlendModel {
             try? await Task.sleep(for: .milliseconds(120))
         }
         withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { position = 1; litTile = nil }
+        // sometimes she overshoots and tumbles off the end (then beams)
+        if Bool.random() || index == 0 {
+            tumbleCount += 1
+            services.sounds.playPack("tumble")
+            try? await Task.sleep(for: .seconds(0.9))
+            services.sounds.playPack("squeak_happy")
+        }
         tilesBounce += 1
         await services.voice.sayWord(item.word.text)
         try? await Task.sleep(for: .milliseconds(250))
@@ -213,6 +222,7 @@ final class StretchyBlendModel {
         stuckTask?.cancel()
         if card == item.word {
             phase = .won
+            winVariant = Int.random(in: 0..<4)
             burstCard = card
             tilesBounce += 1
             let helped = usedHelp || hintLevel >= 3
@@ -261,7 +271,7 @@ final class StretchyBlendModel {
         default:
             usedHelp = true
             glowCard = item.word
-            await services.voice.say("It says \(item.word.text). Tap \(item.word.text).")
+            await services.voice.say([.line("It says"), .word(item.word.text), .line("Tap it!")])
         }
         resetStuckTimer()
     }
