@@ -268,6 +268,17 @@ final class ProgressStore {
 
     // MARK: Persistence
 
+    #if DEBUG
+    /// `-demoTreats N` / `-demoEgg N` launch arguments: set up the treasure
+    /// screen's states for checking it.
+    func setDemoTreasure(treats: Int?, egg: Int?) {
+        mutate { d in
+            if let treats { d.treats = treats }
+            if let egg { d.eggProgress = egg }
+        }
+    }
+    #endif
+
     private func mutate(_ change: (inout ProgressData) -> Void) {
         change(&data)
         scheduleSave()

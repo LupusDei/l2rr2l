@@ -25,6 +25,11 @@ struct L2RR2LApp: App {
                         let game = args.firstIndex(of: "-uitestGame").flatMap { $0 + 1 < args.count ? GameID(rawValue: args[$0 + 1]) : nil }
                         services.router.open(.game(game ?? .wordMachine))
                     }
+                    let args = CommandLine.arguments
+                    func number(_ flag: String) -> Int? { args.firstIndex(of: flag).flatMap { $0 + 1 < args.count ? Int(args[$0 + 1]) : nil } }
+                    if number("-demoTreats") != nil || number("-demoEgg") != nil {
+                        services.progress.setDemoTreasure(treats: number("-demoTreats"), egg: number("-demoEgg"))
+                    }
                     if CommandLine.arguments.contains("-openTreasure") { services.router.open(.treasure(fromSession: true)) }
                     if CommandLine.arguments.contains("-landscape") {
                         // asked once the scene is active, or the request is ignored

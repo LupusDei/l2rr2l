@@ -317,7 +317,7 @@ private struct SoundBox: View {
         ZStack {
             slot.fill(Theme.skyTop.opacity(0.75))
             slot.strokeBorder(style: StrokeStyle(lineWidth: 4, dash: [10, 8]))
-                .foregroundStyle(target ? Theme.gold : .white.opacity(0.6))
+                .foregroundStyle(target || letter == nil ? Theme.gold : .white.opacity(0.6))
             if let letter {
                 TrayTile(letter: letter, size: size * 0.9, glow: humming)
                     .transition(.scale(scale: 1.4).combined(with: .opacity))
@@ -329,7 +329,8 @@ private struct SoundBox: View {
         }
         .frame(width: size, height: size * 1.05)
         .scaleEffect(humming ? 1.1 : (target ? 1.06 : 1))
-        .glow(humming ? Theme.gold : .clear, radius: 18)
+        // an empty box glows softly: that's where the new sound goes
+        .glow(humming ? Theme.gold : (letter == nil ? Theme.gold.opacity(0.55) : .clear), radius: 18)
         .keyframeAnimator(initialValue: CGFloat(0), trigger: reject) { view, x in
             view.offset(x: x)
         } keyframes: { _ in
