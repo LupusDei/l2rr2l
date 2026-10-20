@@ -28,22 +28,29 @@ struct TreasureView: View {
                 CutisieActor(size: min(w, h) * 0.42)
                     .position(x: w * 0.5, y: h * 0.33)
 
-                // treats to feed her
-                VStack(spacing: m.s(10)) {
-                    HStack(spacing: m.s(18)) {
-                        if progress.data.treats == 0 {
-                            Text("⭐️ → 🍓")
-                                .font(.system(size: m.s(40)))
-                                .opacity(0.6)
-                        }
-                        ForEach(0..<min(progress.data.treats, 8), id: \.self) { i in
-                            Button { feed(i) } label: {
-                                Text(treatArt[i % treatArt.count])
-                                    .font(.system(size: m.s(64)))
-                                    .frame(width: m.s(100), height: m.s(100))
+                // the painted chests and egg in the background aren't
+                // tappable, so dim the painting and let the real things pop
+                Color.black.opacity(0.35).ignoresSafeArea().allowsHitTesting(false)
+
+                // treats to feed her, or (with none left) how to earn the next one
+                VStack(spacing: m.s(14)) {
+                    if progress.data.treats == 0 {
+                        TreatMeter(stars: progress.data.stars % ProgressStore.starsPerTreat,
+                                   needed: ProgressStore.starsPerTreat, size: m.s(46))
+                    } else {
+                        HStack(spacing: m.s(18)) {
+                            ForEach(0..<min(progress.data.treats, 8), id: \.self) { i in
+                                Button { feed(i) } label: {
+                                    Text(treatArt[i % treatArt.count])
+                                        .font(.system(size: m.s(64)))
+                                        .frame(width: m.s(100), height: m.s(100))
+                                }
+                                .buttonStyle(.chunky(Theme.pink, depth: m.s(8), cornerRadius: m.s(30)))
+                                .opacity(flyingTreat == i ? 0 : 1)
+                                .overlay(alignment: .bottomTrailing) {
+                                    if i == 0 && flyingTreat == nil { TapHint(size: m.s(54)).offset(x: m.s(24), y: m.s(30)) }
+                                }
                             }
-                            .buttonStyle(.chunky(Theme.pink, depth: m.s(8), cornerRadius: m.s(30)))
-                            .opacity(flyingTreat == i ? 0 : 1)
                         }
                     }
                 }
@@ -57,10 +64,26 @@ struct TreasureView: View {
                                                 removal: .scale(scale: 0.1).combined(with: .opacity)))
                 }
 
-                // the mystery egg
-                MysteryEgg(progress: progress.data.eggProgress, needed: ProgressStore.treatsPerEgg,
-                           wobble: eggWobble, size: m.s(150)) { hatch() }
-                    .position(x: w * 0.82, y: h * 0.5)
+                // the mystery egg, with one warm dot per treat fed
+                let eggReady = progress.data.eggProgress >= ProgressStore.treatsPerEgg
+                VStack(spacing: m.s(10)) {
+                    MysteryEgg(progress: progress.data.eggProgress, needed: ProgressStore.treatsPerEgg,
+                               wobble: eggWobble, size: m.s(150)) { hatch() }
+                        .overlay(alignment: .bottomTrailing) {
+                            if eggReady { TapHint(size: m.s(54)).offset(x: m.s(20), y: m.s(20)) }
+                        }
+                    HStack(spacing: m.s(8)) {
+                        ForEach(0..<ProgressStore.treatsPerEgg, id: \.self) { i in
+                            Circle()
+                                .fill(i < progress.data.eggProgress ? Theme.gold : .white.opacity(0.3))
+                                .frame(width: m.s(16), height: m.s(16))
+                                .glow(i < progress.data.eggProgress ? Theme.gold : .clear, radius: 5)
+                        }
+                    }
+                }
+                .padding(m.s(16))
+                .background(Circle().fill(Theme.skyTop.opacity(0.55)).padding(-m.s(10)))
+                .position(x: w * 0.82, y: h * 0.5)
 
                 // her growing sky home
                 CollectionShelf(items: progress.data.collectibles + progress.data.hatched)
@@ -113,6 +136,8 @@ struct TreasureView: View {
         }
         if services.progress.data.treats > 0 {
             await services.voice.say("Cutisie is hungry. Tap a treat to feed her!")
+        } else if services.progress.data.eggProgress < ProgressStore.treatsPerEgg {
+            await services.voice.say("Every five stars makes a treat. Feed Cutisie treats to hatch the egg!")
         }
         if services.progress.data.eggProgress >= ProgressStore.treatsPerEgg { eggWobble += 1 }
         #if DEBUG
@@ -177,6 +202,51 @@ struct TreasureView: View {
             await services.voice.say(fromSession ? "Bye bye, star reader! See you tomorrow!" : "Bye bye!")
             services.router.goHome()
         }
+    }
+}
+
+/// No treats yet: stars filling toward the next treat (5 stars = 1 treat).
+private struct TreatMeter: View {
+    let stars: Int
+    let needed: Int
+    let size: CGFloat
+
+    var body: some View {
+        HStack(spacing: size * 0.18) {
+            ForEach(0..<needed, id: \.self) { i in
+                Image(systemName: "star.fill")
+                    .font(.system(size: size * 0.7))
+                    .foregroundStyle(i < stars ? Theme.gold : .white.opacity(0.3))
+                    .glow(i < stars ? Theme.gold : .clear, radius: 6)
+            }
+            Image(systemName: "arrow.right")
+                .font(.system(size: size * 0.5, weight: .heavy))
+                .foregroundStyle(.white.opacity(0.8))
+            Text("🍓")
+                .font(.system(size: size))
+                .opacity(0.5)
+        }
+        .padding(.horizontal, size * 0.5)
+        .padding(.vertical, size * 0.3)
+        .background(Capsule().fill(Theme.skyTop.opacity(0.6)))
+        .overlay(Capsule().stroke(.white.opacity(0.4), lineWidth: 2))
+    }
+}
+
+/// A bobbing pointing hand that says "tap this".
+private struct TapHint: View {
+    let size: CGFloat
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
+            let t = timeline.date.timeIntervalSinceReferenceDate
+            Image(systemName: "hand.point.up.left.fill")
+                .font(.system(size: size))
+                .foregroundStyle(.white)
+                .shadow(color: .black.opacity(0.4), radius: 4)
+                .offset(x: -6 * abs(sin(t * 3)), y: -8 * abs(sin(t * 3)))
+        }
+        .allowsHitTesting(false)
     }
 }
 
