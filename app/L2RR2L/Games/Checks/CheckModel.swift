@@ -57,6 +57,15 @@ final class CheckModel {
     /// What each choice shows: a picture/emoji or a word.
     private(set) var choiceDisplay: [String: String] = [:]
     private(set) var picked: String?
+    /// Warm-ups: choices she already tried on this question (they fade).
+    private(set) var wrongPicks: Set<String> = []
+    @ObservationIgnored private var missesHere = 0
+    /// The picked answer's colour: green for a right warm-up pick, a neutral
+    /// lilac in the checks (which never say right or wrong).
+    var pickColor: Color {
+        if case .warmUp = kind { return Theme.mint }
+        return Theme.lilac
+    }
     private(set) var asked = 0
     private(set) var resultLine = ""
     private(set) var passed = false
@@ -282,7 +291,27 @@ final class CheckModel {
         case .claps(let w): choice == String(w.count)
         case .onset(let o): choice == o.word
         }
-        record(q, correct: correct)
+        // Warm-ups are practice, so a wrong pick says so gently and she tries
+        // again. The checks themselves never say right or wrong (they place
+        // her), so every answer there gets the same neutral "got it".
+        if case .warmUp = kind, !correct {
+            wrongPicks.insert(choice)
+            missesHere += 1
+            services.feedback.play(.oops)
+            services.mascot.react(.encourage)
+            Task {
+                try? await Task.sleep(for: .seconds(0.6))
+                if picked == choice { picked = nil }
+                replay()
+            }
+            return
+        }
+        if case .warmUp = kind {
+            services.feedback.play(.correct)
+            services.celebration.fire(.sparkle)
+            services.mascot.react(.cheer)
+        }
+        record(q, correct: correct && missesHere == 0)
     }
 
     /// Grown-up's ✓ / ✗ for a unicorn word, or nil if nobody is there.
@@ -319,11 +348,13 @@ final class CheckModel {
         sparkleAndMoveOn()
     }
 
-    /// Every answer sparkles: the check never feels like a test.
+    /// Checks acknowledge every answer the same soft way (no praise, no
+    /// "wrong") so they never feel like a test and never reward guessing.
     private func sparkleAndMoveOn() {
         phase = .answered
-        services.sounds.playTwinkle()
-        services.celebration.fire(.sparkle)
+        wrongPicks = []
+        missesHere = 0
+        if case .warmUp = kind {} else { services.feedback.play(.tap) }
         var pause = 0.9
         if let q = question, case .unicorn(let w) = q {
             // Cutisie acts out what the unicorn word "means"

@@ -156,8 +156,9 @@ private struct CheckBoard: View {
                         choiceLabel(q, choice)
                             .frame(width: m.s(190), height: m.s(180))
                     }
-                    .buttonStyle(.chunky(model.picked == choice ? Theme.gold : .white, depth: m.s(10), cornerRadius: m.s(36)))
-                    .disabled(model.phase != .asking)
+                    .buttonStyle(.chunky(model.picked == choice ? model.pickColor : .white, depth: m.s(10), cornerRadius: m.s(36)))
+                    .opacity(model.wrongPicks.contains(choice) ? 0.4 : 1)
+                    .disabled(model.phase != .asking || model.wrongPicks.contains(choice))
                 }
             }
         }
@@ -199,10 +200,10 @@ private struct SparkleTrail: View {
         let filled = total == 0 ? 0 : Int((Double(done) / Double(total) * Double(shown)).rounded(.down))
         HStack(spacing: 6) {
             ForEach(0..<shown, id: \.self) { i in
-                Image(systemName: "sparkle")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(i < filled ? Theme.gold : .white.opacity(0.3))
-                    .glow(i < filled ? Theme.gold : .clear, radius: 6)
+                // plain dots: how far along she is, not a score
+                Circle()
+                    .fill(i < filled ? Color.white.opacity(0.85) : Color.white.opacity(0.25))
+                    .frame(width: 12, height: 12)
             }
         }
         .animation(.spring, value: filled)
