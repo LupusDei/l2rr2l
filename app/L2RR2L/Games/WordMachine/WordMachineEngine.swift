@@ -65,6 +65,13 @@ struct WordMachineEngine: Equatable {
         return .accepted
     }
 
+    /// Take a letter back out of its box (the change-one scaffold pops out
+    /// the letter that has to change, so there's an empty box to fill).
+    mutating func clear(_ slot: Int) {
+        guard state == .building, slots.indices.contains(slot) else { return }
+        slots[slot] = nil
+    }
+
     /// Hint level 4: the right letter goes in for her.
     mutating func autoFill(_ slot: Int) -> PlaceResult {
         guard state == .building, slots.indices.contains(slot) else { return .ignored }

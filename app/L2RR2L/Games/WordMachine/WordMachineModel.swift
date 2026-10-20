@@ -24,6 +24,8 @@ final class WordMachineModel {
     private(set) var aliveCount = 0
 
     @ObservationIgnored private var explainedPickUp = false
+    /// Change steps left where the changing letter pops out for her (per app run).
+    static var changeScaffolds = 3
     @ObservationIgnored private var misses: [Int: Int] = [:]
     @ObservationIgnored private var usedHelp = false
     @ObservationIgnored private var wordShownAt = Date()
@@ -69,7 +71,20 @@ final class WordMachineModel {
         } else {
             services.mascot.react(.think)
             await services.voice.say([.line("Now make it"), .word(word.text)])
-            if engine.index == 1 { await services.voice.say("Change one letter!") }
+            // The old word stays in the boxes so she changes just one sound.
+            // Until she's got the idea, the letter that changes pops out so
+            // she sees an empty box to fill; after that she finds it herself.
+            if Self.changeScaffolds > 0, let changing = engine.wrongSlots.first {
+                Self.changeScaffolds -= 1
+                await services.voice.say("Change one letter!")
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.5)) { engine.clear(changing) }
+                services.feedback.play(.pop)
+                rejectBox = changing
+                rejectCount += 1
+            } else {
+                await services.voice.say("Which sound changes?")
+                explainedPickUp = false
+            }
         }
         guard !stopped else { return }
         await hum()
