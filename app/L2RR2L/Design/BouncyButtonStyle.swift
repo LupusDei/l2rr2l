@@ -43,7 +43,7 @@ struct ChunkyButtonStyle: ButtonStyle {
                 .background {
                     ZStack {
                         face.fill(color.opacity(0.55)).blur(radius: pressed ? 10 : 20).offset(y: depth * 1.6)
-                        face.fill(color.mix(with: .black, by: 0.35)).offset(y: depth)
+                        face.fill(color.mixed(with: .black, by: 0.35)).offset(y: depth)
                     }
                 }
                 .scaleEffect(x: pressed ? 1.04 : 1, y: pressed ? 0.96 : 1, anchor: .bottom)
@@ -102,7 +102,7 @@ struct ChunkyTitle: View {
     let text: String
     var size: CGFloat
     var colors: [Color] = [.white, Theme.pink]
-    var extrude: Color = Theme.lilac.mix(with: .black, by: 0.45)
+    var extrude: Color = Theme.lilac.mixed(with: .black, by: 0.45)
 
     var body: some View {
         let label = Text(text).font(.system(size: size, weight: .black, design: .rounded))

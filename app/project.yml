@@ -2,7 +2,7 @@ name: L2RR2L
 options:
   bundleIdPrefix: com.lupusdei
   deploymentTarget:
-    iOS: "18.0"
+    iOS: "17.0"
   createIntermediateGroups: true
 settings:
   base:

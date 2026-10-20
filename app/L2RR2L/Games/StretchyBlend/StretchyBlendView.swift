@@ -120,7 +120,7 @@ private struct RainbowSlide: View {
     var body: some View {
         ZStack {
             Capsule()
-                .fill(LinearGradient(colors: bands.map { $0.mix(with: .white, by: 0.35) }, startPoint: .top, endPoint: .bottom))
+                .fill(LinearGradient(colors: bands.map { $0.mixed(with: .white, by: 0.35) }, startPoint: .top, endPoint: .bottom))
             Capsule()
                 .fill(LinearGradient(colors: [.white.opacity(0.6), .clear], startPoint: .top, endPoint: .center))
                 .padding(4)
@@ -149,7 +149,7 @@ private struct SoundTile: View {
             .frame(width: size, height: size * 1.05)
             .background {
                 ZStack {
-                    face.fill(base.mix(with: .black, by: 0.3)).offset(y: size * 0.08)
+                    face.fill(base.mixed(with: .black, by: 0.3)).offset(y: size * 0.08)
                     face.fill(LinearGradient(colors: [.white, base], startPoint: .top, endPoint: .bottom))
                     face.stroke(lit ? Theme.gold : .white, lineWidth: lit ? 6 : 3)
                 }
@@ -313,7 +313,7 @@ struct RoundDonePanel: View {
                         .font(.system(size: m.s(64), weight: .black))
                         .foregroundStyle(.white)
                         .frame(width: m.s(220), height: m.s(140))
-                        .symbolEffect(.bounce, options: .repeating.speed(0.5))
+                        .repeatingBounce(speed: 0.5)
                 }
                 .buttonStyle(.chunky(Theme.gold, depth: m.s(12), cornerRadius: m.s(44)))
             } else {

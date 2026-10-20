@@ -13,16 +13,16 @@ struct RootView: View {
                     switch route {
                     case .game(let game):
                         GameScaffold(game: game) { game.makeView() }
-                            .navigationTransition(.zoom(sourceID: game, in: zoom))
+                            .zoomTransition(game, in: zoom)
                     case .stickerBook:
                         StickerBookView()
-                            .navigationTransition(.zoom(sourceID: "stars", in: zoom))
+                            .zoomTransition("stars", in: zoom)
                     case .sparkleCheck:
                         CheckView(kind: .sparkleCheck)
-                            .navigationTransition(.zoom(sourceID: "special", in: zoom))
+                            .zoomTransition("special", in: zoom)
                     case .skyTrial(let stage):
                         CheckView(kind: .skyTrial(stage: stage))
-                            .navigationTransition(.zoom(sourceID: "special", in: zoom))
+                            .zoomTransition("special", in: zoom)
                     case .treasure(let fromSession):
                         TreasureView(fromSession: fromSession)
                     case .warmUp(let kind):
@@ -63,7 +63,13 @@ extension View {
     /// Marks a view as the place a zoom transition grows out of.
     @ViewBuilder
     func zoomSource(_ id: some Hashable, in namespace: Namespace.ID?) -> some View {
-        if let namespace { matchedTransitionSource(id: id, in: namespace) } else { self }
+        if #available(iOS 18.0, *), let namespace { matchedTransitionSource(id: id, in: namespace) } else { self }
+    }
+
+    /// Grows the pushed screen out of its `zoomSource` (iOS 18); a plain push before that.
+    @ViewBuilder
+    func zoomTransition(_ id: some Hashable, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 18.0, *) { navigationTransition(.zoom(sourceID: id, in: namespace)) } else { self }
     }
 }
 

@@ -29,6 +29,7 @@
 		49E3F47C730800E2A22DB295 /* ReadAlongUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F55CD56068F41D2C29C1571D /* ReadAlongUITests.swift */; };
 		4C8BB5ACE65CFBE518A3DBAF /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FE6A55D6003776E8028604 /* Feedback.swift */; };
 		51F1D7A645D4BDACDC74DE10 /* ProgressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D98B10C330FF5ECB67930 /* ProgressModel.swift */; };
+		528BE7E15C71C3B8B3CEDD5C /* Compat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658A95D979A582521FF6B771 /* Compat.swift */; };
 		54F81895FC44F9B69920A0B9 /* CutisieReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD49B20018419B2E8AF665D6 /* CutisieReader.swift */; };
 		58B8705529B0E839F917D2B4 /* StarCatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3A85DE62509B67B8EC727B /* StarCatchView.swift */; };
 		61012253AD1E456B3ECBC8D0 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6CD74BB4DE32013C0C4E71 /* Haptics.swift */; };
@@ -105,6 +106,7 @@
 		5585E0878F746D23D64EEE92 /* JellyTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyTile.swift; sourceTree = "<group>"; };
 		5C83D4DBBF0C13D69A6A51D4 /* L2RR2LUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = L2RR2LUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CC604A55D0724564317F43B /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		658A95D979A582521FF6B771 /* Compat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Compat.swift; sourceTree = "<group>"; };
 		66D224CACECB112E3EE2A0D9 /* L2RR2LApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L2RR2LApp.swift; sourceTree = "<group>"; };
 		6A7DEBFFC77B1D0F0221B540 /* NewThingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewThingView.swift; sourceTree = "<group>"; };
 		6F0CB3E8A05551C191516B48 /* WordMachineEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordMachineEngine.swift; sourceTree = "<group>"; };
@@ -373,6 +375,7 @@
 			isa = PBXGroup;
 			children = (
 				322857F163A035266F57A09A /* BouncyButtonStyle.swift */,
+				658A95D979A582521FF6B771 /* Compat.swift */,
 				5585E0878F746D23D64EEE92 /* JellyTile.swift */,
 				3D0220D6D4173A82E0E43F80 /* ParallaxMotion.swift */,
 				102E3EA4C57FA7264F3F44F2 /* SkyBackground.swift */,
@@ -562,6 +565,7 @@
 				D841E5E0FBB3B244A076D82F /* CelebrationOverlay.swift in Sources */,
 				D257EB1A41585FDCC99FFEB8 /* CheckModel.swift in Sources */,
 				A4EDE2B4714D035074106E93 /* CheckView.swift in Sources */,
+				528BE7E15C71C3B8B3CEDD5C /* Compat.swift in Sources */,
 				9E200F384BEEC8AD6C95000B /* CutisieActor.swift in Sources */,
 				54F81895FC44F9B69920A0B9 /* CutisieReader.swift in Sources */,
 				4C8BB5ACE65CFBE518A3DBAF /* Feedback.swift in Sources */,
@@ -740,7 +744,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 2.0.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -828,7 +832,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 2.0.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

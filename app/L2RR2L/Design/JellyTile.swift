@@ -84,7 +84,7 @@ struct JellyTile: View {
             .frame(width: size, height: size)
             .background {
                 ZStack {
-                    shape.fill(color.mix(with: .black, by: 0.22)).offset(y: size * 0.07)
+                    shape.fill(color.mixed(with: .black, by: 0.22)).offset(y: size * 0.07)
                     shape.fill(LinearGradient(colors: [.white, color], startPoint: .top, endPoint: .bottom))
                     // jelly highlight
                     Ellipse().fill(.white.opacity(0.7))

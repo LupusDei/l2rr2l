@@ -208,7 +208,7 @@ struct PortalOrb: View {
                 VStack(spacing: -size * 0.08) {
                     orb(t: t)
                     ChunkyTitle(text: game.title, size: size * 0.17, colors: [.white, game.colors[0]],
-                                extrude: game.colors[1].mix(with: .black, by: 0.5))
+                                extrude: game.colors[1].mixed(with: .black, by: 0.5))
                         .fixedSize()
                 }
                 .offset(y: 10 * sin(t * 1.3 + phase))
@@ -230,7 +230,7 @@ struct PortalOrb: View {
     private func orb(t: Double) -> some View {
         ZStack {
             Circle()
-                .fill(RadialGradient(colors: [game.colors[0].mix(with: .white, by: 0.25), game.colors[1], game.colors[1].mix(with: Theme.skyTop, by: 0.5)],
+                .fill(RadialGradient(colors: [game.colors[0].mixed(with: .white, by: 0.25), game.colors[1], game.colors[1].mixed(with: Theme.skyTop, by: 0.5)],
                                      center: UnitPoint(x: 0.35, y: 0.3), startRadius: 0, endRadius: size * 0.7))
             // inner swirl
             Circle()

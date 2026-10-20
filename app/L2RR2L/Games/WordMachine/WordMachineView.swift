@@ -172,7 +172,7 @@ private struct Workbench: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: height * 0.3, style: .continuous)
-                .fill(Color(red: 0.55, green: 0.38, blue: 0.62).mix(with: .black, by: 0.25))
+                .fill(Color(red: 0.55, green: 0.38, blue: 0.62).mixed(with: .black, by: 0.25))
                 .offset(y: height * 0.08)
             RoundedRectangle(cornerRadius: height * 0.3, style: .continuous)
                 .fill(LinearGradient(colors: [Color(red: 0.98, green: 0.86, blue: 0.95), Color(red: 0.86, green: 0.74, blue: 0.98)],
@@ -263,8 +263,8 @@ private struct MachineBody: View {
         TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
             let t = timeline.date.timeIntervalSinceReferenceDate
             ZStack {
-                shape.fill(Theme.lilac.mix(with: .black, by: 0.4)).offset(y: height * 0.07)
-                shape.fill(LinearGradient(colors: [Theme.mint.mix(with: .white, by: 0.2), Theme.sky, Theme.lilac],
+                shape.fill(Theme.lilac.mixed(with: .black, by: 0.4)).offset(y: height * 0.07)
+                shape.fill(LinearGradient(colors: [Theme.mint.mixed(with: .white, by: 0.2), Theme.sky, Theme.lilac],
                                           startPoint: .topLeading, endPoint: .bottomTrailing))
                 shape.fill(LinearGradient(colors: [.white.opacity(0.45), .clear], startPoint: .top, endPoint: .center))
                     .padding(6)

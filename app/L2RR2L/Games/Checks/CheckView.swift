@@ -72,7 +72,7 @@ private struct CheckBoard: View {
                             .font(.system(size: m.s(110)))
                             .foregroundStyle(Theme.gold)
                             .glow(Theme.gold, radius: 20)
-                            .symbolEffect(.bounce, options: .repeat(3))
+                            .repeatingBounce(times: 3)
                         Text(model.resultLine)
                             .font(.playful(m.s(32), weight: .bold))
                             .foregroundStyle(.white)

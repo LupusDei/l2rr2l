@@ -89,14 +89,35 @@ private struct AuroraMesh: View {
         let w1 = Float(sin(t * 0.21) * 0.18)
         let w2 = Float(cos(t * 0.17) * 0.16)
         let w3 = Float(sin(t * 0.13 + 1) * 0.2)
+        if #available(iOS 18.0, *) {
+            mesh(w1, w2, w3)
+        } else {
+            // iOS 17: a vertical sky with two drifting glows standing in for the mesh
+            GeometryReader { g in
+                ZStack {
+                    LinearGradient(colors: [Theme.skyTop, Theme.aurora2.mixed(with: Theme.skyTop, by: 0.6), Theme.skyBottom],
+                                   startPoint: .top, endPoint: .bottom)
+                    RadialGradient(colors: [tint.mixed(with: Theme.skyTop, by: 0.45), .clear], center: .center,
+                                   startRadius: 0, endRadius: g.size.width * 0.6)
+                        .offset(x: g.size.width * CGFloat(w1), y: -g.size.height * 0.3)
+                    RadialGradient(colors: [Theme.aurora3.mixed(with: Theme.skyTop, by: 0.5), .clear], center: .center,
+                                   startRadius: 0, endRadius: g.size.width * 0.5)
+                        .offset(x: g.size.width * CGFloat(w3), y: g.size.height * CGFloat(0.05 + w2))
+                }
+            }
+        }
+    }
+
+    @available(iOS 18.0, *)
+    private func mesh(_ w1: Float, _ w2: Float, _ w3: Float) -> some View {
         MeshGradient(width: 3, height: 3, points: [
             [0, 0], [0.5 + w1 * 0.5, 0], [1, 0],
             [0, 0.45 + w2], [0.5 + w3, 0.5 + w1], [1, 0.4 - w2],
             [0, 1], [0.5 - w1 * 0.5, 1], [1, 1],
         ], colors: [
-            Theme.skyTop, tint.mix(with: Theme.skyTop, by: 0.55), Theme.skyTop,
-            Theme.aurora2.mix(with: Theme.skyTop, by: 0.6), tint.mix(with: Theme.skyBottom, by: 0.35), Theme.aurora3.mix(with: Theme.skyTop, by: 0.6),
-            Theme.skyBottom, Theme.skyBottom.mix(with: Theme.aurora3, by: 0.2), Theme.skyBottom,
+            Theme.skyTop, tint.mixed(with: Theme.skyTop, by: 0.55), Theme.skyTop,
+            Theme.aurora2.mixed(with: Theme.skyTop, by: 0.6), tint.mixed(with: Theme.skyBottom, by: 0.35), Theme.aurora3.mixed(with: Theme.skyTop, by: 0.6),
+            Theme.skyBottom, Theme.skyBottom.mixed(with: Theme.aurora3, by: 0.2), Theme.skyBottom,
         ])
     }
 }
