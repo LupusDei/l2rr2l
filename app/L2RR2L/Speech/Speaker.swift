@@ -2,7 +2,8 @@ import AVFoundation
 
 /// Plays the Star Voice's recorded audio. There is no synthesized speech in
 /// the app: every line, word and sound is a recording in one voice (the
-/// Runway "Serene" Star Voice).
+/// Star Voice: Runway preset "Maya" on ElevenLabs v3, recorded and checked by
+/// tools/record_voice.py; letter sounds by tools/make_letter_sounds.py).
 ///
 /// - Lines: `Media/voice/<slug>.(m4a|mp3|wav)`, slug from `VoiceSlug.make`
 ///   (the list to record is `Media/content/voice_lines.json`, built by

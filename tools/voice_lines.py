@@ -81,6 +81,17 @@ def main():
         words.update(u["text"].lower() for u in st["unicornWords"])
     for w in cur.get("pictureWords", []):
         words.add(w["text"].lower())
+    # every word in Read Along and Story Magic sentences
+    for name in ("readalong.json", "stories.json"):
+        path = os.path.join(MEDIA, "content", name)
+        if not os.path.exists(path):
+            continue
+        data = json.load(open(path))
+        texts = [s["text"] for s in data.get("sentences", [])]
+        for st in data.get("stories", []):
+            texts += [l["text"] for l in st["pages"] + [st["check"]]]
+        for t in texts:
+            words.update(re.findall(r"[a-z']+", t.lower()))
     wu = cur.get("warmups", {})
     for r in wu.get("rhymeSets", []):
         words.update(x["text"] for x in r["words"])
@@ -93,7 +104,7 @@ def main():
 
     by_slug = {slug(t): t for t in sorted(lines)}
     out = {
-        "voice": "Star Voice (Runway preset Serene): warm, slow, clear, smiling",
+        "voice": "Star Voice (Runway preset Maya, ElevenLabs v3): warm, slow, clear, smiling",
         "lines": by_slug,
         "words": sorted(words),
         "missing": {

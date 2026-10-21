@@ -42,4 +42,4 @@ Scenes are composed live from the word pictures (the transparent art-pack cards)
 
 ## Content
 
-27 stories across Stages 1 to 6 in `stories.json`. Words not in the curriculum get their tiles from the file's `words` table. This game's narrator lines and the word "big" are recorded in the Star Voice (Runway preset Serene) with `tools/record_voice.py`; `tools/voice_lines.py` lists every line the app needs.
+27 stories across Stages 1 to 6 in `stories.json`. Words not in the curriculum get their tiles from the file's `words` table. This game's narrator lines and the word "big" are recorded in the Star Voice (Runway preset Maya, ElevenLabs v3) with `tools/record_voice.py`, which checks each take with Whisper; `tools/voice_lines.py` lists every line the app needs.
