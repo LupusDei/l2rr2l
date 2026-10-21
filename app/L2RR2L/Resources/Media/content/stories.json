@@ -1,0 +1,1074 @@
+{
+ "version": 1,
+ "about": "Story Magic stories (design/story-magic.md). Every word is decodable with the sounds taught by its stage, or is a heart word taught by then. Scenes: a (who), rel on/in/has/and with b, act (nap dig sit sip hop run sing jump clap swim), look (sad mad red hot big). Checked by StoryMagicTests.",
+ "stories": [
+  {
+   "id": "cat-nap",
+   "stage": 1,
+   "pages": [
+    {
+     "text": "The cat is on the mat.",
+     "scene": {
+      "a": "cat",
+      "rel": "on",
+      "b": "mat"
+     }
+    },
+    {
+     "text": "The cat can nap.",
+     "scene": {
+      "a": "cat",
+      "act": "nap"
+     }
+    },
+    {
+     "text": "The dog and the cat nap.",
+     "scene": {
+      "a": "dog",
+      "rel": "and",
+      "b": "cat",
+      "act": "nap"
+     }
+    }
+   ],
+   "check": {
+    "text": "The mat is on the cat.",
+    "scene": {
+     "a": "mat",
+     "rel": "on",
+     "b": "cat"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "pig-pot",
+   "stage": 1,
+   "pages": [
+    {
+     "text": "The pig can dig.",
+     "scene": {
+      "a": "pig",
+      "act": "dig"
+     }
+    },
+    {
+     "text": "The pig is in the pot.",
+     "scene": {
+      "a": "pig",
+      "rel": "in",
+      "b": "pot"
+     }
+    },
+    {
+     "text": "The pig is sad.",
+     "scene": {
+      "a": "pig",
+      "look": "sad"
+     }
+    }
+   ],
+   "check": {
+    "text": "The pot is in the pig.",
+    "scene": {
+     "a": "pot",
+     "rel": "in",
+     "b": "pig"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "dad-cap",
+   "stage": 1,
+   "pages": [
+    {
+     "text": "The cap is on Dad.",
+     "scene": {
+      "a": "cap",
+      "rel": "on",
+      "b": "dad"
+     }
+    },
+    {
+     "text": "Dad can nap.",
+     "scene": {
+      "a": "dad",
+      "act": "nap"
+     }
+    },
+    {
+     "text": "The cat is on Dad.",
+     "scene": {
+      "a": "cat",
+      "rel": "on",
+      "b": "dad"
+     }
+    }
+   ],
+   "check": {
+    "text": "Dad is in the cap.",
+    "scene": {
+     "a": "dad",
+     "rel": "in",
+     "b": "cap"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "kid-sip",
+   "stage": 1,
+   "pages": [
+    {
+     "text": "The kid can sip.",
+     "scene": {
+      "a": "kid",
+      "act": "sip"
+     }
+    },
+    {
+     "text": "A cat can sip.",
+     "scene": {
+      "a": "cat",
+      "act": "sip"
+     }
+    },
+    {
+     "text": "The kid and the cat sit.",
+     "scene": {
+      "a": "kid",
+      "rel": "and",
+      "b": "cat",
+      "act": "sit"
+     }
+    }
+   ],
+   "check": {
+    "text": "A kid can sit.",
+    "scene": {
+     "a": "kid",
+     "act": "sit"
+    },
+    "silly": false
+   }
+  },
+  {
+   "id": "pan-pot",
+   "stage": 1,
+   "pages": [
+    {
+     "text": "A pan is on the pot.",
+     "scene": {
+      "a": "pan",
+      "rel": "on",
+      "b": "pot"
+     }
+    },
+    {
+     "text": "A pin is in the tin.",
+     "scene": {
+      "a": "pin",
+      "rel": "in",
+      "b": "tin"
+     }
+    },
+    {
+     "text": "The dog is mad!",
+     "scene": {
+      "a": "dog",
+      "look": "mad"
+     }
+    }
+   ],
+   "check": {
+    "text": "The pot is on the pin.",
+    "scene": {
+     "a": "pot",
+     "rel": "on",
+     "b": "pin"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "map-dig",
+   "stage": 1,
+   "pages": [
+    {
+     "text": "The map is on the mat.",
+     "scene": {
+      "a": "map",
+      "rel": "on",
+      "b": "mat"
+     }
+    },
+    {
+     "text": "The dog can dig.",
+     "scene": {
+      "a": "dog",
+      "act": "dig"
+     }
+    },
+    {
+     "text": "The kid and the dog dig.",
+     "scene": {
+      "a": "kid",
+      "rel": "and",
+      "b": "dog",
+      "act": "dig"
+     }
+    }
+   ],
+   "check": {
+    "text": "A dog can sit.",
+    "scene": {
+     "a": "dog",
+     "act": "sit"
+    },
+    "silly": false
+   }
+  },
+  {
+   "id": "hen-hat",
+   "stage": 2,
+   "pages": [
+    {
+     "text": "The hen is red.",
+     "scene": {
+      "a": "hen",
+      "look": "red"
+     }
+    },
+    {
+     "text": "The hen has a hat.",
+     "scene": {
+      "a": "hen",
+      "rel": "has",
+      "b": "hat"
+     }
+    },
+    {
+     "text": "The hen can hop.",
+     "scene": {
+      "a": "hen",
+      "act": "hop"
+     }
+    }
+   ],
+   "check": {
+    "text": "The hat has a hen.",
+    "scene": {
+     "a": "hat",
+     "rel": "has",
+     "b": "hen"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "bug-cup",
+   "stage": 2,
+   "pages": [
+    {
+     "text": "A bug is in the cup.",
+     "scene": {
+      "a": "bug",
+      "rel": "in",
+      "b": "cup"
+     }
+    },
+    {
+     "text": "The cup is on the rug.",
+     "scene": {
+      "a": "cup",
+      "rel": "on",
+      "b": "rug"
+     }
+    },
+    {
+     "text": "The bug can run!",
+     "scene": {
+      "a": "bug",
+      "act": "run"
+     }
+    }
+   ],
+   "check": {
+    "text": "The rug is in the cup.",
+    "scene": {
+     "a": "rug",
+     "rel": "in",
+     "b": "cup"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "fox-box",
+   "stage": 2,
+   "pages": [
+    {
+     "text": "The fox is in the box.",
+     "scene": {
+      "a": "fox",
+      "rel": "in",
+      "b": "box"
+     }
+    },
+    {
+     "text": "The box is on the bed.",
+     "scene": {
+      "a": "box",
+      "rel": "on",
+      "b": "bed"
+     }
+    },
+    {
+     "text": "The fox can nap.",
+     "scene": {
+      "a": "fox",
+      "act": "nap"
+     }
+    }
+   ],
+   "check": {
+    "text": "The bed is in the box.",
+    "scene": {
+     "a": "bed",
+     "rel": "in",
+     "b": "box"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "pup-sun",
+   "stage": 2,
+   "pages": [
+    {
+     "text": "The sun is hot.",
+     "scene": {
+      "a": "sun",
+      "look": "hot"
+     }
+    },
+    {
+     "text": "The pup is hot.",
+     "scene": {
+      "a": "pup",
+      "look": "hot"
+     }
+    },
+    {
+     "text": "The pup is in the tub.",
+     "scene": {
+      "a": "pup",
+      "rel": "in",
+      "b": "tub"
+     }
+    }
+   ],
+   "check": {
+    "text": "The tub is in the pup.",
+    "scene": {
+     "a": "tub",
+     "rel": "in",
+     "b": "pup"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "big-bus",
+   "stage": 2,
+   "pages": [
+    {
+     "text": "The bus is big.",
+     "scene": {
+      "a": "bus",
+      "look": "big"
+     }
+    },
+    {
+     "text": "A duck is on the bus.",
+     "scene": {
+      "a": "duck",
+      "rel": "on",
+      "b": "bus"
+     }
+    },
+    {
+     "text": "The duck can hop.",
+     "scene": {
+      "a": "duck",
+      "act": "hop"
+     }
+    }
+   ],
+   "check": {
+    "text": "The bus is on the duck.",
+    "scene": {
+     "a": "bus",
+     "rel": "on",
+     "b": "duck"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "rat-wig",
+   "stage": 2,
+   "pages": [
+    {
+     "text": "A rat has a wig.",
+     "scene": {
+      "a": "rat",
+      "rel": "has",
+      "b": "wig"
+     }
+    },
+    {
+     "text": "The rat is in a hat.",
+     "scene": {
+      "a": "rat",
+      "rel": "in",
+      "b": "hat"
+     }
+    },
+    {
+     "text": "The rat can run.",
+     "scene": {
+      "a": "rat",
+      "act": "run"
+     }
+    }
+   ],
+   "check": {
+    "text": "The hat can run.",
+    "scene": {
+     "a": "hat",
+     "act": "run"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "jam-bun",
+   "stage": 2,
+   "pages": [
+    {
+     "text": "The jam is on the bun.",
+     "scene": {
+      "a": "jam",
+      "rel": "on",
+      "b": "bun"
+     }
+    },
+    {
+     "text": "The bun is in the bag.",
+     "scene": {
+      "a": "bun",
+      "rel": "in",
+      "b": "bag"
+     }
+    },
+    {
+     "text": "The bag is on the bus.",
+     "scene": {
+      "a": "bag",
+      "rel": "on",
+      "b": "bus"
+     }
+    }
+   ],
+   "check": {
+    "text": "The bus is in the bag.",
+    "scene": {
+     "a": "bus",
+     "rel": "in",
+     "b": "bag"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "yak-bell",
+   "stage": 2,
+   "pages": [
+    {
+     "text": "The yak is big.",
+     "scene": {
+      "a": "yak",
+      "look": "big"
+     }
+    },
+    {
+     "text": "The yak has a bell.",
+     "scene": {
+      "a": "yak",
+      "rel": "has",
+      "b": "bell"
+     }
+    },
+    {
+     "text": "The yak can nap.",
+     "scene": {
+      "a": "yak",
+      "act": "nap"
+     }
+    }
+   ],
+   "check": {
+    "text": "A yak can hop.",
+    "scene": {
+     "a": "yak",
+     "act": "hop"
+    },
+    "silly": false
+   }
+  },
+  {
+   "id": "fish-dish",
+   "stage": 3,
+   "pages": [
+    {
+     "text": "The fish is in the dish.",
+     "scene": {
+      "a": "fish",
+      "rel": "in",
+      "b": "dish"
+     }
+    },
+    {
+     "text": "The fish can sing.",
+     "scene": {
+      "a": "fish",
+      "act": "sing"
+     }
+    },
+    {
+     "text": "The chick has a chip.",
+     "scene": {
+      "a": "chick",
+      "rel": "has",
+      "b": "chip"
+     }
+    }
+   ],
+   "check": {
+    "text": "The dish is in the fish.",
+    "scene": {
+     "a": "dish",
+     "rel": "in",
+     "b": "fish"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "chick-ship",
+   "stage": 3,
+   "pages": [
+    {
+     "text": "The chick is on the ship.",
+     "scene": {
+      "a": "chick",
+      "rel": "on",
+      "b": "ship"
+     }
+    },
+    {
+     "text": "The ship is in the bath.",
+     "scene": {
+      "a": "ship",
+      "rel": "in",
+      "b": "bath"
+     }
+    },
+    {
+     "text": "The chick can sing.",
+     "scene": {
+      "a": "chick",
+      "act": "sing"
+     }
+    }
+   ],
+   "check": {
+    "text": "The bath is on the chick.",
+    "scene": {
+     "a": "bath",
+     "rel": "on",
+     "b": "chick"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "cat-shed",
+   "stage": 3,
+   "pages": [
+    {
+     "text": "The moth is on the shell.",
+     "scene": {
+      "a": "moth",
+      "rel": "on",
+      "b": "shell"
+     }
+    },
+    {
+     "text": "The cat is in the shed.",
+     "scene": {
+      "a": "cat",
+      "rel": "in",
+      "b": "shed"
+     }
+    },
+    {
+     "text": "The cat has a fish.",
+     "scene": {
+      "a": "cat",
+      "rel": "has",
+      "b": "fish"
+     }
+    }
+   ],
+   "check": {
+    "text": "The shed is in the cat.",
+    "scene": {
+     "a": "shed",
+     "rel": "in",
+     "b": "cat"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "duck-sink",
+   "stage": 3,
+   "pages": [
+    {
+     "text": "The duck is in the sink.",
+     "scene": {
+      "a": "duck",
+      "rel": "in",
+      "b": "sink"
+     }
+    },
+    {
+     "text": "The duck has a shell.",
+     "scene": {
+      "a": "duck",
+      "rel": "has",
+      "b": "shell"
+     }
+    },
+    {
+     "text": "The duck can sing.",
+     "scene": {
+      "a": "duck",
+      "act": "sing"
+     }
+    }
+   ],
+   "check": {
+    "text": "The sink can sing.",
+    "scene": {
+     "a": "sink",
+     "act": "sing"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "frog-drum",
+   "stage": 4,
+   "pages": [
+    {
+     "text": "The frog can jump.",
+     "scene": {
+      "a": "frog",
+      "act": "jump"
+     }
+    },
+    {
+     "text": "The frog is on the drum.",
+     "scene": {
+      "a": "frog",
+      "rel": "on",
+      "b": "drum"
+     }
+    },
+    {
+     "text": "A crab is in the sand.",
+     "scene": {
+      "a": "crab",
+      "rel": "in",
+      "b": "sand"
+     }
+    }
+   ],
+   "check": {
+    "text": "The drum is on the frog.",
+    "scene": {
+     "a": "drum",
+     "rel": "on",
+     "b": "frog"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "tent-hill",
+   "stage": 4,
+   "pages": [
+    {
+     "text": "The tent is on the hill.",
+     "scene": {
+      "a": "tent",
+      "rel": "on",
+      "b": "hill"
+     }
+    },
+    {
+     "text": "A gift is in the tent.",
+     "scene": {
+      "a": "gift",
+      "rel": "in",
+      "b": "tent"
+     }
+    },
+    {
+     "text": "The kid can clap.",
+     "scene": {
+      "a": "kid",
+      "act": "clap"
+     }
+    }
+   ],
+   "check": {
+    "text": "The hill is in the tent.",
+    "scene": {
+     "a": "hill",
+     "rel": "in",
+     "b": "tent"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "pup-sled",
+   "stage": 4,
+   "pages": [
+    {
+     "text": "The sled is on the hill.",
+     "scene": {
+      "a": "sled",
+      "rel": "on",
+      "b": "hill"
+     }
+    },
+    {
+     "text": "The pup is on the sled.",
+     "scene": {
+      "a": "pup",
+      "rel": "on",
+      "b": "sled"
+     }
+    },
+    {
+     "text": "The pup can jump.",
+     "scene": {
+      "a": "pup",
+      "act": "jump"
+     }
+    }
+   ],
+   "check": {
+    "text": "The pup can swim.",
+    "scene": {
+     "a": "pup",
+     "act": "swim"
+    },
+    "silly": false
+   }
+  },
+  {
+   "id": "snake-cake",
+   "stage": 5,
+   "pages": [
+    {
+     "text": "The snake is on the cake.",
+     "scene": {
+      "a": "snake",
+      "rel": "on",
+      "b": "cake"
+     }
+    },
+    {
+     "text": "The snake has a cape.",
+     "scene": {
+      "a": "snake",
+      "rel": "has",
+      "b": "cape"
+     }
+    },
+    {
+     "text": "The snake is on the slide.",
+     "scene": {
+      "a": "snake",
+      "rel": "on",
+      "b": "slide"
+     }
+    }
+   ],
+   "check": {
+    "text": "The cake is on the snake.",
+    "scene": {
+     "a": "cake",
+     "rel": "on",
+     "b": "snake"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "kite-plane",
+   "stage": 5,
+   "pages": [
+    {
+     "text": "The kite is on the gate.",
+     "scene": {
+      "a": "kite",
+      "rel": "on",
+      "b": "gate"
+     }
+    },
+    {
+     "text": "The plane is big.",
+     "scene": {
+      "a": "plane",
+      "look": "big"
+     }
+    },
+    {
+     "text": "The bike is on the plane.",
+     "scene": {
+      "a": "bike",
+      "rel": "on",
+      "b": "plane"
+     }
+    }
+   ],
+   "check": {
+    "text": "The plane is in the bike.",
+    "scene": {
+     "a": "plane",
+     "rel": "in",
+     "b": "bike"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "pup-bone",
+   "stage": 5,
+   "pages": [
+    {
+     "text": "The pup has a bone.",
+     "scene": {
+      "a": "pup",
+      "rel": "has",
+      "b": "bone"
+     }
+    },
+    {
+     "text": "The bone is in the cake.",
+     "scene": {
+      "a": "bone",
+      "rel": "in",
+      "b": "cake"
+     }
+    },
+    {
+     "text": "The pup can jump.",
+     "scene": {
+      "a": "pup",
+      "act": "jump"
+     }
+    }
+   ],
+   "check": {
+    "text": "The cake is in the bone.",
+    "scene": {
+     "a": "cake",
+     "rel": "in",
+     "b": "bone"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "bee-tree",
+   "stage": 6,
+   "pages": [
+    {
+     "text": "A bee is in the tree.",
+     "scene": {
+      "a": "bee",
+      "rel": "in",
+      "b": "tree"
+     }
+    },
+    {
+     "text": "The bee has a coin.",
+     "scene": {
+      "a": "bee",
+      "rel": "has",
+      "b": "coin"
+     }
+    },
+    {
+     "text": "The bee can sing.",
+     "scene": {
+      "a": "bee",
+      "act": "sing"
+     }
+    }
+   ],
+   "check": {
+    "text": "The tree is in the bee.",
+    "scene": {
+     "a": "tree",
+     "rel": "in",
+     "b": "bee"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "goat-boat",
+   "stage": 6,
+   "pages": [
+    {
+     "text": "The goat is in the boat.",
+     "scene": {
+      "a": "goat",
+      "rel": "in",
+      "b": "boat"
+     }
+    },
+    {
+     "text": "The boat is on the lake.",
+     "scene": {
+      "a": "boat",
+      "rel": "on",
+      "b": "lake"
+     }
+    },
+    {
+     "text": "The goat can sing.",
+     "scene": {
+      "a": "goat",
+      "act": "sing"
+     }
+    }
+   ],
+   "check": {
+    "text": "The boat is in the goat.",
+    "scene": {
+     "a": "boat",
+     "rel": "in",
+     "b": "goat"
+    },
+    "silly": true
+   }
+  },
+  {
+   "id": "owl-cloud",
+   "stage": 6,
+   "pages": [
+    {
+     "text": "The owl is on the cloud.",
+     "scene": {
+      "a": "owl",
+      "rel": "on",
+      "b": "cloud"
+     }
+    },
+    {
+     "text": "The owl has a star.",
+     "scene": {
+      "a": "owl",
+      "rel": "has",
+      "b": "star"
+     }
+    },
+    {
+     "text": "The moon is big.",
+     "scene": {
+      "a": "moon",
+      "look": "big"
+     }
+    }
+   ],
+   "check": {
+    "text": "The cloud is on the owl.",
+    "scene": {
+     "a": "cloud",
+     "rel": "on",
+     "b": "owl"
+    },
+    "silly": true
+   }
+  }
+ ],
+ "words": {
+  "on": {
+   "graphemes": [
+    "o",
+    "n"
+   ],
+   "sounds": [
+    "o",
+    "n"
+   ]
+  },
+  "has": {
+   "graphemes": [
+    "h",
+    "a",
+    "s"
+   ],
+   "sounds": [
+    "h",
+    "a",
+    "z"
+   ]
+  },
+  "and": {
+   "graphemes": [
+    "a",
+    "n",
+    "d"
+   ],
+   "sounds": [
+    "a",
+    "n",
+    "d"
+   ]
+  },
+  "big": {
+   "graphemes": [
+    "b",
+    "i",
+    "g"
+   ],
+   "sounds": [
+    "b",
+    "i",
+    "g"
+   ]
+  }
+ }
+}

@@ -33,9 +33,10 @@ final class Router {
     private(set) var sessionStarted: Date?
 
     /// Today's adventure (learning path 5): a quick warm-up, blend, build,
-    /// read alone, then the treasure.
-    func startSession(warmUp: WarmUpKind?, newSound: String? = nil) {
+    /// read alone, the story moment once she's ready for it, then the treasure.
+    func startSession(warmUp: WarmUpKind?, newSound: String? = nil, story: Bool = false) {
         var steps: [Route] = [.game(.stretchyBlend), .game(.wordMachine), .game(.starCatch), .treasure(fromSession: true)]
+        if story { steps.insert(.game(.storyMagic), at: 3) }
         if let newSound { steps.insert(.newThing(newSound), at: 0) }
         if let warmUp { steps.insert(.warmUp(warmUp), at: 0) }
         sessionStarted = .now

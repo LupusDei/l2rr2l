@@ -209,6 +209,18 @@ final class ProgressStore {
     // MARK: Stages, assessments, sessions
 
     /// Words read correctly without help at least once (for milestones).
+    /// A Story Magic story is done: it goes in Cutisie's book (moved to the end if read before).
+    func finishStory(_ id: String) {
+        mutate { d in
+            d.storiesRead.removeAll { $0 == id }
+            d.storiesRead.append(id)
+        }
+    }
+
+    /// The story moment joins the session once she reads some words alone
+    /// (learning path 5: from late Stage 1).
+    var storyReady: Bool { data.placementDone && (data.stage >= 2 || wordsReadAlone >= 8) }
+
     var wordsReadAlone: Int { data.words.values.filter { !$0.knownDays.isEmpty }.count }
 
     /// Share of a stage's pictured words that are known (learning path:

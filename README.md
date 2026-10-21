@@ -24,7 +24,7 @@ Requires Xcode 26+, iOS 18 deployment target. `brew install xcodegen` if you cha
 | `app/L2RR2L/Mascot` | `MascotDirector` reactions and `MascotView` (video clip, still, or animated interim art) |
 | `app/L2RR2L/Celebration` | confetti, fireworks, sticker reveal overlay |
 | `app/L2RR2L/Progress` | saved progress: stages, word mastery over days, spaced review, error patterns, skills with prerequisites/bridges, milestones, stars, treats, egg, sticker book |
-| `app/L2RR2L/Games` | game catalog, shared game screen, and the three playable games: Stretchy Blend, Word Machine, Star Catch (content in `Games/Content/WordBank.swift`) |
+| `app/L2RR2L/Games` | game catalog, shared game screen, and the games: Stretchy Blend, Word Machine, Star Catch, Read Along and Story Magic (content in `Games/Content/WordBank.swift`, `Media/content/*.json`) |
 | `app/L2RR2L/Resources/Media` | drop folder for mascot clips, sounds, phonemes, words (see its README) |
 | `app/L2RR2L/Games/Checks` | Sparkle Check placement and Sky Trial checkpoints |
 | `app/L2RR2L/Resources/Media/content/curriculum.json` | all stages: words, tiles and sounds, pictures, distractors, chains, heart words, sentences, unicorn words. Edit `tools/make_curriculum.py` and re-run it |

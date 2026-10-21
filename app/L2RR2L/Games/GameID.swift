@@ -8,6 +8,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
     case wordMachine
     case starCatch
     case readAlong
+    case storyMagic
 
     var id: String { rawValue }
 
@@ -17,6 +18,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .wordMachine: "Word Machine"
         case .starCatch: "Star Catch"
         case .readAlong: "Read Along"
+        case .storyMagic: "Story Magic"
         }
     }
 
@@ -26,6 +28,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .wordMachine: "Build words with the magic machine"
         case .starCatch: "Read it, then catch it!"
         case .readAlong: "Read a story line with Cutisie"
+        case .storyMagic: "Your words make the picture"
         }
     }
 
@@ -35,6 +38,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .wordMachine: "gearshape.2.fill"
         case .starCatch: "star.fill"
         case .readAlong: "book.fill"
+        case .storyMagic: "wand.and.stars"
         }
     }
 
@@ -44,6 +48,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .wordMachine: [Theme.mint, Theme.sky]
         case .starCatch: [Theme.gold, Theme.peach]
         case .readAlong: [Theme.peach, Theme.pink]
+        case .storyMagic: [Theme.lilac, Theme.aurora3]
         }
     }
 
@@ -54,6 +59,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .wordMachine: "bg-build"
         case .starCatch: "bg-catch"
         case .readAlong: "bg-story"
+        case .storyMagic: "bg-tales"
         }
     }
 
@@ -64,6 +70,7 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
         case .wordMachine: "Let's build words with my magic machine!"
         case .starCatch: "Read the word, then catch the star!"
         case .readAlong: "Story time! Let's read with Cutisie."
+        case .storyMagic: "Cutisie dreamed a story. Your words make it real!"
         }
     }
 
@@ -85,6 +92,8 @@ enum GameID: String, CaseIterable, Identifiable, Codable {
             StarCatchView()
         case .readAlong:
             ReadAlongView()
+        case .storyMagic:
+            StoryMagicView()
         }
     }
 }

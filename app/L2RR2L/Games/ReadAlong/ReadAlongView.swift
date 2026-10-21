@@ -325,7 +325,7 @@ private struct ReadAnchorsKey: PreferenceKey {
 }
 
 /// Lays words out left to right, wrapping to a new centred line when full.
-private struct WrapLayout: Layout {
+struct WrapLayout: Layout {
     var spacing: CGFloat
     var lineSpacing: CGFloat
 

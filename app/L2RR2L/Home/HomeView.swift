@@ -18,7 +18,7 @@ struct HomeView: View {
             let w = geo.size.width, h = geo.size.height
             let landscape = w > h
             let mascotSize = min(w, h) * (landscape ? 0.46 : 0.44)
-            let orb = min(w, h) * (landscape ? 0.21 : 0.22)
+            let orb = min(w, h) * (landscape ? 0.19 : 0.18)
 
             ZStack {
                 SkyBackground(imageName: "bg-home")
@@ -120,15 +120,16 @@ struct HomeView: View {
 
     private func portalSpot(_ index: Int, landscape: Bool) -> UnitPoint {
         let spots: [UnitPoint] = landscape
-            ? [UnitPoint(x: 0.13, y: 0.64), UnitPoint(x: 0.37, y: 0.84), UnitPoint(x: 0.63, y: 0.84), UnitPoint(x: 0.87, y: 0.64)]
-            : [UnitPoint(x: 0.18, y: 0.7), UnitPoint(x: 0.35, y: 0.86), UnitPoint(x: 0.65, y: 0.86), UnitPoint(x: 0.82, y: 0.7)]
+            ? [UnitPoint(x: 0.12, y: 0.62), UnitPoint(x: 0.3, y: 0.84), UnitPoint(x: 0.5, y: 0.86), UnitPoint(x: 0.7, y: 0.84), UnitPoint(x: 0.88, y: 0.62)]
+            : [UnitPoint(x: 0.15, y: 0.68), UnitPoint(x: 0.28, y: 0.83), UnitPoint(x: 0.5, y: 0.86), UnitPoint(x: 0.72, y: 0.83), UnitPoint(x: 0.85, y: 0.68)]
         return spots[index]
     }
 
     private func play() {
         services.feedback.play(.whoosh)
         if progress.data.placementDone {
-            services.router.startSession(warmUp: progress.nextWarmUp(), newSound: progress.nextNewSound())
+            services.router.startSession(warmUp: progress.nextWarmUp(), newSound: progress.nextNewSound(),
+                                         story: progress.storyReady)
         } else {
             services.router.open(.sparkleCheck)
         }

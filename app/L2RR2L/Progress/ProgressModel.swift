@@ -40,6 +40,8 @@ struct ProgressData: Codable, Equatable {
     // Activity
     var games: [String: GameStats] = [:]
     var daysPlayed: Set<String> = []
+    /// Story Magic stories finished, oldest first (Cutisie's book).
+    var storiesRead: [String] = []
 
     init() {}
 
@@ -68,6 +70,7 @@ struct ProgressData: Codable, Equatable {
         assessments = try c.decodeIfPresent([Assessment].self, forKey: .assessments) ?? []
         games = try c.decodeIfPresent([String: GameStats].self, forKey: .games) ?? [:]
         daysPlayed = try c.decodeIfPresent(Set<String>.self, forKey: .daysPlayed) ?? []
+        storiesRead = try c.decodeIfPresent([String].self, forKey: .storiesRead) ?? []
     }
 }
 
