@@ -1,68 +1,57 @@
-# L2RR2L - Learn to Read, Read to Learn
+# L2RR2L: Cutisie's Sky
 
-[![iOS TestFlight](https://github.com/LupusDei/l2rr2l/actions/workflows/ios-testflight.yml/badge.svg)](https://github.com/LupusDei/l2rr2l/actions/workflows/ios-testflight.yml)
+A reading game for a nearly-6-year-old, iPad first with iPhone support. Native SwiftUI.
+Cutisie Cute, a winged baby unicorn, lives in a night sky; an off-screen narrator, the
+Star Voice, does all the talking. The first web/iOS attempt lives in `archive/v1/`.
 
-A web application to teach young kids how to read through engaging, personalized learning experiences.
-
-## Vision
-
-L2RR2L uses best-in-class methodologies for teaching reading:
-- **Phonetics** - Sound-based learning with audio feedback
-- **Pattern Recognition** - Visual and linguistic patterns
-- **Gamification** - Fun challenges and rewards
-- **AI-Powered Personalization** - Adapts to each child's learning style
-- **Parental Insights** - Progress tracking and recommendations
-
-## Tech Stack
-
-- React + TypeScript (Vite)
-- AI/ML for personalization
-- Responsive design for tablets and desktop
-
-## Getting Started
+## Run it
 
 ```bash
-npm install
-npm run dev
+cd app && xcodegen generate   # only after adding/removing source files
+open L2RR2L.xcodeproj         # pick an iPad simulator, Run
 ```
 
-## Environment Variables
+Requires Xcode 26+, iOS 18 deployment target. `brew install xcodegen` if you change files.
 
-Copy `.env.example` to `.env` and configure the required variables:
+## Layout
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `ELEVENLABS_API_KEY` | Yes | API key for voice features (text-to-speech, pronunciation) |
-| `XAI_API_KEY` | No | xAI/Grok API key for AI features |
-| `ANTHROPIC_API_KEY` | No | Alternative AI provider |
-| `JWT_SECRET` | Production | Secret for JWT authentication |
-| `PORT` | No | Server port (default: 3001) |
-| `NODE_ENV` | No | Environment (development/production) |
+| Folder | What |
+|---|---|
+| `app/L2RR2L/App` | entry point, `AppServices` (shared systems + the "correct / oops / round done / sticker" moments), router |
+| `app/L2RR2L/Design` | theme, living parallax sky, chunky 3D buttons, title lettering |
+| `app/L2RR2L/Feedback` | synthesized sound palette (swap in real files), haptics (iPhone only; iPads have none) |
+| `app/L2RR2L/Speech` | `Speaker` (TTS, IPA pure letter sounds, recordings win), `StarVoice` narrator, `PhonemeEngine` (holdable letter sounds for blending) |
+| `app/L2RR2L/Mascot` | `MascotDirector` reactions and `MascotView` (video clip, still, or animated interim art) |
+| `app/L2RR2L/Celebration` | confetti, fireworks, sticker reveal overlay |
+| `app/L2RR2L/Progress` | saved progress: stages, word mastery over days, spaced review, error patterns, skills with prerequisites/bridges, milestones, stars, treats, egg, sticker book |
+| `app/L2RR2L/Games` | game catalog, shared game screen, and the games: Stretchy Blend, Word Machine, Star Catch, Read Along and Story Magic (content in `Games/Content/WordBank.swift`, `Media/content/*.json`) |
+| `app/L2RR2L/Resources/Media` | drop folder for mascot clips, sounds, phonemes, words (see its README) |
+| `app/L2RR2L/Games/Checks` | Sparkle Check placement and Sky Trial checkpoints |
+| `app/L2RR2L/Resources/Media/content/curriculum.json` | all stages: words, tiles and sounds, pictures, distractors, chains, heart words, sentences, unicorn words. Edit `tools/make_curriculum.py` and re-run it |
+| `art/cutisie` | mascot art brief and references |
 
-## Deployment
+## Adding a game
 
-### Cloudflare Pages
+1. Create `app/L2RR2L/Games/<Name>/<Name>View.swift`.
+2. Return it from the matching case in `GameID.makeView()` and flip `isReady`.
+3. Use `AppServices` for everything that should feel the same across games:
+   `voice.say(...)`, `voice.sayLetterSound(...)`, `celebrateCorrect(game:word:usedAudioHelp:responseTime:)`,
+   `encourageRetry(game:word:errorTags:)`, `celebrateRoundComplete(game:)`, `mascot.react(...)`.
 
-The frontend is configured for Cloudflare Pages deployment.
+## Trying it without playing for days (debug builds)
 
-**Build settings:**
-- Build command: `npm run build`
-- Build output directory: `dist`
-- Root directory: `/`
+Launch arguments: `-demoProgress` (placement done, Stage 1 words known so the
+Sky Trial shows, some treats), `-openTreasure` (jump to the end-of-session
+treasure), `-landscape`, and `-autopilot`, which plays a full Sparkle Check and
+then one whole session (warm-up, new sound, three games, treasure) on its own,
+missing every fourth answer so hints and the struggle rule get exercised.
 
-**Environment Variables (Cloudflare Dashboard):**
+## Art pack
 
-Configure these in Cloudflare Pages > Settings > Environment Variables:
-
-1. **Production variables:**
-   - `ELEVENLABS_API_KEY` - Your ElevenLabs API key (encrypt this)
-   - `NODE_ENV` - Set to `production`
-
-2. **Optional AI variables:**
-   - `XAI_API_KEY` or `ANTHROPIC_API_KEY` - For AI-powered features
-
-Note: The backend server requires separate deployment (e.g., Railway, Render, or Cloudflare Workers).
-
-## License
-
-MIT
+`art/cutisie/out` (not committed, about 1 GB) holds Cutisie's clips, scenes and
+word picture cards. The "Bundle Cutisie clips" build step copies clips,
+posters, scenes and picture cards into the app when the folder is present;
+without it the app falls back to pose stills and emoji. Letter sounds
+(`Media/phonemes`), spoken words (`Media/words`), poses, backgrounds and
+sounds are committed. The parent page opens by holding the small people icon
+in the home screen's bottom-right corner for 2 seconds.

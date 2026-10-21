@@ -1,0 +1,103 @@
+name: L2RR2L
+options:
+  bundleIdPrefix: com.lupusdei
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "2.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  L2RR2L:
+    type: application
+    platform: iOS
+    sources:
+      - path: L2RR2L
+        excludes:
+          - "Resources/Media"
+      # Media is a folder reference: drop mascot videos, sound effects and
+      # letter-sound recordings in and they ship without touching the project.
+      - path: L2RR2L/Resources/Media
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lupusdei.l2rr2l
+        PRODUCT_NAME: L2RR2L
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Cutisie Reads
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UIRequiresFullScreen: NO
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UIStatusBarHidden: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_PREVIEWS: YES
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+    preBuildScripts:
+      # The app plays recorded Star Voice audio only. System speech sounds
+      # robotic and gets letter sounds wrong, so it must never come back.
+      - name: Forbid system speech
+        basedOnDependencyAnalysis: false
+        script: |
+          if grep -rnE "AVSpeechSynthesi[sz]er|AVSpeechUtterance" "${SRCROOT}/L2RR2L" --include=*.swift; then
+            echo "error: System speech (AVSpeechSynthesizer) is not allowed. Use recorded Star Voice audio (Speaker / StarVoice)."
+            exit 1
+          fi
+    postBuildScripts:
+      # Cutisie's video clips (~260 MB) aren't committed. When the art pack is
+      # on this machine, copy them into the app; otherwise the app falls back
+      # to her pose stills.
+      - name: Bundle Cutisie clips
+        basedOnDependencyAnalysis: false
+        script: |
+          PACK="${SRCROOT}/../art/cutisie/out/videos"
+          DEST="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Media"
+          if [ -d "$PACK/alpha" ]; then
+            mkdir -p "$DEST/mascot/clips" "$DEST/scenes"
+            rsync -a --delete "$PACK/alpha/" "$DEST/mascot/clips/"
+            if [ -d "$PACK/../words/pictures" ]; then
+              mkdir -p "$DEST/pictures"
+              rsync -a --delete "$PACK/../words/pictures/" "$DEST/pictures/"
+            fi
+            mkdir -p "$DEST/mascot/posters"
+            rsync -a --delete "$PACK/posters/" "$DEST/mascot/posters/"
+            rsync -a --delete "$PACK/scenes/" "$DEST/scenes/"
+          else
+            echo "warning: Cutisie art pack not found at $PACK; clips will use still poses"
+          fi
+  L2RR2LTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [L2RR2LTests]
+    dependencies:
+      - target: L2RR2L
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.lupusdei.l2rr2l.tests
+  L2RR2LUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [L2RR2LUITests]
+    dependencies:
+      - target: L2RR2L
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.lupusdei.l2rr2l.uitests
+        TEST_TARGET_NAME: L2RR2L
+schemes:
+  L2RR2L:
+    build:
+      targets:
+        L2RR2L: all
+    test:
+      targets: [L2RR2LTests, L2RR2LUITests]

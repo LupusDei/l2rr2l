@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "about": "Read Along sentences. Every word is decodable with the sounds taught by its stage, or is a heart word taught by then. Words not in curriculum.json get their tiles and sounds from `words` below. Checked by ReadAlongContentTests.",
+  "sentences": [
+    {"stage": 1, "text": "Sam sat."},
+    {"stage": 1, "text": "a cat in a pot"},
+    {"stage": 1, "text": "a pig in a pit"},
+    {"stage": 1, "text": "The cat is sad."},
+    {"stage": 1, "text": "Dad can dig."},
+    {"stage": 1, "text": "The man can nap."},
+    {"stage": 1, "text": "a kid in a cap"},
+    {"stage": 1, "text": "a dog on a mat"},
+    {"stage": 1, "text": "I sit on a mat."},
+    {"stage": 1, "text": "a pig and a cat"},
+
+    {"stage": 2, "text": "The hen is red."},
+    {"stage": 2, "text": "A bug is in the cup."},
+    {"stage": 2, "text": "The pup can run."},
+    {"stage": 2, "text": "A fox sat on a box."},
+    {"stage": 2, "text": "Hop on the log!"},
+    {"stage": 2, "text": "The duck can hop."},
+    {"stage": 2, "text": "A rat in a hat"},
+    {"stage": 2, "text": "The sun is hot."},
+    {"stage": 2, "text": "The dog is on the bed."},
+    {"stage": 2, "text": "She has a jet."},
+
+    {"stage": 3, "text": "The fish is in the dish."},
+    {"stage": 3, "text": "A king has a ring."},
+    {"stage": 3, "text": "The chick is on the ship."},
+    {"stage": 3, "text": "I sing in the bath."},
+    {"stage": 3, "text": "The moth has a wing."},
+    {"stage": 3, "text": "My chip is thin."},
+    {"stage": 3, "text": "They sing to the fish."},
+
+    {"stage": 4, "text": "The frog can jump."},
+    {"stage": 4, "text": "A crab is in the sand."},
+    {"stage": 4, "text": "Stop at the flag!"},
+    {"stage": 4, "text": "One frog is on the sled."},
+    {"stage": 4, "text": "Clap, clap, jump!"},
+    {"stage": 4, "text": "The nest is in the tent."},
+    {"stage": 4, "text": "Come and swim!"},
+
+    {"stage": 5, "text": "The snake ate the cake."},
+    {"stage": 5, "text": "I like my kite."},
+    {"stage": 5, "text": "Put the cake on the plane."},
+    {"stage": 5, "text": "My bike is at home."},
+    {"stage": 5, "text": "A snake on a slide"},
+    {"stage": 5, "text": "The bone is on the rope."},
+
+    {"stage": 6, "text": "A bee is in the tree."},
+    {"stage": 6, "text": "The goat is in the boat."},
+    {"stage": 6, "text": "Look at the moon!"},
+    {"stage": 6, "text": "The girl has a toy car."},
+    {"stage": 6, "text": "A bird is on the cow."},
+    {"stage": 6, "text": "The cow is in the rain."},
+    {"stage": 6, "text": "A star in the night"}
+  ],
+  "words": {
+    "on":  {"graphemes": ["o", "n"], "sounds": ["o", "n"]},
+    "has": {"graphemes": ["h", "a", "s"], "sounds": ["h", "a", "z"]},
+    "ate": {"graphemes": ["a", "t", "e"], "sounds": ["a_e", "t", ""]},
+    "and": {"graphemes": ["a", "n", "d"], "sounds": ["a", "n", "d"]},
+    "run": {"graphemes": ["r", "u", "n"], "sounds": ["r", "u", "n"]},
+    "pup": {"graphemes": ["p", "u", "p"], "sounds": ["p", "u", "p"]}
+  }
+}

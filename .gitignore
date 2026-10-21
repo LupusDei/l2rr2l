@@ -48,3 +48,8 @@ coverage
 # Cloudflare
 .dev.vars
 .wrangler/
+
+# Xcode
+xcuserdata/
+DerivedData/
+*.xcuserstate
